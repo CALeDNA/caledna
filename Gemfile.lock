@@ -259,6 +259,9 @@ GEM
     title (0.0.7)
       i18n
       rails (>= 3.1)
+    turbolinks (5.0.1)
+      turbolinks-source (~> 5)
+    turbolinks-source (5.0.3)
     tzinfo (1.2.4)
       thread_safe (~> 0.1)
     uglifier (4.0.2)
@@ -308,6 +311,7 @@ DEPENDENCIES
   stairs
   timecop
   title
+  turbolinks
   uglifier
 
 RUBY VERSION

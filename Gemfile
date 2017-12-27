@@ -20,6 +20,7 @@ gem 'sass-rails'
 gem 'sidekiq'
 gem 'simple_form'
 gem 'title'
+gem 'turbolinks'
 gem 'uglifier'
 
 source 'https://rails-assets.org' do
