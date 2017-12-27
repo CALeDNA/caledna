@@ -1,0 +1,5 @@
+- [ ] Be well-tested according to our Automated Testing Policy, and the test suite must be passing.
+- [ ] Conform to the Ruby Community Styleguide via rubocop.
+- [ ] Update the seed file with any new data that QA will need to accept your feature
+- [ ] Ensure that any new ENV vars are added to `setup.rb` and updated on CI and servers
+- [ ] Views render correctly in all supported browsers
