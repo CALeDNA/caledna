@@ -1,0 +1,17 @@
+AllCops:
+  Exclude:
+    - 'bin/**/*'
+    - 'config/initializers/*.rb'
+    - 'config/environments/*.rb'
+    - 'db/schema.rb'
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Exclude:
+    - 'db/migrate/*.rb'
+
+Metrics/LineLength:
+  Exclude:
+    - 'db/migrate/*.rb'
