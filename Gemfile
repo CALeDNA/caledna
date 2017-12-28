@@ -9,6 +9,7 @@ gem 'airbrake', require: false
 gem 'autoprefixer-rails'
 gem 'bundler'
 gem 'coffee-rails'
+gem 'devise'
 gem 'flutie'
 gem 'i18n-tasks'
 gem 'newrelic_rpm'
