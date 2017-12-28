@@ -43,7 +43,7 @@ end
 group :development, :test do
   gem 'bundler-audit', '~> 0.6', require: false
   gem 'dotenv-rails', '~> 2.2'
-  gem 'factory_girl_rails', '~> 4.9'
+  gem 'factory_bot_rails', '~> 4.8.2'
   gem 'listen', '~> 3.1'
   gem 'pry-byebug', '~> 3.5'
   gem 'pry-rails', '~> 0.3'
