@@ -1,0 +1,57 @@
+<%#
+NOTE: Changed the generated Administrate file. Add form from Devise Invitable to create new researcher.
+%>
+
+<% content_for(:title) { "#{t("administrate.actions.new")} #{page.resource_name.titleize}" } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+
+  <div>
+    <%= link_to t("administrate.actions.back"), :back, class: "button" %>
+  </div>
+</header>
+
+<section class="main-content__body">
+  <%= simple_form_for page.resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post, class: "form"} do |f| %>
+
+    <% if page.resource.errors.any? %>
+      <div id="error_explanation">
+        <h2>
+          <%= pluralize(page.resource.errors.count, "error") %>
+          prohibited this <%= page.resource_name %> from being saved:
+        </h2>
+
+        <ul>
+          <% page.resource.errors.full_messages.each do |message| %>
+            <li class="flash-error"><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field-unit field-unit--string">
+      <div class="field-unit__label">
+        <%= f.label :email %>
+      </div>
+      <div class="field-unit__field">
+        <%= f.input_field :email %>
+      </div>
+    </div>
+
+    <div class="field-unit field-unit--string">
+      <div class="field-unit__label">
+        <%= f.label :username %>
+      </div>
+      <div class="field-unit__field">
+        <%= f.input_field :username %>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit, t("devise.invitations.new.submit_button") %>
+    </div>
+  <% end %>
+</section>

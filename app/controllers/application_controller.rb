@@ -15,5 +15,6 @@ class ApplicationController < ActionController::Base
 
     devise_parameter_sanitizer.permit(:sign_up, keys: allowed_params)
     devise_parameter_sanitizer.permit(:account_update, keys: allowed_params)
+    devise_parameter_sanitizer.permit(:invite, keys: allowed_params)
   end
 end
