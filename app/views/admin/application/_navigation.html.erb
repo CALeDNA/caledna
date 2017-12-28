@@ -1,0 +1,14 @@
+<%# NOTE: Changed the generated Administrate file. Added non-resource-based links. %>
+
+<nav class="navigation" role="navigation">
+  <%= link_to 'Logout', destroy_researcher_session_path, method: :delete,
+    class: 'navigation__link navigation' %>
+
+  <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
+    <%= link_to(
+      display_resource_name(resource),
+      [namespace, resource.path],
+      class: "navigation__link navigation__link--#{nav_link_state(resource)}"
+    ) %>
+  <% end %>
+</nav>
