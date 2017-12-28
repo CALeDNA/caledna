@@ -15,7 +15,7 @@ RSpec.configure do |config|
   config.filter_run_when_matching :focus
 
   # Print the slowest examples and example groups at the end of the spec run
-  config.profile_examples = 10
+  # config.profile_examples = 10
 
   # Run specs in random order to surface order dependencies. You can fix the
   # order by providing the seed.

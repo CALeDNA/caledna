@@ -23,7 +23,7 @@ describe Admin::ResearchersController do
       login_researcher
     end
 
-    let(:researcher) { FactoryBot.create(:researcher, email: old_email) }
+    let(:researcher) { create(:researcher, email: old_email) }
     let(:old_email) { 'a@a.com' }
     let(:new_email) { 'b@b.com' }
 

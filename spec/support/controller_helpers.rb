@@ -3,6 +3,6 @@
 module ControllerHelpers
   def login_researcher
     @request.env['devise.mapping'] = Devise.mappings[:researcher]
-    sign_in FactoryBot.create(:researcher)
+    sign_in create(:researcher)
   end
 end

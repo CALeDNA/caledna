@@ -45,6 +45,7 @@ group :development, :test do
   gem 'bundler-audit', '~> 0.6', require: false
   gem 'dotenv-rails', '~> 2.2'
   gem 'factory_bot_rails', '~> 4.8.2'
+  gem 'faker', '~> 1.8.7'
   gem 'listen', '~> 3.1'
   gem 'pry-byebug', '~> 3.5'
   gem 'pry-rails', '~> 0.3'
@@ -56,6 +57,7 @@ group :test do
   gem 'capybara-webkit', '~> 1.14'
   gem 'database_cleaner', '~> 1.6'
   gem 'launchy', '~> 2.4'
+  gem 'rails-controller-testing', '~> 1.0.2'
   gem 'rspec-sidekiq', '~> 3.0'
   gem 'shoulda-matchers', '~> 3.1', require: false
   gem 'timecop', '~> 0.9'
