@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   end
 
   devise_for :researchers
+  root 'application#index'
 end
