@@ -3,57 +3,57 @@
 source 'https://rubygems.org'
 
 ruby '2.4.0'
-gem 'rails', '~> 5.0.1'
+gem 'rails', '~> 5.0'
 
-gem 'administrate'
-gem 'airbrake', require: false
-gem 'autoprefixer-rails'
+gem 'administrate', '~> 0.8'
+gem 'airbrake', '~> 7.1', require: false
+gem 'autoprefixer-rails', '~> 7.2'
 gem 'bundler'
-gem 'coffee-rails'
-gem 'devise'
-gem 'flutie'
-gem 'i18n-tasks'
-gem 'newrelic_rpm'
-gem 'pg'
-gem 'puma'
-gem 'rack-canonical-host'
-gem 'recipient_interceptor'
-gem 'sass-rails'
-gem 'sidekiq'
-gem 'simple_form'
-gem 'title'
-gem 'turbolinks'
-gem 'uglifier'
+gem 'coffee-rails', '~> 4.2'
+gem 'devise', '~> 4.3'
+gem 'flutie', '~> 2.0'
+gem 'i18n-tasks', '~> 0.9'
+gem 'newrelic_rpm', '~> 4.7'
+gem 'pg', '~> 0.21'
+gem 'puma', '~> 3.11'
+gem 'rack-canonical-host', '~> 0.2'
+gem 'recipient_interceptor', '~> 0.1'
+gem 'sass-rails', '~> 5.0'
+gem 'sidekiq', '~> 5.0'
+gem 'simple_form', '~> 3.5'
+gem 'title', '~> 0.0'
+gem 'turbolinks', '~> 5.0'
+gem 'uglifier', '~> 4.0'
 
 source 'https://rails-assets.org' do
-  gem 'rails-assets-jquery'
-  gem 'rails-assets-jquery-ujs'
+  gem 'rails-assets-jquery', '~> 3.2'
+  gem 'rails-assets-jquery-ujs', '~> 1.2'
 end
 
 group :development do
-  gem 'better_errors'
-  gem 'binding_of_caller'
-  gem 'spring'
-  gem 'spring-commands-rspec'
-  gem 'stairs'
+  gem 'better_errors', '~> 2.4'
+  gem 'binding_of_caller', '~> 0.7'
+  gem 'spring', '~> 2.0'
+  gem 'spring-commands-rspec', '~> 1.0'
+  gem 'stairs', '~> 0.10'
 end
 
 group :development, :test do
-  gem 'bundler-audit', require: false
-  gem 'dotenv-rails'
-  gem 'factory_girl_rails'
-  gem 'listen'
-  gem 'pry-byebug'
-  gem 'pry-rails'
-  gem 'rspec-rails'
-  gem 'rubocop'
+  gem 'bundler-audit', '~> 0.6', require: false
+  gem 'dotenv-rails', '~> 2.2'
+  gem 'factory_girl_rails', '~> 4.9'
+  gem 'listen', '~> 3.1'
+  gem 'pry-byebug', '~> 3.5'
+  gem 'pry-rails', '~> 0.3'
+  gem 'rspec-rails', '~> 3.7'
+  gem 'rubocop', '~> 0.52'
 end
 
 group :test do
-  # gem "capybara-webkit"
-  gem 'database_cleaner'
-  gem 'launchy'
-  gem 'rspec-sidekiq'
-  gem 'shoulda-matchers', require: false
-  gem 'timecop'
+  gem 'capybara-webkit', '~> 1.14'
+  gem 'database_cleaner', '~> 1.6'
+  gem 'launchy', '~> 2.4'
+  gem 'rspec-sidekiq', '~> 3.0'
+  gem 'shoulda-matchers', '~> 3.1', require: false
+  gem 'timecop', '~> 0.9'
 end
