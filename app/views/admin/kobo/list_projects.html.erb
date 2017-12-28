@@ -1,0 +1,26 @@
+<% content_for(:title) { 'Import Kobo Projects' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Records</th>
+      <th></th>
+    </tr>
+    <% @projects.each do |project| %>
+    <tr>
+      <th><%= project['title'] %></th>
+      <th>--</th>
+      <th>Import</th>
+    </tr>
+    <% end %>
+  </table>
+
+</section>
