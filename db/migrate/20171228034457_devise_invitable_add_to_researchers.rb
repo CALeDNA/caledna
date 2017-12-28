@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DeviseInvitableAddToResearchers < ActiveRecord::Migration
   def up
     change_table :researchers do |t|

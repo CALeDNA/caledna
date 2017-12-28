@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Researchers
   class InvitationsController < Devise::InvitationsController
     # path after inviter submits invite form
