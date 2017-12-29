@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171228214339) do
+ActiveRecord::Schema.define(version: 20171229163643) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,4 +56,23 @@ ActiveRecord::Schema.define(version: 20171228214339) do
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true, using: :btree
   end
 
+  create_table "samples", force: :cascade do |t|
+    t.integer  "project_id"
+    t.decimal  "latitude",        precision: 15, scale: 10
+    t.decimal  "longitude",       precision: 15, scale: 10
+    t.datetime "submission_date"
+    t.string   "letter_code"
+    t.string   "bar_code"
+    t.string   "kit_number"
+    t.jsonb    "kobo_data"
+    t.boolean  "approved"
+    t.boolean  "analyzed"
+    t.datetime "analysis_date"
+    t.text     "notes"
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
+  end
+
+  add_foreign_key "samples", "projects"
 end

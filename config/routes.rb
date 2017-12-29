@@ -8,7 +8,10 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: 'researchers#index'
+    resources :projects
+    resources :samples
     resources :researchers
+
     controller 'kobo' do
       get 'list_projects'
     end
