@@ -9,6 +9,10 @@ module KoboApi
       get('/data', headers: headers)
     end
 
+    def self.project(kobo_id)
+      get("/data/#{kobo_id}", headers: headers)
+    end
+
     private_class_method
 
     def self.headers

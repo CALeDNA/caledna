@@ -6,7 +6,7 @@
     class: 'navigation__link navigation' %>
 
   <hr>
-  <%= link_to 'Import Kobo Projects', admin_list_projects_path,
+  <%= link_to 'Import Kobo Projects', admin_import_kobo_path,
     class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
 
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>

@@ -13,7 +13,9 @@ Rails.application.routes.draw do
     resources :researchers
 
     controller 'kobo' do
-      get 'list_projects'
+      post 'import_projects'
+      post 'import_samples/:id' => 'kobo#import_samples'
+      get 'import_kobo'
     end
   end
 

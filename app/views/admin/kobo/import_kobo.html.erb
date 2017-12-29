@@ -7,6 +7,9 @@
 </header>
 
 <section class="main-content__body">
+  <%= form_tag(admin_import_projects_path, method: "post") do %>
+    <%= submit_tag("Import Projects") %>
+  <% end %>
 
   <table>
     <tr>
@@ -16,9 +19,13 @@
     </tr>
     <% @projects.each do |project| %>
     <tr>
-      <th><%= project.name %></th>
-      <th>--</th>
-      <th>Import</th>
+      <td><%= project.name %></td>
+      <td><%= project.samples.count %></td>
+      <td>
+        <%= form_tag(admin_path(project), method: "post") do %>
+          <%= submit_tag("Import Samples") %>
+        <% end %>
+      </td>
     </tr>
     <% end %>
   </table>
