@@ -7,7 +7,7 @@ module KoboApi
         next if imported_project_ids.include?(project_data['id'])
         save_project(project_data)
       end
-      results.all? { |r| r }
+      results.compact.all? { |r| r }
     end
 
     def self.save_project(hash_payload)

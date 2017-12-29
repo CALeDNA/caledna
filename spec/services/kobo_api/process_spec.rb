@@ -64,8 +64,8 @@ describe KoboApi::Process do
           .to change { Project.count }.by(1)
       end
 
-      it 'returns false when all items are not saved' do
-        expect(subject.import_projects(data)).to eq(false)
+      it 'returns true when only new items are saved' do
+        expect(subject.import_projects(data)).to eq(true)
       end
     end
   end
