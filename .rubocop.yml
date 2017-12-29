@@ -5,6 +5,7 @@ AllCops:
     - 'config/environments/*.rb'
     - 'db/schema.rb'
     - 'db/migrate/*.rb'
+    - 'app/dashboards/*.rb'
 
 Style/Documentation:
   Enabled: false
