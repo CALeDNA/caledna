@@ -8,6 +8,7 @@ gem 'rails', '~> 5.0'
 # using branch of administrate because it hasn't been merged into master yet
 gem 'administrate', git: 'git://github.com/jonatasrancan/administrate.git',
   branch: 'feature/search-through-association-fields'
+gem 'administrate-field-json', '~> 0.0.4'
 gem 'airbrake', '~> 7.1', require: false
 gem 'autoprefixer-rails', '~> 7.2'
 gem 'bundler'

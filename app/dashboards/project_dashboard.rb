@@ -8,7 +8,7 @@ class ProjectDashboard < Administrate::BaseDashboard
     description: Field::Text,
     kobo_name: Field::String,
     kobo_id: Field::Number,
-    kobo_payload: Field::String.with_options(searchable: false),
+    kobo_payload: Field::JSON.with_options(searchable: false),
     start_date: Field::DateTime,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,

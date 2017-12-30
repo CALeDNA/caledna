@@ -14,7 +14,7 @@ class SampleDashboard < Administrate::BaseDashboard
     letter_code: Field::String,
     bar_code: Field::String,
     kit_number: Field::String,
-    kobo_data: Field::String.with_options(searchable: false),
+    kobo_data: Field::JSON.with_options(searchable: false),
     approved: Field::Boolean,
     analyzed: Field::Boolean,
     analysis_date: Field::DateTime,
