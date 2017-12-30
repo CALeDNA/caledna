@@ -1,3 +1,20 @@
+GIT
+  remote: git://github.com/jonatasrancan/administrate.git
+  revision: e999cb48f080bbde239a9351fdd6c484433c42be
+  branch: feature/search-through-association-fields
+  specs:
+    administrate (0.8.1)
+      actionpack (>= 4.2, < 5.2)
+      actionview (>= 4.2, < 5.2)
+      activerecord (>= 4.2, < 5.2)
+      autoprefixer-rails (>= 6.0)
+      datetime_picker_rails (~> 0.0.7)
+      jquery-rails (>= 4.0)
+      kaminari (>= 1.0)
+      momentjs-rails (~> 2.8)
+      sass-rails (~> 5.0)
+      selectize-rails (~> 0.6)
+
 GEM
   remote: https://rubygems.org/
   remote: https://rails-assets.org/
@@ -41,17 +58,9 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    administrate (0.8.1)
-      actionpack (>= 4.2, < 5.2)
-      actionview (>= 4.2, < 5.2)
-      activerecord (>= 4.2, < 5.2)
-      autoprefixer-rails (>= 6.0)
-      datetime_picker_rails (~> 0.0.7)
-      jquery-rails (>= 4.0)
-      kaminari (>= 1.0)
-      momentjs-rails (~> 2.8)
-      sass-rails (~> 5.0)
-      selectize-rails (~> 0.6)
+    administrate-field-json (0.0.4)
+      administrate (~> 0.3)
+      rails (>= 4.2, < 5.1)
     airbrake (7.1.1)
       airbrake-ruby (~> 2.5)
     airbrake-ruby (2.7.0)
@@ -349,7 +358,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  administrate (~> 0.8)
+  administrate!
+  administrate-field-json (~> 0.0.4)
   airbrake (~> 7.1)
   autoprefixer-rails (~> 7.2)
   better_errors (~> 2.4)

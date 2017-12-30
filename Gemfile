@@ -5,7 +5,9 @@ source 'https://rubygems.org'
 ruby '2.4.0'
 gem 'rails', '~> 5.0'
 
-gem 'administrate', '~> 0.8'
+# using branch of administrate because it hasn't been merged into master yet
+gem 'administrate', git: 'git://github.com/jonatasrancan/administrate.git',
+  branch: 'feature/search-through-association-fields'
 gem 'airbrake', '~> 7.1', require: false
 gem 'autoprefixer-rails', '~> 7.2'
 gem 'bundler'

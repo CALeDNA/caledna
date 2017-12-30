@@ -2,7 +2,11 @@ require "administrate/base_dashboard"
 
 class SampleDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
-    project: Field::BelongsTo,
+    project: Field::BelongsTo.with_options(
+      order: 'name asc', # order in form dropdown
+      searchable: true, # make associated project name searchable
+      searchable_field: 'name'
+    ),
     id: Field::Number,
     latitude: Field::String.with_options(searchable: false),
     longitude: Field::String.with_options(searchable: false),
