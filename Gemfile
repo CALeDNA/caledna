@@ -20,6 +20,8 @@ gem 'httparty', '~> 0.15.6'
 gem 'i18n-tasks', '~> 0.9'
 gem 'newrelic_rpm', '~> 4.7'
 gem 'pg', '~> 0.21'
+gem 'pundit', '~> 1.1.0' # added pundit to deal with administrate bug
+# https://github.com/thoughtbot/administrate/issues/1048
 gem 'puma', '~> 3.11'
 gem 'rack-canonical-host', '~> 0.2'
 gem 'recipient_interceptor', '~> 0.1'
