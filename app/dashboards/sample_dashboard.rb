@@ -10,10 +10,12 @@ class SampleDashboard < Administrate::BaseDashboard
     id: Field::Number,
     latitude: Field::String.with_options(searchable: false),
     longitude: Field::String.with_options(searchable: false),
+    collection_date: Field::DateTime,
     submission_date: Field::DateTime,
-    letter_code: Field::String,
-    bar_code: Field::String,
     kit_number: Field::String,
+    location_letter: Field::String,
+    site_number: Field::String,
+    bar_code: Field::String,
     kobo_data: Field::JSON.with_options(searchable: false),
     approved: Field::Boolean,
     analyzed: Field::Boolean,
@@ -28,7 +30,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :project,
     :latitude,
     :longitude,
-    :kit_number,
+    :bar_code,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
@@ -36,12 +38,14 @@ class SampleDashboard < Administrate::BaseDashboard
     :project,
     :latitude,
     :longitude,
-    :letter_code,
     :bar_code,
     :kit_number,
+    :location_letter,
+    :site_number,
     :approved,
     :analyzed,
     :notes,
+    :collection_date,
     :submission_date,
     :analysis_date,
     :created_at,
@@ -53,17 +57,19 @@ class SampleDashboard < Administrate::BaseDashboard
     :project,
     :latitude,
     :longitude,
-    :letter_code,
     :bar_code,
     :kit_number,
+    :location_letter,
+    :site_number,
     :approved,
     :analyzed,
     :notes,
+    :collection_date,
     :submission_date,
     :analysis_date,
   ].freeze
 
-  # def display_resource(sample)
-  #   "Sample ##{sample.id}"
-  # end
+  def display_resource(sample)
+    sample.bar_code
+  end
 end

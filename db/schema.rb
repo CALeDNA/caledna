@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171229163643) do
+ActiveRecord::Schema.define(version: 20171230170857) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,8 +22,9 @@ ActiveRecord::Schema.define(version: 20171229163643) do
     t.integer  "kobo_id"
     t.jsonb    "kobo_payload"
     t.datetime "start_date"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.datetime "last_import_date"
     t.index ["kobo_id"], name: "index_projects_on_kobo_id", unique: true, using: :btree
   end
 
@@ -62,9 +63,6 @@ ActiveRecord::Schema.define(version: 20171229163643) do
     t.decimal  "latitude",        precision: 15, scale: 10
     t.decimal  "longitude",       precision: 15, scale: 10
     t.datetime "submission_date"
-    t.string   "letter_code"
-    t.string   "bar_code"
-    t.string   "kit_number"
     t.jsonb    "kobo_data"
     t.boolean  "approved",                                  default: false
     t.boolean  "analyzed",                                  default: false
@@ -72,6 +70,11 @@ ActiveRecord::Schema.define(version: 20171229163643) do
     t.text     "notes"
     t.datetime "created_at",                                                null: false
     t.datetime "updated_at",                                                null: false
+    t.string   "bar_code"
+    t.string   "kit_number"
+    t.string   "location_letter"
+    t.string   "site_number"
+    t.datetime "collection_date"
     t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
   end
 

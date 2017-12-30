@@ -17,7 +17,8 @@ module KoboApi
         description: data.description,
         kobo_name: data.title,
         kobo_id: data.id,
-        kobo_payload: hash_payload
+        kobo_payload: hash_payload,
+        last_import_date: Time.zone.now
       )
 
       project.save
@@ -35,26 +36,40 @@ module KoboApi
       results.compact.all? { |r| r }
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def self.save_sample(project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
-      submission_date =
-        data.Enter_the_sampling_date_and_time || data._submission_time
+
+      kit_number =
+        (data.What_is_your_kit_number_e_g_K0021 || data.kit).try(:upcase)
+      location_letter = data.Which_location_lette_codes_LA_LB_or_LC.try(:upcase)
+      site_number = data.You_re_at_your_first_r_barcodes_S1_or_S2.try(:upcase)
+
+      # rubocop:disable Style/ConditionalAssignment
+      if data.kit
+        bar_code = data.kit
+      else
+        bar_code = "#{kit_number}-#{location_letter}-#{site_number}"
+      end
+      # rubocop:enable Style/ConditionalAssignment
+
       sample = ::Sample.new(
         project_id: project_id,
         kobo_id: data._id,
         latitude: data._geolocation.first,
         longitude: data._geolocation.second,
-        submission_date: submission_date,
-        letter_code: data.Which_location_lette_codes_LA_LB_or_LC,
-        bar_code: data.You_re_at_your_first_r_barcodes_S1_or_S2,
-        kit_number: data.What_is_your_kit_number_e_g_K0021,
+        collection_date: data.Enter_the_sampling_date_and_time,
+        submission_date: data._submission_time,
+        location_letter: location_letter,
+        site_number: site_number,
+        kit_number: kit_number,
+        bar_code: bar_code,
         kobo_data: hash_payload
       )
 
       sample.save
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def self.sample_ids
       Sample.select(:kobo_id).map(&:kobo_id)

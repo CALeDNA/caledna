@@ -15,12 +15,14 @@
     <tr>
       <th>Name</th>
       <th>Records</th>
+      <th>Last Import</th>
       <th></th>
     </tr>
     <% @projects.each do |project| %>
     <tr>
       <td><%= project.name %></td>
       <td><%= project.samples.count %></td>
+      <td><%= project.last_import_date %></td>
       <td>
         <%= form_tag(admin_path(project), method: "post") do %>
           <%= submit_tag("Import Samples") %>

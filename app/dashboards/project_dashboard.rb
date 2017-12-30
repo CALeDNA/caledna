@@ -12,12 +12,14 @@ class ProjectDashboard < Administrate::BaseDashboard
     start_date: Field::DateTime,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    last_import_date: Field::DateTime,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
     :name,
     :samples,
     :start_date,
+    :last_import_date,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
@@ -28,6 +30,7 @@ class ProjectDashboard < Administrate::BaseDashboard
     :start_date,
     :created_at,
     :updated_at,
+    :last_import_date,
     :kobo_payload,
     :samples,
   ].freeze
