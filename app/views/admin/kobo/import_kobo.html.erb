@@ -19,7 +19,7 @@
       <th></th>
     </tr>
     <% @projects.each do |project| %>
-    <tr>
+    <tr class="js-table-row" data-url="<%= admin_project_path(project.id) %>%">
       <td><%= project.name %></td>
       <td><%= project.samples.count %></td>
       <td><%= project.last_import_date %></td>
