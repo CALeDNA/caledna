@@ -25,7 +25,7 @@ module KoboApi
     end
 
     def self.project_ids
-      Project.select(:kobo_id).map(&:kobo_id)
+      Project.pluck(:kobo_id)
     end
 
     def self.import_samples(project_id, hash_payload)
@@ -72,7 +72,7 @@ module KoboApi
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def self.sample_ids
-      Sample.select(:kobo_id).map(&:kobo_id)
+      Sample.pluck(:kobo_id)
     end
 
     def project(kobo_id)
