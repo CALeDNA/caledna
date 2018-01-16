@@ -23,6 +23,7 @@ gem 'jquery-rails', '~> 4.3.1'
 gem 'kaminari', '~> 1.1.1'
 gem 'newrelic_rpm', '~> 4.7'
 gem 'pg', '~> 0.21'
+gem 'pg_search', '~> 2.1.2'
 gem 'pundit', '~> 1.1.0' # added pundit to deal with administrate bug
 # https://github.com/thoughtbot/administrate/issues/1048
 gem 'puma', '~> 3.11'

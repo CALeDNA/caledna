@@ -1,0 +1,17 @@
+<h1>Search Results</h1>
+
+ <%= render partial: "form" %>
+
+<div class="search-results">
+  <% if @search_results.present? %>
+    <% @search_results.each do |result| %>
+      <% if result.searchable_type == 'Project' %>
+        <%= render partial: "project", locals: { result: result} %>
+      <% else %>
+        <%= render partial: "sample", locals: { result: result} %>
+      <% end %>
+    <% end  %>
+  <% else %>
+    <p>No search results found.</p>
+  <% end %>
+</div>

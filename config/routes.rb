@@ -20,7 +20,8 @@ Rails.application.routes.draw do
   end
 
   resources :samples, only: [:index, :show]
-  resource :map
+  resource :map, only: [:show]
+  resource :search, only: [:show]
 
   root 'maps#show'
 end

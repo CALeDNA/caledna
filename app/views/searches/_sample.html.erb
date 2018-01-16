@@ -1,0 +1,6 @@
+<% sample = result.searchable %>
+<div>
+  <h2><%= link_to "Sample: #{sample.bar_code}", sample_path(sample) %></h2>
+  <b>Lat/Long:</b> <%= sample.latitude %>, <%= sample.longitude %><br>
+  <b>Submission Date:</b> <%= sample.submission_date %><br>
+</div>
