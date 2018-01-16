@@ -11,6 +11,7 @@ gem 'administrate', git: 'git://github.com/jonatasrancan/administrate.git',
 gem 'administrate-field-json', '~> 0.0.4'
 gem 'airbrake', '~> 7.1', require: false
 gem 'autoprefixer-rails', '~> 7.2'
+gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bundler'
 gem 'coffee-rails', '~> 4.2'
 gem 'devise', '~> 4.3'
@@ -18,6 +19,8 @@ gem 'devise_invitable', '~> 1.7.0'
 gem 'flutie', '~> 2.0'
 gem 'httparty', '~> 0.15.6'
 gem 'i18n-tasks', '~> 0.9'
+gem 'jquery-rails', '~> 4.3.1'
+gem 'kaminari', '~> 1.1.1'
 gem 'newrelic_rpm', '~> 4.7'
 gem 'pg', '~> 0.21'
 gem 'pundit', '~> 1.1.0' # added pundit to deal with administrate bug

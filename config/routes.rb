@@ -19,5 +19,7 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :samples, only: [:index, :show]
+
   root 'application#index'
 end

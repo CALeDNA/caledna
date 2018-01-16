@@ -1,0 +1,16 @@
+ @import "bootstrap-sprockets";
+ @import "bootstrap";
+
+ body {
+  padding-top: 50px;
+}
+
+.json {
+  overflow-wrap: break-word;
+  width: 80vw;
+}
+
+.clickable_row:hover {
+  background:#eee;
+  cursor: pointer;
+}

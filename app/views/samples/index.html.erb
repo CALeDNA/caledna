@@ -1,0 +1,21 @@
+<h1>Database</h1>
+
+<table class="table">
+  <tr>
+    <td>Project</td>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Bar Code</th>
+  </tr>
+
+  <% @samples.each do |sample| %>
+    <tr class="clickable_row" onclick="window.location='<%= sample_path sample%>'" >
+      <td><%= sample.project.name %></td>
+      <td><%= sample.latitude %> </td>
+      <td><%= sample.longitude %></td>
+      <td><%= sample.bar_code %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= paginate @samples %>

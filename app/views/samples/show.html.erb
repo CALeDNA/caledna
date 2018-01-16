@@ -1,0 +1,24 @@
+<h1><%= @sample.bar_code %></h1>
+
+<table class="table">
+  <tr>
+    <td>Project</td>
+    <td><%= @sample.project.name %></td>
+  </tr>
+  <tr>
+    <td>Lat/Long</td>
+    <td><%= @sample.latitude %> / <%= @sample.longitude %> </td>
+  </tr>
+  <tr>
+    <td>Bar Code</td>
+    <td><%= @sample.bar_code %></td>
+  </tr>
+  <tr>
+    <td>Collection Date</td>
+    <td><%= @sample.collection_date %></td>
+  </tr>
+  <tr>
+    <td>Data</td>
+    <td><pre class="json"><%=  JSON.pretty_generate(@sample.kobo_data)  %></pre></td>
+  </tr>
+</table>
