@@ -1,5 +1,5 @@
- @import "bootstrap-sprockets";
- @import "bootstrap";
+@import "bootstrap-sprockets";
+@import "bootstrap";
 
  body {
   padding-top: 50px;
@@ -14,3 +14,5 @@
   background:#eee;
   cursor: pointer;
 }
+
+#mapid { height: 80vh; }
