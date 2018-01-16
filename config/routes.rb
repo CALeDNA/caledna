@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   }
 
   namespace :admin do
-    root to: 'researchers#index'
+    root to: 'projects#index'
     resources :projects
     resources :samples
     resources :researchers
