@@ -7,7 +7,12 @@
   </tr>
   <tr>
     <td>Lat/Long</td>
-    <td><%= @sample.latitude %>, <%= @sample.longitude %> </td>
+    <td>
+      <%= @sample.latitude %>, <%= @sample.longitude %>
+      <%= link_to map_path(lat: @sample.latitude, lng: @sample.longitude, zoom: 15) do %>
+        <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+      <% end %>
+    </td>
   </tr>
   <tr>
     <td>Bar Code</td>

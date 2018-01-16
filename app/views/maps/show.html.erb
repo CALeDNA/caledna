@@ -1,4 +1,6 @@
 <h1>Map</h1>
+
+
 <div id='mapid'></div>
 
 <script>
@@ -22,15 +24,15 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
     });
 
-  var latlng = L.latLng(38.0, -118.3);
-  var map = L.map('mapid', {center: latlng, zoom: 6, layers: [tiles]});
+  var latlng = L.latLng(<%= params[:lat] || 38.0 %>, <%= params[:lng] || -118.3 %>);
+  var map = L.map('mapid', {center: latlng, zoom: <%= params[:zoom] || 6 %>, layers: [tiles]});
 
   var markers = L.markerClusterGroup({ disableClusteringAtZoom: 17 });
 
   for (var i = 0; i < addressPoints.length; i++) {
     var a = addressPoints[i];
     var lat = a[0];
-    var long = a[1];
+    var lng = a[1];
     var id = a[2];
     var barcode = a[3];
     var projectName = a[4];
@@ -38,8 +40,8 @@
     var title =
       sampleLink + '<br>' +
       '<b>Project:</b> ' + projectName + '<br>' +
-      '<b>Lat/Long</b>: ' + lat + ', ' + long + '<br>';
-    var marker = L.marker(L.latLng(lat, long), { title: title  });
+      '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>';
+    var marker = L.marker(L.latLng(lat, lng), { title: title  });
     marker.bindPopup(title);
     markers.addLayer(marker);
   }
