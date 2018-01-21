@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 def delete_records
-  puts 'deleting existing records...'
+  puts 'deleting some records...'
   researcher = Researcher.find_by(email: 'user@example.com')
   researcher.delete if researcher.present?
 
@@ -11,17 +11,31 @@ def delete_records
   project.delete
 end
 
+def reset_search
+  puts 'reset search...'
+  PgSearch::Document.delete_all(searchable_type: 'Project')
+  PgSearch::Document.delete_all(searchable_type: 'Sample')
+  PgSearch::Multisearch.rebuild(Project, Sample)
+end
+
 unless Rails.env.production?
   delete_records
+  reset_search
 
   puts 'seeding people...'
-  FactoryBot.create(:researcher, email: 'user@example.com',
-                                 password: 'password',
-                                 username: 'Jane Doe')
+  FactoryBot.create(
+    :researcher,
+    email: 'user@example.com',
+    password: 'password',
+    username: 'Jane Doe'
+  )
 
   puts 'seeding projects...'
-  project = FactoryBot.create(:project, name: 'Demo project',
-                                        description: Faker::Lorem.sentence)
+  project = FactoryBot.create(
+    :project,
+    name: 'Demo project',
+    description: Faker::Lorem.sentence
+  )
 
   puts 'seeding samples...'
   FactoryBot.create_list(
@@ -48,8 +62,11 @@ unless Rails.env.production?
   )
 
   Sample.all.each_with_index do |sample, i|
-    sample.update(bar_code: "K055#{i}-LC-S2", latitude: "37.#{i * i}6783",
-                  longitude: "-120.#{i * 2}23574")
+    sample.update(
+      bar_code: "K055#{i}-LC-S2",
+      latitude: "37.#{i * i}6783",
+      longitude: "-120.#{i * 2}23574"
+    )
   end
 
   puts 'done seeding'
