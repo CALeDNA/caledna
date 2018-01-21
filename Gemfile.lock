@@ -1,6 +1,6 @@
 GIT
-  remote: git://github.com/jonatasrancan/administrate.git
-  revision: e999cb48f080bbde239a9351fdd6c484433c42be
+  remote: https://github.com/jonatasrancan/administrate.git
+  revision: 0b57c02b4a0ae8e63a72abb1464c2617970bdf58
   branch: feature/search-through-association-fields
   specs:
     administrate (0.8.1)
