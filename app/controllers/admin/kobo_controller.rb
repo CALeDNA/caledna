@@ -3,7 +3,7 @@
 module Admin
   class KoboController < Admin::ApplicationController
     def import_kobo
-      @projects = ::Project.all
+      @projects = ::Project.all.where.not(kobo_id: nil)
     end
 
     def import_projects

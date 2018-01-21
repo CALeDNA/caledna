@@ -33,6 +33,7 @@ unless Rails.env.production?
   puts 'seeding projects...'
   project = FactoryBot.create(
     :project,
+    kobo_id: nil,
     name: 'Demo project',
     description: Faker::Lorem.sentence
   )
