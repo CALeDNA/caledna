@@ -2,7 +2,7 @@
 
 class Project < ApplicationRecord
   include PgSearch
-  multisearchable :against => [:name]
+  multisearchable against: [:name]
 
   validates :kobo_id, uniqueness: true
 

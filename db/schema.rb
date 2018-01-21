@@ -69,23 +69,21 @@ ActiveRecord::Schema.define(version: 20180121030639) do
   create_table "samples", force: :cascade do |t|
     t.integer  "project_id"
     t.integer  "kobo_id"
-    t.decimal  "latitude",        precision: 15, scale: 10
-    t.decimal  "longitude",       precision: 15, scale: 10
+    t.decimal  "latitude",                precision: 15, scale: 10
+    t.decimal  "longitude",               precision: 15, scale: 10
     t.datetime "submission_date"
-    t.jsonb    "kobo_data"
-    t.boolean  "approved",                                  default: false
-    t.boolean  "analyzed",                                  default: false
-    t.datetime "analysis_date"
-    t.text     "notes"
-    t.datetime "created_at",                                                null: false
-    t.datetime "updated_at",                                                null: false
+    t.string   "location_letter"
     t.string   "bar_code"
     t.string   "kit_number"
-    t.string   "location_letter"
+    t.jsonb    "kobo_data"
+    t.datetime "analysis_date"
+    t.text     "notes"
+    t.datetime "created_at",                                                              null: false
+    t.datetime "updated_at",                                                              null: false
     t.string   "site_number"
     t.datetime "collection_date"
-    t.datetime "results_date"
-    t.boolean  "with_results",                              default: false
+    t.datetime "results_completion_date"
+    t.string   "status_cd",                                         default: "submitted"
     t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
   end
 

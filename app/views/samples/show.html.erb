@@ -6,6 +6,10 @@
     <td><%= link_to @sample.project.name, project_path(@sample.project) %></td>
   </tr>
   <tr>
+    <td>Bar Code</td>
+    <td><%= @sample.bar_code %></td>
+  </tr>
+  <tr>
     <td>Lat/Long</td>
     <td>
       <%= @sample.latitude %>, <%= @sample.longitude %>
@@ -15,15 +19,19 @@
     </td>
   </tr>
   <tr>
-    <td>Bar Code</td>
-    <td><%= @sample.bar_code %></td>
+    <td>Status</td>
+    <td><%= @sample.status_display %></td>
   </tr>
   <tr>
     <td>Collection Date</td>
-    <td><%= @sample.collection_date %></td>
+    <td><%= @sample.submission_date %></td>
   </tr>
   <tr>
-    <td>Data</td>
-    <td><pre class="json"><%=  JSON.pretty_generate(@sample.kobo_data)  %></pre></td>
+    <td>Analysis Date</td>
+    <td><%= @sample.analysis_date %></td>
+  </tr>
+  <tr>
+    <td>DNA Results Completed Date</td>
+    <td><%= @sample.results_completion_date %></td>
   </tr>
 </table>

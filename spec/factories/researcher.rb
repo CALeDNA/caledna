@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :researcher do
-    email { Faker::Internet.email }
+    sequence(:email) { |n| "user_#{n}@example.com" }
     password 'password'
   end
 end

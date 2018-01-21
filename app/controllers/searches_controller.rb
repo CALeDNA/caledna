@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SearchesController < ApplicationController
   def show
     @search_results = PgSearch.multisearch(search_params[:query])

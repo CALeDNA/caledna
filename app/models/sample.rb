@@ -6,7 +6,13 @@ class Sample < ApplicationRecord
 
   belongs_to :project
 
-  scope :processing, -> { where(analyzed: true) }
-  scope :with_results, -> { where(with_results: true) }
+  scope :analyzed, -> { where(status_cd: :analyzed) }
+  scope :results_completed, -> { where(status_cd: :results_completed) }
 
+  as_enum :status, %i[submitted approved analyzed results_completed],
+          map: :string
+
+  def status_display
+    status.to_s.tr('_', ' ')
+  end
 end

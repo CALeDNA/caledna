@@ -19,10 +19,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :samples, only: [:index, :show]
-  resource :map, only: [:show]
-  resource :search, only: [:show]
-  resources :projects, only: [:index, :show]
+  resources :samples, only: %i[index show]
+  resource :map, only: %i[show]
+  resource :search, only: %i[show]
+  resources :projects, only: %i[index show]
 
   root 'maps#show'
 end

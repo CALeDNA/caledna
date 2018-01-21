@@ -5,9 +5,10 @@
 <table class="table">
   <tr>
     <th>Project</th>
+    <th>Bar Code</th>
     <th>Latitude</th>
     <th>Longitude</th>
-    <th>Bar Code</th>
+    <th>Status</th>
   </tr>
 
   <% @samples.each do |sample| %>
@@ -16,6 +17,7 @@
       <td><%= sample.bar_code %></td>
       <td><%= sample.latitude %> </td>
       <td><%= sample.longitude %></td>
+      <td><%= sample.status_display %></td>
     </tr>
   <% end %>
 </table>
