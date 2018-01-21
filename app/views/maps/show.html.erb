@@ -14,7 +14,8 @@
       <%= m.id %>,
       "<%= m.bar_code %>",
       '<%= link_to m.name, project_path(m.project_id) %>',
-      '<%= link_to m.bar_code, sample_path(m) %>'
+      '<%= link_to m.bar_code, sample_path(m) %>',
+      '<%= m.status %>',
     ],
   <% end %>
   ]
@@ -37,10 +38,12 @@
     var barcode = a[3];
     var projectName = a[4];
     var sampleLink = a[5];
+    var status = a[6];
     var title =
       '<b>Sample:</b> ' + sampleLink + '<br>' +
       '<b>Project:</b> ' + projectName + '<br>' +
-      '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>';
+      '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
+      '<b>Status</b>: ' + status + '<br>';
     var marker = L.marker(L.latLng(lat, lng), { title: title  });
     marker.bindPopup(title);
     markers.addLayer(marker);

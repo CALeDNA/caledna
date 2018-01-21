@@ -3,20 +3,29 @@
 <p><%= @project.description %></p>
 
 <p>
-  Samples collected: <%= @project.samples.count %>,
+  <%= pluralize(@project.samples.count, 'sample') %> collected.
   <%= link_to samples_path(project_id: @project.id) do %>
-    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> View
+    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+  <% end %>
+  <%= link_to map_path(project_id: @project.id) do %>
+    <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
   <% end %>
 </p>
 <p>
-  Samples being analyzed: <%= @project.samples.analyzed.count %>,
+  <%= pluralize(@project.samples.analyzed.count, 'sample') %> being analyzed.
   <%= link_to samples_path(project_id: @project.id, status: :analyzed) do %>
-    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> View
+    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+  <% end %>
+  <%= link_to map_path(project_id: @project.id, status: :analyzed) do %>
+    <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
   <% end %>
 </p>
 <p>
-  Samples with DNA results: <%= @project.samples.results_completed.count %>,
+  <%= pluralize(@project.samples.results_completed.count, 'sample') %> with DNA results.
   <%= link_to samples_path(project_id: @project.id, status: :results_completed) do %>
-    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> View
+    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+  <% end %>
+    <%= link_to map_path(project_id: @project.id, status: :results_completed) do %>
+    <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
   <% end %>
 </p>
