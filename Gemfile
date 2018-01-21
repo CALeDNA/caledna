@@ -51,11 +51,14 @@ group :development do
   gem 'stairs', '~> 0.10'
 end
 
+group :development, :test, :staging do
+  gem 'factory_bot_rails', '~> 4.8.2'
+  gem 'faker', '~> 1.8.7'
+end
+
 group :development, :test do
   gem 'bundler-audit', '~> 0.6', require: false
   gem 'dotenv-rails', '~> 2.2'
-  gem 'factory_bot_rails', '~> 4.8.2'
-  gem 'faker', '~> 1.8.7'
   gem 'listen', '~> 3.1'
   gem 'pry-byebug', '~> 3.5'
   gem 'pry-rails', '~> 0.3'
