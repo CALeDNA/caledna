@@ -1,5 +1,5 @@
 <% project = result.searchable %>
 <div>
-  <h2>Project: <%= project.name %></h2>
+  <h2><%= link_to "Project: #{project.name}", project_path(project) %></h2>
   <p><%= project.description %></p>
 </div>

@@ -2,7 +2,8 @@
 
 class Sample < ApplicationRecord
   include PgSearch
-  multisearchable against: %i[bar_code latitude longitude]
+  multisearchable against: %i[bar_code status_cd latitude longitude
+                              project_name]
 
   belongs_to :project
 
@@ -14,5 +15,10 @@ class Sample < ApplicationRecord
 
   def status_display
     status.to_s.tr('_', ' ')
+  end
+
+  # NOTE: project_name exists mainlly so it can be indexed for searches
+  def project_name
+    project.name
   end
 end
