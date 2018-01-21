@@ -3,7 +3,7 @@
 <table class="table">
   <tr>
     <td>Project</td>
-    <td><%= @sample.project.name %></td>
+    <td><%= link_to @sample.project.name, project_path(@sample.project) %></td>
   </tr>
   <tr>
     <td>Lat/Long</td>

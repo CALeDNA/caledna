@@ -13,7 +13,7 @@
       <%= m.longitude %>,
       <%= m.id %>,
       "<%= m.bar_code %>",
-      "<%= m.name %>",
+      '<%= link_to m.name, project_path(m.project_id) %>',
       '<%= link_to m.bar_code, sample_path(m) %>'
     ],
   <% end %>
@@ -38,7 +38,7 @@
     var projectName = a[4];
     var sampleLink = a[5];
     var title =
-      sampleLink + '<br>' +
+      '<b>Sample:</b> ' + sampleLink + '<br>' +
       '<b>Project:</b> ' + projectName + '<br>' +
       '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>';
     var marker = L.marker(L.latLng(lat, lng), { title: title  });

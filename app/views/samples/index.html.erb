@@ -1,4 +1,4 @@
-<h1>Database</h1>
+<h1>Samples</h1>
 
  <%= render partial: "searches/form" %>
 
@@ -11,11 +11,11 @@
   </tr>
 
   <% @samples.each do |sample| %>
-    <tr class="clickable_row" onclick="window.location='<%= sample_path sample%>'" >
-      <td><%= sample.project.name %></td>
+    <tr class="clickable_row" data-path="<%= sample_path(sample) %>">
+      <td ><%= link_to sample.project.name, project_path(sample.project) %></td>
+      <td><%= sample.bar_code %></td>
       <td><%= sample.latitude %> </td>
       <td><%= sample.longitude %></td>
-      <td><%= sample.bar_code %></td>
     </tr>
   <% end %>
 </table>

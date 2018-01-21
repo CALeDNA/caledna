@@ -7,7 +7,7 @@
   </tr>
 
   <% @projects.each do |project| %>
-    <tr class="clickable_row" onclick="window.location='<%= project_path project%>'" >
+    <tr class="clickable_row" data-path='<%= project_path project%>' >
       <td><%= project.name %></td>
       <td><%= project.samples.count %> </td>
     </tr>
