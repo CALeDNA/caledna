@@ -1,0 +1,17 @@
+<h1>Projects</h1>
+
+<table class="table">
+  <tr>
+    <th>Name</th>
+    <th>Number of Samples</th>
+  </tr>
+
+  <% @projects.each do |project| %>
+    <tr class="clickable_row" onclick="window.location='<%= project_path project%>'" >
+      <td><%= project.name %></td>
+      <td><%= project.samples.count %> </td>
+    </tr>
+  <% end %>
+</table>
+
+<%= paginate @projects %>

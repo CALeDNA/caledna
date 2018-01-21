@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180116134318) do
+ActiveRecord::Schema.define(version: 20180121030639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,8 @@ ActiveRecord::Schema.define(version: 20180116134318) do
     t.string   "location_letter"
     t.string   "site_number"
     t.datetime "collection_date"
+    t.datetime "results_date"
+    t.boolean  "with_results",                              default: false
     t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
   end
 

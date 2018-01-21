@@ -1,0 +1,7 @@
+<h1><%= @project.name %></h1>
+
+<p><%= @project.description %></p>
+
+<p>Samples collected: <%= @project.samples.count %></p>
+<p>Samples being analyzed: <%= @project.samples.processing.count %></p>
+<p>Samples with DNA results: <%= @project.samples.with_results.count %></p>
