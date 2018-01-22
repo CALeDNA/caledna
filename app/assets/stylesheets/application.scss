@@ -19,12 +19,29 @@
 
 .search-form {
   margin-bottom: 1em;
+  display: inline;
+  margin-left: 1em;
+  .search_query {
+    input {
+      width: 20em;
+    }
+  }
 }
 
 .samples-menu {
   margin-bottom: 1em;
+
+  .btn-group {
+    margin-right: 1em;
+  }
 }
+
+
 
 .samples-links a {
   margin-left: .5em;
+}
+
+.form {
+  display: inline;
 }

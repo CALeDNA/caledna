@@ -3,18 +3,21 @@
 
 <h1>Samples</h1>
 
-<%= render partial: "searches/form" %>
+<div class=" samples-menu">
+  <div class="btn-group" role="group" >
+    <a href="<%= samples_path(path_params) %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+    </a>
+    <a href="<%= samples_path(path_params.merge(view: :list)) %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+    </a>
+  </div>
 
-<div class="btn-group samples-menu" role="group" >
-  <a href="<%= samples_path(path_params) %>" class="btn btn-default">
-    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
-  </a>
-  <a href="<%= samples_path(path_params.merge(view: :list)) %>" class="btn btn-default">
-    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-  </a>
   <a href="<%= samples_path(view: params[:view]) %>" class="btn btn-default">
-    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span> View All
+    <span class="glyphicon glyphicon glyphicon-refresh" aria-hidden="true"></span> View All
   </a>
+
+  <%= render partial: "searches/form" %>
 </div>
 
 <% if params[:view] == 'list' %>
