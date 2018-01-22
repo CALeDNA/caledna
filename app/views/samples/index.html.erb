@@ -18,7 +18,7 @@
 </div>
 
 <% if params[:view] == 'list' %>
-  <%= render partial: "list", locals: { samples: @samples }  %>
+  <%= render partial: "samples/list", locals: { samples: @samples }  %>
 <% else %>
-  <%= render partial: "map", locals: { samples: @samples } %>
+  <%= render partial: "samples/map", locals: { samples: @samples } %>
 <% end %>

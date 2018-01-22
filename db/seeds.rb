@@ -13,9 +13,8 @@ end
 
 def reset_search
   puts 'reset search...'
-  PgSearch::Document.delete_all(searchable_type: 'Project')
   PgSearch::Document.delete_all(searchable_type: 'Sample')
-  PgSearch::Multisearch.rebuild(Project, Sample)
+  PgSearch::Multisearch.rebuild(Sample)
 end
 
 unless Rails.env.production?

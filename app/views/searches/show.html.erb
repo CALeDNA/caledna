@@ -1,17 +1,24 @@
-<h1>Search Results</h1>
+<% path_params = { project_id: params[:project_id], status: params[:status],
+  lat: params[:lat], lng: params[:lng], zoom: params[:zoom], sample_id: params[:sample_id] } %>
 
- <%= render partial: "form" %>
+<h1>Samples: <%= @query %></h1>
 
-<div class="search-results">
-  <% if @search_results.present? %>
-    <% @search_results.each do |result| %>
-      <% if result.searchable_type == 'Project' %>
-        <%= render partial: "project", locals: { result: result} %>
-      <% else %>
-        <%= render partial: "sample", locals: { result: result} %>
-      <% end %>
-    <% end  %>
-  <% else %>
-    <p>No search results found.</p>
-  <% end %>
+<%= render partial: "searches/form" %>
+
+<div class="btn-group samples-menu" role="group" >
+  <a href="<%= search_path(search: { query: @query }) %>" class="btn btn-default">
+    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+  </a>
+  <a href="<%= search_path(search: { query: @query }, view: :list) %>" class="btn btn-default">
+    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+  </a>
+  <a href="<%= samples_path %>" class="btn btn-default">
+    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span> View All
+  </a>
 </div>
+
+<% if params[:view] == 'list' %>
+  <%= render partial: "samples/list", locals: { samples: @samples }  %>
+<% else %>
+  <%= render partial: "samples/map", locals: { samples: @samples } %>
+<% end %>
