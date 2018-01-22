@@ -1,7 +1,12 @@
 <% path_params = { project_id: params[:project_id], status: params[:status],
   lat: params[:lat], lng: params[:lng], zoom: params[:zoom], sample_id: params[:sample_id] } %>
 
-<h1>Samples</h1>
+<h1>
+  Samples
+  <% if @display_name %>
+  : <%= @display_name %>
+  <% end %>
+</h1>
 
 <div class=" samples-menu">
   <div class="btn-group" role="group" >
