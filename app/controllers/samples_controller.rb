@@ -15,6 +15,7 @@ class SamplesController < ApplicationController
     query = {}
     query[:status_cd] = params[:status] if params[:status]
     query[:project_id] = params[:project_id] if params[:project_id]
+    query[:id] = params[:sample_id] if params[:sample_id]
     query
   end
 end

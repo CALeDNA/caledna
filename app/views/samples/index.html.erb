@@ -1,25 +1,24 @@
+<% path_params = { project_id: params[:project_id], status: params[:status],
+  lat: params[:lat], lng: params[:lng], zoom: params[:zoom], sample_id: params[:sample_id] } %>
+
 <h1>Samples</h1>
 
- <%= render partial: "searches/form" %>
+<%= render partial: "searches/form" %>
 
-<table class="table">
-  <tr>
-    <th>Project</th>
-    <th>Bar Code</th>
-    <th>Latitude</th>
-    <th>Longitude</th>
-    <th>Status</th>
-  </tr>
+<div class="btn-group samples-menu" role="group" >
+  <a href="<%= samples_path(path_params) %>" class="btn btn-default">
+    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+  </a>
+  <a href="<%= samples_path(path_params.merge(view: :list)) %>" class="btn btn-default">
+    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+  </a>
+  <a href="<%= samples_path(view: params[:view]) %>" class="btn btn-default">
+    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span> View All
+  </a>
+</div>
 
-  <% @samples.each do |sample| %>
-    <tr class="clickable_row" data-path="<%= sample_path(sample) %>">
-      <td ><%= link_to sample.project.name, project_path(sample.project) %></td>
-      <td><%= sample.bar_code %></td>
-      <td><%= sample.latitude %> </td>
-      <td><%= sample.longitude %></td>
-      <td><%= sample.status_display %></td>
-    </tr>
-  <% end %>
-</table>
-
-<%= paginate @samples %>
+<% if params[:view] == 'list' %>
+  <%= render partial: "list", locals: { samples: @samples }  %>
+<% else %>
+  <%= render partial: "map", locals: { samples: @samples } %>
+<% end %>

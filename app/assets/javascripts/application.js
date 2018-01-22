@@ -17,9 +17,18 @@
 //= require_tree .
 
 $(document).on('turbolinks:load', function() {
-  document.querySelectorAll('.clickable_row td')
-    .forEach(function(el) { el.addEventListener("click", function(e) {
+
+  function clickableTableRows () {
+    function clickRow (el) {
+      el.addEventListener("click", function(e) {
         e.stopPropagation();
         window.location = el.parentElement.dataset['path'];
-      })})
+      })
+    }
+
+    document.querySelectorAll('.clickable_row td')
+      .forEach(clickRow)
+  }
+
+  clickableTableRows();
 });

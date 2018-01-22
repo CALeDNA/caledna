@@ -25,7 +25,8 @@ describe 'Samples' do
     end
 
     it 'renders all samples when no query string' do
-      visit samples_path
+      visit samples_path(view: :list)
+
       expect(page).to have_content 'sample 1'
       expect(page).to have_content 'sample 2'
       expect(page).to have_content 'sample 3'
@@ -33,8 +34,18 @@ describe 'Samples' do
       expect(page).to have_content 'sample 5'
     end
 
+    it 'renders one sample when sample_id is in query string' do
+      visit samples_path(view: :list, sample_id: sample1.id)
+
+      expect(page).to have_content 'sample 1'
+      expect(page).to_not have_content 'sample 2'
+      expect(page).to_not have_content 'sample 3'
+      expect(page).to_not have_content 'sample 4'
+      expect(page).to_not have_content 'sample 5'
+    end
+
     it 'renders samples for a project when project_id is in query string' do
-      visit samples_path(project_id: project.id)
+      visit samples_path(view: :list, project_id: project.id)
 
       expect(page).to have_content 'sample 1'
       expect(page).to have_content 'sample 2'
@@ -44,7 +55,7 @@ describe 'Samples' do
     end
 
     it 'renders analyzed samples when status=analyzed is in query string' do
-      visit samples_path(status: :analyzed)
+      visit samples_path(view: :list, status: :analyzed)
 
       expect(page).to_not have_content 'sample 1'
       expect(page).to have_content 'sample 2'
@@ -55,7 +66,7 @@ describe 'Samples' do
 
     it 'renders samples when results when status=results_completed is '\
        'in query string' do
-      visit samples_path(status: :results_completed)
+      visit samples_path(view: :list, status: :results_completed)
 
       expect(page).to_not have_content 'sample 1'
       expect(page).to_not have_content 'sample 2'
@@ -66,7 +77,7 @@ describe 'Samples' do
 
     it 'renders analyzed samples for a project when period_id and '\
        'status=analyzed are in query string' do
-      visit samples_path(status: :analyzed, project_id: project.id)
+      visit samples_path(view: :list, status: :analyzed, project_id: project.id)
 
       expect(page).to_not have_content 'sample 1'
       expect(page).to have_content 'sample 2'
@@ -77,7 +88,8 @@ describe 'Samples' do
 
     it 'renders analyzed samples for a project when period_id and '\
        'status=results_completed are in query string' do
-      visit samples_path(status: :results_completed, project_id: project.id)
+      visit samples_path(view: :list, status: :results_completed,
+                         project_id: project.id)
 
       expect(page).to_not have_content 'sample 1'
       expect(page).to_not have_content 'sample 2'

@@ -1,0 +1,52 @@
+<div id='mapid'></div>
+
+<script>
+(function(){
+
+  var addressPoints = [
+  <% samples.each do |sample|  %>
+    [
+      <%= sample.latitude%>,
+      <%= sample.longitude %>,
+      <%= sample.id %>,
+      "<%= sample.bar_code %>",
+      '<%= link_to sample.project.name, project_path(sample.project_id) %>',
+      '<%= link_to sample.bar_code, sample_path(sample) %>',
+      '<%= sample.status %>',
+    ],
+  <% end %>
+  ]
+
+  var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
+    });
+
+  var latlng = L.latLng(<%= params[:lat] || 38.0 %>, <%= params[:lng] || -118.3 %>);
+  var map = L.map('mapid', {center: latlng, zoom: <%= params[:zoom] || 6 %>, layers: [tiles]});
+
+  var markers = L.markerClusterGroup({ disableClusteringAtZoom: 17 });
+
+  for (var i = 0; i < addressPoints.length; i++) {
+    var a = addressPoints[i];
+    var lat = a[0];
+    var lng = a[1];
+    var id = a[2];
+    var barcode = a[3];
+    var projectName = a[4];
+    var sampleLink = a[5];
+    var status = a[6];
+    var title =
+      '<b>Sample:</b> ' + sampleLink + '<br>' +
+      '<b>Project:</b> ' + projectName + '<br>' +
+      '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
+      '<b>Status</b>: ' + status + '<br>';
+    var marker = L.marker(L.latLng(lat, lng), { title: title  });
+    marker.bindPopup(title);
+    markers.addLayer(marker);
+  }
+
+  map.addLayer(markers);
+
+})()
+</script>

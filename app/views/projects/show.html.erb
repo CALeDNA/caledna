@@ -4,28 +4,27 @@
 
 <p>
   <%= pluralize(@project.samples.count, 'sample') %> collected.
-  <%= link_to samples_path(project_id: @project.id) do %>
-    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-  <% end %>
-  <%= link_to map_path(project_id: @project.id) do %>
-    <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+  <% if @project.samples.count > 0 %>
+    <%= render partial: 'samples_links', locals: {
+      map_path: samples_path(project_id: @project.id),
+      list_path: samples_path(project_id: @project.id, view: :list) } %>
   <% end %>
 </p>
+
 <p>
   <%= pluralize(@project.samples.analyzed.count, 'sample') %> being analyzed.
-  <%= link_to samples_path(project_id: @project.id, status: :analyzed) do %>
-    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-  <% end %>
-  <%= link_to map_path(project_id: @project.id, status: :analyzed) do %>
-    <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+  <% if @project.samples.analyzed.count > 0 %>
+    <%= render partial: 'samples_links', locals: {
+      map_path: samples_path(project_id: @project.id, status: :analyzed),
+      list_path: samples_path(project_id: @project.id, status: :analyzed, view: :list) } %>
   <% end %>
 </p>
+
 <p>
   <%= pluralize(@project.samples.results_completed.count, 'sample') %> with DNA results.
-  <%= link_to samples_path(project_id: @project.id, status: :results_completed) do %>
-    <span class=" glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-  <% end %>
-    <%= link_to map_path(project_id: @project.id, status: :results_completed) do %>
-    <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+  <% if @project.samples.results_completed.count > 0 %>
+    <%= render partial: 'samples_links', locals: {
+      map_path: samples_path(project_id: @project.id, status: :results_completed),
+      list_path: samples_path(project_id: @project.id, status: :results_completed, view: :list) } %>
   <% end %>
 </p>
