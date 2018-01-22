@@ -2,7 +2,7 @@
 
 [ ![Codeship Status for caledna/caledna](https://app.codeship.com/projects/cec73960-e110-0135-f609-6eccc654fb46/status?branch=master)](https://app.codeship.com/projects/266576)
 
-Rails app that runs [data.ucedna.com](http://data.ucedna.com)
+Rails app that handles the data management flow for [CALeDNA](http://ucedna.com).
 
 ## Setup
 
