@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'pundit/rspec'
 
 ENV['RAILS_ENV'] ||= 'test'
 
@@ -17,6 +18,7 @@ ActiveRecord::Migration.maintain_test_schema!
 Dir[Rails.root.join('spec/support/**/*.rb')].sort.each { |file| require file }
 
 RSpec.configure do |config|
+  config.include Warden::Test::Helpers
   # run each of your examples within a transaction
   config.use_transactional_fixtures = true
   # mix in different behaviours to your tests based on their file location.
@@ -25,5 +27,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include ControllerHelpers, type: :controller
+  config.include ValidUserRequestHelper, type: :request
+  config.include ValidUserRequestHelper, type: :feature
   config.include FactoryBot::Syntax::Methods
 end

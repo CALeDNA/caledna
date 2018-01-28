@@ -11,7 +11,7 @@ describe Admin::ResearchersController do
     end
 
     it 'succedes if user is logged in' do
-      login_researcher
+      login_director
       get :index
 
       expect(response).to have_http_status(200)
@@ -20,7 +20,7 @@ describe Admin::ResearchersController do
 
   describe '#PUT update' do
     before(:each) do
-      login_researcher
+      login_director
     end
 
     let(:researcher) { create(:researcher, email: old_email) }

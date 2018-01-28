@@ -7,10 +7,10 @@ Rails.application.routes.draw do
   }
 
   namespace :admin do
-    root to: 'projects#index'
+    root to: 'samples#index'
     resources :projects
-    resources :samples
     resources :researchers
+    resources :samples
 
     controller 'kobo' do
       post 'import_projects'

@@ -6,6 +6,8 @@ class Sample < ApplicationRecord
                               project_name]
 
   belongs_to :project
+  belongs_to :processor, class_name: 'Researcher', foreign_key: 'processor_id',
+                         optional: true
 
   scope :analyzed, -> { where(status_cd: :analyzed) }
   scope :results_completed, -> { where(status_cd: :results_completed) }

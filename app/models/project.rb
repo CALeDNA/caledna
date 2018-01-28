@@ -3,5 +3,5 @@
 class Project < ApplicationRecord
   validates :kobo_id, uniqueness: true
 
-  has_many :samples
+  has_many :samples, dependent: :destroy
 end

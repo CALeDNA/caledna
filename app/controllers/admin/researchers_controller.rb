@@ -4,6 +4,19 @@ module Admin
   class ResearchersController < Admin::ApplicationController
     # NOTE: Changed the generated Administrate file. Customize params so admins
     # can leave passwords blank when editing admins.
+
+    def show
+      # NOTE: because adminstrate/pundit needs #show to display records
+      # on the index page, the only way to prevent users from accessing
+      # #show while making #index work, is to authorize edit/update/delete
+      # on #show
+      authorize requested_resource, :access_show?
+
+      render locals: {
+        page: Administrate::Page::Show.new(dashboard, requested_resource)
+      }
+    end
+
     private
 
     def resource_params

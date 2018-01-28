@@ -2,52 +2,51 @@ require "administrate/base_dashboard"
 
 class SampleDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
+    pg_search_document: Field::HasOne,
     project: Field::BelongsTo.with_options(
       order: 'name asc', # order in form dropdown
       searchable: true, # make associated project name searchable
       searchable_field: 'name'
     ),
+    processor: Field::BelongsTo.with_options(class_name: "Researcher"),
     id: Field::Number,
+    kobo_id: Field::Number,
     latitude: Field::String.with_options(searchable: false),
     longitude: Field::String.with_options(searchable: false),
     collection_date: Field::DateTime,
     submission_date: Field::DateTime,
-    kit_number: Field::String,
-    location_letter: Field::String,
-    site_number: Field::String,
     bar_code: Field::String,
     kobo_data: Field::JSON.with_options(searchable: false),
-    approved: Field::Boolean,
-    analyzed: Field::Boolean,
     analysis_date: Field::DateTime,
     notes: Field::Text,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    results_completion_date: Field::DateTime,
+    status_cd: Field::String,
+    processor_id: Field::Number,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
-    :id,
     :project,
     :latitude,
     :longitude,
     :bar_code,
+    :processor,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
-    :id,
     :project,
     :latitude,
     :longitude,
     :bar_code,
-    :kit_number,
-    :location_letter,
-    :site_number,
-    :approved,
-    :analyzed,
+    :processor,
+    :kobo_id,
+    :status_cd,
     :notes,
-    :collection_date,
     :submission_date,
+    :collection_date,
     :analysis_date,
+    :results_completion_date,
     :created_at,
     :updated_at,
     :kobo_data,
@@ -58,15 +57,16 @@ class SampleDashboard < Administrate::BaseDashboard
     :latitude,
     :longitude,
     :bar_code,
-    :kit_number,
-    :location_letter,
-    :site_number,
-    :approved,
-    :analyzed,
+    :processor,
+    :kobo_id,
+    :status_cd,
     :notes,
-    :collection_date,
     :submission_date,
+    :collection_date,
     :analysis_date,
+    :results_completion_date,
+    :created_at,
+    :updated_at,
   ].freeze
 
   def display_resource(sample)

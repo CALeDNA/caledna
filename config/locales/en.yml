@@ -24,3 +24,8 @@ en:
     formats:
       long: "%b %d, %Y"
       short: "%b %d"
+  pundit:
+    default: 'You cannot perform this action.'
+  administrate:
+    actions:
+      new: 'New'

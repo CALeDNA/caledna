@@ -5,4 +5,9 @@ module ControllerHelpers
     @request.env['devise.mapping'] = Devise.mappings[:researcher]
     sign_in create(:researcher)
   end
+
+  def login_director
+    @request.env['devise.mapping'] = Devise.mappings[:researcher]
+    sign_in create(:director)
+  end
 end

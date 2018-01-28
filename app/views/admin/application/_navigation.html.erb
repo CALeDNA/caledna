@@ -6,8 +6,10 @@
     class: 'navigation__link navigation' %>
 
   <hr>
-  <%= link_to 'Import Kobo Projects', admin_import_kobo_path,
-    class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
+  <% if policy(:import_kobo).import_kobo? %>
+    <%= link_to 'Import Kobo Projects', admin_import_kobo_path,
+      class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
+  <% end %>
 
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
     <%

@@ -32,7 +32,6 @@ class ProjectDashboard < Administrate::BaseDashboard
     :updated_at,
     :last_import_date,
     :kobo_payload,
-    :samples,
   ].freeze
 
   FORM_ATTRIBUTES = [
@@ -41,7 +40,6 @@ class ProjectDashboard < Administrate::BaseDashboard
     :kobo_name,
     :kobo_id,
     :start_date,
-    :samples,
   ].freeze
 
   def display_resource(project)

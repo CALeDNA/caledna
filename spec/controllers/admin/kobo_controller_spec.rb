@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe Admin::KoboController do
   before(:each) do
-    login_researcher
+    login_director
   end
 
   def stub_kobo_connect
