@@ -2,8 +2,11 @@
 
 def delete_records
   puts 'deleting some records...'
-  researcher = Researcher.find_by(email: 'user@example.com')
-  researcher.delete if researcher.present?
+  Researcher.delete_all
+  Role.delete_all
+
+  sql = 'DELETE from researchers_roles'
+  ActiveRecord::Base.connection.execute(sql)
 
   project = Project.find_by(name: 'Demo project')
   return if project.blank?
@@ -17,17 +20,40 @@ def reset_search
   PgSearch::Multisearch.rebuild(Sample)
 end
 
+puts 'seeding roles...'
+Role.create(name: :director)
+Role.create(name: :lab_manager)
+Role.create(name: :sample_processor)
+
 unless Rails.env.production?
   delete_records
   reset_search
 
   puts 'seeding people...'
-  FactoryBot.create(
+  user1 = FactoryBot.create(
     :researcher,
-    email: 'user@example.com',
+    email: 'director@example.com',
     password: 'password',
-    username: 'Jane Doe'
+    username: 'Director Jane'
   )
+  user1.add_role :director
+
+  user2 = FactoryBot.create(
+    :researcher,
+    email: 'lab_manager@example.com',
+    password: 'password',
+    username: 'Lab Manager Jane'
+  )
+  user2.add_role :lab_manager
+
+  user3 = FactoryBot.create(
+    :researcher,
+    email: 'sample_processor@example.com',
+    password: 'password',
+    username: 'Sample Processor Jane'
+  )
+  user3.add_role :sample_processor
+
 
   puts 'seeding projects...'
   project = FactoryBot.create(
