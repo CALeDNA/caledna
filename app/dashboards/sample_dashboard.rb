@@ -2,6 +2,7 @@ require "administrate/base_dashboard"
 
 class SampleDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
+    photos: Field::HasMany,
     pg_search_document: Field::HasOne,
     project: Field::BelongsTo.with_options(
       order: 'name asc', # order in form dropdown
@@ -43,6 +44,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :kobo_id,
     :status_cd,
     :notes,
+    :photos,
     :submission_date,
     :collection_date,
     :analysis_date,

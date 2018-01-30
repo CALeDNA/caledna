@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     resources :projects
     resources :researchers
     resources :samples
+    resources :photos
 
     controller 'kobo' do
       post 'import_projects'
