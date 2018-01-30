@@ -32,6 +32,7 @@ module KoboApi
       results = hash_payload.map do |sample_data|
         next if sample_ids.include?(sample_data['_id'])
         save_sample(project_id, sample_data)
+        save_photos(Sample.last.id, sample_data)
       end
       results.compact.all? { |r| r }
     end
@@ -65,6 +66,27 @@ module KoboApi
       )
 
       sample.save
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def self.save_photos(sample_id, hash_payload)
+      data = OpenStruct.new(hash_payload)
+
+      photos_data = data._attachments
+      photos_data.each do |photo_data|
+        data = OpenStruct.new(photo_data)
+
+        filename = data.filename.split('/').last
+        photo = ::Photo.new(
+          file_name: filename,
+          source_url: "#{ENV.fetch('KOBO_MEDIA_URL')}#{data.filename}",
+          kobo_payload: data,
+          sample_id: sample_id
+        )
+
+        photo.save
+      end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
