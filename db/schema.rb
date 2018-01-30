@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180128102910) do
+ActiveRecord::Schema.define(version: 20180130135418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,15 +90,12 @@ ActiveRecord::Schema.define(version: 20180128102910) do
     t.decimal  "latitude",                precision: 15, scale: 10
     t.decimal  "longitude",               precision: 15, scale: 10
     t.datetime "submission_date"
-    t.string   "location_letter"
     t.string   "bar_code"
-    t.string   "kit_number"
     t.jsonb    "kobo_data"
     t.datetime "analysis_date"
     t.text     "notes"
     t.datetime "created_at",                                                              null: false
     t.datetime "updated_at",                                                              null: false
-    t.string   "site_number"
     t.datetime "collection_date"
     t.datetime "results_completion_date"
     t.string   "status_cd",                                         default: "submitted"

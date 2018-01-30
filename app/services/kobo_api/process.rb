@@ -60,9 +60,6 @@ module KoboApi
         longitude: data._geolocation.second,
         collection_date: data.Enter_the_sampling_date_and_time,
         submission_date: data._submission_time,
-        location_letter: location_letter,
-        site_number: site_number,
-        kit_number: kit_number,
         bar_code: bar_code,
         kobo_data: hash_payload
       )
