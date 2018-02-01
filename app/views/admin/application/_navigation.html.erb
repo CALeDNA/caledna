@@ -11,9 +11,19 @@
       class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
   <% end %>
 
+  <% if policy(:assign_samples).index? %>
+    <%= link_to 'Assign Samples', admin_assign_samples_path,
+      class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
+  <% end %>
+
+    <% if policy(:approve_samples).index? %>
+    <%= link_to 'Approve Samples', admin_approve_samples_path,
+      class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
+  <% end %>
+
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
     <%
-      non_model_dashboards = ['kobo']
+      non_model_dashboards = ['kobo', 'assign_samples', 'approve_samples']
       next if non_model_dashboards.include?(resource.resource)
     %>
 

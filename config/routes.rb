@@ -18,6 +18,16 @@ Rails.application.routes.draw do
       post 'import_samples/:id' => 'kobo#import_samples'
       get 'import_kobo'
     end
+
+    controller 'assign_samples' do
+      post 'assign_samples' => 'assign_samples#create'
+      get 'assign_samples' => 'assign_samples#index'
+    end
+
+    controller 'approve_samples' do
+      post 'approve_samples' => 'approve_samples#create'
+      get 'approve_samples' => 'approve_samples#index'
+    end
   end
 
   resources :samples, only: %i[index show]

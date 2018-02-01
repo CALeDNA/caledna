@@ -1,0 +1,41 @@
+<% content_for(:title) { 'Approve Samples' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Records</th>
+      <th>Last Import</th>
+      <th></th>
+    </tr>
+    <% @samples.each do |sample| %>
+    <tr class="js-table-row" data-url="<%= admin_sample_path(sample.id) %>%">
+      <td><%= sample.bar_code %></td>
+      <td><%= sample.latitude %> / <%= sample.longitude %></td>
+      <td>
+        <% sample.photos.each do |photo| %>
+          <%= link_to admin_photo_path(photo) do %>
+            <%= image_tag(photo.source_url)  %>
+          <% end %>
+
+        <% end %>
+      </td>
+      <td>
+      <%= simple_form_for sample, url: admin_sample_path(sample), method: :put do |f| %>
+        <%= f.hidden_field :status_cd, value: :approved  %>
+        <%= f.button :submit %>
+      <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+
+</section>
+
+<%= paginate @samples %>
