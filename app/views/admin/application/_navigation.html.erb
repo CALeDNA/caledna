@@ -23,7 +23,7 @@
 
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
     <%
-      non_model_dashboards = ['kobo', 'assign_samples', 'approve_samples']
+      non_model_dashboards = ['kobo', 'assign_samples', 'approve_samples', 'batch_actions']
       next if non_model_dashboards.include?(resource.resource)
     %>
 

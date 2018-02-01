@@ -1,0 +1,34 @@
+<div class="modal-overlay closed" id="modal-overlay"></div>
+
+<div class="modal closed" id="modal">
+  <button class="close-button" id="close-button">Close X</button>
+  <div class="modal-guts">
+    <h1>Modal Example</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae expedita corrupti laudantium aperiam, doloremque explicabo ipsum earum dicta saepe delectus totam vitae ipsam doloribus et obcaecati facilis eius assumenda, cumque.</p>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae expedita corrupti laudantium aperiam, doloremque explicabo ipsum earum dicta saepe delectus totam vitae ipsam doloribus et obcaecati facilis eius assumenda, cumque.</p>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  // BUG: toggle class only works if javascript is in the modal template file
+
+  var modal = document.querySelector("#modal");
+  var modalOverlay = document.querySelector("#modal-overlay");
+  var closeButton = document.querySelector("#close-button");
+  var openButton = document.querySelector("#open-button");
+
+  closeButton.addEventListener("click", function() {
+    modal.classList.toggle("closed");
+    modalOverlay.classList.toggle("closed");
+  });
+
+  openButton.addEventListener("click", function() {
+    modal.classList.toggle("closed");
+    modalOverlay.classList.toggle("closed");
+  });
+
+})()
+
+</script>
