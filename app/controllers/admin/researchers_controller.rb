@@ -2,8 +2,9 @@
 
 module Admin
   class ResearchersController < Admin::ApplicationController
-    # NOTE: Changed the generated Administrate file. Customize params so admins
-    # can leave passwords blank when editing admins.
+    # NOTE: Changed the generated Administrate file. Let password be
+    #  blank when editing.
+    # https://github.com/thoughtbot/administrate/issues/495#issuecomment-249566344
 
     def show
       # NOTE: because adminstrate/pundit needs #show to display records
@@ -17,30 +18,12 @@ module Admin
       }
     end
 
-    private
-
-    def resource_params
-      raw_params.select { |_k, v| v.present? }
-    end
-
-    def raw_params
-      params.require(resource_class.model_name.param_key)
-            .permit(dashboard.permitted_attributes)
-            .transform_values { |v| read_param_value(v) }
-    end
-
-    def read_param_value(data)
-      # rubocop:disable Style/GuardClause
-      if data.is_a?(ActionController::Parameters) && data[:type]
-        if data[:type] == Administrate::Field::Polymorphic.to_s
-          GlobalID::Locator.locate(data[:value])
-        else
-          raise "Unrecognised param data: #{data.inspect}"
-        end
-      else
-        data
+    def update
+      if params[:researcher][:password].blank?
+        params[:researcher].delete(:password)
+        params[:researcher].delete(:password_confirmation)
       end
-      # rubocop:enable Style/GuardClause
+      super
     end
   end
 end
