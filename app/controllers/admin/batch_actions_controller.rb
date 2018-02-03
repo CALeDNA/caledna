@@ -21,9 +21,10 @@ module Admin
     end
 
     def assign_samples
-      processor_id = JSON.parse(batch_params['data'])['processor_id']
-
       if samples.update(status_cd: :assigned, processor_id: processor_id)
+
+        SampleAssignmentWorker.perform_async(mail_hash)
+
         flash[:success] = 'Samples assigned'
         success_handler
       else
@@ -32,6 +33,19 @@ module Admin
     end
 
     private
+
+    def mail_hash
+      processor = Researcher.find(processor_id)
+      JSON.generate({
+        'name': processor.username,
+        'email': processor.email,
+        'samples_count': processor.samples.count
+      })
+    end
+
+    def processor_id
+      JSON.parse(batch_params['data'])['processor_id']
+    end
 
     def samples
       @samples ||= Sample.where(id: batch_params[:ids])
