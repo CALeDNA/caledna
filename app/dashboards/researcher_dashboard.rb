@@ -7,7 +7,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
     id: Field::Number,
     email: Field::String,
     username: Field::String,
-    role_cd: Field::String,
+    role_cd: EnumField,
     encrypted_password: Field::String,
     reset_password_token: Field::String,
     reset_password_sent_at: Field::DateTime,

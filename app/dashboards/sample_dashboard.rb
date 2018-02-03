@@ -23,7 +23,7 @@ class SampleDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     results_completion_date: Field::DateTime,
-    status_cd: Field::String,
+    status_cd: EnumField,
     processor_id: Field::Number,
   }.freeze
 
