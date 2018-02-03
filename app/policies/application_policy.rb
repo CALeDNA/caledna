@@ -56,6 +56,6 @@ class ApplicationPolicy
   private
 
   def all_roles
-    user.is_director? || user.is_lab_manager? || user.is_sample_processor?
+    user.director? || user.lab_manager? || user.sample_processor?
   end
 end

@@ -29,7 +29,6 @@ gem 'pundit', '~> 1.1.0' # added pundit to deal with administrate bug
 gem 'puma', '~> 3.11'
 gem 'rack-canonical-host', '~> 0.2'
 gem 'recipient_interceptor', '~> 0.1'
-gem 'rolify', '~> 5.2'
 gem 'sass-rails', '~> 5.0'
 gem 'sidekiq', '~> 5.0'
 gem 'simple_enum', '~> 2.3'

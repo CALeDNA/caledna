@@ -6,15 +6,15 @@ FactoryBot.define do
     password 'password'
 
     factory :director do
-      after(:create) { |user| user.add_role(:director) }
+      role :director
     end
 
     factory :sample_processor do
-      after(:create) { |user| user.add_role(:sample_processor) }
+      role :sample_processor
     end
 
     factory :lab_manager do
-      after(:create) { |user| user.add_role(:lab_manager) }
+      role :lab_manager
     end
   end
 end

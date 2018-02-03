@@ -10,14 +10,14 @@ class ProjectPolicy < ApplicationPolicy
   end
 
   def create?
-    user.is_director?
+    user.director?
   end
 
   def update?
-    user.is_director?
+    user.director?
   end
 
   def destroy?
-    user.is_director?
+    user.director?
   end
 end

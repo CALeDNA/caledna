@@ -78,7 +78,7 @@ describe 'Samples' do
 
     describe '#GET samples index page' do
       it 'display sample data and actions for samples' do
-        processor = Researcher.with_role(:sample_processor).first
+        processor = Researcher.sample_processors.first
         create(:sample, bar_code: '123', processor: processor)
         visit admin_samples_path
 
@@ -91,7 +91,7 @@ describe 'Samples' do
 
     describe '#GET samples show page' do
       it 'display sample data and actions for samples' do
-        processor = Researcher.with_role(:sample_processor).first
+        processor = Researcher.sample_processors.first
         sample = create(:sample, bar_code: '123', processor: processor)
         visit admin_sample_path(id: sample.id)
 

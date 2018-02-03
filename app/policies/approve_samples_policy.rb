@@ -2,10 +2,10 @@
 
 class ApproveSamplesPolicy < Struct.new(:user, :import_kobo)
   def index?
-    user.is_director?
+    user.director?
   end
 
   def create?
-    user.is_director?
+    user.director?
   end
 end

@@ -10,7 +10,7 @@ class SamplePolicy < ApplicationPolicy
   end
 
   def create?
-    user.is_director?
+    user.director?
   end
 
   def update?
@@ -18,7 +18,7 @@ class SamplePolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.is_director?
+    user.director?
   end
 
   class Scope < Scope
@@ -28,7 +28,7 @@ class SamplePolicy < ApplicationPolicy
 
     # NOTE: resolve_admin affects the number of records shown on index
     def resolve_admin
-      if user.is_sample_processor?
+      if user.sample_processor?
         scope.where(processor: user)
       else
         scope.all
@@ -40,6 +40,6 @@ class SamplePolicy < ApplicationPolicy
 
   def valid_users
     # NOTE: scope.where affects if row on the index will show data
-    user.is_director? || user.is_lab_manager? || scope.where(processor: user)
+    user.director? || user.lab_manager? || scope.where(processor: user)
   end
 end

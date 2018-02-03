@@ -3,9 +3,8 @@
 module Admin
   class AssignSamplesController < Admin::ApplicationController
     def index
-
       @samples = Sample.where(status_cd: :approved).page params[:page]
-      @processors = Researcher.with_role(:sample_processor)
+      @processors = Researcher.sample_processors
                               .collect { |p| [p.username, p.id] }
     end
   end

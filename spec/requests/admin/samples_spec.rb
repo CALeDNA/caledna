@@ -37,7 +37,7 @@ describe 'Samples' do
   shared_examples 'allows #show access for own samples' do
     describe '#GET samples show page' do
       it 'returns 200' do
-        processor = Researcher.with_role(:sample_processor).first
+        processor = Researcher.sample_processors.first
         sample = FactoryBot.create(:sample, processor: processor)
         get admin_sample_path(id: sample.id)
 
@@ -151,7 +151,7 @@ describe 'Samples' do
   shared_examples 'denies delete access for own samples' do
     describe '#DELETE' do
       it 'does not delete a sample' do
-        processor = Researcher.with_role(:sample_processor).first
+        processor = Researcher.sample_processors.first
         sample = FactoryBot.create(:sample, processor: processor)
 
         expect { delete admin_sample_path(id: sample.id) }
@@ -163,7 +163,7 @@ describe 'Samples' do
   shared_examples 'allows edit access for own samples' do
     describe '#PUT' do
       it 'updates a sample' do
-        processor = Researcher.with_role(:sample_processor).first
+        processor = Researcher.sample_processors.first
         sample = FactoryBot.create(:sample, bar_code: '123',
                                             processor: processor)
         params = { id: sample.id, sample: { bar_code: 'abc' } }
@@ -176,7 +176,7 @@ describe 'Samples' do
 
     describe '#GET samples edit page' do
       it 'returns 200' do
-        processor = Researcher.with_role(:sample_processor).first
+        processor = Researcher.sample_processors.first
         sample = FactoryBot.create(:sample, bar_code: '123',
                                             processor: processor)
         get edit_admin_sample_path(id: sample.id)

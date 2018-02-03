@@ -2,14 +2,14 @@
 
 class ImportKoboPolicy < Struct.new(:user, :import_kobo)
   def import_kobo?
-    user.is_director?
+    user.director?
   end
 
   def import_projects?
-    user.is_director?
+    user.director?
   end
 
   def import_samples?
-    user.is_director?
+    user.director?
   end
 end

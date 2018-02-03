@@ -8,7 +8,6 @@
 </header>
 
 <section class="main-content__body">
-
   <div class="assign-samples-menu">
     <%= select(:sample, :processor_id, @processors, {include_blank: 'Select processor'}) %>
     <a data-action="assign_samples" class="batch-action btn btn-default">
@@ -43,7 +42,7 @@
     var associatedDataEl = document.getElementById('associated_data');
 
     selectEl.addEventListener('change', (e) => {
-      associatedDataEl.dataset.data = {"processor_id": e.target.value }
+      associatedDataEl.dataset.data = JSON.stringify({"processor_id": e.target.value })
     })
 
   })()

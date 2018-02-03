@@ -6,7 +6,6 @@ def delete_records
   Photo.destroy_all
   Sample.destroy_all
   Researcher.destroy_all
-  Role.destroy_all
   Project.destroy_all
 
   sql = 'DELETE from researchers_roles'
@@ -18,11 +17,6 @@ def reset_search
   PgSearch::Document.delete_all(searchable_type: 'Sample')
   PgSearch::Multisearch.rebuild(Sample)
 end
-
-puts 'seeding roles...'
-Role.create(name: :director)
-Role.create(name: :lab_manager)
-Role.create(name: :sample_processor)
 
 unless Rails.env.production?
   delete_records

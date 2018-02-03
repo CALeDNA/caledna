@@ -7,6 +7,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
     id: Field::Number,
     email: Field::String,
     username: Field::String,
+    role_cd: Field::String,
     encrypted_password: Field::String,
     reset_password_token: Field::String,
     reset_password_sent_at: Field::DateTime,
@@ -31,6 +32,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     email
     username
+    role_cd
     sign_in_count
     current_sign_in_at
     last_sign_in_at
@@ -41,6 +43,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
     email
     username
+    role_cd
     password
     password_confirmation
   ].freeze

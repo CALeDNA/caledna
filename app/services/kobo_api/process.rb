@@ -69,7 +69,7 @@ module KoboApi
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def self.save_photos(sample_id, hash_payload)
       data = OpenStruct.new(hash_payload)
 
@@ -88,7 +88,7 @@ module KoboApi
         photo.save
       end
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     def self.sample_ids
       Sample.pluck(:kobo_id)
