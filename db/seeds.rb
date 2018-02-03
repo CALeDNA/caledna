@@ -2,14 +2,12 @@
 
 def delete_records
   puts 'deleting some records...'
-  project = Project.find_by(name: 'Demo project')
-  if project.present?
-    Sample.where(project: project).destroy_all
-    project.delete
-  end
 
+  Photo.destroy_all
+  Sample.destroy_all
   Researcher.destroy_all
   Role.destroy_all
+  Project.destroy_all
 
   sql = 'DELETE from researchers_roles'
   ActiveRecord::Base.connection.execute(sql)
@@ -45,11 +43,18 @@ unless Rails.env.production?
     username: 'Lab Manager Jane'
   )
 
-  processor = FactoryBot.create(
+  FactoryBot.create(
     :sample_processor,
     email: 'sample_processor@example.com',
     password: 'password',
     username: 'Sample Processor Jane'
+  )
+
+  processor = FactoryBot.create(
+    :sample_processor,
+    email: 'sample_processor2@example.com',
+    password: 'password',
+    username: 'Sample Processor Bob'
   )
 
   puts 'seeding projects...'
@@ -62,7 +67,7 @@ unless Rails.env.production?
 
   puts 'seeding samples...'
   samples = FactoryBot.create_list(
-    :sample, 2,
+    :sample, 15,
     project: project,
     status: :submitted,
     submission_date: Time.zone.now - 2.months
@@ -80,7 +85,7 @@ unless Rails.env.production?
   samples.first.update(processor: processor)
 
   FactoryBot.create_list(
-    :sample, 2,
+    :sample, 4,
     project: project,
     status: :results_completed,
     submission_date: Time.zone.now - 2.months,

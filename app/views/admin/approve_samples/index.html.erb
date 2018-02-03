@@ -1,4 +1,5 @@
-<% content_for(:title) { 'Approve Submitted Samples' } %>
+<% content_for(:title) { 'Approve Samples' } %>
+<% content_for(:javascript) { javascript_include_tag 'admin/batch_actions.js' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -17,9 +18,6 @@
         Reject
       </a>
     </div>
-    <a data-action="assign_samples" class="btn btn-default open-button" id="open-button">
-      Assign
-    </a>
   </div>
 
   <table>
@@ -39,16 +37,14 @@
       <td>
         <% sample.photos.each do |photo| %>
           <%= link_to admin_photo_path(photo) do %>
-            <%#= image_tag(photo.source_url)  %>
+            <%= image_tag(photo.source_url)  %>
           <% end %>
         <% end %>
       </td>
     </tr>
     <% end %>
   </table>
-
 </section>
 
-<%= render partial: 'assign_modal' %>
-
+<input type="hidden" data-data="" id="associated-data" >
 <%= paginate @samples %>

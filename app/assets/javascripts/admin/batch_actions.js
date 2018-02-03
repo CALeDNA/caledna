@@ -1,8 +1,9 @@
 (function(){
-
   var batchActionHandler = function(event) {
     var action = event.target.dataset['action'];
     var checkboxes = document.getElementsByName('row');
+    var associatedDataEl = document.getElementById('associated_data');
+    var associatedData = associatedDataEl ? associatedDataEl.dataset['data'] : null;
     var ids = [];
 
     checkboxes.forEach(function(checkbox) {
@@ -11,8 +12,7 @@
       }
     })
 
-    var data = { batch_action: { ids: ids } };
-
+    var data = { batch_action: { ids: ids, data: associatedData } };
     var successHandler = function(message) {
       window.location.reload();
     }

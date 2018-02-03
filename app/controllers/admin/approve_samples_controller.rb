@@ -5,7 +5,5 @@ module Admin
     def index
       @samples = Sample.where(status_cd: :submitted).page params[:page]
     end
-
-    def create; end
   end
 end

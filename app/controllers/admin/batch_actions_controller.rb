@@ -20,6 +20,17 @@ module Admin
       end
     end
 
+    def assign_samples
+      processor_id = JSON.parse(batch_params['data'])['processor_id']
+
+      if samples.update(status_cd: :assigned, processor_id: processor_id)
+        flash[:success] = 'Samples assigned'
+        success_handler
+      else
+        error_handler(object)
+      end
+    end
+
     private
 
     def samples
@@ -27,7 +38,7 @@ module Admin
     end
 
     def batch_params
-      params.require(:batch_action).permit(ids: [])
+      params.require(:batch_action).permit(:data, ids: [])
     end
 
     def success_handler
