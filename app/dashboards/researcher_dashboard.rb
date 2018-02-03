@@ -20,7 +20,8 @@ class ResearcherDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     password: PasswordField,
-    password_confirmation: PasswordField
+    password_confirmation: PasswordField,
+    active: Field::Boolean
   }.freeze
 
   COLLECTION_ATTRIBUTES = %i[
@@ -38,12 +39,14 @@ class ResearcherDashboard < Administrate::BaseDashboard
     last_sign_in_at
     created_at
     updated_at
+    active
   ].freeze
 
   FORM_ATTRIBUTES = %i[
     email
     username
     role_cd
+    active
     password
     password_confirmation
   ].freeze

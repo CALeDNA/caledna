@@ -12,4 +12,12 @@ class Researcher < ApplicationRecord
 
   as_enum :role, %i[sample_processor lab_manager director],
           map: :string
+
+  def active_for_authentication?
+    super && active?
+  end
+
+  def inactive_message
+    'You are not allowed to log in.'
+  end
 end
