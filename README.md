@@ -19,3 +19,8 @@ $ rake newb
 - [administrate](https://github.com/thoughtbot/administrate) for the admin dashboard
 - [devise](https://github.com/plataformatec/devise) for authenication
 - [pundit](https://github.com/varvet/pundit) for authorization
+
+## Data Sources
+
+We are using the database from [Itegrated Taxonomic Information System (ITIS)](https://itis.gov) as
+the basis for our taxonomy data.

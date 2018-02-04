@@ -15,6 +15,22 @@ def reset_search
   PgSearch::Multisearch.rebuild(Sample)
 end
 
+# rubocop:disable Metrics/AbcSize
+def import_taxonomy_data
+  puts 'seeding taxonomy...'
+  sql_file = Rails.root.join('db').join('data').join('itis_condensed_data.sql')
+  host = ActiveRecord::Base.connection_config[:host]
+  user = ActiveRecord::Base.connection_config[:username]
+  db = ActiveRecord::Base.connection_config[:database]
+
+  cmd = 'psql '
+  cmd += "--host #{host} " if host.present?
+  cmd += "--username #{user} " if user.present?
+  cmd += "#{db} < #{sql_file}"
+  exec cmd
+end
+# rubocop:enable Metrics/AbcSize
+
 unless Rails.env.production?
   delete_records
   reset_search
@@ -94,3 +110,5 @@ unless Rails.env.production?
 
   puts 'done seeding'
 end
+
+import_taxonomy_data if Hierarchy.count.zero?

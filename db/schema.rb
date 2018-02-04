@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180203233242) do
+ActiveRecord::Schema.define(version: 20180204120024) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "hierarchy", primary_key: "hierarchy_string", id: :string, limit: 300, force: :cascade do |t|
+    t.integer "tsn",           null: false
+    t.integer "parent_tsn"
+    t.integer "level",         null: false
+    t.integer "childrencount", null: false
+  end
+
+  create_table "kingdoms", primary_key: "kingdom_id", id: :integer, force: :cascade do |t|
+    t.string "kingdom_name", limit: 10, null: false
+    t.date   "update_date",             null: false
+  end
+
+  create_table "longnames", primary_key: "tsn", id: :integer, force: :cascade do |t|
+    t.string "completename", limit: 300, null: false
+  end
 
   create_table "pg_search_documents", force: :cascade do |t|
     t.text     "content"
@@ -96,6 +112,52 @@ ActiveRecord::Schema.define(version: 20180203233242) do
     t.integer  "processor_id"
     t.index ["processor_id"], name: "index_samples_on_processor_id", using: :btree
     t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
+  end
+
+  create_table "taxon_unit_types", primary_key: ["kingdom_id", "rank_id"], force: :cascade do |t|
+    t.integer "kingdom_id",                    null: false
+    t.integer "rank_id",            limit: 2,  null: false
+    t.string  "rank_name",          limit: 15, null: false
+    t.integer "dir_parent_rank_id", limit: 2,  null: false
+    t.integer "req_parent_rank_id", limit: 2,  null: false
+    t.date    "update_date",                   null: false
+  end
+
+  create_table "taxonomic_units", primary_key: "tsn", id: :integer, force: :cascade do |t|
+    t.string   "unit_ind1",          limit: 1
+    t.string   "unit_name1",         limit: 35,  null: false
+    t.string   "unit_ind2",          limit: 1
+    t.string   "unit_name2",         limit: 35
+    t.string   "unit_ind3",          limit: 7
+    t.string   "unit_name3",         limit: 35
+    t.string   "unit_ind4",          limit: 7
+    t.string   "unit_name4",         limit: 35
+    t.string   "unnamed_taxon_ind",  limit: 1
+    t.string   "name_usage",         limit: 12,  null: false
+    t.string   "unaccept_reason",    limit: 50
+    t.string   "credibility_rtng",   limit: 40,  null: false
+    t.string   "completeness_rtng",  limit: 10
+    t.string   "currency_rating",    limit: 7
+    t.integer  "phylo_sort_seq",     limit: 2
+    t.datetime "initial_time_stamp",             null: false
+    t.integer  "parent_tsn"
+    t.integer  "taxon_author_id"
+    t.integer  "hybrid_author_id"
+    t.integer  "kingdom_id",         limit: 2,   null: false
+    t.integer  "rank_id",            limit: 2,   null: false
+    t.date     "update_date",                    null: false
+    t.string   "uncertain_prnt_ind", limit: 3
+    t.text     "n_usage"
+    t.string   "complete_name",      limit: 255, null: false
+  end
+
+  create_table "vernaculars", primary_key: ["tsn", "vern_id"], force: :cascade do |t|
+    t.integer "tsn",                        null: false
+    t.string  "vernacular_name", limit: 80, null: false
+    t.string  "language",        limit: 15, null: false
+    t.string  "approved_ind",    limit: 1
+    t.date    "update_date",                null: false
+    t.integer "vern_id",                    null: false
   end
 
   add_foreign_key "photos", "samples"
