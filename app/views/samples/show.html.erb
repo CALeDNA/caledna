@@ -34,4 +34,21 @@
     <td>DNA Results Completed Date</td>
     <td><%= long_date(@sample.results_completion_date) %></td>
   </tr>
+    <tr>
+    <td>Specimens Found</td>
+    <td>
+      <ul>
+        <% @sample.specimens.each do |s| %>
+          <li>
+
+          <%= s.taxonomic_unit.complete_name %>
+          <% if s.taxonomic_unit.common_name.present? %>
+          (<%= s.taxonomic_unit.common_name %>)
+          <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </td>
+  </tr>
+
 </table>
