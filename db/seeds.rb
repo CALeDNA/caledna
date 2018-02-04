@@ -3,6 +3,7 @@
 def delete_records
   puts 'deleting some records...'
 
+  Specimen.destroy_all
   Photo.destroy_all
   Sample.destroy_all
   Researcher.destroy_all
@@ -83,7 +84,7 @@ unless Rails.env.production?
   samples.second.update(processor: processor)
 
   samples = FactoryBot.create_list(
-    :sample, 2,
+    :sample, 4,
     project: project,
     status: :analyzed,
     submission_date: Time.zone.now - 2.months,
@@ -92,7 +93,7 @@ unless Rails.env.production?
   samples.first.update(processor: processor)
 
   FactoryBot.create_list(
-    :sample, 4,
+    :sample, 50,
     project: project,
     status: :results_completed,
     submission_date: Time.zone.now - 2.months,
@@ -106,6 +107,14 @@ unless Rails.env.production?
       latitude: "37.#{i * i}6783",
       longitude: "-120.#{i * 2}23574"
     )
+  end
+
+  taxon_count = TaxonomicUnit.valid.count
+  Sample.results_completed.each do |sample|
+    rand(1..5).times do |i|
+      unit = TaxonomicUnit.offset(rand(taxon_count)).take
+      Specimen.create(sample: sample, taxonomic_unit: unit)
+    end
   end
 
   puts 'done seeding'

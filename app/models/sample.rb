@@ -9,6 +9,7 @@ class Sample < ApplicationRecord
   belongs_to :processor, class_name: 'Researcher', foreign_key: 'processor_id',
                          optional: true
   has_many :photos
+  has_many :specimens
 
   scope :analyzed, -> { where(status_cd: :analyzed) }
   scope :results_completed, -> { where(status_cd: :results_completed) }

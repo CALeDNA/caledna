@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180204120024) do
+ActiveRecord::Schema.define(version: 20180204140551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,6 +114,15 @@ ActiveRecord::Schema.define(version: 20180204120024) do
     t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
   end
 
+  create_table "specimens", force: :cascade do |t|
+    t.integer  "sample_id"
+    t.integer  "tsn"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sample_id"], name: "index_specimens_on_sample_id", using: :btree
+    t.index ["tsn"], name: "index_specimens_on_tsn", using: :btree
+  end
+
   create_table "taxon_unit_types", primary_key: ["kingdom_id", "rank_id"], force: :cascade do |t|
     t.integer "kingdom_id",                    null: false
     t.integer "rank_id",            limit: 2,  null: false
@@ -163,4 +172,6 @@ ActiveRecord::Schema.define(version: 20180204120024) do
   add_foreign_key "photos", "samples"
   add_foreign_key "samples", "projects"
   add_foreign_key "samples", "researchers", column: "processor_id"
+  add_foreign_key "specimens", "samples"
+  add_foreign_key "specimens", "taxonomic_units", column: "tsn", primary_key: "tsn", name: "specimens_tsn_fkey"
 end
