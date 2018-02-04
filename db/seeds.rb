@@ -7,9 +7,6 @@ def delete_records
   Sample.destroy_all
   Researcher.destroy_all
   Project.destroy_all
-
-  sql = 'DELETE from researchers_roles'
-  ActiveRecord::Base.connection.execute(sql)
 end
 
 def reset_search

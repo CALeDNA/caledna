@@ -36,11 +36,11 @@ module Admin
 
     def mail_hash
       processor = Researcher.find(processor_id)
-      JSON.generate({
+      JSON.generate(
         'name': processor.username,
         'email': processor.email,
         'samples_count': processor.samples.count
-      })
+      )
     end
 
     def processor_id
