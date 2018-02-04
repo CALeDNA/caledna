@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   resources :samples, only: %i[index show]
   resource :search, only: %i[show]
   resources :projects, only: %i[index show]
+  resources :taxa, only: %i[index show]
 
   root 'samples#index'
 end

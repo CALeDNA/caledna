@@ -112,7 +112,7 @@ unless Rails.env.production?
   taxon_count = TaxonomicUnit.valid.count
   Sample.results_completed.each do |sample|
     rand(1..5).times do |i|
-      unit = TaxonomicUnit.offset(rand(taxon_count)).take
+      unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
       Specimen.create(sample: sample, taxonomic_unit: unit)
     end
   end

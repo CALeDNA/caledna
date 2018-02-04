@@ -1,0 +1,21 @@
+
+<p><%= @taxon.complete_name %>
+<%= "(#{ @taxon.common_name})" if
+   @taxon.common_name.present? %>
+</p>
+
+<table>
+<% @taxon.taxonomy_tree.each do |taxon|
+    next if taxon.blank?
+%>
+  <tr>
+  <td>
+    <%= taxon['rank_name'] %>
+  </td>
+  <td>
+    <%= link_to taxon['complete_name'], taxa_path(taxon['tsn']) %>
+    <%= "(#{taxon['vernacular_name']})" if taxon['vernacular_name'].present? %>
+  </td>
+  </tr>
+<% end %>
+</table>
