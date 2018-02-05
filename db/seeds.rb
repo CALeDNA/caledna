@@ -109,19 +109,21 @@ unless Rails.env.production?
     )
   end
 
-  taxon_count = TaxonomicUnit.valid.count
-  tsn = []
-  rand(1..3).times do |i|
-    unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
-    tsn.push(unit.tsn)
-  end
-
-  Sample.results_completed.each do |sample|
-    rand(1..5).times do |i|
+  unless Hierarchy.count.zero?
+    taxon_count = TaxonomicUnit.valid.count
+    tsn = []
+    rand(1..3).times do |i|
       unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
-      Specimen.create(sample: sample, taxonomic_unit: unit)
+      tsn.push(unit.tsn)
     end
-    Specimen.create(sample: sample, tsn: tsn.sample)
+
+    Sample.results_completed.each do |sample|
+      rand(1..5).times do |i|
+        unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
+        Specimen.create(sample: sample, taxonomic_unit: unit)
+      end
+      Specimen.create(sample: sample, tsn: tsn.sample)
+    end
   end
 
   puts 'done seeding'
