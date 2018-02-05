@@ -7,6 +7,9 @@ class TaxaController < ApplicationController
 
   def show
     @taxon = TaxonomicUnit.find(params[:id])
+
+    ids = Specimen.where(tsn: params[:id]).pluck(:sample_id)
+    @samples = Sample.where(id: ids).page  params[:page]
   end
 
   def top_tsn

@@ -1,10 +1,9 @@
-
-<p><%= @taxon.complete_name %>
+<h1><%= @taxon.complete_name %>
 <%= "(#{ @taxon.common_name})" if
    @taxon.common_name.present? %>
-</p>
+</h1>
 
-<table>
+<table class="table table-condensed taxonomy-tree">
 <% @taxon.taxonomy_tree.each do |taxon|
     next if taxon.blank?
 %>
@@ -19,3 +18,22 @@
   </tr>
 <% end %>
 </table>
+
+<div class="samples-menu">
+  <div class="btn-group" role="group" >
+    <a href="<%= taxa_path %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+    </a>
+    <a href="<%= taxa_path(view: :list) %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+    </a>
+  </div>
+
+  <%= render partial: "searches/form" %>
+</div>
+
+<% if params[:view] == 'list' %>
+  <%= render partial: "samples/list", locals: { samples: @samples }  %>
+<% else %>
+  <%= render partial: "samples/map", locals: { samples: @samples } %>
+<% end %>
