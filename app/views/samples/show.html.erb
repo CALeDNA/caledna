@@ -42,8 +42,7 @@
           <li>
 
           <%= link_to s.taxonomic_unit.complete_name, taxa_path(s.taxonomic_unit) %>
-          <%= "(#{s.taxonomic_unit.common_name})" if
-            s.taxonomic_unit.common_name.present? %>
+          <%= s.taxonomic_unit.common_name %>
           </li>
         <% end %>
       </ul>

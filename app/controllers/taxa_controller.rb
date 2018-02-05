@@ -2,7 +2,8 @@
 
 class TaxaController < ApplicationController
   def index
-    @taxa = TaxonomicUnit.where(tsn: top_tsn)
+    @higlights = TaxonomicUnit.where(highlight: true).order(:complete_name)
+    @top_taxa = TaxonomicUnit.where(tsn: top_taxa_ids)
   end
 
   def show
@@ -12,8 +13,9 @@ class TaxaController < ApplicationController
     @samples = Sample.where(id: ids).page  params[:page]
   end
 
-  def top_tsn
-    Specimen.group('tsn').order('count(*)')
-            .limit(10).pluck(:tsn)
+  private
+
+  def top_taxa_ids
+    Specimen.group('tsn').order('count(*) DESC').limit(10).pluck(:tsn)
   end
 end

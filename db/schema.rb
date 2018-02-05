@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180204140551) do
+ActiveRecord::Schema.define(version: 20180205012035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 20180204140551) do
     t.integer  "processor_id"
     t.index ["processor_id"], name: "index_samples_on_processor_id", using: :btree
     t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
+    t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
 
   create_table "specimens", force: :cascade do |t|
@@ -134,7 +135,7 @@ ActiveRecord::Schema.define(version: 20180204140551) do
 
   create_table "taxonomic_units", primary_key: "tsn", id: :integer, force: :cascade do |t|
     t.string   "unit_ind1",          limit: 1
-    t.string   "unit_name1",         limit: 35,  null: false
+    t.string   "unit_name1",         limit: 35,                  null: false
     t.string   "unit_ind2",          limit: 1
     t.string   "unit_name2",         limit: 35
     t.string   "unit_ind3",          limit: 7
@@ -142,22 +143,25 @@ ActiveRecord::Schema.define(version: 20180204140551) do
     t.string   "unit_ind4",          limit: 7
     t.string   "unit_name4",         limit: 35
     t.string   "unnamed_taxon_ind",  limit: 1
-    t.string   "name_usage",         limit: 12,  null: false
+    t.string   "name_usage",         limit: 12,                  null: false
     t.string   "unaccept_reason",    limit: 50
-    t.string   "credibility_rtng",   limit: 40,  null: false
+    t.string   "credibility_rtng",   limit: 40,                  null: false
     t.string   "completeness_rtng",  limit: 10
     t.string   "currency_rating",    limit: 7
     t.integer  "phylo_sort_seq",     limit: 2
-    t.datetime "initial_time_stamp",             null: false
+    t.datetime "initial_time_stamp",                             null: false
     t.integer  "parent_tsn"
     t.integer  "taxon_author_id"
     t.integer  "hybrid_author_id"
-    t.integer  "kingdom_id",         limit: 2,   null: false
-    t.integer  "rank_id",            limit: 2,   null: false
-    t.date     "update_date",                    null: false
+    t.integer  "kingdom_id",         limit: 2,                   null: false
+    t.integer  "rank_id",            limit: 2,                   null: false
+    t.date     "update_date",                                    null: false
     t.string   "uncertain_prnt_ind", limit: 3
     t.text     "n_usage"
-    t.string   "complete_name",      limit: 255, null: false
+    t.string   "complete_name",      limit: 255,                 null: false
+    t.boolean  "highlight",                      default: false
+    t.index ["complete_name"], name: "index_taxonomic_units_on_complete_name", using: :btree
+    t.index ["n_usage"], name: "index_taxonomic_units_on_n_usage", using: :btree
   end
 
   create_table "vernaculars", primary_key: ["tsn", "vern_id"], force: :cascade do |t|
@@ -167,6 +171,7 @@ ActiveRecord::Schema.define(version: 20180204140551) do
     t.string  "approved_ind",    limit: 1
     t.date    "update_date",                null: false
     t.integer "vern_id",                    null: false
+    t.index ["language"], name: "index_vernaculars_on_language", using: :btree
   end
 
   add_foreign_key "photos", "samples"

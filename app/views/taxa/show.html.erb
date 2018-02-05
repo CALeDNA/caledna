@@ -1,6 +1,5 @@
-<h1><%= @taxon.complete_name %>
-<%= "(#{ @taxon.common_name})" if
-   @taxon.common_name.present? %>
+<h1>
+  <%= @taxon.complete_name %> <%= @taxon.common_name %>
 </h1>
 
 <table class="table table-condensed taxonomy-tree">

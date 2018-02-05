@@ -128,3 +128,10 @@ unless Rails.env.production?
 end
 
 import_taxonomy_data if Hierarchy.count.zero?
+
+Kingdom.all.pluck(:kingdom_name).each do |name|
+  sql = 'UPDATE taxonomic_units SET highlight = true ' \
+  "WHERE complete_name = '#{name.strip}' " \
+  'AND tsn NOT IN (590735, 43780, 202421)'
+  ActiveRecord::Base.connection.execute(sql)
+end

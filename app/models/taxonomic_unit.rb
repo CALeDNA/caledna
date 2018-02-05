@@ -11,7 +11,8 @@ class TaxonomicUnit < ApplicationRecord
   scope :valid, -> { where(n_usage: 'valid').or(where(n_usage: 'accepted')) }
 
   def common_name
-    vernaculars.where(language: 'English').pluck(:vernacular_name).join(', ')
+    names = vernaculars.where(language: 'English').pluck(:vernacular_name)
+    "(#{names.join(', ')})" if names.present?
   end
 
   def taxonomy_tree
