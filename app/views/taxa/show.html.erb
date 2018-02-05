@@ -1,8 +1,9 @@
-<h1>
+<h1 class="title">
   <%= @taxon.complete_name %> <%= @taxon.common_name %>
 </h1>
 
 <table class="table table-condensed taxonomy-tree">
+  <caption>Taxonomy</caption>
 <% @taxon.taxonomy_tree.each do |taxon|
     next if taxon.blank?
 %>
@@ -18,6 +19,10 @@
 <% end %>
 </table>
 
+<hr>
+
+<h1 class="title">Samples</h1>
+
 <div class="samples-menu">
   <div class="btn-group" role="group" >
     <a href="<%= taxa_path %>" class="btn btn-default">
@@ -27,8 +32,6 @@
       <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
     </a>
   </div>
-
-  <%= render partial: "searches/form" %>
 </div>
 
 <% if params[:view] == 'list' %>

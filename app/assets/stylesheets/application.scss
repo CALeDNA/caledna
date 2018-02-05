@@ -5,6 +5,10 @@
   padding-top: 50px;
 }
 
+h1.title {
+  margin-bottom: 3rem;
+}
+
 .json {
   overflow-wrap: break-word;
   width: 80vw;
@@ -46,6 +50,16 @@
   display: inline;
 }
 
-.taxonomy-tree td {
-  border: none !important;
+
+.taxonomy-tree  {
+  width: auto !important;
+
+  td {
+    border: none !important;
+  }
+
+  caption {
+    font-weight: bold;
+    font-size: 2rem;
+  }
 }
