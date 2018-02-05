@@ -8,11 +8,19 @@ class TaxaController < ApplicationController
 
   def show
     @taxon = TaxonomicUnit.find(params[:id])
-    @samples = Kaminari.paginate_array(samples).page(params[:page])
+    @samples = paginated_samples
     @taxa = taxa
   end
 
   private
+
+  def paginated_samples
+    if params[:view]
+      Kaminari.paginate_array(samples).page(params[:page])
+    else
+      samples
+    end
+  end
 
   def raw_samples
     sql = 'SELECT samples.id, bar_code, ' \
@@ -23,7 +31,7 @@ class TaxaController < ApplicationController
     'INNER JOIN specimens ON hierarchy.tsn = specimens.tsn ' \
     'INNER JOIN samples ON specimens.sample_id = samples.id ' \
     'INNER JOIN projects ON samples.project_id = projects.id ' \
-    "WHERE hierarchy_string ~ " \
+    'WHERE hierarchy_string ~ ' \
     "'([^[:digit:]]|^)#{params[:id]}([^[:digit:]]|$)'"
 
     @raw_samples ||= ActiveRecord::Base.connection.execute(sql)

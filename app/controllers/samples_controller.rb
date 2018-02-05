@@ -2,7 +2,7 @@
 
 class SamplesController < ApplicationController
   def index
-    @samples = Sample.order(:bar_code).where(query_string).page params[:page]
+    @samples = paginated_samples
     @display_name = display_name
   end
 
@@ -11,6 +11,18 @@ class SamplesController < ApplicationController
   end
 
   private
+
+  def paginated_samples
+    if params[:view]
+      samples.page(params[:page])
+    else
+      samples
+    end
+  end
+
+  def samples
+    Sample.order(:bar_code).where(query_string)
+  end
 
   # TODO: add test
   def display_name
