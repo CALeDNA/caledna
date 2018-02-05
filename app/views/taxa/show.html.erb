@@ -11,7 +11,7 @@
     <%= taxon['rank_name'] %>
   </td>
   <td>
-    <%= link_to taxon['complete_name'], taxa_path(taxon['tsn']) %>
+    <%= link_to taxon['complete_name'], taxa_path(taxon['tsn'], view: params[:view]) %>
     <%= "(#{taxon['vernacular_name']})" if taxon['vernacular_name'].present? %>
   </td>
   </tr>
@@ -32,7 +32,7 @@
 </div>
 
 <% if params[:view] == 'list' %>
-  <%= render partial: "samples/list", locals: { samples: @samples }  %>
+  <%= render partial: "list", locals: { samples: @samples }  %>
 <% else %>
   <%= render partial: "samples/map", locals: { samples: @samples } %>
 <% end %>

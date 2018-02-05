@@ -10,8 +10,8 @@
       <%= sample.longitude %>,
       <%= sample.id %>,
       "<%= sample.bar_code %>",
-      '<%= link_to sample.project.name, project_path(sample.project_id) %>',
-      '<%= link_to sample.bar_code, sample_path(sample) %>',
+      '<%= link_to sample.project_name, project_path(id: sample.project_id) %>',
+      '<%= link_to sample.bar_code, sample_path(id: sample.id) %>',
       '<%= sample.status %>',
     ],
   <% end %>

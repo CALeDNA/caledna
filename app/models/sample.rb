@@ -21,7 +21,6 @@ class Sample < ApplicationRecord
     status.to_s.tr('_', ' ')
   end
 
-  # NOTE: project_name exists mainlly so it can be indexed for searches
   def project_name
     project.name
   end
