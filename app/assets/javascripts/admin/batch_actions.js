@@ -26,9 +26,11 @@
   };
 
   var actions = document.querySelectorAll('.batch-action');
-  actions.forEach(function(actionEl){
-    actionEl.addEventListener('click', batchActionHandler);
-  })
+  if (actions) {
+    actions.forEach(function(actionEl){
+      actionEl.addEventListener('click', batchActionHandler);
+    })
+  }
 
   function toggle() {
     var checkboxes = document.getElementsByName('row');
@@ -39,6 +41,8 @@
   }
 
   var checkboxToggler = document.getElementsByName('rows')[0];
-  checkboxToggler.addEventListener('click', toggle);
+  if (checkboxToggler) {
+    checkboxToggler.addEventListener('click', toggle);
+  }
 
 })()
