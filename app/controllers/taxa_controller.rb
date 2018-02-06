@@ -22,6 +22,7 @@ class TaxaController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def raw_samples
     sql = 'SELECT samples.id, bar_code, ' \
     'taxonomic_units.rank_id,  taxonomic_units.tsn as tsn, latitude, ' \
@@ -36,9 +37,10 @@ class TaxaController < ApplicationController
 
     @raw_samples ||= ActiveRecord::Base.connection.execute(sql)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def samples
-    groups = raw_samples.group_by {|t| t['id']}.values
+    groups = raw_samples.group_by { |t| t['id'] }.values
     @samples ||= groups.map do |g|
       OpenStruct.new(g.first.merge(taxons: g.pluck('complete_name', 'tsn')))
     end

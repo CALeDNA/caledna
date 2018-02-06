@@ -15,13 +15,15 @@ class TaxonomicUnit < ApplicationRecord
     "(#{names.join(', ')})" if names.present?
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def taxonomy_tree
     return [] if hierarchy.blank?
     ids = hierarchy.hierarchy_string.split('-').map(&:to_i)
     ids_string = ids.join(', ')
 
     sql =
-      'SELECT DISTINCT(taxonomic_units.tsn), complete_name, taxonomic_units.tsn, taxonomic_units.rank_id, ' \
+      'SELECT DISTINCT(taxonomic_units.tsn), complete_name, ' \
+      'taxonomic_units.tsn, taxonomic_units.rank_id, ' \
       'rank_name, vernacular_name ' \
       'FROM taxonomic_units ' \
       'INNER JOIN taxon_unit_types ' \
@@ -30,7 +32,6 @@ class TaxonomicUnit < ApplicationRecord
       'ON vernaculars.tsn = taxonomic_units.tsn ' \
       "WHERE taxonomic_units.tsn IN (#{ids_string}) " \
       "AND (language = 'English' OR language IS NULL)"
-
 
     taxa = ActiveRecord::Base.connection.execute(sql)
     puts taxa
@@ -45,4 +46,5 @@ class TaxonomicUnit < ApplicationRecord
       record
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end
