@@ -13,9 +13,6 @@
     <td>Lat/Long</td>
     <td>
       <%= @sample.latitude %>, <%= @sample.longitude %>
-      <%= link_to samples_path(lat: @sample.latitude, lng: @sample.longitude, zoom: 15, sample_id: @sample.id) do %>
-        <span class=" glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
-      <% end %>
     </td>
   </tr>
   <tr>
@@ -49,3 +46,6 @@
     </td>
   </tr>
 </table>
+
+<%= render partial: "samples/map", locals: { samples: [@sample],
+  initial_lat: @sample.latitude, initial_lng: @sample.longitude } %>

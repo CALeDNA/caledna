@@ -6,7 +6,7 @@
   var addressPoints = [
   <% samples.each do |sample|  %>
     [
-      <%= sample.latitude%>,
+      <%= sample.latitude %>,
       <%= sample.longitude %>,
       <%= sample.id %>,
       "<%= sample.bar_code %>",
@@ -22,7 +22,9 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
     });
 
-  var latlng = L.latLng(<%= params[:lat] || 38.0 %>, <%= params[:lng] || -118.3 %>);
+  var initialLat = <%= initial_lat || 38.0 %>
+  var initialLng =  <%= initial_lng || -118.3 %>
+  var latlng = L.latLng(initialLat, initialLng);
   var map = L.map('mapid', {center: latlng, zoom: <%= params[:zoom] || 6 %>, layers: [tiles]});
 
   var markers = L.markerClusterGroup({ disableClusteringAtZoom: 17 });

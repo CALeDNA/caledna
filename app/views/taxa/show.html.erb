@@ -37,5 +37,6 @@
 <% if params[:view] == 'list' %>
   <%= render partial: "list", locals: { samples: @samples }  %>
 <% else %>
-  <%= render partial: "samples/map", locals: { samples: @samples } %>
+  <%= render partial: "samples/map", locals: { samples: @samples,
+  initial_lat: params[:lat], initial_lng: params[:lng] } %>
 <% end %>
