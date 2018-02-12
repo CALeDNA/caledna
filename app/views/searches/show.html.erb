@@ -13,11 +13,11 @@
     </a>
   </div>
 
-  <a href="<%= samples_path %>" class="btn btn-default">
-    <span class="glyphicon glyphicon glyphicon-refresh" aria-hidden="true"></span> View All
-  </a>
-
   <%= render partial: "searches/form" %>
+
+  <a href="<%= samples_path %>" class="btn btn-default reset-search">
+    <span class="glyphicon glyphicon glyphicon-refresh" aria-hidden="true"></span> Reset Search
+  </a>
 </div>
 
 <% if params[:view] == 'list' %>

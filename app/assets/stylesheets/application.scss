@@ -24,12 +24,16 @@ h1.title {
 .search-form {
   margin-bottom: 1em;
   display: inline;
-  margin-left: 1em;
+
   .search_query {
     input {
       width: 20em;
     }
   }
+}
+
+.reset-search {
+  margin-left: 1em;
 }
 
 .samples-menu {

@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 
 class SearchesController < ApplicationController
+  include PaginatedSamples
+
   def show
     @samples = paginated_samples
     @query = search_params[:query]
   end
 
   private
-
-  def paginated_samples
-    if params[:view]
-      samples.page(params[:page])
-    else
-      samples
-    end
-  end
 
   def samples
     search_results = PgSearch.multisearch(search_params[:query])
