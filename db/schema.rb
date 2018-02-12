@@ -10,10 +10,84 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180211292812) do
+ActiveRecord::Schema.define(version: 20180212152638) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "extraction_types", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "extractions", force: :cascade do |t|
+    t.integer  "sample_id"
+    t.integer  "extraction_type_id"
+    t.integer  "processor_id"
+    t.string   "priority_sequencing_cd"
+    t.boolean  "prepub_share",                          default: false
+    t.string   "prepub_share_group"
+    t.boolean  "prepub_filter_sensitive_info",          default: false
+    t.string   "sra_url"
+    t.integer  "sra_adder_id"
+    t.datetime "sra_add_date"
+    t.string   "local_fastq_storage_url"
+    t.integer  "local_fastq_storage_adder_id"
+    t.datetime "local_fastq_storage_add_date"
+    t.boolean  "stat_bio_reps_pooled",                  default: false
+    t.datetime "stat_bio_reps_pooled_date"
+    t.string   "loc_bio_reps_pooled"
+    t.datetime "bio_reps_pooled_date"
+    t.string   "protocol_bio_reps_pooled"
+    t.string   "changes_protocol_bio_reps_pooled"
+    t.boolean  "stat_dna_extraction",                   default: false
+    t.datetime "stat_dna_extraction_date"
+    t.string   "loc_dna_extracts"
+    t.datetime "dna_extraction_date"
+    t.string   "protocol_dna_extraction"
+    t.string   "changes_protocol_dna_extraction"
+    t.string   "metabarcoding_primers",                 default: [],    array: true
+    t.boolean  "stat_barcoding_pcr_done",               default: false
+    t.datetime "stat_barcoding_pcr_done_date"
+    t.integer  "barcoding_pcr_number_of_replicates"
+    t.boolean  "reamps_needed"
+    t.boolean  "stat_barcoding_pcr_pooled",             default: false
+    t.datetime "stat_barcoding_pcr_pooled_date"
+    t.boolean  "stat_barcoding_pcr_bead_cleaned",       default: false
+    t.datetime "stat_barcoding_pcr_bead_cleaned_date"
+    t.string   "brand_beads_cd"
+    t.decimal  "cleaned_concentration"
+    t.string   "loc_stored"
+    t.string   "select_indices_cd"
+    t.string   "index_1_name"
+    t.string   "index_2_name"
+    t.boolean  "stat_index_pcr_done",                   default: false
+    t.datetime "stat_index_pcr_done_date"
+    t.boolean  "stat_index_pcr_bead_cleaned",           default: false
+    t.datetime "stat_index_pcr_bead_cleaned_date"
+    t.string   "index_brand_beads_cd"
+    t.decimal  "index_cleaned_concentration"
+    t.string   "index_loc_stored"
+    t.boolean  "stat_libraries_pooled",                 default: false
+    t.datetime "stat_libraries_pooled_date"
+    t.string   "loc_libraries_pooled"
+    t.boolean  "stat_sequenced",                        default: false
+    t.datetime "stat_sequenced_date"
+    t.string   "intended_sequencing_depth_per_barcode"
+    t.string   "sequencing_platform_cd"
+    t.string   "assoc_field_blank"
+    t.string   "assoc_extraction_blank"
+    t.string   "assoc_pcr_blank"
+    t.string   "notes_sample_processor"
+    t.string   "notes_lab_manager"
+    t.string   "notes_director"
+    t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
+    t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
+    t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
+    t.index ["sample_id"], name: "index_extractions_on_sample_id", using: :btree
+    t.index ["sra_adder_id"], name: "index_extractions_on_sra_adder_id", using: :btree
+  end
 
   create_table "field_data_projects", force: :cascade do |t|
     t.integer  "kobo_id"
@@ -116,11 +190,11 @@ ActiveRecord::Schema.define(version: 20180211292812) do
   end
 
   create_table "specimens", force: :cascade do |t|
-    t.integer  "sample_id"
     t.integer  "tsn"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["sample_id"], name: "index_specimens_on_sample_id", using: :btree
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "extraction_id"
+    t.index ["extraction_id"], name: "index_specimens_on_extraction_id", using: :btree
     t.index ["tsn"], name: "index_specimens_on_tsn", using: :btree
   end
 
@@ -174,9 +248,14 @@ ActiveRecord::Schema.define(version: 20180211292812) do
     t.index ["language"], name: "index_vernaculars_on_language", using: :btree
   end
 
+  add_foreign_key "extractions", "extraction_types"
+  add_foreign_key "extractions", "researchers", column: "local_fastq_storage_adder_id"
+  add_foreign_key "extractions", "researchers", column: "processor_id"
+  add_foreign_key "extractions", "researchers", column: "sra_adder_id"
+  add_foreign_key "extractions", "samples"
   add_foreign_key "photos", "samples"
   add_foreign_key "samples", "field_data_projects"
   add_foreign_key "samples", "researchers", column: "processor_id"
-  add_foreign_key "specimens", "samples"
+  add_foreign_key "specimens", "extractions"
   add_foreign_key "specimens", "taxonomic_units", column: "tsn", primary_key: "tsn", name: "specimens_tsn_fkey"
 end

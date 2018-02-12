@@ -5,6 +5,8 @@ def delete_records
 
   Specimen.destroy_all
   Photo.destroy_all
+  ExtractionType.destroy_all
+  Extraction.destroy_all
   Sample.destroy_all
   Researcher.destroy_all
   FieldDataProject.destroy_all
@@ -30,6 +32,38 @@ def import_taxonomy_data
   cmd += "#{db} < #{sql_file}"
   exec cmd
 end
+
+def seed_samples(project)
+  samples = FactoryBot.create_list(
+    :sample, 15,
+    field_data_project: project,
+    status: :submitted,
+    submission_date: Time.zone.now - 2.months
+  )
+
+  samples = FactoryBot.create_list(
+    :sample, 4,
+    field_data_project: project,
+    status: :analyzed,
+    submission_date: Time.zone.now - 2.months,
+  )
+
+  FactoryBot.create_list(
+    :sample, 50,
+    field_data_project: project,
+    status: :results_completed,
+    submission_date: Time.zone.now - 2.months,
+  )
+
+  Sample.all.each_with_index do |sample, i|
+    sample.update(
+      barcode: "K055#{i}-LC-S2",
+      latitude: "37.#{i * i}6783",
+      longitude: "-120.#{i * 2}23574"
+    )
+  end
+end
+
 # rubocop:enable Metrics/AbcSize
 
 unless Rails.env.production?
@@ -37,7 +71,7 @@ unless Rails.env.production?
   reset_search
 
   puts 'seeding people...'
-  FactoryBot.create(
+  director = FactoryBot.create(
     :director,
     email: 'director@example.com',
     password: 'password',
@@ -51,14 +85,14 @@ unless Rails.env.production?
     username: 'Lab Manager Jane'
   )
 
-  FactoryBot.create(
+  processor1 = FactoryBot.create(
     :sample_processor,
     email: 'sample_processor@example.com',
     password: 'password',
     username: 'Sample Processor Jane'
   )
 
-  processor = FactoryBot.create(
+  processor2 = FactoryBot.create(
     :sample_processor,
     email: 'sample_processor2@example.com',
     password: 'password',
@@ -70,44 +104,56 @@ unless Rails.env.production?
     :field_data_project,
     kobo_id: nil,
     name: 'Demo project',
-    description: Faker::Lorem.sentence
+    description: Faker::Lorem.paragraph
   )
 
-  puts 'seeding samples...'
-  samples = FactoryBot.create_list(
-    :sample, 15,
-    field_data_project: project,
-    status: :submitted,
-    submission_date: Time.zone.now - 2.months
-  )
-  samples.first.update(processor: processor)
-  samples.second.update(processor: processor)
+  seed_samples(project)
 
-  samples = FactoryBot.create_list(
-    :sample, 4,
-    field_data_project: project,
-    status: :analyzed,
-    submission_date: Time.zone.now - 2.months,
-    analysis_date: Time.zone.now - 1.months
-  )
-  samples.first.update(processor: processor)
+  puts 'seeding extractions...'
 
-  FactoryBot.create_list(
-    :sample, 50,
-    field_data_project: project,
-    status: :results_completed,
-    submission_date: Time.zone.now - 2.months,
-    analysis_date: Time.zone.now - 1.months,
-    results_completion_date: Time.zone.now - 1.week
-  )
+  typeA = FactoryBot.create(:extraction_type, name: 'extraction A')
+  typeB = FactoryBot.create(:extraction_type, name: 'extraction B')
 
-  Sample.all.each_with_index do |sample, i|
-    sample.update(
-      barcode: "K055#{i}-LC-S2",
-      latitude: "37.#{i * i}6783",
-      longitude: "-120.#{i * 2}23574"
+  Sample.analyzed.each do |sample|
+    processor = [processor1, processor2].sample
+    FactoryBot.create(
+      :extraction,
+      :being_analyzed,
+      sample: sample,
+      processor_id: processor.id,
+      extraction_type: typeA,
+      sra_adder_id: director.id,
+      local_fastq_storage_adder_id: director.id
     )
   end
+
+  Sample.results_completed.each do |sample|
+    processor = [processor1, processor2].sample
+    FactoryBot.create(
+      :extraction,
+      :results_completed,
+      sample: sample,
+      processor_id: processor.id,
+      extraction_type: typeA,
+      sra_adder_id: director.id,
+      local_fastq_storage_adder_id: director.id
+    )
+  end
+
+  Sample.results_completed.take(5).each do |sample|
+    processor = [processor1, processor2].sample
+    FactoryBot.create(
+      :extraction,
+      :results_completed,
+      sample: sample,
+      processor_id: processor.id,
+      extraction_type: typeB,
+      sra_adder_id: director.id,
+      local_fastq_storage_adder_id: director.id
+    )
+  end
+
+  puts 'import taxonomy...'
 
   unless Hierarchy.count.zero?
     taxon_count = TaxonomicUnit.valid.count
@@ -117,12 +163,12 @@ unless Rails.env.production?
       tsn.push(unit.tsn)
     end
 
-    Sample.results_completed.each do |sample|
+    Extraction.all.each do |extraction|
       rand(1..5).times do
         unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
-        Specimen.create(sample: sample, taxonomic_unit: unit)
+        Specimen.create(extraction: extraction, taxonomic_unit: unit)
       end
-      Specimen.create(sample: sample, tsn: tsn.sample)
+      Specimen.create(extraction: extraction, tsn: tsn.sample)
     end
   end
 

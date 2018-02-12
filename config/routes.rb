@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     resources :field_data_projects
     resources :researchers
     resources :samples
+    resources :extraction_types
+    resources :extractions
     resources :photos
 
     controller 'kobo' do

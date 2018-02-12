@@ -6,10 +6,8 @@ class Sample < ApplicationRecord
                               field_data_project_name]
 
   belongs_to :field_data_project
-  belongs_to :processor, class_name: 'Researcher', foreign_key: 'processor_id',
-                         optional: true
   has_many :photos
-  has_many :specimens
+  has_many :extractions
 
   scope :analyzed, -> { where(status_cd: :analyzed) }
   scope :results_completed, -> { where(status_cd: :results_completed) }

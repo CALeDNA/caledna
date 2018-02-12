@@ -30,8 +30,10 @@ class TaxaController < ApplicationController
     'FROM taxonomic_units ' \
     'INNER JOIN hierarchy ON hierarchy.tsn = taxonomic_units.tsn ' \
     'INNER JOIN specimens ON hierarchy.tsn = specimens.tsn ' \
-    'INNER JOIN samples ON specimens.sample_id = samples.id ' \
-    'INNER JOIN projects ON samples.taxonomic_units = field_data_projects.id ' \
+    'INNER JOIN extractions ON specimens.extraction_id = extractions.id ' \
+    'INNER JOIN samples ON samples.id = extractions.sample_id ' \
+    'INNER JOIN field_data_projects ON samples.field_data_project_id ' \
+    ' = field_data_projects.id ' \
     'WHERE hierarchy_string ~ ' \
     "'([^[:digit:]]|^)#{params[:id]}([^[:digit:]]|$)'"
 

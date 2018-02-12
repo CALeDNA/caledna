@@ -9,7 +9,6 @@ class SampleDashboard < Administrate::BaseDashboard
       searchable: true, # make associated project name searchable
       searchable_field: 'name'
     ),
-    processor: Field::BelongsTo.with_options(class_name: "Researcher"),
     id: Field::Number,
     kobo_id: Field::Number,
     latitude: Field::String.with_options(searchable: false),
@@ -33,7 +32,6 @@ class SampleDashboard < Administrate::BaseDashboard
     :latitude,
     :longitude,
     :barcode,
-    :processor,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
@@ -41,7 +39,6 @@ class SampleDashboard < Administrate::BaseDashboard
     :latitude,
     :longitude,
     :barcode,
-    :processor,
     :kobo_id,
     :status_cd,
     :substrate_cd,
@@ -61,7 +58,6 @@ class SampleDashboard < Administrate::BaseDashboard
     :latitude,
     :longitude,
     :barcode,
-    :processor,
     :kobo_id,
     :status_cd,
     :substrate_cd,

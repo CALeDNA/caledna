@@ -34,15 +34,17 @@
     <tr>
     <td>Specimens Found</td>
     <td>
-      <ul>
-        <% @sample.specimens.each do |s| %>
+      <% @sample.extractions.each do |extraction| %>
+        <%= extraction.extraction_type.name %>
+        <ul>
+        <% extraction.specimens.each do |s| %>
           <li>
-
-          <%= link_to s.taxonomic_unit.complete_name, taxa_path(s.taxonomic_unit) %>
-          <%= s.taxonomic_unit.common_name %>
+            <%= link_to s.taxonomic_unit.complete_name, taxa_path(s.taxonomic_unit) %>
+            <%= s.taxonomic_unit.common_name %>
           </li>
         <% end %>
-      </ul>
+        </ul>
+      <% end %>
     </td>
   </tr>
 </table>
