@@ -2,6 +2,6 @@
 
 FactoryBot.define do
   factory :sample do
-    project
+    field_data_project
   end
 end

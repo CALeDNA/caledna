@@ -4,17 +4,17 @@ require 'rails_helper'
 
 describe 'Samples' do
   describe 'samples index page' do
-    let(:project) { create(:project) }
+    let(:project) { create(:field_data_project) }
     let!(:sample1) do
-      create(:sample, bar_code: 'sample 1', project: project,
+      create(:sample, bar_code: 'sample 1', field_data_project: project,
                       status_cd: :approved)
     end
     let!(:sample2) do
-      create(:sample, bar_code: 'sample 2', project: project,
+      create(:sample, bar_code: 'sample 2', field_data_project: project,
                       status_cd: :analyzed)
     end
     let!(:sample3) do
-      create(:sample, bar_code: 'sample 3', project: project,
+      create(:sample, bar_code: 'sample 3', field_data_project: project,
                       status_cd: :results_completed)
     end
     let!(:sample4) do
@@ -45,7 +45,7 @@ describe 'Samples' do
     end
 
     it 'renders samples for a project when project_id is in query string' do
-      visit samples_path(view: :list, project_id: project.id)
+      visit samples_path(view: :list, field_data_project_id: project.id)
 
       expect(page).to have_content 'sample 1'
       expect(page).to have_content 'sample 2'
@@ -77,7 +77,9 @@ describe 'Samples' do
 
     it 'renders analyzed samples for a project when period_id and '\
        'status=analyzed are in query string' do
-      visit samples_path(view: :list, status: :analyzed, project_id: project.id)
+      visit samples_path(view: :list,
+                         status: :analyzed,
+                         field_data_project_id: project.id)
 
       expect(page).to_not have_content 'sample 1'
       expect(page).to have_content 'sample 2'
@@ -88,8 +90,9 @@ describe 'Samples' do
 
     it 'renders analyzed samples for a project when period_id and '\
        'status=results_completed are in query string' do
-      visit samples_path(view: :list, status: :results_completed,
-                         project_id: project.id)
+      visit samples_path(view: :list,
+                         status: :results_completed,
+                         field_data_project_id: project.id)
 
       expect(page).to_not have_content 'sample 1'
       expect(page).to_not have_content 'sample 2'

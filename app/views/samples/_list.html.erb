@@ -10,7 +10,7 @@
   <% samples.each do |sample| %>
     <tr class="clickable_row" data-path="<%= sample_path(sample) %>">
       <td><%= link_to sample.bar_code, sample_path(sample) %></td>
-      <td ><%= link_to sample.project.name, project_path(sample.project) %></td>
+      <td ><%= link_to sample.field_data_project.name,  field_data_project_path(sample.field_data_project) %></td>
       <td><%= sample.latitude %> </td>
       <td><%= sample.longitude %></td>
       <td><%= sample.status_display %></td>

@@ -3,9 +3,9 @@
 class Sample < ApplicationRecord
   include PgSearch
   multisearchable against: %i[bar_code status_cd latitude longitude
-                              project_name]
+                              field_data_project_name]
 
-  belongs_to :project
+  belongs_to :field_data_project
   belongs_to :processor, class_name: 'Researcher', foreign_key: 'processor_id',
                          optional: true
   has_many :photos
@@ -21,7 +21,7 @@ class Sample < ApplicationRecord
     status.to_s.tr('_', ' ')
   end
 
-  def project_name
-    project.name
+  def field_data_project_name
+    field_data_project.name
   end
 end

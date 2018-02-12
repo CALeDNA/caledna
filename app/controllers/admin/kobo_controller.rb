@@ -5,7 +5,7 @@ module Admin
     def import_kobo
       authorize :import_kobo, :import_kobo?
 
-      @projects = ::Project.all.where.not(kobo_id: nil)
+      @projects = ::FieldDataProject.all.where.not(kobo_id: nil)
     end
 
     def import_projects
@@ -36,7 +36,7 @@ module Admin
     private
 
     def project
-      @project = Project.find(params[:id])
+      @project = FieldDataProject.find(params[:id])
     end
   end
 end

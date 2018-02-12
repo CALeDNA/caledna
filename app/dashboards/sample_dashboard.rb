@@ -4,7 +4,7 @@ class SampleDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     photos: Field::HasMany,
     pg_search_document: Field::HasOne,
-    project: Field::BelongsTo.with_options(
+    field_data_project: Field::BelongsTo.with_options(
       order: 'name asc', # order in form dropdown
       searchable: true, # make associated project name searchable
       searchable_field: 'name'
@@ -28,7 +28,7 @@ class SampleDashboard < Administrate::BaseDashboard
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
-    :project,
+    :field_data_project,
     :latitude,
     :longitude,
     :bar_code,
@@ -36,7 +36,7 @@ class SampleDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
-    :project,
+    :field_data_project,
     :latitude,
     :longitude,
     :bar_code,
@@ -55,7 +55,7 @@ class SampleDashboard < Administrate::BaseDashboard
   ].freeze
 
   FORM_ATTRIBUTES = [
-    :project,
+    :field_data_project,
     :latitude,
     :longitude,
     :bar_code,

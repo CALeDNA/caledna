@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: 'samples#index'
-    resources :projects
+    resources :field_data_projects
     resources :researchers
     resources :samples
     resources :photos
@@ -37,7 +37,7 @@ Rails.application.routes.draw do
 
   resources :samples, only: %i[index show]
   resource :search, only: %i[show]
-  resources :projects, only: %i[index show]
+  resources :field_data_projects, only: %i[index show]
   resources :taxa, only: %i[index show]
 
   root 'samples#index'

@@ -6,19 +6,19 @@ describe 'Projects' do
   shared_examples 'allows write access' do
     describe '#POST' do
       it 'creates a new project' do
-        attributes = FactoryBot.attributes_for(:project)
-        params = { project: attributes }
+        attributes = FactoryBot.attributes_for(:field_data_project)
+        params = { field_data_project: attributes }
 
-        expect { post admin_projects_path, params: params }
-          .to change(Project, :count).by(1)
+        expect { post admin_field_data_projects_path, params: params }
+          .to change(FieldDataProject, :count).by(1)
       end
     end
 
     describe '#PUT' do
       it 'updates a project' do
-        project = FactoryBot.create(:project, name: 'name1')
-        params = { id: project.id, project: { name: 'name2' } }
-        put admin_project_path(id: project.id), params: params
+        project = FactoryBot.create(:field_data_project, name: 'name1')
+        params = { id: project.id, field_data_project: { name: 'name2' } }
+        put admin_field_data_project_path(id: project.id), params: params
         project.reload
 
         expect(project.name).to eq('name2')
@@ -27,10 +27,10 @@ describe 'Projects' do
 
     describe '#DELETE' do
       it 'deletes a project' do
-        project = FactoryBot.create(:project)
+        project = FactoryBot.create(:field_data_project)
 
-        expect { delete admin_project_path(id: project.id) }
-          .to change(Project, :count).by(-1)
+        expect { delete admin_field_data_project_path(id: project.id) }
+          .to change(FieldDataProject, :count).by(-1)
       end
     end
 
@@ -44,8 +44,8 @@ describe 'Projects' do
 
     describe '#GET projects edit page' do
       it 'redirects to admin root' do
-        project = create(:project, name: 'name1')
-        get edit_admin_project_path(id: project.id)
+        project = create(:field_data_project, name: 'name1')
+        get edit_admin_field_data_project_path(id: project.id)
 
         expect(response.status).to eq(200)
       end
@@ -55,19 +55,19 @@ describe 'Projects' do
   shared_examples 'denies write access' do
     describe '#POST' do
       it 'does not create a new project' do
-        attributes = FactoryBot.attributes_for(:project)
-        params = { project: attributes }
+        attributes = FactoryBot.attributes_for(:field_data_project)
+        params = { field_data_project: attributes }
 
-        expect { post admin_projects_path, params: params }
-          .to change(Project, :count).by(0)
+        expect { post admin_field_data_projects_path, params: params }
+          .to change(FieldDataProject, :count).by(0)
       end
     end
 
     describe '#PUT' do
       it 'does not update a project' do
-        project = FactoryBot.create(:project, name: 'name1')
-        params = { id: project.id, project: { name: 'name2' } }
-        put admin_project_path(id: project.id), params: params
+        project = FactoryBot.create(:field_data_project, name: 'name1')
+        params = { id: project.id, field_data_project: { name: 'name2' } }
+        put admin_field_data_project_path(id: project.id), params: params
         project.reload
 
         expect(project.name).to eq('name1')
@@ -76,10 +76,10 @@ describe 'Projects' do
 
     describe '#DELETE' do
       it 'does not delete a project' do
-        project = FactoryBot.create(:project)
+        project = FactoryBot.create(:field_data_project)
 
-        expect { delete admin_project_path(id: project.id) }
-          .to change(Project, :count).by(0)
+        expect { delete admin_field_data_project_path(id: project.id) }
+          .to change(FieldDataProject, :count).by(0)
       end
     end
 
@@ -93,8 +93,8 @@ describe 'Projects' do
 
     describe '#GET projects edit page' do
       it 'redirects to admin root' do
-        project = create(:project, name: 'name1')
-        get edit_admin_project_path(id: project.id)
+        project = create(:field_data_project, name: 'name1')
+        get edit_admin_field_data_project_path(id: project.id)
 
         expect(response).to redirect_to admin_samples_path
       end
@@ -104,8 +104,8 @@ describe 'Projects' do
   shared_examples 'allows read access' do
     describe '#GET projects index page' do
       it 'returns 200' do
-        create(:project)
-        get admin_projects_path
+        create(:field_data_project)
+        get admin_field_data_projects_path
 
         expect(response.status).to eq(200)
       end
@@ -113,8 +113,8 @@ describe 'Projects' do
 
     describe '#GET projects show page' do
       it 'returns 200' do
-        project = create(:project)
-        get admin_project_path(id: project.id)
+        project = create(:field_data_project)
+        get admin_field_data_project_path(id: project.id)
 
         expect(response.status).to eq(200)
       end

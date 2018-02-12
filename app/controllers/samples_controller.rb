@@ -26,8 +26,8 @@ class SamplesController < ApplicationController
 
   # TODO: add test
   def display_name
-    if params[:project_id]
-      Project.select(:name).find(params[:project_id]).name
+    if params[:field_data_project_id]
+      FieldDataProject.select(:name).find(params[:field_data_project_id]).name
     elsif params[:sample_id]
       Sample.select(:bar_code).find(params[:sample_id]).bar_code
     end
@@ -36,7 +36,8 @@ class SamplesController < ApplicationController
   def query_string
     query = {}
     query[:status_cd] = params[:status] if params[:status]
-    query[:project_id] = params[:project_id] if params[:project_id]
+    project_id = params[:field_data_project_id]
+    query[:field_data_project_id] = project_id if project_id
     query[:id] = params[:sample_id] if params[:sample_id]
     query
   end

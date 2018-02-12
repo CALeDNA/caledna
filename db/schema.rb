@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180205012035) do
+ActiveRecord::Schema.define(version: 20180211224524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "field_data_projects", force: :cascade do |t|
+    t.integer  "kobo_id"
+    t.jsonb    "kobo_payload"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.datetime "last_import_date"
+    t.string   "description"
+    t.string   "name"
+    t.string   "date_range"
+    t.index ["kobo_id"], name: "index_field_data_projects_on_kobo_id", unique: true, using: :btree
+  end
 
   create_table "hierarchy", primary_key: "hierarchy_string", id: :string, limit: 300, force: :cascade do |t|
     t.integer "tsn",           null: false
@@ -50,19 +62,6 @@ ActiveRecord::Schema.define(version: 20180205012035) do
     t.index ["sample_id"], name: "index_photos_on_sample_id", using: :btree
   end
 
-  create_table "projects", force: :cascade do |t|
-    t.string   "name"
-    t.text     "description"
-    t.string   "kobo_name"
-    t.integer  "kobo_id"
-    t.jsonb    "kobo_payload"
-    t.datetime "start_date"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.datetime "last_import_date"
-    t.index ["kobo_id"], name: "index_projects_on_kobo_id", unique: true, using: :btree
-  end
-
   create_table "researchers", force: :cascade do |t|
     t.string   "email",                  default: "",                 null: false
     t.string   "encrypted_password",     default: "",                 null: false
@@ -95,7 +94,7 @@ ActiveRecord::Schema.define(version: 20180205012035) do
   end
 
   create_table "samples", force: :cascade do |t|
-    t.integer  "project_id"
+    t.integer  "field_data_project_id"
     t.integer  "kobo_id"
     t.decimal  "latitude",                precision: 15, scale: 10
     t.decimal  "longitude",               precision: 15, scale: 10
@@ -110,8 +109,8 @@ ActiveRecord::Schema.define(version: 20180205012035) do
     t.datetime "results_completion_date"
     t.string   "status_cd",                                         default: "submitted"
     t.integer  "processor_id"
+    t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["processor_id"], name: "index_samples_on_processor_id", using: :btree
-    t.index ["project_id"], name: "index_samples_on_project_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
 
@@ -175,7 +174,7 @@ ActiveRecord::Schema.define(version: 20180205012035) do
   end
 
   add_foreign_key "photos", "samples"
-  add_foreign_key "samples", "projects"
+  add_foreign_key "samples", "field_data_projects"
   add_foreign_key "samples", "researchers", column: "processor_id"
   add_foreign_key "specimens", "samples"
   add_foreign_key "specimens", "taxonomic_units", column: "tsn", primary_key: "tsn", name: "specimens_tsn_fkey"

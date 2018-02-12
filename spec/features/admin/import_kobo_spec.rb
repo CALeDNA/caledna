@@ -8,7 +8,7 @@ describe 'Import Kobo' do
 
     describe '#GET import_kobo' do
       it 'display project data and actions for researchers' do
-        create(:project, name: 'project name')
+        create(:field_data_project, name: 'project name')
         visit admin_import_kobo_path
 
         expect(page).to have_content('project name')

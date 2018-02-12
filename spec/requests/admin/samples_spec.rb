@@ -49,7 +49,10 @@ describe 'Samples' do
   shared_examples 'allows full write access' do
     describe '#POST' do
       it 'creates a new sample' do
-        attributes = { bar_code: '123', project_id: create(:project).id }
+        attributes = {
+          bar_code: '123',
+          field_data_project_id: create(:field_data_project).id
+        }
         params = { sample: attributes }
 
         expect { post admin_samples_path, params: params }
@@ -98,7 +101,10 @@ describe 'Samples' do
   shared_examples 'denies create access' do
     describe '#POST' do
       it 'does not create a new sample' do
-        attributes = { bar_code: '123', project_id: create(:project).id }
+        attributes = {
+          bar_code: '123',
+          field_data_project_id: create(:field_data_project).id
+        }
         params = { sample: attributes }
 
         expect { post admin_samples_path, params: params }

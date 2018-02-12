@@ -12,10 +12,9 @@ module KoboApi
 
     def self.save_project(hash_payload)
       data = OpenStruct.new(hash_payload)
-      project = ::Project.new(
+      project = ::FieldDataProject.new(
         name: data.title,
         description: data.description,
-        kobo_name: data.title,
         kobo_id: data.id,
         kobo_payload: hash_payload,
         last_import_date: Time.zone.now
@@ -25,7 +24,7 @@ module KoboApi
     end
 
     def self.project_ids
-      Project.pluck(:kobo_id)
+      FieldDataProject.pluck(:kobo_id)
     end
 
     def self.import_samples(project_id, hash_payload)
@@ -38,7 +37,7 @@ module KoboApi
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def self.save_sample(project_id, hash_payload)
+    def self.save_sample(field_data_project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
 
       kit_number =
@@ -55,7 +54,7 @@ module KoboApi
       # rubocop:enable Style/ConditionalAssignment
 
       sample = ::Sample.new(
-        project_id: project_id,
+        field_data_project_id: field_data_project_id,
         kobo_id: data._id,
         latitude: data._geolocation.first,
         longitude: data._geolocation.second,

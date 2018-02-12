@@ -2,26 +2,26 @@
 
 require 'rails_helper'
 
-describe 'Projects' do
+describe 'Field Data Projects' do
   describe 'when researcher is a director' do
     before { login_director }
 
     describe '#GET projects index page' do
       it 'display project data and actions for projects' do
-        create(:project, name: 'name1')
-        visit admin_projects_path
+        create(:field_data_project, name: 'name1')
+        visit admin_field_data_projects_path
 
         expect(page).to have_content('name1')
         expect(page).to have_content('Edit')
         expect(page).to have_content('Destroy')
-        expect(page).to have_content('New project')
+        expect(page).to have_content('New field data project')
       end
     end
 
     describe '#GET projects show page' do
       it 'display project data and actions for projects' do
-        project = create(:project, name: 'name1')
-        visit admin_project_path(id: project.id)
+        project = create(:field_data_project, name: 'name1')
+        visit admin_field_data_project_path(id: project.id)
 
         expect(page).to have_content('name1')
         expect(page).to have_content('Edit name1')
@@ -30,19 +30,19 @@ describe 'Projects' do
 
     describe '#GET projects new page' do
       it 'display project data and actions for projects' do
-        visit new_admin_project_path
+        visit new_admin_field_data_project_path
 
-        expect(page).to have_button('Create Project')
+        expect(page).to have_button('Create Field data project')
       end
     end
 
     describe '#GET projects edit page' do
       it 'display project data and actions for projects' do
-        project = create(:project, name: 'name1')
-        visit edit_admin_project_path(id: project.id)
+        project = create(:field_data_project, name: 'name1')
+        visit edit_admin_field_data_project_path(id: project.id)
 
         expect(page).to have_content('name1')
-        expect(page).to have_button('Update Project')
+        expect(page).to have_button('Update Field data project')
       end
     end
   end
@@ -52,8 +52,8 @@ describe 'Projects' do
 
     describe '#GET projects index page' do
       it 'display project data and actions for projects' do
-        create(:project, name: 'name1')
-        visit admin_projects_path
+        create(:field_data_project, name: 'name1')
+        visit admin_field_data_projects_path
 
         expect(page).to have_content('name1')
         expect(page).to_not have_content('Edit')
@@ -64,8 +64,8 @@ describe 'Projects' do
 
     describe '#GET projects show page' do
       it 'display project data and actions for projects' do
-        project = create(:project, name: 'name1')
-        visit admin_project_path(id: project.id)
+        project = create(:field_data_project, name: 'name1')
+        visit admin_field_data_project_path(id: project.id)
 
         expect(page).to have_content('name1')
         expect(page).to_not have_content('Edit name1')
@@ -78,8 +78,8 @@ describe 'Projects' do
 
     describe '#GET projects index page' do
       it 'display project data and actions for projects' do
-        create(:project, name: 'name1')
-        visit admin_projects_path
+        create(:field_data_project, name: 'name1')
+        visit admin_field_data_projects_path
 
         expect(page).to have_content('name1')
         expect(page).to_not have_content('Edit')
@@ -90,8 +90,8 @@ describe 'Projects' do
 
     describe '#GET projects show page' do
       it 'display project data and actions for projects' do
-        project = create(:project, name: 'name1')
-        visit admin_project_path(id: project.id)
+        project = create(:field_data_project, name: 'name1')
+        visit admin_field_data_project_path(id: project.id)
 
         expect(page).to have_content('name1')
         expect(page).to_not have_content('Edit name1')

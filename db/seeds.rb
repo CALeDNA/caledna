@@ -7,7 +7,7 @@ def delete_records
   Photo.destroy_all
   Sample.destroy_all
   Researcher.destroy_all
-  Project.destroy_all
+  FieldDataProject.destroy_all
 end
 
 def reset_search
@@ -67,7 +67,7 @@ unless Rails.env.production?
 
   puts 'seeding projects...'
   project = FactoryBot.create(
-    :project,
+    :field_data_project,
     kobo_id: nil,
     name: 'Demo project',
     description: Faker::Lorem.sentence
@@ -76,7 +76,7 @@ unless Rails.env.production?
   puts 'seeding samples...'
   samples = FactoryBot.create_list(
     :sample, 15,
-    project: project,
+    field_data_project: project,
     status: :submitted,
     submission_date: Time.zone.now - 2.months
   )
@@ -85,7 +85,7 @@ unless Rails.env.production?
 
   samples = FactoryBot.create_list(
     :sample, 4,
-    project: project,
+    field_data_project: project,
     status: :analyzed,
     submission_date: Time.zone.now - 2.months,
     analysis_date: Time.zone.now - 1.months
@@ -94,7 +94,7 @@ unless Rails.env.production?
 
   FactoryBot.create_list(
     :sample, 50,
-    project: project,
+    field_data_project: project,
     status: :results_completed,
     submission_date: Time.zone.now - 2.months,
     analysis_date: Time.zone.now - 1.months,

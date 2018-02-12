@@ -2,10 +2,10 @@
 
 require 'rails_helper'
 
-describe 'Projects' do
+describe 'Field Data Projects' do
   describe 'projects index page' do
     it 'returns OK' do
-      get projects_path
+      get field_data_projects_path
 
       expect(response.status).to eq(200)
     end
@@ -13,8 +13,8 @@ describe 'Projects' do
 
   describe 'projects show page' do
     it 'returns OK' do
-      project = create(:project)
-      get project_path(id: project.id)
+      project = create(:field_data_project)
+      get field_data_project_path(id: project.id)
 
       expect(response.status).to eq(200)
     end

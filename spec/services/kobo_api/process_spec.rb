@@ -12,11 +12,11 @@ describe KoboApi::Process do
     end
 
     it 'creates new Project with passed in data' do
-      expect { subject.save_project(data) }.to change { Project.count }.by(1)
-
-      expect(Project.first.name).to eq(title)
-      expect(Project.first.kobo_id).to eq(id)
-      expect(Project.first.kobo_payload).to eq(data)
+      expect { subject.save_project(data) }
+        .to change { FieldDataProject.count }.by(1)
+      expect(FieldDataProject.first.name).to eq(title)
+      expect(FieldDataProject.first.kobo_id).to eq(id)
+      expect(FieldDataProject.first.kobo_payload).to eq(data)
     end
   end
 
@@ -39,7 +39,7 @@ describe KoboApi::Process do
 
       it 'all items are saved' do
         expect { subject.import_projects(data) }
-          .to change { Project.count }.by(2)
+          .to change { FieldDataProject.count }.by(2)
       end
 
       it 'returns true when all items are saved' do
@@ -49,7 +49,7 @@ describe KoboApi::Process do
 
     context 'incoming data contains previously imported projects' do
       before(:each) do
-        create(:project, kobo_id: 1)
+        create(:field_data_project, kobo_id: 1)
       end
 
       it 'calls save_project only for new items' do
@@ -61,7 +61,7 @@ describe KoboApi::Process do
 
       it 'does not save previously imported items' do
         expect { subject.import_projects(data) }
-          .to change { Project.count }.by(1)
+          .to change { FieldDataProject.count }.by(1)
       end
 
       it 'returns true when only new items are saved' do

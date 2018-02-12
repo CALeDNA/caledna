@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Project < ApplicationRecord
+class FieldDataProject < ApplicationRecord
   validates :kobo_id, uniqueness: true
 
   has_many :samples, dependent: :destroy

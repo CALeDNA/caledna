@@ -26,12 +26,12 @@ class TaxaController < ApplicationController
   def raw_samples
     sql = 'SELECT samples.id, bar_code, ' \
     'taxonomic_units.rank_id,  taxonomic_units.tsn as tsn, latitude, ' \
-    'longitude, complete_name, project_id, name as project_name ' \
+    'longitude, complete_name, field_data_project_id, name as project_name ' \
     'FROM taxonomic_units ' \
     'INNER JOIN hierarchy ON hierarchy.tsn = taxonomic_units.tsn ' \
     'INNER JOIN specimens ON hierarchy.tsn = specimens.tsn ' \
     'INNER JOIN samples ON specimens.sample_id = samples.id ' \
-    'INNER JOIN projects ON samples.project_id = projects.id ' \
+    'INNER JOIN projects ON samples.taxonomic_units = field_data_projects.id ' \
     'WHERE hierarchy_string ~ ' \
     "'([^[:digit:]]|^)#{params[:id]}([^[:digit:]]|$)'"
 
@@ -62,7 +62,8 @@ class TaxaController < ApplicationController
 
   def query_string
     query = {}
-    query[:project_id] = params[:project_id] if params[:project_id]
+    project_id = params[:field_data_project_id]
+    query[:field_data_project_id] = project_id if project_id
     query
   end
 end
