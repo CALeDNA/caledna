@@ -23,7 +23,7 @@
   <table>
     <tr>
       <th><%= check_box_tag :rows %></th>
-      <th>Bar Code</th>
+      <th>Barcode</th>
       <th>Field Data Project</th>
       <th>Lat/Lng</th>
       <th>Photo</th>
@@ -31,7 +31,7 @@
     <% @samples.each do |sample| %>
     <tr class="js-table-rows" data-url="<%= admin_sample_path(sample.id) %>%">
       <td><%= check_box_tag :row, sample.id%> </td>
-      <td><%= sample.bar_code %></td>
+      <td><%= sample.barcode %></td>
       <td><%= sample.field_data_project.name %></td>
       <td><%= sample.latitude %> / <%= sample.longitude %></td>
       <td>

@@ -103,7 +103,7 @@ unless Rails.env.production?
 
   Sample.all.each_with_index do |sample, i|
     sample.update(
-      bar_code: "K055#{i}-LC-S2",
+      barcode: "K055#{i}-LC-S2",
       latitude: "37.#{i * i}6783",
       longitude: "-120.#{i * 2}23574"
     )

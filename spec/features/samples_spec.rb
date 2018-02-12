@@ -6,29 +6,29 @@ describe 'Samples' do
   describe 'samples index page' do
     let(:project) { create(:field_data_project) }
     let!(:sample1) do
-      create(:sample, bar_code: 'sample 1', field_data_project: project,
+      create(:sample, barcode: 'sample 1', field_data_project: project,
                       status_cd: :approved)
     end
     let!(:sample2) do
-      create(:sample, bar_code: 'sample 2', field_data_project: project,
+      create(:sample, barcode: 'sample 2', field_data_project: project,
                       status_cd: :analyzed)
     end
     let!(:sample3) do
-      create(:sample, bar_code: 'sample 3', field_data_project: project,
+      create(:sample, barcode: 'sample 3', field_data_project: project,
                       status_cd: :results_completed)
     end
     let!(:sample4) do
-      create(:sample, bar_code: 'sample 4', status_cd: :analyzed)
+      create(:sample, barcode: 'sample 4', status_cd: :analyzed)
     end
     let!(:sample5) do
-      create(:sample, bar_code: 'sample 5', status_cd: :results_completed)
+      create(:sample, barcode: 'sample 5', status_cd: :results_completed)
     end
     let!(:sample6) do
-      create(:sample, bar_code: 'sample 6', status_cd: :submitted)
+      create(:sample, barcode: 'sample 6', status_cd: :submitted)
     end
 
     let!(:sample7) do
-      create(:sample, bar_code: 'sample 7', status_cd: :rejected)
+      create(:sample, barcode: 'sample 7', status_cd: :rejected)
     end
 
     it 'renders all approved samples when no query string' do

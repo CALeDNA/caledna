@@ -21,7 +21,7 @@ class SamplesController < ApplicationController
   end
 
   def samples
-    Sample.approved.order(:bar_code).where(query_string)
+    Sample.approved.order(:barcode).where(query_string)
   end
 
   # TODO: add test
@@ -29,7 +29,7 @@ class SamplesController < ApplicationController
     if params[:field_data_project_id]
       FieldDataProject.select(:name).find(params[:field_data_project_id]).name
     elsif params[:sample_id]
-      Sample.select(:bar_code).find(params[:sample_id]).bar_code
+      Sample.select(:barcode).find(params[:sample_id]).barcode
     end
   end
 

@@ -25,7 +25,7 @@ describe 'ImportKobo' do
     describe '#POST import_samples' do
       it 'creates a new sample' do
         project = create(:field_data_project)
-        attributes = { bar_code: '123', field_data_project_id: project.id }
+        attributes = { barcode: '123', field_data_project_id: project.id }
         params = { id: project.id, sample: attributes }
 
         expect { post admin_samples_path, params: params }
@@ -56,7 +56,7 @@ describe 'ImportKobo' do
     describe '#POST import_samples' do
       it 'does not create a new sample' do
         project = create(:field_data_project)
-        attributes = { bar_code: '123', project_id: project.id }
+        attributes = { barcode: '123', project_id: project.id }
         params = { id: project.id, sample: attributes }
 
         expect { post admin_samples_path, params: params }

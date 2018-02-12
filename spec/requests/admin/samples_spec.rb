@@ -50,7 +50,7 @@ describe 'Samples' do
     describe '#POST' do
       it 'creates a new sample' do
         attributes = {
-          bar_code: '123',
+          barcode: '123',
           field_data_project_id: create(:field_data_project).id
         }
         params = { sample: attributes }
@@ -62,12 +62,12 @@ describe 'Samples' do
 
     describe '#PUT' do
       it 'updates a sample' do
-        sample = FactoryBot.create(:sample, bar_code: '123')
-        params = { id: sample.id, sample: { bar_code: 'abc' } }
+        sample = FactoryBot.create(:sample, barcode: '123')
+        params = { id: sample.id, sample: { barcode: 'abc' } }
         put admin_sample_path(id: sample.id), params: params
         sample.reload
 
-        expect(sample.bar_code).to eq('abc')
+        expect(sample.barcode).to eq('abc')
       end
     end
 
@@ -90,7 +90,7 @@ describe 'Samples' do
 
     describe '#GET samples edit page' do
       it 'redirects to admin root' do
-        sample = create(:sample, bar_code: '123')
+        sample = create(:sample, barcode: '123')
         get edit_admin_sample_path(id: sample.id)
 
         expect(response.status).to eq(200)
@@ -102,7 +102,7 @@ describe 'Samples' do
     describe '#POST' do
       it 'does not create a new sample' do
         attributes = {
-          bar_code: '123',
+          barcode: '123',
           field_data_project_id: create(:field_data_project).id
         }
         params = { sample: attributes }
@@ -124,18 +124,18 @@ describe 'Samples' do
   shared_examples 'allows edit access' do
     describe '#PUT' do
       it 'updates a sample' do
-        sample = FactoryBot.create(:sample, bar_code: '123')
-        params = { id: sample.id, sample: { bar_code: 'abc' } }
+        sample = FactoryBot.create(:sample, barcode: '123')
+        params = { id: sample.id, sample: { barcode: 'abc' } }
         put admin_sample_path(id: sample.id), params: params
         sample.reload
 
-        expect(sample.bar_code).to eq('abc')
+        expect(sample.barcode).to eq('abc')
       end
     end
 
     describe '#GET samples edit page' do
       it 'redirects to admin root' do
-        sample = create(:sample, bar_code: '123')
+        sample = create(:sample, barcode: '123')
         get edit_admin_sample_path(id: sample.id)
 
         expect(response.status).to eq(200)
@@ -170,20 +170,20 @@ describe 'Samples' do
     describe '#PUT' do
       it 'updates a sample' do
         processor = Researcher.sample_processors.first
-        sample = FactoryBot.create(:sample, bar_code: '123',
+        sample = FactoryBot.create(:sample, barcode: '123',
                                             processor: processor)
-        params = { id: sample.id, sample: { bar_code: 'abc' } }
+        params = { id: sample.id, sample: { barcode: 'abc' } }
         put admin_sample_path(id: sample.id), params: params
         sample.reload
 
-        expect(sample.bar_code).to eq('abc')
+        expect(sample.barcode).to eq('abc')
       end
     end
 
     describe '#GET samples edit page' do
       it 'returns 200' do
         processor = Researcher.sample_processors.first
-        sample = FactoryBot.create(:sample, bar_code: '123',
+        sample = FactoryBot.create(:sample, barcode: '123',
                                             processor: processor)
         get edit_admin_sample_path(id: sample.id)
 

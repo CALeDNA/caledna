@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180211224524) do
+ActiveRecord::Schema.define(version: 20180211292812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -96,19 +96,20 @@ ActiveRecord::Schema.define(version: 20180211224524) do
   create_table "samples", force: :cascade do |t|
     t.integer  "field_data_project_id"
     t.integer  "kobo_id"
-    t.decimal  "latitude",                precision: 15, scale: 10
-    t.decimal  "longitude",               precision: 15, scale: 10
+    t.decimal  "latitude",              precision: 15, scale: 10
+    t.decimal  "longitude",             precision: 15, scale: 10
     t.datetime "submission_date"
-    t.string   "bar_code"
+    t.string   "barcode"
     t.jsonb    "kobo_data"
-    t.datetime "analysis_date"
     t.text     "notes"
-    t.datetime "created_at",                                                              null: false
-    t.datetime "updated_at",                                                              null: false
+    t.datetime "created_at",                                                            null: false
+    t.datetime "updated_at",                                                            null: false
     t.datetime "collection_date"
-    t.datetime "results_completion_date"
-    t.string   "status_cd",                                         default: "submitted"
+    t.string   "status_cd",                                       default: "submitted"
     t.integer  "processor_id"
+    t.string   "substrate_cd"
+    t.string   "ecosystem_category_cd"
+    t.string   "alt_id"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["processor_id"], name: "index_samples_on_processor_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree

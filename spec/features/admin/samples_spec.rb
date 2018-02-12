@@ -8,7 +8,7 @@ describe 'Samples' do
 
     describe '#GET samples index page' do
       it 'display sample data and actions for samples' do
-        create(:sample, bar_code: '123')
+        create(:sample, barcode: '123')
         visit admin_samples_path
 
         expect(page).to have_content('123')
@@ -20,7 +20,7 @@ describe 'Samples' do
 
     describe '#GET samples show page' do
       it 'display sample data and actions for samples' do
-        sample = create(:sample, bar_code: '123')
+        sample = create(:sample, barcode: '123')
         visit admin_sample_path(id: sample.id)
 
         expect(page).to have_content('123')
@@ -38,7 +38,7 @@ describe 'Samples' do
 
     describe '#GET samples edit page' do
       it 'display sample data and actions for samples' do
-        sample = create(:sample, bar_code: '123')
+        sample = create(:sample, barcode: '123')
         visit edit_admin_sample_path(id: sample.id)
 
         expect(page).to have_content('123')
@@ -52,7 +52,7 @@ describe 'Samples' do
 
     describe '#GET samples index page' do
       it 'display sample data and actions for samples' do
-        create(:sample, bar_code: '123')
+        create(:sample, barcode: '123')
         visit admin_samples_path
 
         expect(page).to have_content('123')
@@ -64,7 +64,7 @@ describe 'Samples' do
 
     describe '#GET samples show page' do
       it 'display sample data and actions for samples' do
-        sample = create(:sample, bar_code: '123')
+        sample = create(:sample, barcode: '123')
         visit admin_sample_path(id: sample.id)
 
         expect(page).to have_content('123')
@@ -79,7 +79,7 @@ describe 'Samples' do
     describe '#GET samples index page' do
       it 'display sample data and actions for samples' do
         processor = Researcher.sample_processors.first
-        create(:sample, bar_code: '123', processor: processor)
+        create(:sample, barcode: '123', processor: processor)
         visit admin_samples_path
 
         expect(page).to have_content('123')
@@ -92,7 +92,7 @@ describe 'Samples' do
     describe '#GET samples show page' do
       it 'display sample data and actions for samples' do
         processor = Researcher.sample_processors.first
-        sample = create(:sample, bar_code: '123', processor: processor)
+        sample = create(:sample, barcode: '123', processor: processor)
         visit admin_sample_path(id: sample.id)
 
         expect(page).to have_content('123')

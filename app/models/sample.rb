@@ -2,7 +2,7 @@
 
 class Sample < ApplicationRecord
   include PgSearch
-  multisearchable against: %i[bar_code status_cd latitude longitude
+  multisearchable against: %i[barcode status_cd latitude longitude
                               field_data_project_name]
 
   belongs_to :field_data_project
@@ -19,6 +19,8 @@ class Sample < ApplicationRecord
 
   as_enum :status, %i[submitted approved rejected analyzed results_completed],
           map: :string
+  as_enum :substrate, %i[soil sediment water other], map: :string
+  as_enum :ecosystem_category, %i[terrestrial aquatic], map: :string
 
   def status_display
     status.to_s.tr('_', ' ')

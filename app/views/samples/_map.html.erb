@@ -9,9 +9,9 @@
       <%= sample.latitude %>,
       <%= sample.longitude %>,
       <%= sample.id %>,
-      "<%= sample.bar_code %>",
+      "<%= sample.barcode %>",
       '<%= link_to sample.field_data_project_name,  field_data_project_path(id: sample.field_data_project_id) %>',
-      '<%= link_to sample.bar_code, sample_path(id: sample.id) %>',
+      '<%= link_to sample.barcode, sample_path(id: sample.id) %>',
       '<%= sample.status %>',
     ],
   <% end %>

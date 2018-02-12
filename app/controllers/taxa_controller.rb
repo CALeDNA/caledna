@@ -24,7 +24,7 @@ class TaxaController < ApplicationController
 
   # rubocop:disable Metrics/MethodLength
   def raw_samples
-    sql = 'SELECT samples.id, bar_code, ' \
+    sql = 'SELECT samples.id, barcode, ' \
     'taxonomic_units.rank_id,  taxonomic_units.tsn as tsn, latitude, ' \
     'longitude, complete_name, field_data_project_id, name as project_name ' \
     'FROM taxonomic_units ' \

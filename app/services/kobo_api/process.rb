@@ -47,9 +47,9 @@ module KoboApi
 
       # rubocop:disable Style/ConditionalAssignment
       if data.kit
-        bar_code = data.kit
+        barcode = data.kit
       else
-        bar_code = "#{kit_number}-#{location_letter}-#{site_number}"
+        barcode = "#{kit_number}-#{location_letter}-#{site_number}"
       end
       # rubocop:enable Style/ConditionalAssignment
 
@@ -60,8 +60,9 @@ module KoboApi
         longitude: data._geolocation.second,
         collection_date: data.Enter_the_sampling_date_and_time,
         submission_date: data._submission_time,
-        bar_code: bar_code,
-        kobo_data: hash_payload
+        barcode: barcode,
+        kobo_data: hash_payload,
+        substrate: data.What_type_of_substrate_did_you
       )
 
       sample.save

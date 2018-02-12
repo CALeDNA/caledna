@@ -35,3 +35,7 @@ en:
         role_cd: Role
       sample:
         status_cd: Status
+        substrate_cd: Substrate
+        ecosystem_category_cd: 'Ecosystem Category'
+        alt_id: 'Alt ID'
+        kobo_id: 'Kobo ID'

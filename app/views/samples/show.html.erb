@@ -1,4 +1,4 @@
-<h1 class="title"><%= @sample.bar_code %></h1>
+<h1 class="title"><%= @sample.barcode %></h1>
 
 <table class="table">
   <tr>
@@ -6,8 +6,8 @@
     <td><%= link_to @sample.field_data_project.name, field_data_project_path(@sample.field_data_project) %></td>
   </tr>
   <tr>
-    <td>Bar Code</td>
-    <td><%= @sample.bar_code %></td>
+    <td>Barcode</td>
+    <td><%= @sample.barcode %></td>
   </tr>
   <tr>
     <td>Lat/Long</td>
@@ -25,11 +25,11 @@
   </tr>
   <tr>
     <td>Analysis Date</td>
-    <td><%= long_date(@sample.analysis_date) %></td>
+    <td>--</td>
   </tr>
   <tr>
     <td>DNA Results Completed Date</td>
-    <td><%= long_date(@sample.results_completion_date) %></td>
+    <td>--</td>
   </tr>
     <tr>
     <td>Specimens Found</td>

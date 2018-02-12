@@ -16,14 +16,15 @@ class SampleDashboard < Administrate::BaseDashboard
     longitude: Field::String.with_options(searchable: false),
     collection_date: Field::DateTime,
     submission_date: Field::DateTime,
-    bar_code: Field::String,
+    barcode: Field::String,
     kobo_data: Field::JSON.with_options(searchable: false),
-    analysis_date: Field::DateTime,
     notes: Field::Text,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
-    results_completion_date: Field::DateTime,
     status_cd: EnumField,
+    substrate_cd: EnumField,
+    ecosystem_category_cd: EnumField,
+    alt_id: Field::String,
     processor_id: Field::Number,
   }.freeze
 
@@ -31,7 +32,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :field_data_project,
     :latitude,
     :longitude,
-    :bar_code,
+    :barcode,
     :processor,
   ].freeze
 
@@ -39,16 +40,17 @@ class SampleDashboard < Administrate::BaseDashboard
     :field_data_project,
     :latitude,
     :longitude,
-    :bar_code,
+    :barcode,
     :processor,
     :kobo_id,
     :status_cd,
+    :substrate_cd,
+    :ecosystem_category_cd,
+    :alt_id,
     :notes,
     :photos,
     :submission_date,
     :collection_date,
-    :analysis_date,
-    :results_completion_date,
     :created_at,
     :updated_at,
     :kobo_data,
@@ -58,20 +60,21 @@ class SampleDashboard < Administrate::BaseDashboard
     :field_data_project,
     :latitude,
     :longitude,
-    :bar_code,
+    :barcode,
     :processor,
     :kobo_id,
     :status_cd,
+    :substrate_cd,
+    :ecosystem_category_cd,
+    :alt_id,
     :notes,
     :submission_date,
     :collection_date,
-    :analysis_date,
-    :results_completion_date,
     :created_at,
     :updated_at,
   ].freeze
 
   def display_resource(sample)
-    sample.bar_code
+    sample.barcode
   end
 end
