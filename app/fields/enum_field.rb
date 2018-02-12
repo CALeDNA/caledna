@@ -9,8 +9,9 @@ class EnumField < Administrate::Field::Base
 
   def select_field_values(form_builder)
     field_name = attribute.to_s.sub('_cd', '')
-    options = form_builder.object.class.public_send(field_name.pluralize)
-    options.keys.map do |v|
+    fields = form_builder.object.class.public_send(field_name.pluralize)
+    options = [["Select #{field_name.titleize}", '']]
+    options + fields.keys.map do |v|
       [v.titleize, v]
     end
   end
