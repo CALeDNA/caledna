@@ -19,7 +19,7 @@ class SearchesController < ApplicationController
   def samples
     search_results = PgSearch.multisearch(search_params[:query])
     ids = search_results.pluck(:searchable_id)
-    Sample.where(id: ids)
+    Sample.approved.where(id: ids)
   end
 
   def search_params

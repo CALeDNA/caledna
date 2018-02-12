@@ -23,8 +23,15 @@ describe 'Samples' do
     let!(:sample5) do
       create(:sample, bar_code: 'sample 5', status_cd: :results_completed)
     end
+    let!(:sample6) do
+      create(:sample, bar_code: 'sample 6', status_cd: :submitted)
+    end
 
-    it 'renders all samples when no query string' do
+    let!(:sample7) do
+      create(:sample, bar_code: 'sample 7', status_cd: :rejected)
+    end
+
+    it 'renders all approved samples when no query string' do
       visit samples_path(view: :list)
 
       expect(page).to have_content 'sample 1'
@@ -32,6 +39,12 @@ describe 'Samples' do
       expect(page).to have_content 'sample 3'
       expect(page).to have_content 'sample 4'
       expect(page).to have_content 'sample 5'
+    end
+
+    it 'does not render unapproved samples' do
+      visit samples_path(view: :list)
+      expect(page).to_not have_content 'sample 6'
+      expect(page).to_not have_content 'sample 7'
     end
 
     it 'renders one sample when sample_id is in query string' do

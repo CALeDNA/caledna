@@ -13,6 +13,9 @@ class Sample < ApplicationRecord
 
   scope :analyzed, -> { where(status_cd: :analyzed) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
+  scope :approved, (lambda do
+    where.not(status_cd: :submitted).where.not(status_cd: :rejected)
+  end)
 
   as_enum :status, %i[submitted approved rejected analyzed results_completed],
           map: :string

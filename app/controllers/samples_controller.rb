@@ -21,7 +21,7 @@ class SamplesController < ApplicationController
   end
 
   def samples
-    Sample.order(:bar_code).where(query_string)
+    Sample.approved.order(:bar_code).where(query_string)
   end
 
   # TODO: add test
