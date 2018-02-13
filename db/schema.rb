@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180212152638) do
+ActiveRecord::Schema.define(version: 20180213145628) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "asvs", force: :cascade do |t|
+    t.integer  "tsn"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "extraction_id"
+    t.index ["extraction_id"], name: "index_asvs_on_extraction_id", using: :btree
+    t.index ["tsn"], name: "index_asvs_on_tsn", using: :btree
+  end
 
   create_table "extraction_types", force: :cascade do |t|
     t.string   "name"
@@ -189,15 +198,6 @@ ActiveRecord::Schema.define(version: 20180212152638) do
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
 
-  create_table "specimens", force: :cascade do |t|
-    t.integer  "tsn"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.integer  "extraction_id"
-    t.index ["extraction_id"], name: "index_specimens_on_extraction_id", using: :btree
-    t.index ["tsn"], name: "index_specimens_on_tsn", using: :btree
-  end
-
   create_table "taxon_unit_types", primary_key: ["kingdom_id", "rank_id"], force: :cascade do |t|
     t.integer "kingdom_id",                    null: false
     t.integer "rank_id",            limit: 2,  null: false
@@ -207,7 +207,7 @@ ActiveRecord::Schema.define(version: 20180212152638) do
     t.date    "update_date",                   null: false
   end
 
-  create_table "taxonomic_units", primary_key: "tsn", id: :integer, force: :cascade do |t|
+  create_table "taxonomic_units", primary_key: "tsn", id: :bigint, force: :cascade do |t|
     t.string   "unit_ind1",          limit: 1
     t.string   "unit_name1",         limit: 35,                  null: false
     t.string   "unit_ind2",          limit: 1
@@ -248,6 +248,8 @@ ActiveRecord::Schema.define(version: 20180212152638) do
     t.index ["language"], name: "index_vernaculars_on_language", using: :btree
   end
 
+  add_foreign_key "asvs", "extractions"
+  add_foreign_key "asvs", "taxonomic_units", column: "tsn", primary_key: "tsn", name: "asvs_tsn_fkey"
   add_foreign_key "extractions", "extraction_types"
   add_foreign_key "extractions", "researchers", column: "local_fastq_storage_adder_id"
   add_foreign_key "extractions", "researchers", column: "processor_id"
@@ -256,6 +258,4 @@ ActiveRecord::Schema.define(version: 20180212152638) do
   add_foreign_key "photos", "samples"
   add_foreign_key "samples", "field_data_projects"
   add_foreign_key "samples", "researchers", column: "processor_id"
-  add_foreign_key "specimens", "extractions"
-  add_foreign_key "specimens", "taxonomic_units", column: "tsn", primary_key: "tsn", name: "specimens_tsn_fkey"
 end

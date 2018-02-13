@@ -8,7 +8,7 @@ class Extraction < ApplicationRecord
   belongs_to :extraction_type
   belongs_to :processor, class_name: 'Researcher', foreign_key: 'processor_id',
                          optional: true
-  has_many :specimens
+  has_many :asvs
 
   as_enum :priority_sequencing, %i[none low high], map: :string
   as_enum :brand_beads, %i[AmpureXP Serapure Other], map: :string

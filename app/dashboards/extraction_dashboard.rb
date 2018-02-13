@@ -5,7 +5,7 @@ class ExtractionDashboard < Administrate::BaseDashboard
     sample: Field::BelongsTo,
     extraction_type: Field::BelongsTo,
     processor: Field::BelongsTo.with_options(class_name: "Researcher"),
-    specimens: Field::HasMany,
+    asvs: Field::HasMany,
     id: Field::Number,
     processor_id: Field::Number,
     priority_sequencing_cd: Field::String,
@@ -70,14 +70,14 @@ class ExtractionDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :sample,
     :processor,
-    :specimens,
+    :asvs,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :sample,
     :extraction_type,
     :processor,
-    :specimens,
+    :asvs,
     :id,
     :processor_id,
     :priority_sequencing_cd,
@@ -146,7 +146,7 @@ class ExtractionDashboard < Administrate::BaseDashboard
     :sample,
     :extraction_type,
     :processor,
-    :specimens,
+    :asvs,
     :processor_id,
     :priority_sequencing_cd,
     :prepub_share,

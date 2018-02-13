@@ -23,30 +23,36 @@
     <td>Collection Date</td>
     <td><%= long_date(@sample.submission_date) %></td>
   </tr>
-  <tr>
-    <td>Analysis Date</td>
-    <td>--</td>
-  </tr>
-  <tr>
-    <td>DNA Results Completed Date</td>
-    <td>--</td>
-  </tr>
+
+  <% @sample.extractions.each do |extraction| %>
+   <% if @sample.extractions.length > 1%>
+      <tr>
+        <td><%= extraction.extraction_type.name %></td>
+        <td></td>
+      </tr>
+    <% end %>
     <tr>
-    <td>Specimens Found</td>
-    <td>
-      <% @sample.extractions.each do |extraction| %>
-        <%= extraction.extraction_type.name %>
+      <td>Analysis Date</td>
+      <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
+    </tr>
+    <tr>
+      <td>DNA Results Completed Date</td>
+      <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
+    </tr>
+    <tr>
+      <td>Organisms from ASV</td>
+      <td>
         <ul>
-        <% extraction.specimens.each do |s| %>
+        <% extraction.asvs.each do |s| %>
           <li>
             <%= link_to s.taxonomic_unit.complete_name, taxa_path(s.taxonomic_unit) %>
             <%= s.taxonomic_unit.common_name %>
           </li>
         <% end %>
         </ul>
-      <% end %>
-    </td>
-  </tr>
+      </td>
+    </tr>
+  <% end %>
 </table>
 
 <%= render partial: "samples/map", locals: { samples: [@sample],

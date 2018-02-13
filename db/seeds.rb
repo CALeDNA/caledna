@@ -3,7 +3,7 @@
 def delete_records
   puts 'deleting some records...'
 
-  Specimen.destroy_all
+  Asv.destroy_all
   Photo.destroy_all
   ExtractionType.destroy_all
   Extraction.destroy_all
@@ -166,9 +166,9 @@ unless Rails.env.production?
     Extraction.all.each do |extraction|
       rand(1..5).times do
         unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
-        Specimen.create(extraction: extraction, taxonomic_unit: unit)
+        Asv.create(extraction: extraction, taxonomic_unit: unit)
       end
-      Specimen.create(extraction: extraction, tsn: tsn.sample)
+      Asv.create(extraction: extraction, tsn: tsn.sample)
     end
   end
 

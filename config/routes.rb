@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     resources :samples
     resources :extraction_types
     resources :extractions
+    resources :asvs
     resources :photos
     resources :researchers
 

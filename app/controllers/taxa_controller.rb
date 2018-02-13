@@ -29,8 +29,8 @@ class TaxaController < ApplicationController
     'longitude, complete_name, field_data_project_id, name as project_name ' \
     'FROM taxonomic_units ' \
     'INNER JOIN hierarchy ON hierarchy.tsn = taxonomic_units.tsn ' \
-    'INNER JOIN specimens ON hierarchy.tsn = specimens.tsn ' \
-    'INNER JOIN extractions ON specimens.extraction_id = extractions.id ' \
+    'INNER JOIN asvs ON hierarchy.tsn = asvs.tsn ' \
+    'INNER JOIN extractions ON asvs.extraction_id = extractions.id ' \
     'INNER JOIN samples ON samples.id = extractions.sample_id ' \
     'INNER JOIN field_data_projects ON samples.field_data_project_id ' \
     ' = field_data_projects.id ' \
@@ -53,13 +53,13 @@ class TaxaController < ApplicationController
       TaxonomicUnit
       .distinct(:tsn)
       .joins(:hierarchy)
-      .joins('INNER JOIN specimens ON hierarchy.tsn = specimens.tsn')
-      .joins('INNER JOIN samples ON samples.id = specimens.sample_id')
+      .joins('INNER JOIN asvs ON hierarchy.tsn = asvs.tsn')
+      .joins('INNER JOIN samples ON samples.id = asvs.sample_id')
       .where('hierarchy_string LIKE ?', "%#{params[:id]}%")
   end
 
   def top_taxa_ids
-    Specimen.group('tsn').order('count(*) DESC').limit(10).pluck(:tsn)
+    Asv.group('tsn').order('count(*) DESC').limit(10).pluck(:tsn)
   end
 
   def query_string

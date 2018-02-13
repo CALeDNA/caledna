@@ -5,7 +5,7 @@ class TaxonomicUnit < ApplicationRecord
   belongs_to :kingdom
   has_one :longname, foreign_key: 'tsn'
   has_many :vernaculars, foreign_key: 'tsn'
-  has_many :specimens, foreign_key: 'tsn'
+  has_many :asvs, foreign_key: 'tsn'
   has_one :taxon_unit_type, foreign_key: 'rank_id'
 
   scope :valid, -> { where(n_usage: 'valid').or(where(n_usage: 'accepted')) }
