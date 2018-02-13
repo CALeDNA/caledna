@@ -1,0 +1,272 @@
+<table class="table">
+  <tr>
+    <td>Project</td>
+    <td><%= link_to sample.field_data_project.name, field_data_project_path(sample.field_data_project) %></td>
+  </tr>
+  <tr>
+    <td>Barcode</td>
+    <td><%= sample.barcode %></td>
+  </tr>
+  <tr>
+    <td>Lat/Long</td>
+    <td>
+      <%= sample.latitude %>, <%= sample.longitude %>
+    </td>
+  </tr>
+
+  <% sample.extractions.each do |extraction| %>
+   <% if sample.extractions.length > 1%>
+      <tr>
+        <td><b><%= extraction.extraction_type.name %></b></td>
+        <td></td>
+      </tr>
+    <% end %>
+
+    <tr>
+      <td>Organisms from ASV</td>
+      <td>
+        <ul>
+        <% extraction.asvs.each do |s| %>
+          <li>
+            <%= link_to s.taxonomic_unit.complete_name, taxa_path(s.taxonomic_unit) %>
+            <%= s.taxonomic_unit.common_name %>
+          </li>
+        <% end %>
+        </ul>
+      </td>
+    </tr>
+
+    <tr>
+      <td>processor</td>
+      <td><%= extraction.processor.username %></td>
+    </tr>
+    <tr>
+      <td>priority sequencing</td>
+      <td><%= extraction.priority_sequencing_cd %></td>
+    </tr>
+    <tr>
+      <td>prepub share</td>
+      <td><%= extraction.prepub_share %></td>
+    </tr>
+    <tr>
+      <td>prepub share group</td>
+      <td><%= extraction.prepub_share_group %></td>
+    </tr>
+    <tr>
+      <td>prepub filter sensitive info</td>
+      <td><%= extraction.prepub_filter_sensitive_info %></td>
+    </tr>
+    <tr>
+      <td>SRA url</td>
+      <td><%= extraction.sra_url %></td>
+    </tr>
+    <tr>
+      <td>SRA adder</td>
+      <td><%= extraction.sra_adder.username %></td>
+    </tr>
+    <tr>
+      <td>SRA add date</td>
+      <td><%= long_date(extraction.sra_add_date) %></td>
+    </tr>
+    <tr>
+      <td>local fastq storage url</td>
+      <td><%= extraction.local_fastq_storage_url %></td>
+    </tr>
+    <tr>
+      <td>local fastq storage url adder</td>
+      <td><%= extraction.local_fastq_storage_adder.username %></td>
+    </tr>
+    <tr>
+      <td>local fastq storage add date</td>
+      <td><%= long_date(extraction.local_fastq_storage_add_date) %></td>
+    </tr>
+    <tr>
+      <td>stat bio reps pooled</td>
+      <td><%= extraction.stat_bio_reps_pooled %></td>
+    </tr>
+    <tr>
+      <td>stat bio reps pooled date</td>
+      <td><%= long_date(extraction.stat_bio_reps_pooled_date) %></td>
+    </tr>
+    <tr>
+      <td>loc bio reps pooled</td>
+      <td><%= extraction.loc_bio_reps_pooled %></td>
+    </tr>
+    <tr>
+      <td>bio reps pooled date</td>
+      <td><%= long_date(extraction.bio_reps_pooled_date) %></td>
+    </tr>
+    <tr>
+      <td>protocol bio reps pooled</td>
+      <td><%= extraction.protocol_bio_reps_pooled %></td>
+    </tr>
+    <tr>
+      <td>changes protocol bio reps pooled</td>
+      <td><%= extraction.changes_protocol_bio_reps_pooled %></td>
+    </tr>
+    <tr>
+      <td>stat dna extraction</td>
+      <td><%= extraction.stat_dna_extraction %></td>
+    </tr>
+    <tr>
+      <td>stat dna extraction date</td>
+      <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
+    </tr>
+    <tr>
+      <td>loc dna extracts</td>
+      <td><%= extraction.loc_dna_extracts %></td>
+    </tr>
+    <tr>
+      <td>dna extraction date</td>
+      <td><%= long_date(extraction.dna_extraction_date) %></td>
+    </tr>
+    <tr>
+      <td>protocol dna extraction</td>
+      <td><%= extraction.protocol_dna_extraction %></td>
+    </tr>
+    <tr>
+      <td>changes protocol dna extraction</td>
+      <td><%= extraction.changes_protocol_dna_extraction %></td>
+    </tr>
+    <tr>
+      <td>metabarcoding primers</td>
+      <td><%= extraction.metabarcoding_primers %></td>
+    </tr>
+    <tr>
+      <td>stat barcoding pcr done</td>
+      <td><%= extraction.stat_barcoding_pcr_done %></td>
+    </tr>
+    <tr>
+      <td>stat barcoding pcr done date</td>
+      <td><%= long_date(extraction.stat_barcoding_pcr_done_date) %></td>
+    </tr>
+    <tr>
+      <td>barcoding pcr number of replicates</td>
+      <td><%= extraction.barcoding_pcr_number_of_replicates %></td>
+    </tr>
+    <tr>
+      <td>reamps needed</td>
+      <td><%= extraction.reamps_needed %></td>
+    </tr>
+    <tr>
+      <td>stat barcoding pcr pooled</td>
+      <td><%= extraction.stat_barcoding_pcr_pooled %></td>
+    </tr>
+    <tr>
+      <td>stat barcoding pcr pooled date</td>
+      <td><%= long_date(extraction.stat_barcoding_pcr_pooled_date) %></td>
+    </tr>
+    <tr>
+      <td>stat barcoding pcr bead cleaned</td>
+      <td><%= extraction.stat_barcoding_pcr_bead_cleaned %></td>
+    </tr>
+    <tr>
+      <td>stat barcoding pcr bead cleaned date</td>
+      <td><%= long_date(extraction.stat_barcoding_pcr_bead_cleaned_date) %></td>
+    </tr>
+    <tr>
+      <td>brand beads</td>
+      <td><%= extraction.brand_beads_cd %></td>
+    </tr>
+    <tr>
+      <td>cleaned concentration</td>
+      <td><%= extraction.cleaned_concentration %></td>
+    </tr>
+    <tr>
+      <td>loc stored</td>
+      <td><%= extraction.loc_stored %></td>
+    </tr>
+    <tr>
+      <td>select indices</td>
+      <td><%= extraction.select_indices_cd %></td>
+    </tr>
+    <tr>
+      <td>index 1</td>
+      <td><%= extraction.index_1_name %></td>
+    </tr>
+    <tr>
+      <td>index 2</td>
+      <td><%= extraction.index_2_name %></td>
+    </tr>
+    <tr>
+      <td>stat index pcr done</td>
+      <td><%= extraction.stat_index_pcr_done %></td>
+    </tr>
+    <tr>
+      <td>stat index pcr done date</td>
+      <td><%= long_date(extraction.stat_index_pcr_done_date) %></td>
+    </tr>
+    <tr>
+      <td>stat index pcr bead cleaned</td>
+      <td><%= extraction.stat_index_pcr_bead_cleaned %></td>
+    </tr>
+    <tr>
+      <td>stat index pcr bead cleaned date</td>
+      <td><%= long_date(extraction.stat_index_pcr_bead_cleaned_date) %></td>
+    </tr>
+    <tr>
+      <td>index brand beads</td>
+      <td><%= extraction.index_brand_beads_cd %></td>
+    </tr>
+    <tr>
+      <td>index cleaned concentration</td>
+      <td><%= extraction.index_cleaned_concentration %></td>
+    </tr>
+    <tr>
+      <td>index loc stored</td>
+      <td><%= extraction.index_loc_stored %></td>
+    </tr>
+    <tr>
+      <td>stat libraries pooled</td>
+      <td><%= extraction.stat_libraries_pooled %></td>
+    </tr>
+    <tr>
+      <td>stat libraries pooled date</td>
+      <td><%= long_date(extraction.stat_libraries_pooled_date) %></td>
+    </tr>
+    <tr>
+      <td>loc libraries pooled</td>
+      <td><%= extraction.loc_libraries_pooled %></td>
+    </tr>
+    <tr>
+      <td>stat sequenced</td>
+      <td><%= extraction.stat_sequenced %></td>
+    </tr>
+    <tr>
+      <td>stat sequenced date</td>
+      <td><%= long_date(extraction.stat_sequenced_date) %></td>
+    </tr>
+    <tr>
+      <td>intended sequencing depth per barcode</td>
+      <td><%= extraction.intended_sequencing_depth_per_barcode %></td>
+    </tr>
+    <tr>
+      <td>sequencing platform</td>
+      <td><%= extraction.sequencing_platform_cd %></td>
+    </tr>
+    <tr>
+      <td>assoc field blank</td>
+      <td><%= extraction.assoc_field_blank %></td>
+    </tr>
+    <tr>
+      <td>assoc extraction blank</td>
+      <td><%= extraction.assoc_extraction_blank %></td>
+    </tr>
+    <tr>
+      <td>assoc pcr blank</td>
+      <td><%= extraction.assoc_pcr_blank %></td>
+    </tr>
+    <tr>
+      <td>sample processor notes</td>
+      <td><%= extraction.notes_sample_processor %></td>
+    </tr>
+    <tr>
+      <td>lab manager notes</td>
+      <td><%= extraction.notes_lab_manager %></td>
+    </tr>
+    <tr>
+      <td>director notes</td>
+      <td><%= extraction.notes_director %></td>
+    </tr>
+  <% end %>
+</table>

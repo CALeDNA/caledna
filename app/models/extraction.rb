@@ -8,6 +8,11 @@ class Extraction < ApplicationRecord
   belongs_to :extraction_type
   belongs_to :processor, class_name: 'Researcher', foreign_key: 'processor_id',
                          optional: true
+  belongs_to :sra_adder, class_name: 'Researcher', foreign_key: 'processor_id',
+                         optional: true
+  belongs_to :local_fastq_storage_adder, class_name: 'Researcher',
+                                         foreign_key: 'processor_id',
+                                         optional: true
   has_many :asvs
 
   as_enum :priority_sequencing, %i[none low high], map: :string

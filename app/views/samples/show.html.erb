@@ -1,59 +1,15 @@
 <h1 class="title"><%= @sample.barcode %></h1>
 
-<table class="table">
-  <tr>
-    <td>Project</td>
-    <td><%= link_to @sample.field_data_project.name, field_data_project_path(@sample.field_data_project) %></td>
-  </tr>
-  <tr>
-    <td>Barcode</td>
-    <td><%= @sample.barcode %></td>
-  </tr>
-  <tr>
-    <td>Lat/Long</td>
-    <td>
-      <%= @sample.latitude %>, <%= @sample.longitude %>
-    </td>
-  </tr>
-  <tr>
-    <td>Status</td>
-    <td><%= @sample.status_display %></td>
-  </tr>
-  <tr>
-    <td>Collection Date</td>
-    <td><%= long_date(@sample.submission_date) %></td>
-  </tr>
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
+  <li role="presentation"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
+</ul>
 
-  <% @sample.extractions.each do |extraction| %>
-   <% if @sample.extractions.length > 1%>
-      <tr>
-        <td><%= extraction.extraction_type.name %></td>
-        <td></td>
-      </tr>
-    <% end %>
-    <tr>
-      <td>Analysis Date</td>
-      <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
-    </tr>
-    <tr>
-      <td>DNA Results Completed Date</td>
-      <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
-    </tr>
-    <tr>
-      <td>Organisms from ASV</td>
-      <td>
-        <ul>
-        <% extraction.asvs.each do |s| %>
-          <li>
-            <%= link_to s.taxonomic_unit.complete_name, taxa_path(s.taxonomic_unit) %>
-            <%= s.taxonomic_unit.common_name %>
-          </li>
-        <% end %>
-        </ul>
-      </td>
-    </tr>
-  <% end %>
-</table>
-
-<%= render partial: "samples/map", locals: { samples: [@sample],
-  initial_lat: @sample.latitude, initial_lng: @sample.longitude } %>
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane active" id="summary">
+    <%= render partial: "summary", locals: { sample: @sample } %>
+  </div>
+  <div role="tabpanel" class="tab-pane" id="details">
+    <%= render partial: "details", locals: { sample: @sample } %>
+  </div>
+</div>
