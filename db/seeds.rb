@@ -18,7 +18,7 @@ def reset_search
   PgSearch::Multisearch.rebuild(Sample)
 end
 
-# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/AbcSize, Metrics/MethodLength
 def import_taxonomy_data
   puts 'seeding taxonomy...'
   sql_file = Rails.root.join('db').join('data').join('itis_condensed_data.sql')
@@ -34,25 +34,25 @@ def import_taxonomy_data
 end
 
 def seed_samples(project)
-  samples = FactoryBot.create_list(
+  FactoryBot.create_list(
     :sample, 15,
     field_data_project: project,
     status: :submitted,
     submission_date: Time.zone.now - 2.months
   )
 
-  samples = FactoryBot.create_list(
+  FactoryBot.create_list(
     :sample, 4,
     field_data_project: project,
     status: :analyzed,
-    submission_date: Time.zone.now - 2.months,
+    submission_date: Time.zone.now - 2.months
   )
 
   FactoryBot.create_list(
     :sample, 50,
     field_data_project: project,
     status: :results_completed,
-    submission_date: Time.zone.now - 2.months,
+    submission_date: Time.zone.now - 2.months
   )
 
   Sample.all.each_with_index do |sample, i|
@@ -63,8 +63,7 @@ def seed_samples(project)
     )
   end
 end
-
-# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
 unless Rails.env.production?
   delete_records
@@ -111,8 +110,8 @@ unless Rails.env.production?
 
   puts 'seeding extractions...'
 
-  typeA = FactoryBot.create(:extraction_type, name: 'extraction A')
-  typeB = FactoryBot.create(:extraction_type, name: 'extraction B')
+  type_a = FactoryBot.create(:extraction_type, name: 'extraction A')
+  type_b = FactoryBot.create(:extraction_type, name: 'extraction B')
 
   Sample.analyzed.each do |sample|
     processor = [processor1, processor2].sample
@@ -121,7 +120,7 @@ unless Rails.env.production?
       :being_analyzed,
       sample: sample,
       processor_id: processor.id,
-      extraction_type: typeA,
+      extraction_type: type_a,
       sra_adder_id: director.id,
       local_fastq_storage_adder_id: director.id
     )
@@ -134,7 +133,7 @@ unless Rails.env.production?
       :results_completed,
       sample: sample,
       processor_id: processor.id,
-      extraction_type: typeA,
+      extraction_type: type_a,
       sra_adder_id: director.id,
       local_fastq_storage_adder_id: director.id
     )
@@ -147,7 +146,7 @@ unless Rails.env.production?
       :results_completed,
       sample: sample,
       processor_id: processor.id,
-      extraction_type: typeB,
+      extraction_type: type_b,
       sra_adder_id: director.id,
       local_fastq_storage_adder_id: director.id
     )

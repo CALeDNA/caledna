@@ -23,29 +23,6 @@ describe 'Samples' do
     end
   end
 
-  shared_examples 'allows read access for #index' do
-    describe '#GET samples index page' do
-      it 'returns 200' do
-        create(:sample)
-        get admin_samples_path
-
-        expect(response.status).to eq(200)
-      end
-    end
-  end
-
-  shared_examples 'allows #show access for own samples' do
-    describe '#GET samples show page' do
-      it 'returns 200' do
-        processor = Researcher.sample_processors.first
-        sample = FactoryBot.create(:sample, processor: processor)
-        get admin_sample_path(id: sample.id)
-
-        expect(response.status).to eq(200)
-      end
-    end
-  end
-
   shared_examples 'allows full write access' do
     describe '#POST' do
       it 'creates a new sample' do
@@ -154,11 +131,10 @@ describe 'Samples' do
     end
   end
 
-  shared_examples 'denies delete access for own samples' do
+  shared_examples 'denies delete access' do
     describe '#DELETE' do
       it 'does not delete a sample' do
-        processor = Researcher.sample_processors.first
-        sample = FactoryBot.create(:sample, processor: processor)
+        sample = FactoryBot.create(:sample)
 
         expect { delete admin_sample_path(id: sample.id) }
           .to change(Sample, :count).by(0)
@@ -166,28 +142,13 @@ describe 'Samples' do
     end
   end
 
-  shared_examples 'allows edit access for own samples' do
-    describe '#PUT' do
-      it 'updates a sample' do
-        processor = Researcher.sample_processors.first
-        sample = FactoryBot.create(:sample, barcode: '123',
-                                            processor: processor)
-        params = { id: sample.id, sample: { barcode: 'abc' } }
-        put admin_sample_path(id: sample.id), params: params
-        sample.reload
-
-        expect(sample.barcode).to eq('abc')
-      end
-    end
-
+  shared_examples 'denies edit access' do
     describe '#GET samples edit page' do
-      it 'returns 200' do
-        processor = Researcher.sample_processors.first
-        sample = FactoryBot.create(:sample, barcode: '123',
-                                            processor: processor)
+      it 'returns 302' do
+        sample = FactoryBot.create(:sample, barcode: '123')
         get edit_admin_sample_path(id: sample.id)
 
-        expect(response.status).to eq(200)
+        expect(response.status).to eq(302)
       end
     end
   end
@@ -208,10 +169,9 @@ describe 'Samples' do
 
   describe 'when researcher is a sample_processor' do
     before { login_sample_processor }
-    include_examples 'allows read access for #index'
-    include_examples 'allows #show access for own samples'
+    include_examples 'allows read access'
     include_examples 'denies create access'
-    include_examples 'allows edit access for own samples'
-    include_examples 'denies delete access for own samples'
+    include_examples 'denies edit access'
+    include_examples 'denies delete access'
   end
 end

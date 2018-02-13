@@ -78,12 +78,11 @@ describe 'Samples' do
 
     describe '#GET samples index page' do
       it 'display sample data and actions for samples' do
-        processor = Researcher.sample_processors.first
-        create(:sample, barcode: '123', processor: processor)
+        create(:sample, barcode: '123')
         visit admin_samples_path
 
         expect(page).to have_content('123')
-        expect(page).to have_content('Edit')
+        expect(page).to_not have_content('Edit')
         expect(page).to_not have_content('Destroy')
         expect(page).to_not have_content('New sample')
       end
@@ -91,12 +90,11 @@ describe 'Samples' do
 
     describe '#GET samples show page' do
       it 'display sample data and actions for samples' do
-        processor = Researcher.sample_processors.first
-        sample = create(:sample, barcode: '123', processor: processor)
+        sample = create(:sample, barcode: '123')
         visit admin_sample_path(id: sample.id)
 
         expect(page).to have_content('123')
-        expect(page).to have_content('Edit 123')
+        expect(page).to_not have_content('Edit 123')
       end
     end
   end

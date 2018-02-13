@@ -2,7 +2,6 @@
 
 FactoryBot.define do
   factory :extraction do
-
     trait :being_analyzed do
       sample
       extraction_type
@@ -68,7 +67,7 @@ FactoryBot.define do
       loc_libraries_pooled { Faker::Lorem.words(2).join(' ') }
       stat_sequenced true
       stat_sequenced_date Time.zone.now
-      intended_sequencing_depth_per_barcode  { Faker::Lorem.words(2).join(' ') }
+      intended_sequencing_depth_per_barcode { Faker::Lorem.words(2).join(' ') }
       sequencing_platform_cd { Extraction.sequencing_platforms.keys.sample }
       assoc_field_blank { Faker::Lorem.words(2).join(' ') }
       assoc_extraction_blank { Faker::Lorem.words(2).join(' ') }
