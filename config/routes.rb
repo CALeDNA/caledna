@@ -8,13 +8,13 @@ Rails.application.routes.draw do
   }
 
   namespace :admin do
-    root to: 'samples#index'
+    root to: 'field_data_projects#index'
     resources :field_data_projects
-    resources :researchers
     resources :samples
     resources :extraction_types
     resources :extractions
     resources :photos
+    resources :researchers
 
     controller 'kobo' do
       post 'import_projects'

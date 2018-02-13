@@ -25,6 +25,7 @@
     <%
       non_model_dashboards = ['kobo', 'assign_samples', 'approve_samples', 'batch_actions']
       next if non_model_dashboards.include?(resource.resource)
+      next unless policy(resource.name.to_s.singularize.to_sym).index?
     %>
 
     <%= link_to(

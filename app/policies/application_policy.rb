@@ -37,7 +37,9 @@ class ApplicationPolicy
   end
 
   def scope
-    Pundit.policy_scope!(user, record.class)
+    klass =
+      record.class == Symbol ? record.to_s.camelize.constantize : record.class
+    Pundit.policy_scope!(user, klass)
   end
 
   class Scope
