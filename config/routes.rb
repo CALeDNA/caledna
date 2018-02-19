@@ -8,27 +8,31 @@ Rails.application.routes.draw do
   }
 
   namespace :admin do
-    root to: 'field_data_projects#index'
+    root to: 'labwork/home#index'
     resources :field_data_projects
     resources :samples
+    resources :photos
     resources :extraction_types
     resources :extractions
     resources :asvs
-    resources :photos
     resources :researchers
 
-    controller 'kobo' do
-      post 'import_projects'
-      post 'import_samples/:id' => 'kobo#import_samples'
-      get 'import_kobo'
-    end
+    namespace :labwork do
+      get '/' => 'home#index'
 
-    controller 'assign_samples' do
-      get 'assign_samples' => 'assign_samples#index'
-    end
+      controller 'kobo' do
+        get 'import_kobo'
+        post 'import_projects' => 'kobo#import_projects'
+        post 'import_samples/:id' => 'kobo#import_samples', as: :import_samples
+      end
 
-    controller 'approve_samples' do
-      get 'approve_samples' => 'approve_samples#index'
+      controller 'assign_samples' do
+        get 'assign_samples' => 'assign_samples#index'
+      end
+
+      controller 'approve_samples' do
+        get 'approve_samples' => 'approve_samples#index'
+      end
     end
 
     controller 'batch_actions' do

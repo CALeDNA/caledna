@@ -1,0 +1,32 @@
+<% content_for(:title) { 'Process Labwork' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <ul>
+    <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
+      <li>
+        <%= link_to 'Import Kobo Projects', admin_labwork_import_kobo_path %>:
+        import projects and sample from Kobo
+      </li>
+    <% end %>
+
+    <% if policy('Labwork::ApproveSamples'.to_sym).index? %>
+      <li>
+        <%= link_to 'Approve Samples', admin_labwork_approve_samples_path %>:
+        approve samples submitted by citizen scientists and researchers
+      </li>
+    <% end %>
+
+    <% if policy('Labwork::AssignSamples'.to_sym).index? %>
+      <li>
+        <%= link_to 'Assign Samples', admin_labwork_assign_samples_path %>:
+        assign samples to sample processors
+      </li>
+    <% end %>
+  </ul>
+</section>
