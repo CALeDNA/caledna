@@ -1,0 +1,88 @@
+<%= form_tag  admin_labwork_update_multiple_path, method: :put  do |f| %>
+
+  <ul class="multiple-records-list">
+    <% extractions.each do |extraction| %>
+      <li>
+        <%= hidden_field_tag "extraction_ids[]", extraction.id%>
+        <%= extraction.sample.barcode %>
+        <ul>
+          <% extraction.errors.full_messages.each do |msg| %>
+            <li><%=msg %></li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+
+  <%= fields_for :extraction do |f| %>
+    <%= render_admin_field(:select, :extraction_type_id, form: f,
+      select_options: select_field_values(:extraction_type, ExtractionType.select_options) )%>
+    <%= render_admin_field(:select, :priority_sequencing_cd, form: f,
+      select_options: enum_field_values(:priority_sequencing_cd, Extraction.priority_sequencings) )%>
+    <%= render_admin_field(:checkbox, :prepub_share, form: f)%>
+    <%= render_admin_field(:text, :prepub_share_group, form: f )%>
+    <%= render_admin_field(:checkbox, :prepub_filter_sensitive_info, form: f)%>
+    <%= render_admin_field(:text, :sra_url, form: f )%>
+    <%= render_admin_field(:select, :sra_adder_id, form: f,
+      select_options: select_field_values(:sra_adder_id, Researcher.select_options) )%>
+    <%= render_admin_field(:datetime, :sra_add_date, form: f )%>
+    <%= render_admin_field(:text, :local_fastq_storage_url, form: f )%>
+    <%= render_admin_field(:select, :local_fastq_storage_adder_id, form: f,
+      select_options: select_field_values(:local_fastq_storage_adder_id, Researcher.select_options) )%>
+    <%= render_admin_field(:datetime, :local_fastq_storage_add_date, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_bio_reps_pooled, form: f)%>
+    <%= render_admin_field(:datetime, :stat_bio_reps_pooled_date, form: f )%>
+    <%= render_admin_field(:text, :loc_bio_reps_pooled, form: f )%>
+    <%= render_admin_field(:datetime, :bio_reps_pooled_date, form: f )%>
+    <%= render_admin_field(:text, :protocol_bio_reps_pooled, form: f )%>
+    <%= render_admin_field(:text, :changes_protocol_bio_reps_pooled, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_dna_extraction, form: f)%>
+    <%= render_admin_field(:datetime, :stat_dna_extraction_date, form: f )%>
+    <%= render_admin_field(:text, :loc_dna_extracts, form: f )%>
+    <%= render_admin_field(:datetime, :dna_extraction_date, form: f )%>
+    <%= render_admin_field(:text, :protocol_dna_extraction, form: f )%>
+    <%= render_admin_field(:text, :changes_protocol_dna_extraction, form: f )%>
+    <%= render_admin_field(:text, :metabarcoding_primers, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_barcoding_pcr_done, form: f)%>
+    <%= render_admin_field(:datetime, :stat_barcoding_pcr_done_date, form: f )%>
+    <%= render_admin_field(:text, :barcoding_pcr_number_of_replicates, form: f )%>
+    <%= render_admin_field(:checkbox, :reamps_needed, form: f)%>
+    <%= render_admin_field(:checkbox, :stat_barcoding_pcr_pooled, form: f)%>
+    <%= render_admin_field(:datetime, :stat_barcoding_pcr_pooled_date, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_barcoding_pcr_bead_cleaned, form: f)%>
+    <%= render_admin_field(:datetime, :stat_barcoding_pcr_bead_cleaned_date, form: f )%>
+    <%= render_admin_field(:select, :brand_beads_cd, form: f,
+      select_options: enum_field_values(:brand_beads_cd, Extraction.brand_beads) )%>
+    <%= render_admin_field(:text, :cleaned_concentration, form: f )%>
+    <%= render_admin_field(:text, :loc_stored, form: f )%>
+    <%= render_admin_field(:select, :select_indices_cd, form: f,
+      select_options: enum_field_values(:select_indices_cd, Extraction.select_indices) )%>
+    <%= render_admin_field(:text, :index_1_name, form: f )%>
+    <%= render_admin_field(:text, :index_2_name, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_index_pcr_done, form: f)%>
+    <%= render_admin_field(:datetime, :stat_index_pcr_done_date, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_index_pcr_bead_cleaned, form: f)%>
+    <%= render_admin_field(:datetime, :stat_index_pcr_bead_cleaned_date, form: f )%>
+    <%= render_admin_field(:select, :index_brand_beads_cd, form: f,
+      select_options: enum_field_values(:index_brand_beads_cd, Extraction.brand_beads) )%>
+    <%= render_admin_field(:text, :index_cleaned_concentration, form: f )%>
+    <%= render_admin_field(:text, :index_loc_stored, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_libraries_pooled, form: f)%>
+    <%= render_admin_field(:datetime, :stat_libraries_pooled_date, form: f )%>
+    <%= render_admin_field(:text, :loc_libraries_pooled, form: f )%>
+    <%= render_admin_field(:checkbox, :stat_sequenced, form: f)%>
+    <%= render_admin_field(:datetime, :stat_sequenced_date, form: f )%>
+    <%= render_admin_field(:text, :intended_sequencing_depth_per_barcode, form: f )%>
+    <%= render_admin_field(:select, :sequencing_platform_cd, form: f,
+      select_options: enum_field_values(:sequencing_platform_cd, Extraction.sequencing_platforms) )%>
+    <%= render_admin_field(:text, :assoc_field_blank, form: f )%>
+    <%= render_admin_field(:text, :assoc_extraction_blank, form: f )%>
+    <%= render_admin_field(:text, :assoc_pcr_blank, form: f )%>
+    <%= render_admin_field(:text, :notes_sample_processor, form: f )%>
+    <%= render_admin_field(:text, :notes_lab_manager, form: f )%>
+    <%= render_admin_field(:text, :notes_director, form: f )%>
+  <% end%>
+  <div class="form-actions">
+    <%= submit_tag "update"%>
+  </div>
+<% end %>

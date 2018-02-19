@@ -1,0 +1,39 @@
+<% content_for(:title) { 'Process Extractions' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+
+  <div class="extractions-menu">
+    <div class="btn-group" role="group" >
+      <a data-action="process_extractions"  class="batch-action btn btn-default">
+        Edit
+      </a>
+    </div>
+  </div>
+
+  <form action="<%= admin_labwork_edit_multiple_extractions_path %>" method="get" >
+    <table>
+      <tr>
+        <th></th>
+        <th>Barcode</th>
+        <th>Field Data Project</th>
+      </tr>
+      <% @extractions.each do |extraction| %>
+      <tr>
+        <th><%= check_box_tag "extraction_ids[]", extraction.id %></th>
+        <td><%= extraction.sample.barcode %></td>
+        <td><%= extraction.sample.field_data_project.name %></td>
+      </tr>
+      <% end %>
+    </table>
+    <input type="submit" value="Edit Checked">
+  </form>
+</section>
+
+<input type="hidden" data-data="" id="associated-data" >
+<%= paginate @extractions %>

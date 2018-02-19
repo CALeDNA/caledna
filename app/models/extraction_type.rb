@@ -6,4 +6,8 @@ class ExtractionType < ApplicationRecord
   def self.default
     ExtractionType.first
   end
+
+  def self.select_options
+    ExtractionType.all.map {|e| [e.name, e.id]}
+  end
 end

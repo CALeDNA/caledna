@@ -28,5 +28,12 @@
         assign samples to sample processors
       </li>
     <% end %>
+
+    <% if policy('Labwork::ProcessExtractions'.to_sym).index? %>
+      <li>
+        <%= link_to 'Process Extractions', admin_labwork_process_extractions_path %>:
+        enter extraction data
+      </li>
+    <% end %>
   </ul>
 </section>

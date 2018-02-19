@@ -33,12 +33,24 @@ Rails.application.routes.draw do
       controller 'approve_samples' do
         get 'approve_samples' => 'approve_samples#index'
       end
+
+      controller 'process_extractions' do
+        get 'process_extractions' => 'process_extractions#index'
+        get 'edit_multiple', as: :edit_multiple_extractions
+        # post 'edit_multiple', as: :post_edit_multiple_extractions
+
+        # post 'post_edit_multiple', as: :post_edit_multiple_extractions
+        # get 'post_edit_multiple', as: :edit_multiple_extractions
+
+        put 'update_multiple'
+      end
     end
 
     controller 'batch_actions' do
       post 'batch_approve_samples' => 'batch_actions#approve_samples'
       post 'batch_reject_samples' => 'batch_actions#reject_samples'
       post 'batch_assign_samples' => 'batch_actions#assign_samples'
+      post 'batch_process_extractions' => 'batch_actions#process_extractions'
     end
   end
 

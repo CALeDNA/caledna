@@ -13,6 +13,12 @@ class Researcher < ApplicationRecord
   as_enum :role, %i[sample_processor lab_manager director],
           map: :string
 
+  scope :active, -> { where(active: true) }
+
+  def self.select_options
+    Researcher.active.all.map { |e| [e.username, e.id] }
+  end
+
   def active_for_authentication?
     super && active?
   end
