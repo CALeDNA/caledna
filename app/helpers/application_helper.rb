@@ -14,4 +14,23 @@ module ApplicationHelper
     return unless date.present?
     date.strftime(format)
   end
+
+  def render_admin_field(type, field, locals = {})
+    locals[:field] = field
+    render locals: locals, partial: "admin/form/admin_#{type}_field"
+  end
+
+  def select_field_values(field, options_values)
+    field_name = field.to_s
+    options = [["Select #{field_name.titleize}", '']]
+    options + options_values
+  end
+
+  def enum_field_values(field, enum_values)
+    field_name = field.to_s.sub('_cd', '')
+    options = [["Select #{field_name.titleize}", '']]
+    options + enum_values.map do |k,v|
+      [k.titleize, v]
+    end
+  end
 end

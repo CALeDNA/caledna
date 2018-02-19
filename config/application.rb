@@ -18,5 +18,10 @@ module Caledna
     config.autoload_paths += %W[
       #{config.root}/services
     ]
+
+    # NOTE: this allows Administrate to use app helpers
+    config.to_prepare do
+      Administrate::ApplicationController.helper Caledna::Application.helpers
+    end
   end
 end
