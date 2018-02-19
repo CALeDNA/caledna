@@ -21,7 +21,14 @@ module Admin
     end
 
     def assign_samples
-      if samples.update(status_cd: :assigned, processor_id: processor_id)
+      if samples.update(status_cd: :assigned)
+        samples.each do |sample|
+          sample.extractions << Extraction.create(
+            status_cd: :assigned,
+            processor_id: processor_id,
+            extraction_type: ExtractionType.default
+          )
+        end
 
         SampleAssignmentWorker.perform_async(mail_hash)
 
@@ -39,7 +46,7 @@ module Admin
       JSON.generate(
         'name': processor.username,
         'email': processor.email,
-        'samples_count': processor.samples.count
+        'samples_count': processor.extractions.count
       )
     end
 

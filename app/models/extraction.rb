@@ -22,6 +22,9 @@ class Extraction < ApplicationRecord
   as_enum :sequencing_platform, %i[HiSeq 2500 HiSeq4000 Miseq TruSeq],
           map: :string
 
+  as_enum :status, %i[assigned analyzed results_completed],
+          map: :string
+
   # validates :metabarcoding_primers, inclusion: { in: METABARCODING_PRIMERS }
   # validates :barcoding_pcr_number_of_replicates,
   #           inclusion: { in: NUMBER_OF_REPLICATES }

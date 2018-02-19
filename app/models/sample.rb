@@ -15,7 +15,8 @@ class Sample < ApplicationRecord
     where.not(status_cd: :submitted).where.not(status_cd: :rejected)
   end)
 
-  as_enum :status, %i[submitted approved rejected analyzed results_completed],
+  as_enum :status,
+          %i[submitted approved rejected assigned analyzed results_completed],
           map: :string
   as_enum :substrate, %i[soil sediment water other], map: :string
   as_enum :ecosystem_category, %i[terrestrial aquatic], map: :string
