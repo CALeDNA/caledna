@@ -7,16 +7,7 @@
 </header>
 
 <section class="main-content__body">
-
-  <div class="extractions-menu">
-    <div class="btn-group" role="group" >
-      <a data-action="process_extractions"  class="batch-action btn btn-default">
-        Edit
-      </a>
-    </div>
-  </div>
-
-  <form action="<%= admin_labwork_edit_multiple_extractions_path %>" method="get" >
+  <%= form_tag admin_labwork_edit_multiple_extractions_path, method: :post do |f| %>
     <table>
       <tr>
         <th></th>
@@ -31,8 +22,8 @@
       </tr>
       <% end %>
     </table>
-    <input type="submit" value="Edit Checked">
-  </form>
+    <%= submit_tag 'Edit Checked' %>
+  <% end %>
 </section>
 
 <input type="hidden" data-data="" id="associated-data" >

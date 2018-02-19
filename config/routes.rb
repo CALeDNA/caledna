@@ -36,7 +36,7 @@ Rails.application.routes.draw do
 
       controller 'process_extractions' do
         get 'process_extractions' => 'process_extractions#index'
-        get 'edit_multiple', as: :edit_multiple_extractions
+        post 'edit_multiple', as: :edit_multiple_extractions
         # post 'edit_multiple', as: :post_edit_multiple_extractions
 
         # post 'post_edit_multiple', as: :post_edit_multiple_extractions
