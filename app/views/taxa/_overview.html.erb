@@ -37,20 +37,28 @@
 
 <h2 class="title">Samples</h2>
 
-<div class="samples-menu">
-  <div class="btn-group" role="group" >
-    <a href="<%= taxon_path %>" class="btn btn-default">
-      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
-    </a>
-    <a href="<%= taxon_path(view: :list) %>" class="btn btn-default">
-      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-    </a>
+<% if samples.present? %>
+  <div class="samples-menu">
+    <div class="btn-group" role="group" >
+      <a href="<%= taxon_path %>" class="btn btn-default">
+        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+      </a>
+      <a href="<%= taxon_path(view: :list) %>" class="btn btn-default">
+        <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+      </a>
+    </div>
   </div>
-</div>
 
-<% if params[:view] == 'list' %>
-  <%= render partial: "list", locals: { samples: samples }  %>
+  <% if params[:view] == 'list' %>
+    <%= render partial: "list", locals: { samples: samples }  %>
+  <% else %>
+    <%= render partial: "samples/map", locals: { samples: samples,
+    initial_lat: params[:lat], initial_lng: params[:lng] } %>
+  <% end %>
 <% else %>
-  <%= render partial: "samples/map", locals: { samples: samples,
-  initial_lat: params[:lat], initial_lng: params[:lng] } %>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      No CALeDNA samples match <%= taxon.canonicalName %>
+    </div>
+  </div>
 <% end %>
