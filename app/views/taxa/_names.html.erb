@@ -16,25 +16,44 @@
   <% end %>
 </table>
 
-<h3>Common Names</h3>
-<table class="table table-condensed ">
-  <tr>
-    <th>Name</th>
-    <th>Language</th>
-    <th>source</th>
-  </tr>
-
-  <% taxon.vernaculars.each do |vernacular|%>
+<% if taxon.vernaculars.present? %>
+  <h3>Common Names</h3>
+  <table class="table table-condensed ">
     <tr>
-      <td>
-        <%= vernacular.vernacularName %>
-      </td>
-      <td>
-        <%= vernacular.language_name %>
-      </td>
-      <td>
-        <%= vernacular.source %>
-      </td>
+      <th>Name</th>
+      <th>Language</th>
+      <th>source</th>
     </tr>
-  <% end %>
-</table>
+
+    <% taxon.vernaculars.each do |vernacular|%>
+      <tr>
+        <td>
+          <%= vernacular.vernacularName %>
+        </td>
+        <td>
+          <%= vernacular.language_name %>
+        </td>
+        <td>
+          <%= vernacular.source %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end%>
+
+<% if taxon.synonyms.present? %>
+  <h3>Scientific Names</h3>
+  <table class="table table-condensed ">
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+    </tr>
+
+    <% taxon.synonyms.each do |synonym|%>
+      <tr>
+        <td><%= synonym.canonicalName %></td>
+        <td><%=synonym.taxonomicStatus %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

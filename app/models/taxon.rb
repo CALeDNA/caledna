@@ -56,6 +56,10 @@ class Taxon < ApplicationRecord
     eol_record['link']
   end
 
+  def synonyms
+    Taxon.where(acceptedNameUsageID: taxonID)
+  end
+
   private
 
   def gbif_photo
