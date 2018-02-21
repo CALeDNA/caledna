@@ -26,6 +26,12 @@
         </tr>
       <% end %>
     </table>
+
+    <% if taxon.conservation_status? %>
+      <h3>Conservation Status</h3>
+      <p><%= taxon.conservation_status %></p>
+      <p>Source: <a href='www.iucnredlist.org'>IUCN 2017. IUCN Red List of Threatened Species.</a> Version 2017-3</p>
+    <% end %>
   </div>
 </div>
 

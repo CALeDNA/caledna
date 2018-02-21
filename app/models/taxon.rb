@@ -56,6 +56,21 @@ class Taxon < ApplicationRecord
     eol_record['link']
   end
 
+  def iucn_link
+    return if iucn_record.blank?
+    "http://www.iucnredlist.org/details/#{iucn_record['taxonid']}"
+  end
+
+  def conservation_status?
+    return unless taxonRank == 'species' || taxonRank == 'subspecies'
+    iucn_record.present?
+  end
+
+  def conservation_status
+    return if iucn_record.blank?
+    ::IucnApi::CATEGORIES[iucn_record['category'].to_sym]
+  end
+
   def synonyms
     Taxon.where(acceptedNameUsageID: taxonID)
   end
@@ -85,11 +100,11 @@ class Taxon < ApplicationRecord
 
   def inaturalist_taxa
     inat = ::InaturalistApi.new(canonicalName)
-    @inat_taxa ||= inat.taxa
+    @inaturalist_taxa ||= inat.taxa
   end
 
   def inaturalist_record
-    JSON.parse(inaturalist_taxa.body)['results'].first
+    @inaturalist_record ||= JSON.parse(inaturalist_taxa.body)['results'].first
   end
 
   def eol_taxa
@@ -99,5 +114,14 @@ class Taxon < ApplicationRecord
 
   def eol_record
     @eol_record ||= JSON.parse(eol_taxa.body)['results'].last
+  end
+
+  def iucn_species
+    service = ::IucnApi.new
+    @iucn_species ||= service.species(canonicalName)
+  end
+
+  def iucn_record
+    @iucn_record ||= JSON.parse(iucn_species.body)['result'].first
   end
 end

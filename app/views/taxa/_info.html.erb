@@ -8,4 +8,7 @@
   <% if taxon.eol_link %>
     <li><a href="<%= taxon.eol_link %>">Encyclopedia of Life</a></li>
   <% end%>
+  <% if taxon.conservation_status? %>
+    <li><a href="<%= taxon.iucn_link %>">International Union for the Conservation of Nature (IUCN) Red List</a></li>
+  <% end %>
 </ul>
