@@ -9,6 +9,7 @@
 <h1>Most Commonly Found</h1>
 <% @top_taxa.each do |taxon| %>
  <li>
+  <%= taxon.taxonRank %>:
   <%= link_to taxon.canonicalName, taxon_path(taxon) %>
   <%= taxon.common_name %>
   </li>

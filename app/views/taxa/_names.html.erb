@@ -1,0 +1,40 @@
+<h3>Classification</h3>
+<table class="table table-condensed taxonomy-tree">
+  <% taxon.taxonomy_tree.each do |taxon|%>
+    <tr>
+    <td>
+      <%= taxon[:name] %>
+    </td>
+    <td>
+    <% if taxon[:id] %>
+      <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
+    <% else %>
+      <%= taxon[:value] %>
+    <% end %>
+  </td>
+    </tr>
+  <% end %>
+</table>
+
+<h3>Common Names</h3>
+<table class="table table-condensed ">
+  <tr>
+    <th>Name</th>
+    <th>Language</th>
+    <th>source</th>
+  </tr>
+
+  <% taxon.vernaculars.each do |vernacular|%>
+    <tr>
+      <td>
+        <%= vernacular.vernacularName %>
+      </td>
+      <td>
+        <%= vernacular.language %>
+      </td>
+      <td>
+        <%= vernacular.source %>
+      </td>
+    </tr>
+  <% end %>
+</table>

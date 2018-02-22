@@ -1,0 +1,11 @@
+<h3>Links</h3>
+<ul>
+  <li><a href="<%= taxon.gbif_link %>">Global Biodiversity Information Facility</a></li>
+  <% if taxon.inaturalist_link %>
+    <li><a href="<%= taxon.inaturalist_link %>">iNaturalist</a></li>
+    <li><a href="<%= taxon.wikipedia_link %>">Wikipedia</a></li>
+  <% end%>
+  <% if taxon.eol_link %>
+    <li><a href="<%= taxon.eol_link %>">Encyclopedia of Life</a></li>
+  <% end%>
+</ul>

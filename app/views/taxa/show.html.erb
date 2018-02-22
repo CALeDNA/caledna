@@ -1,43 +1,23 @@
 <h1 class="title">
-  <%= @taxon.canonicalName %> <%= @taxon.common_name %>
+  <%= @taxon.taxonRank %>: <%= @taxon.canonicalName %>
 </h1>
 
-<table class="table table-condensed taxonomy-tree">
-  <caption>Classification</caption>
-  <% @taxon.taxonomy_tree.each do |taxon|%>
-    <tr>
-    <td>
-      <%= taxon[:name] %>
-    </td>
-    <td>
-    <% if taxon[:id] %>
-      <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
-    <% else %>
-      <%= taxon[:value] %>
-    <% end %>
-  </td>
-    </tr>
-  <% end %>
-</table>
+ <h2><%= @taxon.common_name %></h2>
 
-<hr>
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+  <li role="presentation"><a href="#names" aria-controls="names" role="tab" data-toggle="tab">Names</a></li>
+  <li role="presentation"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">More Info</a></li>
+</ul>
 
-<h1 class="title">Samples</h1>
-
-<div class="samples-menu">
-  <div class="btn-group" role="group" >
-    <a href="<%= taxon_path %>" class="btn btn-default">
-      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
-    </a>
-    <a href="<%= taxon_path(view: :list) %>" class="btn btn-default">
-      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-    </a>
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane active" id="overview">
+    <%= render partial: "overview", locals: { taxon: @taxon, samples: @samples } %>
+  </div>
+  <div role="tabpanel" class="tab-pane" id="names">
+    <%= render partial: "names", locals: { taxon: @taxon } %>
+  </div>
+  <div role="tabpanel" class="tab-pane" id="info">
+    <%= render partial: "info", locals: { taxon: @taxon } %>
   </div>
 </div>
-
-<% if params[:view] == 'list' %>
-  <%= render partial: "list", locals: { samples: @samples }  %>
-<% else %>
-  <%= render partial: "samples/map", locals: { samples: @samples,
-  initial_lat: params[:lat], initial_lng: params[:lng] } %>
-<% end %>

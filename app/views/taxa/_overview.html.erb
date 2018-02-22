@@ -1,0 +1,50 @@
+<div class="row">
+  <div class="col-md-6">
+    <% if taxon.image.present? %>
+      <%= image_tag taxon.image[:url], alt: taxon.canonicalName, width: 500 %><br>
+      <%=  taxon.image[:attribution] %>
+    <% else %>
+      <%= image_tag 'blank_photo.svg' %>
+    <% end %>
+  </div>
+
+  <div class="col-md-6">
+    <h3>Classification</h3>
+    <table class="table table-condensed taxonomy-tree">
+      <% taxon.taxonomy_tree.each do |taxon|%>
+        <tr>
+        <td>
+          <%= taxon[:name] %>
+        </td>
+        <td>
+        <% if taxon[:id] %>
+          <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
+        <% else %>
+          <%= taxon[:value] %>
+        <% end %>
+      </td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+
+<h2 class="title">Samples</h2>
+
+<div class="samples-menu">
+  <div class="btn-group" role="group" >
+    <a href="<%= taxon_path %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+    </a>
+    <a href="<%= taxon_path(view: :list) %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+    </a>
+  </div>
+</div>
+
+<% if params[:view] == 'list' %>
+  <%= render partial: "list", locals: { samples: samples }  %>
+<% else %>
+  <%= render partial: "samples/map", locals: { samples: samples,
+  initial_lat: params[:lat], initial_lng: params[:lng] } %>
+<% end %>
