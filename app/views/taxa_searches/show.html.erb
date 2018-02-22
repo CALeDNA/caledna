@@ -1,0 +1,26 @@
+<h1>Organism<%= ": #{@query}" if @query %></h1>
+
+<div class="taxa-search-menu">
+  <%= render partial: "form" %>
+  <a href="<%= taxa_search_path %>" class="btn btn-default reset-search">
+    <span class="glyphicon glyphicon glyphicon-refresh" aria-hidden="true"></span> Reset Search
+  </a>
+</div>
+
+<table class="table taxa-search">
+  <% @matches.each do |taxon| %>
+    <tr>
+      <td>
+        <% if taxon.image.present? %>
+          <%= link_to(image_tag(taxon.image[:url], alt: taxon.canonicalName, width: 200), taxon_path(id: taxon.id)) %>
+        <% else %>
+          <%= link_to(image_tag('blank_photo.svg', width: 200), taxon_path(id: taxon.id)) %>
+        <% end %>
+        <p>
+          <%= taxon.taxonRank %>: <%= link_to taxon.canonicalName, taxon_path(id: taxon.id) %><br>
+          <%= taxon.common_names %>
+        </p>
+      </td>
+    </tr>
+  <% end %>
+</table>

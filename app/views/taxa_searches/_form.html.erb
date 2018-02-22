@@ -1,0 +1,8 @@
+<%= simple_form_for :search, url: taxa_search_path, method: :get,
+  html: { class: 'form-inline taxa-search-form' }, wrapper: :inline_form do |f| %>
+  <%= f.input :query, placeholder: 'Search organism name', label: false,
+    input_html: { class: 'icon search-icon', value: @query }  %>
+  <%= f.button :button do %>
+    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+  <% end %>
+<% end %>

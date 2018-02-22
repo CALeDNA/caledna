@@ -31,6 +31,26 @@ h1.title {
   }
 }
 
+.taxa-search-menu {
+  margin-top: 2em;
+  margin-bottom: 2em;
+
+  .taxa-search-form {
+    display: inline;
+
+    input {
+      width: 25em;
+    }
+  }
+}
+
+.taxa-search {
+  img {
+    float: left;
+    margin-right: 1em;
+  }
+}
+
 .reset-search {
   margin-left: 1em;
 }
@@ -42,8 +62,6 @@ h1.title {
     margin-right: 1em;
   }
 }
-
-
 
 .samples-links a {
   margin-left: .5em;
