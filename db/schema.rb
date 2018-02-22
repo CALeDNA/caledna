@@ -10,18 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180213145628) do
+ActiveRecord::Schema.define(version: 20180217142017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "asvs", force: :cascade do |t|
-    t.integer  "tsn"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.integer  "extraction_id"
+    t.integer  "taxonID"
     t.index ["extraction_id"], name: "index_asvs_on_extraction_id", using: :btree
-    t.index ["tsn"], name: "index_asvs_on_tsn", using: :btree
   end
 
   create_table "extraction_types", force: :cascade do |t|
@@ -99,31 +98,31 @@ ActiveRecord::Schema.define(version: 20180213145628) do
   end
 
   create_table "field_data_projects", force: :cascade do |t|
+    t.string   "name"
+    t.text     "description"
     t.integer  "kobo_id"
     t.jsonb    "kobo_payload"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.datetime "last_import_date"
-    t.string   "description"
-    t.string   "name"
     t.string   "date_range"
     t.index ["kobo_id"], name: "index_field_data_projects_on_kobo_id", unique: true, using: :btree
   end
 
-  create_table "hierarchy", primary_key: "hierarchy_string", id: :string, limit: 300, force: :cascade do |t|
-    t.integer "tsn",           null: false
-    t.integer "parent_tsn"
-    t.integer "level",         null: false
-    t.integer "childrencount", null: false
-  end
-
-  create_table "kingdoms", primary_key: "kingdom_id", id: :integer, force: :cascade do |t|
-    t.string "kingdom_name", limit: 10, null: false
-    t.date   "update_date",             null: false
-  end
-
-  create_table "longnames", primary_key: "tsn", id: :integer, force: :cascade do |t|
-    t.string "completename", limit: 300, null: false
+  create_table "multimedia", id: false, force: :cascade do |t|
+    t.integer "taxonID",                  null: false
+    t.text    "identifier"
+    t.text    "references"
+    t.text    "title"
+    t.text    "description"
+    t.text    "license"
+    t.text    "creator"
+    t.string  "created",      limit: 255
+    t.string  "contributor",  limit: 255
+    t.string  "publisher",    limit: 255
+    t.text    "rightsHolder"
+    t.text    "source"
+    t.index ["taxonID"], name: "multimedia_taxonid_idx", using: :btree
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
@@ -198,58 +197,50 @@ ActiveRecord::Schema.define(version: 20180213145628) do
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
 
-  create_table "taxon_unit_types", primary_key: ["kingdom_id", "rank_id"], force: :cascade do |t|
-    t.integer "kingdom_id",                    null: false
-    t.integer "rank_id",            limit: 2,  null: false
-    t.string  "rank_name",          limit: 15, null: false
-    t.integer "dir_parent_rank_id", limit: 2,  null: false
-    t.integer "req_parent_rank_id", limit: 2,  null: false
-    t.date    "update_date",                   null: false
+  create_table "taxa", primary_key: "taxonID", id: :integer, force: :cascade do |t|
+    t.string  "datasetID",                limit: 255
+    t.integer "parentNameUsageID"
+    t.integer "acceptedNameUsageID"
+    t.integer "originalNameUsageID"
+    t.text    "scientificName"
+    t.text    "scientificNameAuthorship"
+    t.string  "canonicalName",            limit: 255
+    t.string  "genericName",              limit: 255
+    t.string  "specificEpithet",          limit: 255
+    t.string  "infraspecificEpithet",     limit: 255
+    t.string  "taxonRank",                limit: 255
+    t.string  "nameAccordingTo",          limit: 255
+    t.text    "namePublishedIn"
+    t.string  "taxonomicStatus",          limit: 255
+    t.string  "nomenclaturalStatus",      limit: 255
+    t.string  "taxonRemarks",             limit: 255
+    t.string  "kingdom",                  limit: 255
+    t.string  "phylum",                   limit: 255
+    t.string  "className",                limit: 255
+    t.string  "order",                    limit: 255
+    t.string  "family",                   limit: 255
+    t.string  "genus",                    limit: 255
+    t.jsonb   "hierarchy"
+    t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
+    t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
+    t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
+    t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end
 
-  create_table "taxonomic_units", primary_key: "tsn", id: :bigint, force: :cascade do |t|
-    t.string   "unit_ind1",          limit: 1
-    t.string   "unit_name1",         limit: 35,                  null: false
-    t.string   "unit_ind2",          limit: 1
-    t.string   "unit_name2",         limit: 35
-    t.string   "unit_ind3",          limit: 7
-    t.string   "unit_name3",         limit: 35
-    t.string   "unit_ind4",          limit: 7
-    t.string   "unit_name4",         limit: 35
-    t.string   "unnamed_taxon_ind",  limit: 1
-    t.string   "name_usage",         limit: 12,                  null: false
-    t.string   "unaccept_reason",    limit: 50
-    t.string   "credibility_rtng",   limit: 40,                  null: false
-    t.string   "completeness_rtng",  limit: 10
-    t.string   "currency_rating",    limit: 7
-    t.integer  "phylo_sort_seq",     limit: 2
-    t.datetime "initial_time_stamp",                             null: false
-    t.integer  "parent_tsn"
-    t.integer  "taxon_author_id"
-    t.integer  "hybrid_author_id"
-    t.integer  "kingdom_id",         limit: 2,                   null: false
-    t.integer  "rank_id",            limit: 2,                   null: false
-    t.date     "update_date",                                    null: false
-    t.string   "uncertain_prnt_ind", limit: 3
-    t.text     "n_usage"
-    t.string   "complete_name",      limit: 255,                 null: false
-    t.boolean  "highlight",                      default: false
-    t.index ["complete_name"], name: "index_taxonomic_units_on_complete_name", using: :btree
-    t.index ["n_usage"], name: "index_taxonomic_units_on_n_usage", using: :btree
-  end
-
-  create_table "vernaculars", primary_key: ["tsn", "vern_id"], force: :cascade do |t|
-    t.integer "tsn",                        null: false
-    t.string  "vernacular_name", limit: 80, null: false
-    t.string  "language",        limit: 15, null: false
-    t.string  "approved_ind",    limit: 1
-    t.date    "update_date",                null: false
-    t.integer "vern_id",                    null: false
-    t.index ["language"], name: "index_vernaculars_on_language", using: :btree
+  create_table "vernaculars", id: false, force: :cascade do |t|
+    t.integer "taxonID",                    null: false
+    t.text    "vernacularName"
+    t.string  "language",       limit: 255
+    t.string  "country",        limit: 255
+    t.string  "countryCode",    limit: 255
+    t.string  "sex",            limit: 255
+    t.string  "lifeStage",      limit: 255
+    t.text    "source"
+    t.index "lower(\"vernacularName\")", name: "vernacular_vernacularname_idx", using: :btree
+    t.index ["taxonID"], name: "vernacular_taxonid_idx", using: :btree
   end
 
   add_foreign_key "asvs", "extractions"
-  add_foreign_key "asvs", "taxonomic_units", column: "tsn", primary_key: "tsn", name: "asvs_tsn_fkey"
   add_foreign_key "extractions", "extraction_types"
   add_foreign_key "extractions", "researchers", column: "local_fastq_storage_adder_id"
   add_foreign_key "extractions", "researchers", column: "processor_id"

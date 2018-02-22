@@ -5,8 +5,8 @@ def delete_records
 
   Asv.destroy_all
   Photo.destroy_all
-  ExtractionType.destroy_all
   Extraction.destroy_all
+  ExtractionType.destroy_all
   Sample.destroy_all
   Researcher.destroy_all
   FieldDataProject.destroy_all
@@ -18,13 +18,25 @@ def reset_search
   PgSearch::Multisearch.rebuild(Sample)
 end
 
+def seed_projects
+  puts 'seeding projects...'
+
+  FactoryBot.create(
+    :field_data_project,
+    kobo_id: nil,
+    name: 'Demo project',
+    description: Faker::Lorem.paragraph
+  )
+end
+
 # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
 def import_taxonomy_data
   puts 'seeding taxonomy...'
-  sql_file = Rails.root.join('db').join('data').join('itis_condensed_data.sql')
-  host = ActiveRecord::Base.connection_config[:host]
-  user = ActiveRecord::Base.connection_config[:username]
-  db = ActiveRecord::Base.connection_config[:database]
+  sql_file = Rails.root.join('db').join('data').join('gbif_data.sql')
+  db_config = Rails.configuration.database_configuration[Rails.env]
+  host = db_config['host']
+  user = db_config['username']
+  db = db_config['database']
 
   cmd = 'psql '
   cmd += "--host #{host} " if host.present?
@@ -34,6 +46,8 @@ def import_taxonomy_data
 end
 
 def seed_samples(project)
+  puts 'seeding samples...'
+
   FactoryBot.create_list(
     :sample, 15,
     field_data_project: project,
@@ -63,51 +77,8 @@ def seed_samples(project)
     )
   end
 end
-# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-unless Rails.env.production?
-  delete_records
-  reset_search
-
-  puts 'seeding people...'
-  director = FactoryBot.create(
-    :director,
-    email: 'director@example.com',
-    password: 'password',
-    username: 'Director Jane'
-  )
-
-  FactoryBot.create(
-    :lab_manager,
-    email: 'lab_manager@example.com',
-    password: 'password',
-    username: 'Lab Manager Jane'
-  )
-
-  processor1 = FactoryBot.create(
-    :sample_processor,
-    email: 'sample_processor@example.com',
-    password: 'password',
-    username: 'Sample Processor Jane'
-  )
-
-  processor2 = FactoryBot.create(
-    :sample_processor,
-    email: 'sample_processor2@example.com',
-    password: 'password',
-    username: 'Sample Processor Bob'
-  )
-
-  puts 'seeding projects...'
-  project = FactoryBot.create(
-    :field_data_project,
-    kobo_id: nil,
-    name: 'Demo project',
-    description: Faker::Lorem.paragraph
-  )
-
-  seed_samples(project)
-
+def seed_extractions(processor1, processor2, director)
   puts 'seeding extractions...'
 
   type_a = FactoryBot.create(:extraction_type, name: 'extraction A')
@@ -151,34 +122,69 @@ unless Rails.env.production?
       local_fastq_storage_adder_id: director.id
     )
   end
+end
 
-  puts 'import taxonomy...'
+def seed_asvs
+  return if Taxon.count.zero?
+  puts 'seeding asv...'
 
-  unless Hierarchy.count.zero?
-    taxon_count = TaxonomicUnit.valid.count
-    tsn = []
-    rand(1..3).times do
-      unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
-      tsn.push(unit.tsn)
-    end
+  taxon_count = Taxon.valid.count/100
+  ids = []
 
-    Extraction.all.each do |extraction|
-      rand(1..5).times do
-        unit = TaxonomicUnit.valid.offset(rand(taxon_count)).take
-        Asv.create(extraction: extraction, taxonomic_unit: unit)
-      end
-      Asv.create(extraction: extraction, tsn: tsn.sample)
-    end
+  rand(1..3).times do
+    taxon = Taxon.valid.offset(rand(taxon_count)).take
+    ids.push(taxon.taxonID)
   end
+
+  Extraction.all.each do |extraction|
+    rand(1..5).times do
+      taxon = Taxon.valid.offset(rand(taxon_count)).take
+      Asv.create(extraction: extraction, taxonID: taxon.taxonID)
+    end
+    Asv.create(extraction: extraction, taxonID: ids.sample)
+  end
+end
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+unless Rails.env.production?
+  delete_records
+  reset_search
+
+  puts 'seeding people...'
+  director = FactoryBot.create(
+    :director,
+    email: 'director@example.com',
+    password: 'password',
+    username: 'Director Jane'
+  )
+
+  FactoryBot.create(
+    :lab_manager,
+    email: 'lab_manager@example.com',
+    password: 'password',
+    username: 'Lab Manager Jane'
+  )
+
+  processor1 = FactoryBot.create(
+    :sample_processor,
+    email: 'sample_processor@example.com',
+    password: 'password',
+    username: 'Sample Processor Jane'
+  )
+
+  processor2 = FactoryBot.create(
+    :sample_processor,
+    email: 'sample_processor2@example.com',
+    password: 'password',
+    username: 'Sample Processor Bob'
+  )
+
+  project = seed_projects
+  seed_samples(project)
+  seed_extractions(processor1, processor2, director)
+  seed_asvs
 
   puts 'done seeding'
 end
 
-import_taxonomy_data if Hierarchy.count.zero?
-
-Kingdom.all.pluck(:kingdom_name).each do |name|
-  sql = 'UPDATE taxonomic_units SET highlight = true ' \
-  "WHERE complete_name = '#{name.strip}' " \
-  'AND tsn NOT IN (590735, 43780, 202421)'
-  ActiveRecord::Base.connection.execute(sql)
-end
+import_taxonomy_data if Taxon.count.zero?

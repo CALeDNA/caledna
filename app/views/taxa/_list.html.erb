@@ -10,7 +10,7 @@
   <% samples.each do |sample| %>
     <tr>
       <td><% links = sample.taxons.map do |t|  %>
-      <% link_to t.first, taxa_path(id: t.last, view: params[:view]) %>
+      <% link_to t.first, taxon_path(id: t.last, view: params[:view]) %>
       <% end %>
       <%= raw links.join('<br> ')%>
       </td>

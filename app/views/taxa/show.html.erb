@@ -1,22 +1,19 @@
 <h1 class="title">
-  <%= @taxon.complete_name %> <%= @taxon.common_name %>
+  <%= @taxon.canonicalName %> <%= @taxon.common_name %>
 </h1>
 
 <table class="table table-condensed taxonomy-tree">
   <caption>Taxonomy</caption>
-<% @taxon.taxonomy_tree.each do |taxon|
-    next if taxon.blank?
-%>
-  <tr>
-  <td>
-    <%= taxon['rank_name'] %>
+  <% @taxon.taxonomy_tree.each do |taxon|%>
+    <tr>
+    <td>
+      <%= taxon[:name] %>
+    </td>
+    <td>
+    <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
   </td>
-  <td>
-    <%= link_to taxon['complete_name'], taxa_path(taxon['tsn'], view: params[:view]) %>
-    <%= "(#{taxon['vernacular_name']})" if taxon['vernacular_name'].present? %>
-  </td>
-  </tr>
-<% end %>
+    </tr>
+  <% end %>
 </table>
 
 <hr>
@@ -25,10 +22,10 @@
 
 <div class="samples-menu">
   <div class="btn-group" role="group" >
-    <a href="<%= taxa_path %>" class="btn btn-default">
+    <a href="<%= taxon_path %>" class="btn btn-default">
       <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
     </a>
-    <a href="<%= taxa_path(view: :list) %>" class="btn btn-default">
+    <a href="<%= taxon_path(view: :list) %>" class="btn btn-default">
       <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
     </a>
   </div>

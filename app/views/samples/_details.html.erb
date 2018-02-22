@@ -28,8 +28,8 @@
         <ul>
         <% extraction.asvs.each do |s| %>
           <li>
-            <%= link_to s.taxonomic_unit.complete_name, taxa_path(s.taxonomic_unit) %>
-            <%= s.taxonomic_unit.common_name %>
+            <%= link_to s.taxon.canonicalName, taxon_path(s.taxon) %>
+            <%= s.taxon.canonicalName %>
           </li>
         <% end %>
         </ul>
