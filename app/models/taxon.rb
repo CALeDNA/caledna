@@ -11,8 +11,7 @@ class Taxon < ApplicationRecord
     names = vernaculars.english.pluck(:vernacularName)
                        .map(&:titleize).uniq
     return if names.blank?
-    string = names.join(', ')
-    parenthesis ? "(#{string})" : string
+    parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
   end
 
   # rubocop:disable Metrics/LineLength, Metrics/AbcSize
@@ -77,6 +76,11 @@ class Taxon < ApplicationRecord
   end
 
   private
+
+  def common_names_string(names)
+    max = 5
+    names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
+  end
 
   def gbif_photo
     photo = multimedia.select(&:image?).first

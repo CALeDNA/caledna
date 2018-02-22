@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-6">
     <% if taxon.image.present? %>
-      <%= image_tag taxon.image[:url], alt: taxon.canonicalName, width: 500 %><br>
+      <%= image_tag taxon.image[:url], alt: taxon.canonicalName, width: 400 %><br>
       <%=  taxon.image[:attribution] %>
     <% else %>
       <%= image_tag 'blank_photo.svg' %>

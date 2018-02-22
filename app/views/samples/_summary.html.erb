@@ -43,6 +43,7 @@
         <ul>
         <% extraction.asvs.each do |s| %>
           <li>
+            <%= s.taxon.taxonRank %>:
             <%= link_to s.taxon.canonicalName, taxon_path(s.taxon) %>
             <%= s.taxon.common_names %>
           </li>
