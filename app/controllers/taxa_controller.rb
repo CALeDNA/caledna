@@ -28,6 +28,9 @@ class TaxaController < ApplicationController
 
   # rubocop:disable Metrics/MethodLength
   def raw_samples
+    # https://stackoverflow.com/a/36251296
+    # Query postgres jsonb by value
+
     sql = 'SELECT samples.id, samples.barcode, ' \
     'asvs."taxonID" as "taxonID", taxa."canonicalName", samples.latitude, ' \
     'samples.longitude, field_data_project_id, ' \
@@ -38,7 +41,8 @@ class TaxaController < ApplicationController
     'INNER JOIN samples ON samples.id = extractions.sample_id ' \
     'INNER JOIN field_data_projects ON samples.field_data_project_id ' \
     ' = field_data_projects.id ' \
-    "WHERE asvs.\"taxonID\" = #{params[:id]}"
+    'where exists (select 1 from jsonb_each_text(taxa.hierarchy) ' \
+    "pair where pair.value = '#{params[:id]}');"
 
     @raw_samples ||= ActiveRecord::Base.connection.execute(sql)
   end
