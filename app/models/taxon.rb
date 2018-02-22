@@ -8,9 +8,7 @@ class Taxon < ApplicationRecord
   scope :valid, -> { where(taxonomicStatus: 'accepted') }
 
   def common_name
-    names = vernaculars.where(language: :en)
-                       .pluck(:vernacularName)
-                       .map(&:downcase).uniq
+    names = vernaculars.english.pluck(:vernacularName).uniq
     names.join(', ') if names.present?
   end
 

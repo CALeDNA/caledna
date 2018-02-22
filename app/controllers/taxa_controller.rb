@@ -15,7 +15,7 @@ class TaxaController < ApplicationController
   private
 
   def taxon
-    @taxon ||= Taxon.find(params[:id])
+    @taxon ||= Taxon.includes(:vernaculars).find(params[:id])
   end
 
   def paginated_samples
