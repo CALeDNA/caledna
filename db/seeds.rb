@@ -45,6 +45,21 @@ def import_taxonomy_data
   exec cmd
 end
 
+def import_taxonomy_trees
+  puts 'seeding taxonomy trees...'
+  sql_file = Rails.root.join('db').join('data').join('taxonomy_trees.sql')
+  db_config = Rails.configuration.database_configuration[Rails.env]
+  host = db_config['host']
+  user = db_config['username']
+  db = db_config['database']
+
+  cmd = 'psql '
+  cmd += "--host #{host} " if host.present?
+  cmd += "--username #{user} " if user.present?
+  cmd += "#{db} < #{sql_file}"
+  exec cmd
+end
+
 def seed_samples(project)
   puts 'seeding samples...'
 
@@ -146,7 +161,7 @@ def seed_asvs
 end
 # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-unless Rails.env.production?
+if Rails.env.production?
   delete_records
   reset_search
 
@@ -188,3 +203,4 @@ unless Rails.env.production?
 end
 
 import_taxonomy_data if Taxon.count.zero?
+import_taxonomy_trees

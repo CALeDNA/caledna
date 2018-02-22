@@ -3,14 +3,18 @@
 </h1>
 
 <table class="table table-condensed taxonomy-tree">
-  <caption>Taxonomy</caption>
+  <caption>Classification</caption>
   <% @taxon.taxonomy_tree.each do |taxon|%>
     <tr>
     <td>
       <%= taxon[:name] %>
     </td>
     <td>
-    <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
+    <% if taxon[:id] %>
+      <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
+    <% else %>
+      <%= taxon[:value] %>
+    <% end %>
   </td>
     </tr>
   <% end %>

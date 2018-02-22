@@ -4,7 +4,7 @@ class TaxaController < ApplicationController
   def index
     # TODO: r-enable highlights
     @higlights = []
-    @top_taxa = Taxon.where(taxonID: top_taxa_ids)
+    @top_taxa = Taxon.includes(:vernaculars).where(taxonID: top_taxa_ids)
   end
 
   def show
