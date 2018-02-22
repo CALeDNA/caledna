@@ -44,7 +44,7 @@
         <% extraction.asvs.each do |s| %>
           <li>
             <%= link_to s.taxon.canonicalName, taxon_path(s.taxon) %>
-            <%= s.taxon.canonicalName %>
+            <%= s.taxon.common_names %>
           </li>
         <% end %>
         </ul>

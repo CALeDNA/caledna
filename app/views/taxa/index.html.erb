@@ -2,7 +2,7 @@
 <% @higlights.each do |taxon| %>
  <li>
   <%= link_to taxon.canonicalName, taxon_path(taxon) %>
-  <%= taxon.common_name %>
+  <%= taxon.common_names %>
   </li>
 <% end %>
 
@@ -11,6 +11,6 @@
  <li>
   <%= taxon.taxonRank %>:
   <%= link_to taxon.canonicalName, taxon_path(taxon) %>
-  <%= taxon.common_name %>
+  <%= taxon.common_names %>
   </li>
 <% end %>

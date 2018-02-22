@@ -7,9 +7,12 @@ class Taxon < ApplicationRecord
 
   scope :valid, -> { where(taxonomicStatus: 'accepted') }
 
-  def common_name
-    names = vernaculars.english.pluck(:vernacularName).uniq
-    names.join(', ') if names.present?
+  def common_names(parenthesis=true)
+    names = vernaculars.english.pluck(:vernacularName)
+                       .map(&:titleize).uniq
+    return if names.blank?
+    string = names.join(', ')
+    parenthesis ? "(#{string})" : string
   end
 
   # rubocop:disable Metrics/LineLength, Metrics/AbcSize
