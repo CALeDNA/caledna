@@ -33,25 +33,9 @@ end
 def import_taxonomy_data
   puts 'seeding taxonomy...'
   sql_file = Rails.root.join('db').join('data').join('gbif_data.sql')
-  db_config = Rails.configuration.database_configuration[Rails.env]
-  host = db_config['host']
-  user = db_config['username']
-  db = db_config['database']
-
-  cmd = 'psql '
-  cmd += "--host #{host} " if host.present?
-  cmd += "--username #{user} " if user.present?
-  cmd += "#{db} < #{sql_file}"
-  exec cmd
-end
-
-def import_taxonomy_trees
-  puts 'seeding taxonomy trees...'
-  sql_file = Rails.root.join('db').join('data').join('taxonomy_trees.sql')
-  db_config = Rails.configuration.database_configuration[Rails.env]
-  host = db_config['host']
-  user = db_config['username']
-  db = db_config['database']
+  host = ActiveRecord::Base.connection_config[:host]
+  user = ActiveRecord::Base.connection_config[:username]
+  db = ActiveRecord::Base.connection_config[:database]
 
   cmd = 'psql '
   cmd += "--host #{host} " if host.present?
@@ -161,7 +145,7 @@ def seed_asvs
 end
 # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-if Rails.env.production?
+if !Rails.env.production? && !ENV.fetch('IMPORT_TAXA')
   delete_records
   reset_search
 
@@ -202,5 +186,4 @@ if Rails.env.production?
   puts 'done seeding'
 end
 
-import_taxonomy_data if Taxon.count.zero?
-import_taxonomy_trees
+import_taxonomy_data if Taxon.count.zero? && ENV.fetch('IMPORT_TAXA')
