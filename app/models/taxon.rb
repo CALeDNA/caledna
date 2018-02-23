@@ -5,6 +5,7 @@ class Taxon < ApplicationRecord
   has_many :vernaculars, foreign_key: 'taxonID'
   has_many :asvs, foreign_key: 'taxonID'
   has_many :multimedia, foreign_key: 'taxonID'
+  has_many :highlights, as: :highlightable
 
   scope :valid, -> { where(taxonomicStatus: 'accepted') }
 

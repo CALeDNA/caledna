@@ -2,12 +2,29 @@
   <%= render partial: "taxa_searches/form" %>
 </div>
 
-<h1>Highlights</h1>
-<% @higlights.each do |taxon| %>
- <li>
-  <%= link_to taxon.canonicalName, taxon_path(taxon) %>
-  <%= taxon.common_names %>
-  </li>
+<h1>Kingdoms</h1>
+<% @highlights.each do |highlight| %>
+  <% if highlight.highlightable_type == 'Taxon'%>
+    <li>
+      <%= link_to highlight.highlightable.canonicalName, taxon_path(highlight.highlightable) %>
+      <%= highlight.highlightable.common_names %>
+    </li>
+  <% end %>
+<% end %>
+
+<h1>Featured Found Organisms </h1>
+<% @highlights.each do |highlight| %>
+  <% if highlight.highlightable_type == 'Asv'%>
+    <li>
+      <%= highlight.highlightable.taxon.taxonRank %>: <%= link_to highlight.highlightable.taxon.canonicalName, taxon_path(highlight.highlightable.taxon) %>
+      <%= highlight.highlightable.taxon.common_names %>
+      <br>Project: <%= link_to highlight.project.name, field_data_project_path(highlight.project) %>
+      <br>Sample: <%= link_to highlight.sample.barcode, sample_path(highlight.sample) %>
+      <% if highlight.notes %>
+        <br>Notes: <%= highlight.notes %>
+      <% end %>
+    </li>
+  <% end %>
 <% end %>
 
 <h1>Most Commonly Found</h1>

@@ -3,7 +3,7 @@
 class TaxaController < ApplicationController
   def index
     # TODO: r-enable highlights
-    @higlights = []
+    @highlights = Highlight.all
     @top_taxa = Taxon.includes(:vernaculars).where(taxonID: top_taxa_ids)
   end
 

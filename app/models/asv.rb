@@ -3,4 +3,5 @@
 class Asv < ApplicationRecord
   belongs_to :extraction
   belongs_to :taxon, foreign_key: 'taxonID'
+  has_many :highlights, as: :highlightable
 end

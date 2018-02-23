@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180217142017) do
+ActiveRecord::Schema.define(version: 20180223150915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,6 +107,16 @@ ActiveRecord::Schema.define(version: 20180217142017) do
     t.datetime "last_import_date"
     t.string   "date_range"
     t.index ["kobo_id"], name: "index_field_data_projects_on_kobo_id", unique: true, using: :btree
+  end
+
+  create_table "highlights", force: :cascade do |t|
+    t.string   "notes"
+    t.integer  "highlightable_id"
+    t.string   "highlightable_type"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.index ["highlightable_id"], name: "index_highlights_on_highlightable_id", using: :btree
+    t.index ["highlightable_type"], name: "index_highlights_on_highlightable_type", using: :btree
   end
 
   create_table "multimedia", id: false, force: :cascade do |t|
