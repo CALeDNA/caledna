@@ -2,6 +2,7 @@
 
 # https://github.com/datasets/language-codes
 
+# rubocop:disable Metrics/ClassLength, Metrics/LineLength
 class Languages
   CODES = {
     aa: 'Afar',
@@ -188,5 +189,6 @@ class Languages
     yo: 'Yoruba',
     za: 'Zhuang; Chuang',
     zu: 'Zulu'
-  }
+  }.freeze
 end
+# rubocop:enable Metrics/ClassLength, Metrics/LineLength

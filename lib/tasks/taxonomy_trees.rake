@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/BlockLength, Metrics/LineLength
 namespace :taxonomy_trees do
   desc 'create sql file for taxonomy_trees'
@@ -25,7 +27,6 @@ namespace :taxonomy_trees do
       sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{class}', '#{class_name[1]}'::jsonb) WHERE \"className\" = '#{class_name[0]}';"
       File.open(file, 'a') { |f| f.write(sql) }
     end
-
 
     puts 'write orders...'
     orders = Taxon.valid.distinct.where(taxonRank: :order).pluck(:order, :taxonID)

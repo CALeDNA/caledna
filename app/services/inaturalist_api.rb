@@ -1,4 +1,4 @@
-# frozen_string: literal
+# frozen_string_literal: true
 
 class InaturalistApi
   include HTTParty

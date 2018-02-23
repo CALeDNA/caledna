@@ -1,4 +1,4 @@
-# frozen_string: literal
+# frozen_string_literal: true
 
 class EolApi
   include HTTParty
@@ -11,6 +11,6 @@ class EolApi
   end
 
   def taxa(keyword)
-    self.class.get("/#{URI.escape(keyword)}.json",  @options)
+    self.class.get("/#{CGI.escape(keyword)}.json", @options)
   end
 end

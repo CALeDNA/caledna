@@ -127,7 +127,7 @@ def seed_asvs
   return if Taxon.count.zero?
   puts 'seeding asv...'
 
-  taxon_count = Taxon.valid.count/100
+  taxon_count = Taxon.valid.count / 100
   ids = []
 
   rand(1..3).times do

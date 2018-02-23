@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class Taxon < ApplicationRecord
   has_many :vernaculars, foreign_key: 'taxonID'
   has_many :asvs, foreign_key: 'taxonID'
@@ -7,7 +8,7 @@ class Taxon < ApplicationRecord
 
   scope :valid, -> { where(taxonomicStatus: 'accepted') }
 
-  def common_names(parenthesis=true)
+  def common_names(parenthesis = true)
     names = vernaculars.english.pluck(:vernacularName)
                        .map(&:titleize).uniq
     return if names.blank?
@@ -18,7 +19,7 @@ class Taxon < ApplicationRecord
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def taxonomy_tree
     tree = []
-    tree.push(name: :kingdom, value: kingdom , id: hierarchy['kingdom']) if kingdom.present?;
+    tree.push(name: :kingdom, value: kingdom, id: hierarchy['kingdom']) if kingdom.present?
     tree.push(name: :phylum, value: phylum, id: hierarchy['phylum']) if phylum.present?
     tree.push(name: :class, value: className, id: hierarchy['class']) if className.present?
     tree.push(name: :order, value: order, id: hierarchy['order']) if order.present?
@@ -86,10 +87,10 @@ class Taxon < ApplicationRecord
     photo = multimedia.select(&:image?).first
     return if photo.blank?
 
+    full_attribution = "#{photo.publisher}: #{photo.rightsHolder}"
     {
       url: photo.identifier,
-      attribution:
-        photo.rightsHolder ? "#{photo.publisher}: #{photo.rightsHolder}" : photo.publisher
+      attribution: photo.rightsHolder ? full_attribution : photo.publisher
     }
   end
 
@@ -99,7 +100,7 @@ class Taxon < ApplicationRecord
 
     {
       url: inaturalist_record['default_photo']['medium_url'],
-      attribution: inaturalist_record['default_photo']['attribution'],
+      attribution: inaturalist_record['default_photo']['attribution']
     }
   end
 
@@ -135,3 +136,4 @@ class Taxon < ApplicationRecord
     @iucn_record ||= JSON.parse(iucn_species.body)['result'].first
   end
 end
+# rubocop:enable Metrics/ClassLength

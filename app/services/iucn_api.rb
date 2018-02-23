@@ -1,4 +1,5 @@
-# frozen_string: literal
+# frozen_string_literal: true
+
 class IucnApi
   include HTTParty
   require 'uri'
@@ -13,7 +14,7 @@ class IucnApi
     LC: 'Least Concern',
     DD: 'Data Deficient',
     NE: 'Not Evaluated'
-  }
+  }.freeze
 
   base_uri 'apiv3.iucnredlist.org/api/v3'
 
@@ -22,6 +23,6 @@ class IucnApi
   end
 
   def species(keyword)
-    self.class.get("/species/#{URI.escape(keyword.downcase)}", @options)
+    self.class.get("/species/#{CGI.escape(keyword.downcase)}", @options)
   end
 end
