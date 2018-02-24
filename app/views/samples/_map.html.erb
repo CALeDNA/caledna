@@ -13,6 +13,7 @@
       '<%= link_to sample.field_data_project_name,  field_data_project_path(id: sample.field_data_project_id) %>',
       '<%= link_to sample.barcode, sample_path(id: sample.id) %>',
       '<%= sample.status %>',
+      '<%= sample.asvs_count %>'
     ],
   <% end %>
   ]
@@ -38,11 +39,13 @@
     var projectName = a[4];
     var sampleLink = a[5];
     var status = a[6];
+    var asvsCount = a[7];
     var body =
       '<b>Sample:</b> ' + sampleLink + '<br>' +
       '<b>Project:</b> ' + projectName + '<br>' +
       '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
-      '<b>Status</b>: ' + status + '<br>';
+      '<b>Status</b>: ' + status + '<br>' +
+      '<b>Organism count</b>: ' + asvsCount + '<br>';
     var marker = L.marker(L.latLng(lat, lng), { title: 'Sample ' + barcode });
     marker.bindPopup(body);
     markers.addLayer(marker);

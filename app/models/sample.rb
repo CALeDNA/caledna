@@ -27,4 +27,8 @@ class Sample < ApplicationRecord
   def field_data_project_name
     field_data_project.name
   end
+
+  def asvs_count
+    extractions.sum { |e| e.asvs.count }
+  end
 end
