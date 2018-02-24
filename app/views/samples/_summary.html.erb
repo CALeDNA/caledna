@@ -41,11 +41,17 @@
       <td>Organisms from ASV</td>
       <td>
         <ul>
-        <% extraction.asvs.each do |s| %>
+        <% extraction.asvs.each do |asv| %>
           <li>
-            <%= s.taxon.taxonRank %>:
-            <%= link_to s.taxon.canonicalName, taxon_path(s.taxon) %>
-            <%= s.taxon.common_names %>
+            <%= asv.taxon.taxonRank %>:
+            <%= link_to asv.taxon.canonicalName, taxon_path(asv.taxon) %>
+            <%= asv.taxon.common_names %>
+            <% if asv.highlights %>
+              <% asv.highlights.each do |highlight| %>
+                <br>notes: <%= highlight.notes %>
+              <% end %>
+            <% end %>
+
           </li>
         <% end %>
         </ul>
