@@ -1,13 +1,13 @@
 <h1 class="title"><%= @sample.barcode %></h1>
 
 <ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active"><a href="#summary" aria-controls="summary" role="tab" data-toggle="tab">Summary</a></li>
-  <li role="presentation"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a></li>
+  <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+  <li role="presentation"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Labwork Details</a></li>
 </ul>
 
 <div class="tab-content">
-  <div role="tabpanel" class="tab-pane active" id="summary">
-    <%= render partial: "summary", locals: { sample: @sample } %>
+  <div role="tabpanel" class="tab-pane active" id="overview">
+    <%= render partial: "overview", locals: { sample: @sample } %>
   </div>
   <div role="tabpanel" class="tab-pane" id="details">
     <%= render partial: "details", locals: { sample: @sample } %>
