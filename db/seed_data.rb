@@ -44,7 +44,7 @@ module SeedData
     )
 
     FactoryBot.create_list(
-      :sample, 4,
+      :sample, 5,
       field_data_project: project,
       status: :analyzed,
       submission_date: Time.zone.now - 2.months
@@ -126,7 +126,7 @@ module SeedData
     end
 
     Extraction.all.each do |extraction|
-      rand(1..5).times do
+      rand(2..5).times do
         taxon = Taxon.valid.offset(rand(taxon_count)).take
         Asv.create(extraction: extraction, taxonID: taxon.taxonID)
       end

@@ -4,7 +4,7 @@ class TaxaController < ApplicationController
   def index
     # TODO: r-enable highlights
     @highlights = Highlight.asv
-    @top_taxa = Taxon.includes(:vernaculars).where(taxonID: top_taxa_ids)
+    @top_taxa = Taxon.order(asvs_count: :desc).limit(10)
   end
 
   def show
@@ -53,10 +53,6 @@ class TaxaController < ApplicationController
     @samples ||= groups.map do |g|
       OpenStruct.new(g.first.merge(taxons: g.pluck('canonicalName', 'taxonID')))
     end
-  end
-
-  def top_taxa_ids
-    Asv.group('taxonID').order('count(*) DESC').limit(10).pluck(:taxonID)
   end
 
   def query_string

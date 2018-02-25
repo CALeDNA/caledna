@@ -18,6 +18,7 @@
  <li>
   <%= taxon.taxonRank %>:
   <%= link_to taxon.canonicalName, taxon_path(taxon) %>
-  <%= taxon.common_names %>
+  <%= taxon.common_names %> (<%= pluralize taxon.asvs_count, 'sample' %>)
+
   </li>
 <% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180224170130) do
+ActiveRecord::Schema.define(version: 20180225022755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 20180224170130) do
     t.integer  "extraction_id"
     t.integer  "taxonID"
     t.index ["extraction_id"], name: "index_asvs_on_extraction_id", using: :btree
+    t.index ["taxonID"], name: "index_asvs_on_taxonID", using: :btree
   end
 
   create_table "extraction_types", force: :cascade do |t|
@@ -231,8 +232,10 @@ ActiveRecord::Schema.define(version: 20180224170130) do
     t.string  "family",                   limit: 255
     t.string  "genus",                    limit: 255
     t.jsonb   "hierarchy"
+    t.integer "asvs_count",                           default: 0
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
+    t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
     t.index ["datasetID"], name: "taxa_datasetID_idx", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree

@@ -84,7 +84,7 @@ class Taxon < ApplicationRecord
   private
 
   def common_names_string(names)
-    max = 4
+    max = 3
     names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
   end
 
