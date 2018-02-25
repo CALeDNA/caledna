@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180225022755) do
+ActiveRecord::Schema.define(version: 20180225224738) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(version: 20180225022755) do
     t.string   "notes_sample_processor"
     t.string   "notes_lab_manager"
     t.string   "notes_director"
+    t.string   "status_cd"
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
@@ -199,12 +200,10 @@ ActiveRecord::Schema.define(version: 20180225022755) do
     t.datetime "updated_at",                                                            null: false
     t.datetime "collection_date"
     t.string   "status_cd",                                       default: "submitted"
-    t.integer  "processor_id"
     t.string   "substrate_cd"
     t.string   "ecosystem_category_cd"
     t.string   "alt_id"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
-    t.index ["processor_id"], name: "index_samples_on_processor_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
 
@@ -236,7 +235,7 @@ ActiveRecord::Schema.define(version: 20180225022755) do
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
-    t.index ["datasetID"], name: "taxa_datasetID_idx", using: :btree
+    t.index ["datasetID"], name: "index_taxa_on_datasetID", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end
@@ -256,6 +255,7 @@ ActiveRecord::Schema.define(version: 20180225022755) do
     t.string  "lifeStage",      limit: 255
     t.text    "source"
     t.index "lower(\"vernacularName\")", name: "vernacular_vernacularname_idx", using: :btree
+    t.index ["language"], name: "index_vernaculars_on_language", using: :btree
     t.index ["taxonID"], name: "vernacular_taxonid_idx", using: :btree
   end
 
@@ -267,5 +267,4 @@ ActiveRecord::Schema.define(version: 20180225022755) do
   add_foreign_key "extractions", "samples"
   add_foreign_key "photos", "samples"
   add_foreign_key "samples", "field_data_projects"
-  add_foreign_key "samples", "researchers", column: "processor_id"
 end
