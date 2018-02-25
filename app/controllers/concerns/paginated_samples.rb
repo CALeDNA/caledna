@@ -12,7 +12,9 @@ module PaginatedSamples
 
   def paginated_samples
     if params[:view]
-      samples.page(params[:page])
+      subject =
+        samples.class == Array ? Kaminari.paginate_array(samples) : samples
+      subject.page(params[:page])
     else
       samples
     end
