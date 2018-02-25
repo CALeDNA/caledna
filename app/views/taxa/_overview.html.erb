@@ -42,15 +42,15 @@
   </div>
 </div>
 
-<h2 class="title">Samples</h2>
+<h2 id="samples" class="title">Samples</h2>
 
 <% if samples.present? %>
   <div class="samples-menu">
     <div class="btn-group" role="group" >
-      <a href="<%= taxon_path %>" class="btn btn-default">
+      <a href="<%= taxon_path %>#samples" class="btn btn-default">
         <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
       </a>
-      <a href="<%= taxon_path(view: :list) %>" class="btn btn-default">
+      <a href="<%= taxon_path(view: :list) %>#samples" class="btn btn-default">
         <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
       </a>
     </div>
