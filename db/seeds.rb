@@ -6,6 +6,7 @@ class DBSeeds
   include SeedData
   include SeedImport
 
+  # rubocop:disable Metrics/MethodLength
   def seed
     delete_records
     reset_search
@@ -47,6 +48,7 @@ class DBSeeds
 
     puts 'done seeding'
   end
+  # rubocop:enable Metrics/MethodLength
 end
 
 import_taxa = ENV.fetch('IMPORT_TAXA', false)

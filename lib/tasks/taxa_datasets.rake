@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :taxa_datasets do
   desc 'import dataset info from gbif'
 
