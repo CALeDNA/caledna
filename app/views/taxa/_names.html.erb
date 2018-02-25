@@ -15,6 +15,10 @@
     </tr>
   <% end %>
 </table>
+<p class='data-source'>
+  Classification Source: <%= link_to taxon.taxa_dataset.name, taxon.taxa_dataset.url %><br>
+  <%= taxon.taxa_dataset.citation %>
+</p>
 
 <% if taxon.vernaculars.present? %>
   <h3>Common Names</h3>
@@ -39,6 +43,10 @@
       </tr>
     <% end %>
   </table>
+  <p class='data-source'>
+    Common Names Source: <%= link_to TaxaDataset.gbif_backbone.name, TaxaDataset.gbif_backbone.url %><br>
+    <%= TaxaDataset.gbif_backbone.citation %>
+  </p>
 <% end%>
 
 <% if taxon.synonyms.present? %>
@@ -56,4 +64,8 @@
       </tr>
     <% end %>
   </table>
+  <p class='data-source'>
+    Scientific Names Source: <%= link_to TaxaDataset.gbif_backbone.name, TaxaDataset.gbif_backbone.url %><br>
+    <%= TaxaDataset.gbif_backbone.citation %>
+  </p>
 <% end %>

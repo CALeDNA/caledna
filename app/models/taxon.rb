@@ -16,6 +16,10 @@ class Taxon < ApplicationRecord
     parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
   end
 
+  def taxa_dataset
+    ::TaxaDataset.find_by(datasetID: datasetID)
+  end
+
   # rubocop:disable Metrics/LineLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def taxonomy_tree
@@ -87,21 +91,22 @@ class Taxon < ApplicationRecord
   def gbif_photo
     photo = multimedia.select(&:image?).first
     return if photo.blank?
-
-    full_attribution = "#{photo.publisher}: #{photo.rightsHolder}"
     {
       url: photo.identifier,
-      attribution: photo.rightsHolder ? full_attribution : photo.publisher
+      attribution: photo.rightsHolder,
+      source: photo.publisher,
+      taxa_url: gbif_link
     }
   end
 
   def inaturalist_photo
     return if inaturalist_record.blank?
     return if inaturalist_record['default_photo'].blank?
-
     {
       url: inaturalist_record['default_photo']['medium_url'],
-      attribution: inaturalist_record['default_photo']['attribution']
+      attribution: inaturalist_record['default_photo']['attribution'],
+      source: 'iNaturalist',
+      taxa_url: inaturalist_link
     }
   end
 

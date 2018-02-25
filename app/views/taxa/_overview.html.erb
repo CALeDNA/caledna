@@ -2,7 +2,10 @@
   <div class="col-md-6">
     <% if taxon.image.present? %>
       <%= image_tag taxon.image[:url], alt: taxon.canonicalName, width: 400 %><br>
-      <%=  taxon.image[:attribution] %>
+      <p class='data-source'>
+        Image Source: <%=  taxon.image[:attribution] %>
+        via <%= link_to taxon.image[:source], taxon.image[:taxa_url] %>
+      </p>
     <% else %>
       <%= image_tag 'blank_photo.svg' %>
     <% end %>
@@ -26,6 +29,10 @@
         </tr>
       <% end %>
     </table>
+    <p class='data-source'>
+      Classification Source: <%= link_to taxon.taxa_dataset.name, taxon.taxa_dataset.url %><br>
+      <%= taxon.taxa_dataset.citation %>
+    </p>
 
     <% if taxon.conservation_status? %>
       <h3>Conservation Status</h3>
