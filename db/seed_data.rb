@@ -33,20 +33,6 @@ module SeedData
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def import_taxonomy_data
-    puts 'seeding taxonomy...'
-    sql_file = Rails.root.join('db').join('data').join('gbif_data.sql')
-    host = ActiveRecord::Base.connection_config[:host]
-    user = ActiveRecord::Base.connection_config[:username]
-    db = ActiveRecord::Base.connection_config[:database]
-
-    cmd = 'psql '
-    cmd += "--host #{host} " if host.present?
-    cmd += "--username #{user} " if user.present?
-    cmd += "#{db} < #{sql_file}"
-    exec cmd
-  end
-
   def seed_samples(project)
     puts 'seeding samples...'
 
@@ -151,10 +137,6 @@ module SeedData
 
   def seed_highlights
     puts 'seeding highlights...'
-    Taxon.order(:taxonID).limit(8).offset(1).each do |kingdom|
-      Highlight.create(highlightable: kingdom)
-    end
-
     Asv.limit(4).each do |asv|
       Highlight.create(highlightable: asv, notes: Faker::Lorem.sentence)
     end
