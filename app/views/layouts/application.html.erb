@@ -23,15 +23,17 @@
   </head>
 
   <body>
-  <%= render partial: "layouts/nav" %>
+    <div id="main-wrapper">
+      <%= render partial: "layouts/nav" %>
 
-    <div class="container main-container">
-      <% flash.each do |name, msg| -%>
-        <%= content_tag :div, msg, class: name %>
-      <% end -%>
-      <%= yield %>
-    </div>
+      <div class="container main-container">
+        <% flash.each do |name, msg| -%>
+          <%= content_tag :div, msg, class: name %>
+        <% end -%>
+        <%= yield %>
+      </div>
 
-  <%= render partial: "layouts/footer" %>
+      <%= render partial: "layouts/footer" %>
+    <div>
   </body>
 </html>

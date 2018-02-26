@@ -2,12 +2,25 @@
 @import "bootstrap";
 @import "font-awesome";
 
-body {
-  padding-top: 130px;
+// bottom of page or end of content footer
+// https://stackoverflow.com/a/12253099
+
+// =============
+// layout
+// =============
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-h1.title {
-  margin-bottom: 3rem;
+#main-wrapper {
+  box-sizing: border-box;
+  min-height: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-header {
@@ -15,9 +28,33 @@ h1.title {
 }
 
 .navbar-default {
+  min-height: 125px;
+}
+
+.main-container {
+  padding-top: 140px;
+  padding-bottom: 170px;
+}
+
+footer {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  min-height: 120px;
+}
+
+// =============
+// common
+// =============
+
+h1.title {
+  margin-bottom: 3rem;
+}
+
+.navbar-default {
   background-color: #cbe2d3;
   border-color: #fff;
-  min-height: 130px;
 
   .navbar-brand {
     padding: 15px 35px;
@@ -99,25 +136,15 @@ ul.nav li.dropdown > ul.dropdown-menu li {
 }
 
 
-.main-container {
-  margin-bottom: 3em;
-}
-
 footer {
   background-color: hsl(142, 28%, 84%);
-
-  // position: fixed;
   text-align: left;
-  min-height: 32px;
-  // bottom: 0px;
-  width: 100%;
   font-family: "proxima-nova";
   font-size: 15px;
   line-height: 1.6em;
   font-weight: 400;
   font-style: normal;
   padding: 1.5em 0 .7em;
-  left: 0;
 
   .social-accounts {
     float: right;
@@ -145,6 +172,12 @@ footer {
     }
   }
 }
+
+
+// =============
+// page specific
+// =============
+
 
 .json {
   overflow-wrap: break-word;
