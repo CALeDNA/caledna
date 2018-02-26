@@ -81,7 +81,8 @@ module SeedData
         processor_id: processor.id,
         extraction_type: type_a,
         sra_adder_id: director.id,
-        local_fastq_storage_adder_id: director.id
+        local_fastq_storage_adder_id: director.id,
+        status_cd: :analyzed
       )
     end
 
@@ -94,7 +95,8 @@ module SeedData
         processor_id: processor.id,
         extraction_type: type_a,
         sra_adder_id: director.id,
-        local_fastq_storage_adder_id: director.id
+        local_fastq_storage_adder_id: director.id,
+        status_cd: :results_completed
       )
     end
 
@@ -107,7 +109,8 @@ module SeedData
         processor_id: processor.id,
         extraction_type: type_b,
         sra_adder_id: director.id,
-        local_fastq_storage_adder_id: director.id
+        local_fastq_storage_adder_id: director.id,
+        status_cd: :results_completed
       )
     end
   end
