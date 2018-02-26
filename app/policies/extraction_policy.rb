@@ -2,15 +2,19 @@
 
 class ExtractionPolicy < ApplicationPolicy
   def index?
-    valid_users
+    all_roles
   end
 
   def show?
-    valid_users
+    all_roles
   end
 
   def create?
     user.director?
+  end
+
+  def edit?
+    valid_users
   end
 
   def update?
@@ -18,7 +22,7 @@ class ExtractionPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.director?
+    user.director? || user.lab_manager?
   end
 
   class Scope < Scope

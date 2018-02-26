@@ -65,12 +65,14 @@ class ExtractionDashboard < Administrate::BaseDashboard
     notes_sample_processor: Field::String,
     notes_lab_manager: Field::String,
     notes_director: Field::String,
+    status_cd: EnumField,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
     :sample,
     :processor,
     :asvs,
+    :status_cd,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
@@ -78,8 +80,7 @@ class ExtractionDashboard < Administrate::BaseDashboard
     :extraction_type,
     :processor,
     :asvs,
-    :id,
-    :processor_id,
+    :status_cd,
     :priority_sequencing_cd,
     :prepub_share,
     :prepub_share_group,
@@ -139,15 +140,12 @@ class ExtractionDashboard < Administrate::BaseDashboard
     :notes_director,
   ].freeze
 
-  # FORM_ATTRIBUTES
-  # an array of attributes that will be displayed
-  # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = [
     :sample,
     :extraction_type,
     :processor,
     :asvs,
-    :processor_id,
+    :status_cd,
     :priority_sequencing_cd,
     :prepub_share,
     :prepub_share_group,
@@ -210,7 +208,7 @@ class ExtractionDashboard < Administrate::BaseDashboard
   # Overwrite this method to customize how extractions are displayed
   # across all pages of the admin dashboard.
   #
-  # def display_resource(extraction)
-  #   "Extraction ##{extraction.id}"
-  # end
+  def display_resource(extraction)
+    "Extraction for #{extraction.sample.barcode}"
+  end
 end

@@ -39,3 +39,5 @@ en:
         ecosystem_category_cd: 'Ecosystem Category'
         alt_id: 'Alt ID'
         kobo_id: 'Kobo ID'
+      field_data_project:
+        kobo_id: 'Kobo ID'

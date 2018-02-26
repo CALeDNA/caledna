@@ -9,10 +9,6 @@ class SamplePolicy < ApplicationPolicy
     all_roles
   end
 
-  def create?
-    user.director?
-  end
-
   def update?
     user.director? || user.lab_manager?
   end

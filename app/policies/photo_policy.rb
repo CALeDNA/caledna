@@ -10,6 +10,6 @@ class PhotoPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.director?
+    user.director? || user.lab_manager?
   end
 end
