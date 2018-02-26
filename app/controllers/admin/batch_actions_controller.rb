@@ -20,6 +20,7 @@ module Admin
       end
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def assign_samples
       if samples.update(status_cd: :assigned)
         samples.each do |sample|
@@ -38,6 +39,7 @@ module Admin
         error_handler(object)
       end
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     private
 

@@ -31,6 +31,7 @@ module Admin
         allowed_params.reject { |_, v| v.blank? }
       end
 
+      # rubocop:disable Metrics/MethodLength
       def allowed_params
         params.require(:extraction).permit(
           :extraction_type_id,
@@ -94,6 +95,7 @@ module Admin
           :status_cd
         )
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

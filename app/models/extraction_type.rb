@@ -8,6 +8,6 @@ class ExtractionType < ApplicationRecord
   end
 
   def self.select_options
-    ExtractionType.all.map {|e| [e.name, e.id]}
+    ExtractionType.all.map { |e| [e.name, e.id] }
   end
 end

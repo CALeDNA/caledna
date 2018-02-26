@@ -9,7 +9,6 @@ class FieldDataProjectPolicy < ApplicationPolicy
     all_roles
   end
 
-
   def update?
     user.director?
   end

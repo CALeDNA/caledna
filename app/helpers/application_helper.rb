@@ -29,7 +29,7 @@ module ApplicationHelper
   def enum_field_values(field, enum_values)
     field_name = field.to_s.sub('_cd', '')
     options = [["Select #{field_name.titleize}", '']]
-    options + enum_values.map do |k,v|
+    options + enum_values.map do |k, v|
       [k.titleize, v]
     end
   end
