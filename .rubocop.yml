@@ -11,6 +11,9 @@ AllCops:
 Style/Documentation:
   Enabled: false
 
+Lint/UriEscapeUnescape:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'

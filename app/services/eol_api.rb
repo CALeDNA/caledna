@@ -11,6 +11,6 @@ class EolApi
   end
 
   def taxa(keyword)
-    self.class.get("/#{CGI.escape(keyword)}.json", @options)
+    self.class.get("/#{URI.encode(keyword)}.json", @options)
   end
 end

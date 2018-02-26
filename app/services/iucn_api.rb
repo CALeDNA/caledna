@@ -23,6 +23,6 @@ class IucnApi
   end
 
   def species(keyword)
-    self.class.get("/species/#{CGI.escape(keyword.downcase)}", @options)
+    self.class.get("/species/#{URI.encode(keyword.downcase)}", @options)
   end
 end
