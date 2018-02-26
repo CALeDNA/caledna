@@ -51,12 +51,11 @@ class DBSeeds
   # rubocop:enable Metrics/MethodLength
 end
 
-import_taxa = ENV.fetch('IMPORT_TAXA', false)
-import_taxa_datasets = ENV.fetch('IMPORT_TAXA_DATASETS', false)
+import_main = ENV.fetch('IMPORT_MAIN', 'true') == 'true'
+import_taxa = ENV.fetch('IMPORT_TAXA', 'false') == 'true'
+import_taxa_datasets = ENV.fetch('IMPORT_TAXA_DATASETS', 'false') == 'true'
 
 db_seeds = DBSeeds.new
-
 db_seeds.import_taxonomy_data if Taxon.count.zero? && import_taxa
 db_seeds.import_taxa_datasets if import_taxa_datasets
-
-db_seeds.seed if !Rails.env.production? && Taxon.count.positive?
+db_seeds.seed if !Rails.env.production? && Taxon.count.positive? && import_main
