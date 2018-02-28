@@ -52,6 +52,8 @@ Rails.application.routes.draw do
       post 'batch_assign_samples' => 'batch_actions#assign_samples'
       post 'batch_process_extractions' => 'batch_actions#process_extractions'
     end
+
+    resource :reseed_database, only: %i[show]
   end
 
   resources :samples, only: %i[index show]

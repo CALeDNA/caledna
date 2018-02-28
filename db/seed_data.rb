@@ -11,7 +11,6 @@ module SeedData
     Extraction.destroy_all
     ExtractionType.destroy_all
     Sample.destroy_all
-    Researcher.destroy_all
     FieldDataProject.destroy_all
   end
 
@@ -66,6 +65,50 @@ module SeedData
     end
   end
 
+  def seed_people
+    puts 'seeding people...'
+    if Researcher.count.zero?
+      director = FactoryBot.create(
+        :director,
+        email: 'director@example.com',
+        password: 'password',
+        username: 'Director Jane'
+      )
+
+      FactoryBot.create(
+        :lab_manager,
+        email: 'lab_manager@example.com',
+        password: 'password',
+        username: 'Lab Manager Jane'
+      )
+
+      processor1 = FactoryBot.create(
+        :sample_processor,
+        email: 'sample_processor@example.com',
+        password: 'password',
+        username: 'Sample Processor Jane'
+      )
+
+      processor2 = FactoryBot.create(
+        :sample_processor,
+        email: 'sample_processor2@example.com',
+        password: 'password',
+        username: 'Sample Processor Bob'
+      )
+    else
+      director = Researcher.find_by(role_cd: 'director')
+      processors = Researcher.where(role_cd: 'sample_processor')
+      processor1 = processors.first
+      processor2 = processors.second
+    end
+
+    {
+      director: director,
+      processor1: processor1,
+      processor2: processor2
+    }
+  end
+
   def seed_extractions(processor1, processor2, director)
     puts 'seeding extractions...'
 
@@ -116,11 +159,10 @@ module SeedData
   end
 
   def seed_asvs
-    return if Taxon.count.zero?
     puts 'seeding asv...'
 
-    vernacular_count = Vernacular.count / 100
-    taxon_count = Taxon.valid.count / 100
+    vernacular_count = 10_000
+    taxon_count = 60_000
     ids = []
 
     rand(1..3).times do

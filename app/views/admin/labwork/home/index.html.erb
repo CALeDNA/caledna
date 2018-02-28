@@ -37,3 +37,18 @@
     <% end %>
   </ul>
 </section>
+
+
+<% if policy(:ReseedDatabase).show? %>
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    Reset Database Data
+  </h1>
+</header>
+
+  <section class="main-content__body">
+    <%= link_to "Reset data", admin_reseed_database_path, data: {confirm: "You sure?"} %>:
+      delete all field data projects, samples, extractions, ASVs, photos,
+      then create a Demo project with samples, extractions, and ASVs
+  </section>
+<% end %>
