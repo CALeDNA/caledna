@@ -1,0 +1,15 @@
+<% content_for(:title) { 'Normalize taxonomy from test results' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+
+  <%= form_tag admin_labwork_taxa_path, multipart: true do %>
+    <%= file_field_tag :file %>
+    <%= submit_tag "Import" %>
+  <% end %>
+</section>

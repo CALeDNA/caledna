@@ -16,7 +16,7 @@
     <%
       non_model_dashboards = ['labwork/process_extractions',  'labwork/home', 'labwork/kobo',
       'labwork/assign_samples', 'labwork/approve_samples', 'batch_actions',
-      'labwork/import_csv']
+      'labwork/import_csv', 'labwork/dna_results']
       next if non_model_dashboards.include?(resource.resource)
       next unless policy(resource.name.to_s.singularize.to_sym).index?
     %>

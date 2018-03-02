@@ -42,6 +42,19 @@
         create or update samples via csv upload
       </li>
     <% end %>
+    <% if policy('Labwork::DnaResult'.to_sym).index? %>
+      <li>
+        <%= link_to 'Process DNA Results', admin_labwork_asvs_path %>:
+        upload dna results csv
+      </li>
+    <% end %>
+
+    <% if policy('Labwork::DnaResult'.to_sym).index? %>
+      <li>
+        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_taxa_path %>:
+        upload dna results csv
+      </li>
+    <% end %>
   </ul>
 </section>
 

@@ -1,0 +1,18 @@
+<% content_for(:title) { 'Normalize taxonomy from test results' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <% @errors.each do |error| %>
+    <p>
+      rank: <%= error[:rank] %><br>
+      taxon: <%= error[:hierarchy][error[:rank].try(:to_sym)] %><br>
+      test result: <%= error[:taxonomy_string] %><br>
+
+    </p>
+  <% end %>
+</section>

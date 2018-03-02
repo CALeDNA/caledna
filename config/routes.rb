@@ -44,6 +44,15 @@ Rails.application.routes.draw do
         get 'samples_csv' => 'import_csv#samples'
         post 'samples_csv' => 'import_csv#samples_create'
       end
+
+      controller 'dna_results' do
+        get 'taxa' => 'dna_results#taxa'
+        post 'taxa' => 'dna_results#taxa_create'
+        get 'asvs' => 'dna_results#asvs'
+        post 'asvs' => 'dna_results#asvs_create'
+      end
+
+
     end
 
     controller 'batch_actions' do
