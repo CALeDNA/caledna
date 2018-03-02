@@ -129,7 +129,9 @@ class Taxon < ApplicationRecord
   end
 
   def eol_record
-    @eol_record ||= JSON.parse(eol_taxa.body)['results'].last
+    response = JSON.parse(eol_taxa.body)
+    # return if response.first['error'].present?
+    @eol_record ||= response['results'].last
   end
 
   def iucn_species
@@ -139,6 +141,7 @@ class Taxon < ApplicationRecord
   end
 
   def iucn_record
+    return if JSON.parse(iucn_species.body)['value'] == '0'
     @iucn_record ||= JSON.parse(iucn_species.body)['result'].first
   end
 end
