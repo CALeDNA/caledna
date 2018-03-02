@@ -86,7 +86,7 @@ class Taxon < ApplicationRecord
     Taxon.where(acceptedNameUsageID: taxonID)
   end
 
-  def accepted
+  def accepted_taxon
     Taxon.find_by(taxonID: acceptedNameUsageID)
   end
 

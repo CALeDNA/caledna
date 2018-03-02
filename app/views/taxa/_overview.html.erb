@@ -29,6 +29,11 @@
         </tr>
       <% end %>
     </table>
+
+    <p>Taxonomic status: <%= taxon.taxonomicStatus %></p>
+    <% if taxon.acceptedNameUsageID %>
+      <p>Accepted name: <%= link_to taxon.accepted_taxon.canonicalName, taxon_path(taxon.accepted_taxon) %></p>
+    <% end %>
     <p class='data-source'>
       Classification Source: <%= link_to taxon.taxa_dataset.name, taxon.taxa_dataset.url %><br>
       <%= taxon.taxa_dataset.citation %>
