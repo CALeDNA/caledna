@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ReseedDatabasePolicy < ApplicationPolicy
-  def show?
+  def delete?
     user.director?
   end
 end
