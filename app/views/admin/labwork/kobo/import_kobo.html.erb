@@ -11,7 +11,7 @@
     <%= submit_tag("Import Projects") %>
   <% end %>
 
-  <table>
+  <table class="no-auto-link">
     <tr>
       <th>Name</th>
       <th>Records</th>
@@ -19,8 +19,8 @@
       <th></th>
     </tr>
     <% @projects.each do |project| %>
-    <tr class="js-table-row" data-url="<%= admin_field_data_project_path(project.id) %>%">
-      <td><%= project.name %></td>
+    <tr>
+      <td><%= link_to project.name, admin_field_data_project_path(project.id) %></td>
       <td><%= project.samples.count %></td>
       <td><%= project.last_import_date %></td>
       <td>

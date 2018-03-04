@@ -1,4 +1,5 @@
 <% content_for(:title) { 'Process Extractions' } %>
+<% content_for(:javascript) { javascript_include_tag 'admin/batch_actions.js' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -8,21 +9,24 @@
 
 <section class="main-content__body">
   <%= form_tag admin_labwork_edit_multiple_extractions_path, method: :post do |f| %>
-    <table>
+    <%= submit_tag 'Batch Edit', class: "batch-action btn btn-default" %>
+
+    <table class="no-auto-link">
       <tr>
-        <th></th>
+        <th><%= check_box_tag :rows %></th>
         <th>Barcode</th>
         <th>Field Data Project</th>
+        <th></th>
       </tr>
       <% @extractions.each do |extraction| %>
       <tr>
-        <th><%= check_box_tag "extraction_ids[]", extraction.id %></th>
-        <td><%= extraction.sample.barcode %></td>
-        <td><%= extraction.sample.field_data_project.name %></td>
+        <th><%= check_box_tag "extraction_ids[]", extraction.id, false, class: "row" %></th>
+        <td><%= link_to extraction.sample.barcode, admin_sample_path( extraction.sample)  %></td>
+        <td><%= link_to extraction.sample.field_data_project.name, admin_field_data_project_path(extraction.sample.field_data_project) %></td>
+        <td><%= link_to 'Edit', edit_admin_extraction_path(extraction) %></td>
       </tr>
       <% end %>
     </table>
-    <%= submit_tag 'Edit Checked' %>
   <% end %>
 </section>
 

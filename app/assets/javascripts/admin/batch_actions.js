@@ -33,7 +33,7 @@
   }
 
   function toggle() {
-    var checkboxes = document.getElementsByName('row');
+    var checkboxes = document.querySelectorAll('.row');
 
     checkboxes.forEach(function(checkbox) {
       checkbox.checked = checkboxToggler.checked;
