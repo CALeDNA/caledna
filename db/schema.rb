@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180225224738) do
+ActiveRecord::Schema.define(version: 20180304051210) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -190,19 +190,22 @@ ActiveRecord::Schema.define(version: 20180225224738) do
   create_table "samples", force: :cascade do |t|
     t.integer  "field_data_project_id"
     t.integer  "kobo_id"
-    t.decimal  "latitude",              precision: 15, scale: 10
-    t.decimal  "longitude",             precision: 15, scale: 10
+    t.decimal  "latitude"
+    t.decimal  "longitude"
     t.datetime "submission_date"
     t.string   "barcode"
     t.jsonb    "kobo_data"
     t.text     "notes"
-    t.datetime "created_at",                                                            null: false
-    t.datetime "updated_at",                                                            null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
     t.datetime "collection_date"
-    t.string   "status_cd",                                       default: "submitted"
+    t.string   "status_cd",             default: "submitted"
     t.string   "substrate_cd"
     t.string   "ecosystem_category_cd"
     t.string   "alt_id"
+    t.decimal  "altitude"
+    t.integer  "gps_precision"
+    t.string   "location"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
@@ -237,6 +240,7 @@ ActiveRecord::Schema.define(version: 20180225224738) do
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
     t.index ["datasetID"], name: "index_taxa_on_datasetID", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
+    t.index ["kingdom", "phylum", "className", "order", "family", "genus", "canonicalName", "taxonRank"], name: "taxonomy_idx", using: :btree
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end
 
