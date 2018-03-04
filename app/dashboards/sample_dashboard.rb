@@ -11,13 +11,16 @@ class SampleDashboard < Administrate::BaseDashboard
     ),
     id: Field::Number,
     kobo_id: Field::Number,
-    latitude: Field::String.with_options(searchable: false),
-    longitude: Field::String.with_options(searchable: false),
+    latitude: Field::Number.with_options(searchable: false),
+    longitude: Field::Number.with_options(searchable: false),
+    altitude: Field::Number.with_options(searchable: false),
+    gps_precision: Field::Number.with_options(searchable: false),
     collection_date: Field::DateTime,
     submission_date: Field::DateTime,
     barcode: Field::String,
     kobo_data: Field::JSON.with_options(searchable: false),
     notes: Field::Text,
+    location: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     status_cd: EnumField,
@@ -28,18 +31,20 @@ class SampleDashboard < Administrate::BaseDashboard
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
-    :field_data_project,
+    :barcode,
     :latitude,
     :longitude,
-    :barcode,
+    :field_data_project,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
-    :field_data_project,
+    :barcode,
     :latitude,
     :longitude,
-    :barcode,
-    :kobo_id,
+    :altitude,
+    :gps_precision,
+    :field_data_project,
+    :location,
     :status_cd,
     :substrate_cd,
     :ecosystem_category_cd,
@@ -48,26 +53,25 @@ class SampleDashboard < Administrate::BaseDashboard
     :photos,
     :submission_date,
     :collection_date,
-    :created_at,
-    :updated_at,
     :kobo_data,
   ].freeze
 
   FORM_ATTRIBUTES = [
-    :field_data_project,
+    :barcode,
     :latitude,
     :longitude,
-    :barcode,
-    :kobo_id,
+    :altitude,
+    :gps_precision,
+    :field_data_project,
+    :location,
     :status_cd,
     :substrate_cd,
     :ecosystem_category_cd,
     :alt_id,
     :notes,
+    :photos,
     :submission_date,
     :collection_date,
-    :created_at,
-    :updated_at,
   ].freeze
 
   def display_resource(sample)
