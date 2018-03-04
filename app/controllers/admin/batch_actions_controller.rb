@@ -3,11 +3,12 @@
 module Admin
   class BatchActionsController < Admin::ApplicationController
     def approve_samples
-      if samples.update(status_cd: :approved)
+      results = samples.update(status_cd: :approved)
+      if results.all?(&:valid?)
         flash[:success] = 'Samples approved'
-        success_handler
       else
-        error_handler(object)
+        errors = results.map { |r| r.errors.messages.values }.flatten.join('; ')
+        flash[:error] = errors
       end
     end
 
