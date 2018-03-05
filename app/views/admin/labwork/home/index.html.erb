@@ -35,6 +35,13 @@
         enter extraction data
       </li>
     <% end %>
+
+    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+      <li>
+        <%= link_to 'Import Samples csv', admin_labwork_samples_csv_path %>:
+        create or update samples via csv upload
+      </li>
+    <% end %>
   </ul>
 </section>
 

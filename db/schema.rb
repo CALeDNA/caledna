@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180304051210) do
+ActiveRecord::Schema.define(version: 20180305035945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -206,6 +206,13 @@ ActiveRecord::Schema.define(version: 20180304051210) do
     t.decimal  "altitude"
     t.integer  "gps_precision"
     t.string   "location"
+    t.string   "primer_16s"
+    t.string   "primer_18s"
+    t.string   "primer_cO1"
+    t.string   "primer_fits"
+    t.string   "primer_pits"
+    t.decimal  "elevatr_altitude"
+    t.jsonb    "csv_data"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end

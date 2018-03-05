@@ -37,12 +37,12 @@ Rails.application.routes.draw do
       controller 'process_extractions' do
         get 'process_extractions' => 'process_extractions#index'
         post 'edit_multiple', as: :edit_multiple_extractions
-        # post 'edit_multiple', as: :post_edit_multiple_extractions
-
-        # post 'post_edit_multiple', as: :post_edit_multiple_extractions
-        # get 'post_edit_multiple', as: :edit_multiple_extractions
-
         put 'update_multiple'
+      end
+
+      controller 'import_csv' do
+        get 'samples_csv' => 'import_csv#samples'
+        post 'samples_csv' => 'import_csv#samples_create'
       end
     end
 
