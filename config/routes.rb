@@ -49,6 +49,8 @@ Rails.application.routes.draw do
     controller 'batch_actions' do
       post 'batch_approve_samples' => 'batch_actions#approve_samples'
       post 'batch_reject_samples' => 'batch_actions#reject_samples'
+      post 'batch_duplicate_barcode_samples' =>
+        'batch_actions#duplicate_barcode_samples'
       post 'batch_assign_samples' => 'batch_actions#assign_samples'
       post 'batch_process_extractions' => 'batch_actions#process_extractions'
     end

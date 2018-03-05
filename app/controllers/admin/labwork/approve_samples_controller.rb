@@ -4,7 +4,9 @@ module Admin
   module Labwork
     class ApproveSamplesController < Admin::ApplicationController
       def index
-        @samples = Sample.where(status_cd: :submitted).page params[:page]
+        @samples = Sample.where(status_cd: :submitted)
+                         .order(:barcode)
+                         .page params[:page]
       end
     end
   end

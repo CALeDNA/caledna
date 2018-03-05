@@ -34,6 +34,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :barcode,
     :latitude,
     :longitude,
+    :status_cd,
     :field_data_project,
   ].freeze
 

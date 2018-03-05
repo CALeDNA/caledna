@@ -21,6 +21,15 @@ module Admin
       end
     end
 
+    def duplicate_barcode_samples
+      if samples.update(status_cd: :duplicate_barcode)
+        flash[:success] = 'Samples marked as duplicate barcode'
+        success_handler
+      else
+        error_handler(object)
+      end
+    end
+
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def assign_samples
       if samples.update(status_cd: :assigned)
