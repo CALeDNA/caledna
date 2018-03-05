@@ -9,7 +9,7 @@ describe 'Import Kobo' do
     describe '#GET import_kobo' do
       it 'display project data and actions for researchers' do
         create(:field_data_project, name: 'project name')
-        visit admin_import_kobo_path
+        visit admin_labwork_import_kobo_path
 
         expect(page).to have_content('project name')
         expect(page).to have_button('Import Projects')
@@ -23,7 +23,7 @@ describe 'Import Kobo' do
 
     describe '#GET import_kobo' do
       it 'denies access' do
-        visit admin_import_kobo_path
+        visit admin_labwork_import_kobo_path
 
         expect(page).to have_content('You cannot perform this action')
       end
@@ -35,7 +35,7 @@ describe 'Import Kobo' do
 
     describe '#GET import_kobo' do
       it 'denies access' do
-        visit admin_import_kobo_path
+        visit admin_labwork_import_kobo_path
 
         expect(page).to have_content('You cannot perform this action')
       end

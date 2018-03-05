@@ -12,7 +12,8 @@ class DBSeeds
     people = seed_people
     project = seed_projects
     seed_samples(project)
-    seed_extractions(people[:processor1], people[:processor2], people[:director])
+    seed_extractions(people[:processor1], people[:processor2],
+                     people[:director])
     seed_asvs
     seed_highlights
 

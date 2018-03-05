@@ -25,4 +25,5 @@ module Admin
   end
 end
 
-class ReseedNotAllowedError < StandardError; end
+class ReseedNotAllowedError < StandardError
+end

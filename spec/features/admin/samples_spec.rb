@@ -14,7 +14,7 @@ describe 'Samples' do
         expect(page).to have_content('123')
         expect(page).to have_content('Edit')
         expect(page).to have_content('Destroy')
-        expect(page).to have_content('New sample')
+        expect(page).not_to have_content('New sample')
       end
     end
 
@@ -25,14 +25,6 @@ describe 'Samples' do
 
         expect(page).to have_content('123')
         expect(page).to have_content('Edit 123')
-      end
-    end
-
-    describe '#GET samples new page' do
-      it 'display sample data and actions for samples' do
-        visit new_admin_sample_path
-
-        expect(page).to have_button('Create Sample')
       end
     end
 

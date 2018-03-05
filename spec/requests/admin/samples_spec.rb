@@ -25,7 +25,7 @@ describe 'Samples' do
 
   shared_examples 'allows full write access' do
     describe '#POST' do
-      it 'creates a new sample' do
+      it 'does not creates a new sample' do
         attributes = {
           barcode: '123',
           field_data_project_id: create(:field_data_project).id
@@ -33,7 +33,7 @@ describe 'Samples' do
         params = { sample: attributes }
 
         expect { post admin_samples_path, params: params }
-          .to change(Sample, :count).by(1)
+          .to change(Sample, :count).by(0)
       end
     end
 
@@ -54,14 +54,6 @@ describe 'Samples' do
 
         expect { delete admin_sample_path(id: sample.id) }
           .to change(Sample, :count).by(-1)
-      end
-    end
-
-    describe '#GET samples new page' do
-      it 'redirects to admin root' do
-        get new_admin_sample_path
-
-        expect(response.status).to eq(200)
       end
     end
 

@@ -13,7 +13,6 @@ class Sample < ApplicationRecord
             uniqueness: { message: 'barcode %<value>s is already taken' },
             if: proc { |a| a.approved? }
 
-
   scope :analyzed, -> { where(status_cd: :analyzed) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do

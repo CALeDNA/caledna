@@ -122,7 +122,8 @@ describe KoboApi::Process do
 
     context 'incoming data contains previously imported sample' do
       before(:each) do
-        create(:sample, kobo_id: kobo_id, field_data_project: field_data_project)
+        create(:sample, kobo_id: kobo_id,
+                        field_data_project: field_data_project)
       end
 
       it 'calls save_project_data only for new items' do
@@ -251,7 +252,7 @@ describe KoboApi::Process do
             { 'filename' => 'photo/b2-1.jpg' },
             { 'filename' => 'photo/c1-1.jpg' },
             { 'filename' => 'photo/c1-2.jpg' },
-            { 'filename' => 'photo/c2-1.jpg' },
+            { 'filename' => 'photo/c2-1.jpg' }
           ]
         }
       end

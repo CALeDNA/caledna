@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module KoboApi
+  # rubocop:disable Metrics/ClassLength
   class Process
     MULTI_SAMPLE_PROJECTS = [95_481, 87_534, 95_664].freeze
 
@@ -60,6 +61,7 @@ module KoboApi
       Project.find_by(kobo_id: kobo_id)
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def sample_prefixes
       [
         { gps: 'groupA/A1/A1gps', other: 'groupA/A1/A1', tube: 'LA-S1' },
@@ -97,7 +99,7 @@ module KoboApi
 
       sample_prefixes.each do |prefix|
         data.barcode = "#{kit_number}-#{prefix[:tube]}"
-        data.gps = data.send("#{prefix[:gps]}") || ''
+        data.gps = data.send(prefix[:gps]) || ''
         data.substrate = data.send("#{prefix[:other]}SS")
         data.notes = data.send("#{prefix[:other]}comments")
         data.location =
@@ -131,18 +133,16 @@ module KoboApi
         submission_date: data._submission_time,
         location: data.location,
         status: :submitted,
-
         barcode: data.barcode,
         latitude: data.gps.split.first,
         longitude: data.gps.split.second,
         altitude: data.gps.split.third,
         gps_precision: data.gps.split.fourth,
         substrate: data.substrate,
-        notes: data.notes,
+        notes: data.notes
       )
     end
 
-    # rubocop:disable Metrics/MethodLength
     def save_photos(sample_id, hash_payload)
       data = OpenStruct.new(hash_payload)
 
@@ -161,8 +161,9 @@ module KoboApi
         photo.save
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
+  # rubocop:enable Metrics/ClassLength
 end
 
 # PROJECT = {

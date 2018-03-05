@@ -5,12 +5,12 @@ require 'rails_helper'
 describe 'Projects' do
   shared_examples 'allows write access' do
     describe '#POST' do
-      it 'creates a new project' do
+      it 'does not creates a new project' do
         attributes = FactoryBot.attributes_for(:field_data_project)
         params = { field_data_project: attributes }
 
         expect { post admin_field_data_projects_path, params: params }
-          .to change(FieldDataProject, :count).by(1)
+          .to change(FieldDataProject, :count).by(0)
       end
     end
 
@@ -36,14 +36,14 @@ describe 'Projects' do
 
     describe '#GET projects new page' do
       it 'redirects to admin root' do
-        get new_admin_sample_path
+        get new_admin_field_data_project_path
 
-        expect(response.status).to eq(200)
+        expect(response).to redirect_to admin_samples_path
       end
     end
 
     describe '#GET projects edit page' do
-      it 'redirects to admin root' do
+      it 'returns 200' do
         project = create(:field_data_project, name: 'name1')
         get edit_admin_field_data_project_path(id: project.id)
 

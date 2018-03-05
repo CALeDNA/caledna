@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe ImportKoboPolicy do
+describe Labwork::KoboPolicy do
   subject { described_class }
   let(:director) { create(:director) }
   let(:lab_manager) { create(:lab_manager) }

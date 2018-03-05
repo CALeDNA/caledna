@@ -32,7 +32,7 @@ describe FieldDataProjectPolicy do
 
   permissions :create? do
     it 'grants access to directors' do
-      expect(subject).to permit(director)
+      expect(subject).to_not permit(director)
     end
 
     it 'denies access to non-directors' do

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe Admin::KoboController do
+describe Admin::Labwork::KoboController do
   before(:each) do
     login_director
   end
@@ -14,7 +14,7 @@ describe Admin::KoboController do
 
   def stub_kobo_process
     allow(KoboApi::Process)
-      .to receive(:import_projects)
+      .to receive_message_chain(:new, :import_projects)
   end
 
   describe '#GET import_kobo' do
@@ -41,7 +41,7 @@ describe Admin::KoboController do
         .to receive_message_chain(:projects, :parsed_response)
         .and_return(kobo_data)
 
-      expect(KoboApi::Process).to receive(:import_projects).with(kobo_data)
+      expect(KoboApi::Process).to receive_message_chain(:new, :import_projects)
       post :import_projects
     end
 
@@ -59,7 +59,7 @@ describe Admin::KoboController do
     it 'displays flash message if imported records are not saved' do
       stub_kobo_connect
       allow(KoboApi::Process)
-        .to receive(:import_projects).and_return(false)
+        .to receive_message_chain(:new, :import_projects).and_return(false)
 
       post :import_projects
 
@@ -68,7 +68,8 @@ describe Admin::KoboController do
   end
 
   describe '#POST import_samples' do
-    let(:project) { create(:field_data_project) }
+    let(:kobo_id) { 10 }
+    let(:project) { create(:field_data_project, kobo_id: kobo_id) }
 
     it 'calls KoboApi::Process and KoboApi::Connect methods' do
       kobo_data = [
@@ -78,8 +79,9 @@ describe Admin::KoboController do
         .to receive_message_chain(:project, :parsed_response)
         .and_return(kobo_data)
 
-      expect(KoboApi::Process).to receive(:import_samples)
-        .with(project.id, kobo_data)
+      expect(KoboApi::Process).to receive_message_chain(:new, :import_samples)
+        .with(project.id, kobo_id, kobo_data)
+
       post :import_samples, params: { id: project.id }
     end
 
@@ -97,7 +99,7 @@ describe Admin::KoboController do
     it 'displays flash message if imported records are not saved' do
       stub_kobo_connect
       allow(KoboApi::Process)
-        .to receive(:import_samples).and_return(false)
+        .to receive_message_chain(:new, :import_samples).and_return(false)
 
       post :import_samples, params: { id: project.id }
 

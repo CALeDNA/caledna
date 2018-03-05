@@ -3,10 +3,32 @@
 require 'rails_helper'
 
 describe 'ImportKobo' do
+  def stub_connect_projects
+    allow(KoboApi::Connect)
+      .to receive_message_chain(:projects, :parsed_response)
+      .and_return([{ 'id' => 123, 'title' => 'title' }])
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def stub_connect_project
+    allow(KoboApi::Connect)
+      .to receive_message_chain(:project, :parsed_response)
+      .and_return(
+        [
+          {
+            'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
+            '_id' => 1,
+            '_attachments' => []
+          }
+        ]
+      )
+  end
+  # rubocop:enable Metrics/MethodLength
+
   shared_examples 'allows import access' do
     describe '#GET import_kobo' do
       it 'returns 200' do
-        get admin_import_kobo_path
+        get admin_labwork_import_kobo_path
 
         expect(response.status).to eq(200)
       end
@@ -14,21 +36,20 @@ describe 'ImportKobo' do
 
     describe '#POST import_projects' do
       it 'creates a new project' do
-        attributes = FactoryBot.attributes_for(:field_data_project)
-        params = { field_data_project: attributes }
+        stub_connect_projects
 
-        expect { post admin_field_data_projects_path, params: params }
+        expect { post admin_labwork_import_projects_path }
           .to change(FieldDataProject, :count).by(1)
       end
     end
 
     describe '#POST import_samples' do
       it 'creates a new sample' do
-        project = create(:field_data_project)
-        attributes = { barcode: '123', field_data_project_id: project.id }
-        params = { id: project.id, sample: attributes }
+        stub_connect_project
 
-        expect { post admin_samples_path, params: params }
+        project = create(:field_data_project, kobo_id: 1)
+
+        expect { post admin_labwork_import_samples_path(id: project.id) }
           .to change(Sample, :count).by(1)
       end
     end
@@ -37,7 +58,7 @@ describe 'ImportKobo' do
   shared_examples 'denies import access' do
     describe '#GET import_kobo' do
       it 'redirects to admin root page' do
-        get admin_import_kobo_path
+        get admin_labwork_import_kobo_path
 
         expect(response).to redirect_to admin_samples_path
       end
@@ -45,21 +66,20 @@ describe 'ImportKobo' do
 
     describe '#POST import_projects' do
       it 'does not create a new project' do
-        attributes = FactoryBot.attributes_for(:field_data_project)
-        params = { field_data_project: attributes }
+        stub_connect_projects
 
-        expect { post admin_field_data_projects_path, params: params }
+        expect { post admin_labwork_import_projects_path }
           .to change(FieldDataProject, :count).by(0)
       end
     end
 
     describe '#POST import_samples' do
       it 'does not create a new sample' do
-        project = create(:field_data_project)
-        attributes = { barcode: '123', project_id: project.id }
-        params = { id: project.id, sample: attributes }
+        stub_connect_project
 
-        expect { post admin_samples_path, params: params }
+        project = create(:field_data_project, kobo_id: 1)
+
+        expect { post admin_labwork_import_samples_path(id: project.id) }
           .to change(Sample, :count).by(0)
       end
     end

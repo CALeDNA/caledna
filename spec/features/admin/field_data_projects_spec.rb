@@ -14,7 +14,7 @@ describe 'Field Data Projects' do
         expect(page).to have_content('name1')
         expect(page).to have_content('Edit')
         expect(page).to have_content('Destroy')
-        expect(page).to have_content('New field data project')
+        expect(page).not_to have_content('New field data project')
       end
     end
 
@@ -25,14 +25,6 @@ describe 'Field Data Projects' do
 
         expect(page).to have_content('name1')
         expect(page).to have_content('Edit name1')
-      end
-    end
-
-    describe '#GET projects new page' do
-      it 'display project data and actions for projects' do
-        visit new_admin_field_data_project_path
-
-        expect(page).to have_button('Create Field data project')
       end
     end
 
