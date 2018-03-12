@@ -2,6 +2,9 @@
 
 # rubocop:disable Metrics/ClassLength
 class Taxon < ApplicationRecord
+  # taxonomicStatus: [accepted, doubtful, heterotypic synonym,
+  # homotypic synonym, misapplied, proparte synonym, synonym]
+
   has_many :vernaculars, foreign_key: 'taxonID'
   has_many :asvs, foreign_key: 'taxonID'
   has_many :multimedia, foreign_key: 'taxonID'
@@ -79,6 +82,10 @@ class Taxon < ApplicationRecord
 
   def synonyms
     Taxon.where(acceptedNameUsageID: taxonID)
+  end
+
+  def accepted
+    Taxon.find_by(taxonID: acceptedNameUsageID)
   end
 
   private

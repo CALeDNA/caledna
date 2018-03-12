@@ -5,7 +5,10 @@ module Admin
     class DnaResultsController < Admin::ApplicationController
       include ImportCsv::DnaResults
 
-      def taxa;
+      def taxa; end
+
+      def normalize_taxa
+        @missing_taxa = NormalizeTaxa.all
       end
 
       def taxa_create
@@ -15,10 +18,7 @@ module Admin
           redirect_to admin_labwork_taxa_path
         else
           flash[:error] = 'Taxonomies are invalid'
-
-          @errors = results.errors
-          render 'taxa_errors'
-
+          redirect_to admin_labwork_normalize_taxa_path
         end
       end
 

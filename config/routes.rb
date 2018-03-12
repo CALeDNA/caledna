@@ -52,6 +52,8 @@ Rails.application.routes.draw do
         post 'asvs' => 'dna_results#asvs_create'
       end
 
+      resources :normalize_taxa
+
 
     end
 

@@ -92,6 +92,7 @@ module Phylums
     'Sarcomastigophora': 'Protozoa',
     'Sipuncula': 'Animalia',
     'Spirochaetae': 'Bacteria',
+    'Streptophyta': 'Plantae',
     'Sulcozoa': 'Protozoa',
     'Synergistetes': 'Bacteria',
     'Tardigrada': 'Animalia',

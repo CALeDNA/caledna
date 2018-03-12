@@ -112,9 +112,13 @@ module TaxonomyNormalization
   def get_species(hierarchy)
     Taxon.where(
       kingdom: hierarchy[:kingdom],
-      canonicalName: "#{hierarchy[:genus]} #{hierarchy[:species]}",
+      canonicalName: hierarchy[:species],
       taxonRank: 'species'
-    ).first
+    ).or(Taxon.where(
+        kingdom: hierarchy[:kingdom],
+        scientificName: hierarchy[:species],
+        taxonRank: 'species'
+    )).first
   end
 
   def get_genus(hierarchy)

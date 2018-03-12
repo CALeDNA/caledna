@@ -1,0 +1,14 @@
+<p>
+  rank: <%= @taxon.rank %><br>
+  taxon: <%= @taxon.name %><br>
+  test result: <%= @taxon.taxonomy_string %><br>
+</p>
+
+<h2>Existing Taxa</h2>
+
+<% @suggestions.each do |suggestion| %>
+  <%= render 'suggestion', suggestion: suggestion %>
+  <% if suggestion.acceptedNameUsageID.present? %>
+    <%= render 'suggestion', suggestion: suggestion.accepted %>
+  <% end %>
+<% end %>

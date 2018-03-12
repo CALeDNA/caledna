@@ -11,6 +11,12 @@ module ImportCsv
         results = find_taxon_from_string(taxonomy_string)
         if results[:taxonID].blank? && results[:rank].present?
           invalid_taxonomy.push(results)
+          NormalizeTaxa.create(
+            rank: results[:rank],
+            hierarchy: results[:hierarchy],
+            taxonomy_string: results[:taxonomy_string],
+            normalized: false
+          )
         end
       end
 

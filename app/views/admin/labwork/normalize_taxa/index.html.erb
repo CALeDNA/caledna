@@ -7,12 +7,12 @@
 </header>
 
 <section class="main-content__body">
-  <% @errors.each do |error| %>
+  <% @taxa.each do |taxon| %>
     <p>
-      rank: <%= error[:rank] %><br>
-      taxon: <%= error[:hierarchy][error[:rank].try(:to_sym)] %><br>
-      test result: <%= error[:taxonomy_string] %><br>
+      <%= taxon.rank %><br>
 
+      <%= taxon.taxonomy_string %><br>
+      <%= link_to 'Edit', admin_labwork_normalize_taxon_path(taxon) %>
     </p>
   <% end %>
 </section>
