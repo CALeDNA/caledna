@@ -8,6 +8,7 @@
   <% if suggestion.specificEpithet %>
     species: <%= suggestion.genus %> <%= suggestion.specificEpithet %><br>
   <% end %>
+  scientific name: <%= suggestion.scientificName %><br>
   source: <%= suggestion.taxa_dataset.name %><br>
   status: <%= suggestion.taxonomicStatus %><br>
 

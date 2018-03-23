@@ -13,4 +13,8 @@ class GbifApi
   def datasets(id)
     self.class.get("/dataset/#{id}", @options)
   end
+
+  def taxa(keyword)
+    self.class.get('/species/match', query: {name: keyword})
+  end
 end

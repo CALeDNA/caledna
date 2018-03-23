@@ -8,14 +8,11 @@ module Admin
       end
 
       def show
-        @taxon = normalize_taxon
-        @suggestions =
-          Taxon
-          .where(
-            canonicalName: normalize_taxon.name,
-            taxonRank: normalize_taxon.rank
-          )
-          .order(:taxonomicStatus)
+        @normalize_taxon = normalize_taxon
+        @new_taxon = Taxon.new
+        @suggestions = suggestions
+        @more_suggestions = suggestions.present? ? [] : more_suggestions
+        @query_suggestions = query_suggestions
       end
 
       def update
@@ -26,15 +23,40 @@ module Admin
         end
       end
 
+      def create
+        debugger
+      end
+
       private
 
       def allowed_params
-        params.require(:normalize_taxa).permit(:taxonID)
+        params.require(:normalize_taxa).permit(:taxonID, :query)
       end
 
       def normalize_taxon
         @normalize_taxon ||= NormalizeTaxa.find(params[:id])
       end
+
+      def suggestions
+        @suggestions ||= Taxon.where(
+          canonicalName: normalize_taxon.name,
+          taxonRank: normalize_taxon.rank
+        ).order(:taxonomicStatus)
+      end
+
+      def more_suggestions
+        @more_suggestions ||= Taxon.where(
+          canonicalName: normalize_taxon.name,
+        ).or(Taxon.where(scientificName: normalize_taxon.name))
+        .order(:taxonomicStatus)
+      end
+
+      def query_suggestions
+        @query_suggestions ||= Taxon.where(
+          canonicalName: params[:query]
+        ).order(:taxonomicStatus)
+      end
+
     end
   end
 end
