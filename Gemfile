@@ -39,6 +39,7 @@ gem 'simple_form', '~> 3.5'
 gem 'title', '~> 0.0'
 gem 'turbolinks', '~> 5.0'
 gem 'uglifier', '~> 4.0'
+gem 'webpacker', '~> 3.3'
 
 source 'https://rails-assets.org' do
   gem 'rails-assets-jquery', '~> 3.2'
