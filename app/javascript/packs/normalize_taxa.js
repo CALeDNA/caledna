@@ -6,16 +6,18 @@
 // All it does is render <div>Hello Vue</div> at the bottom of the page.
 
 import Vue from 'vue'
-import App from '../app.vue'
+import Axios from 'axios'
+import NormalizeTaxa from '../components/normalize_taxa.vue'
+
+Vue.prototype.$http = Axios
 
 document.addEventListener('DOMContentLoaded', () => {
-  const el = document.body.appendChild(document.createElement('hello'))
+  const el = document.querySelector('#create-taxa-form')
+
   const app = new Vue({
     el,
-    render: h => h(App)
+    render: h => h(NormalizeTaxa)
   })
-
-  console.log(app)
 })
 
 

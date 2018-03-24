@@ -1,12 +1,41 @@
+<%= javascript_pack_tag 'application' %>
+<%= javascript_pack_tag 'auto' %>
+
 <p>
   rank: <%= @normalize_taxon.rank %><br>
   taxon: <%= @normalize_taxon.name %><br>
   test result: <%= @normalize_taxon.taxonomy_string %><br>
 </p>
 
+<table class="no-auto-link">
+<tr>
+<td>
+<ul>
+  <li>kingdom: <%= @normalize_taxon.kingdom %></li>
+  <li>phylum: <%= @normalize_taxon.phylum if @normalize_taxon.phylum %></li>
+  <li>class: <%= @normalize_taxon.className if @normalize_taxon.className %></li>
+  <li>order: <%= @normalize_taxon.order if @normalize_taxon.order %></li>
+  <li>family: <%= @normalize_taxon.family if @normalize_taxon.family %></li>
+  <li>genus: <%= @normalize_taxon.genus if @normalize_taxon.genus %></li>
+  <li>species: <%= @normalize_taxon.species if @normalize_taxon.species %></li>
+</ul>
+
+</td>
+<td>
+  <h2>Taxonomy Sources</h2>
+  <ul>
+    <li><%= link_to 'GBIF', @normalize_taxon.gbif_link, target: "_blank" %></li>
+    <li><%= link_to 'Catalogue of Life', @normalize_taxon.col_link, target: "_blank" %></li>
+    <li><%= link_to 'Encyclopedia of Life', @normalize_taxon.eol_link, target: "_blank" %></li>
+    <li><%= link_to 'NCBI', @normalize_taxon.ncbi_link, target: "_blank" %></li>
+  </ul>
+</td>
+</tr>
+</table>
+
 
 <% if @suggestions.present? || @more_suggestions.present? %>
-<h2>Choose Existing Taxa</h2>
+  <h2>Choose Existing Taxa</h2>
 
   <% @suggestions.each do |suggestion| %>
     <%= render 'suggestion', suggestion: suggestion %>
@@ -22,54 +51,11 @@
     <% end %>
   <% end %>
 
-
 <% else %>
   <h2>Create New Taxa</h2>
-  <% if @query_suggestions.present? %>
-    <p><%= params[:query] %> found in database.</p>
-  <% else %>
-    <p><%= params[:query] %> not found in database.</p>
-  <% end %>
 
-  <%= simple_form_for @new_taxon, url: admin_labwork_normalize_taxa_path do |f| %>
-    <%= f.input :kingdom %>
-    <%= f.input :phylum %>
-    <%= f.input :className %>
-    <%= f.input :order %>
-    <%= f.input :family %>
-    <%= f.input :genus %>
-    <%= f.input :specificEpithet %>
+  <div id="create-taxa-form"></div>
 
-    <%= f.submit 'create taxon' %>
-  <% end %>
 
-  <h2>Taxonomy from test results</h2>
-
-  <ul>
-    <li>kingdom: <%= link_to @normalize_taxon.kingdom, admin_labwork_normalize_taxon_path(@normalize_taxon, query: @normalize_taxon.kingdom) %></li>
-    <li>phylum: <%= link_to @normalize_taxon.phylum, admin_labwork_normalize_taxon_path(@normalize_taxon, query: @normalize_taxon.phylum) if @normalize_taxon.phylum %></li>
-    <li>class: <%= link_to @normalize_taxon.className, admin_labwork_normalize_taxon_path(@normalize_taxon, query: @normalize_taxon.className) if @normalize_taxon.className %></li>
-    <li>order: <%= link_to @normalize_taxon.order, admin_labwork_normalize_taxon_path(@normalize_taxon, query: @normalize_taxon.order) if @normalize_taxon.order %></li>
-    <li>family: <%= link_to @normalize_taxon.family, admin_labwork_normalize_taxon_path(@normalize_taxon, query: @normalize_taxon.family) if @normalize_taxon.family %></li>
-    <li>genus: <%= link_to @normalize_taxon.genus, admin_labwork_normalize_taxon_path(@normalize_taxon, query: @normalize_taxon.genus) if @normalize_taxon.genus %></li>
-    <li>species: <%= link_to @normalize_taxon.species, admin_labwork_normalize_taxon_path(@normalize_taxon, query: @normalize_taxon.species) if @normalize_taxon.species %></li>
-  </ul>
-
-  <h2>Taxonomy Sources</h2>
-  <ul>
-    <li onclick="refreshSource(this)" data-link=<%= gbif_link %>>GBIF</li>
-    <li onclick="refreshSource(this)" data-link=<%= col_link %>>Catalogue of Life</li>
-    <li onclick="refreshSource(this)" data-link=<%= eol_link %>>Encyclopedia of Life</li>
-    <li onclick="refreshSource(this)" data-link=<%= ncbi_link %>>NCBI</li>
-  </ul>
-
-  <iframe class="search-taxa-iframe" src="<%= gbif_link %>"></iframe>
 
 <% end %>
-
-<script>
-  const refreshSource = (e) => {
-    const el = document.querySelector('.search-taxa-iframe');
-    el.setAttribute('src', e.dataset.link)
-  }
-</script>

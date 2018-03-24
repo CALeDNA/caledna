@@ -17,6 +17,7 @@ module Caledna
 
     config.autoload_paths += %W[
       #{config.root}/services
+      #{config.root}/serializers
     ]
 
     # NOTE: this allows Administrate to use app helpers

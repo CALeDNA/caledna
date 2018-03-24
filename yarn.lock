@@ -5874,7 +5874,13 @@ vue-typeahead@^2.3.2:
   dependencies:
     babel-runtime "^6.0.0"
 
-vue@^2.5.16:
+vue2-autocomplete-js@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/vue2-autocomplete-js/-/vue2-autocomplete-js-0.2.2.tgz#b7a1882d978cb0925bb878d5ea0dd4755a261f95"
+  dependencies:
+    vue "^2.4.2"
+
+vue@^2.4.2, vue@^2.5.16:
   version "2.5.16"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
 

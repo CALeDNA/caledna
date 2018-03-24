@@ -7,6 +7,12 @@ Rails.application.routes.draw do
     invitations: 'researchers/invitations'
   }
 
+  namespace :api do
+    namespace :v1 do
+      resources :taxa
+    end
+  end
+
   namespace :admin do
     root to: 'labwork/home#index'
     resources :field_data_projects

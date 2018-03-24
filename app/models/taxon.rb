@@ -9,6 +9,8 @@ class Taxon < ApplicationRecord
   has_many :asvs, foreign_key: 'taxonID'
   has_many :multimedia, foreign_key: 'taxonID'
   has_many :highlights, as: :highlightable
+  belongs_to :taxa_dataset, foreign_key: 'datasetID'
+  validates :taxonID, presence: true
 
   scope :valid, -> { where(taxonomicStatus: 'accepted') }
 
