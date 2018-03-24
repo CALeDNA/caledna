@@ -39,7 +39,9 @@
 
     <tr>
       <td>processor</td>
-      <td><%= extraction.processor.username %></td>
+      <td>
+        <%= extraction.processor.username if extraction.processor.present? %>
+      </td>
     </tr>
     <tr>
       <td>priority sequencing</td>
@@ -63,7 +65,7 @@
     </tr>
     <tr>
       <td>SRA adder</td>
-      <td><%= extraction.sra_adder.username %></td>
+      <td><%= extraction.sra_adder.username if extraction.sra_adder.present? %></td>
     </tr>
     <tr>
       <td>SRA add date</td>
@@ -75,7 +77,7 @@
     </tr>
     <tr>
       <td>local fastq storage url adder</td>
-      <td><%= extraction.local_fastq_storage_adder.username %></td>
+      <td><%= extraction.local_fastq_storage_adder.username if extraction.local_fastq_storage_adder.present? %></td>
     </tr>
     <tr>
       <td>local fastq storage add date</td>
