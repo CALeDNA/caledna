@@ -60,5 +60,18 @@
   <% end %>
 </table>
 
-<%= render partial: "samples/map", locals: { samples: [sample],
-  initial_lat: sample.latitude, initial_lng: sample.longitude } %>
+<div class="row">
+  <div class="col col-md-6">
+    <h3>Map</h3>
+    <%= render partial: "samples/map", locals: { samples: [sample],
+      initial_lat: sample.latitude, initial_lng: sample.longitude } %>
+  </div>
+  <div class="col col-md-6">
+    <h3>Site Photos</h3>
+    <% if sample.photos.present? %>
+      <%= render partial: "samples/gallery", locals: { photos: sample.photos } %>
+    <% else %>
+      <%= image_tag 'blank_photo.svg' %>
+    <% end %>
+  </div>
+</div>

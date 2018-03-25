@@ -1,3 +1,7 @@
+/*
+ *= require photoswipe
+ */
+
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "font-awesome";
@@ -259,4 +263,8 @@ footer {
 .data-source {
   color: #777;
   font-size: 90%;
+}
+
+.gallery-initial-photo {
+  cursor: pointer;
 }

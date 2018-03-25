@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180305035945) do
+ActiveRecord::Schema.define(version: 20180326070653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,6 +137,15 @@ ActiveRecord::Schema.define(version: 20180305035945) do
     t.index ["taxonID"], name: "multimedia_taxonid_idx", using: :btree
   end
 
+  create_table "normalize_taxa", force: :cascade do |t|
+    t.string  "rank_cd"
+    t.jsonb   "hierarchy",       default: {}
+    t.string  "taxonomy_string"
+    t.boolean "normalized",      default: false
+    t.integer "taxonID"
+    t.index ["taxonID"], name: "normalize_taxa_taxonID_idx", using: :btree
+  end
+
   create_table "pg_search_documents", force: :cascade do |t|
     t.text     "content"
     t.string   "searchable_type"
@@ -153,6 +162,8 @@ ActiveRecord::Schema.define(version: 20180305035945) do
     t.jsonb    "kobo_payload"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.integer  "height"
+    t.integer  "width"
     t.index ["sample_id"], name: "index_photos_on_sample_id", using: :btree
   end
 
@@ -242,12 +253,19 @@ ActiveRecord::Schema.define(version: 20180305035945) do
     t.string  "genus",                    limit: 255
     t.jsonb   "hierarchy"
     t.integer "asvs_count",                           default: 0
+    t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
-    t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
-    t.index ["datasetID"], name: "index_taxa_on_datasetID", using: :btree
+    t.index ["asvs_count"], name: "taxa_asvs_count_idx", using: :btree
+    t.index ["canonicalName", "taxonRank"], name: "taxa_canonicalName_taxonRank_idx", using: :btree
+    t.index ["datasetID"], name: "taxa_datasetID_idx", using: :btree
+    t.index ["genus"], name: "taxa_genus_idx", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
-    t.index ["kingdom", "phylum", "className", "order", "family", "genus", "canonicalName", "taxonRank"], name: "taxonomy_idx", using: :btree
+    t.index ["kingdom", "genus"], name: "taxa_kingdom_genus_idx", using: :btree
+    t.index ["kingdom", "phylum", "className", "order", "family", "genus", "specificEpithet", "infraspecificEpithet"], name: "taxa_kingdom_phylum_className_order_family_genus_specificEpithe", using: :btree
+    t.index ["parentNameUsageID"], name: "taxa_parentNameUsageID_idx", using: :btree
+    t.index ["scientificName"], name: "taxa_scientificName_idx", using: :btree
+    t.index ["taxonRank"], name: "taxa_taxonRank_idx", using: :btree
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end
 

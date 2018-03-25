@@ -11,6 +11,7 @@
 // about supported directives.
 //
 //= require jquery
+//= require photoswipe
 //= require bootstrap-sprockets
 //= require jquery-ujs
 //= require turbolinks
