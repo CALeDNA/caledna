@@ -1,61 +1,66 @@
 <%= javascript_pack_tag 'application' %>
 <%= javascript_pack_tag 'auto' %>
 
-<p>
-  rank: <%= @normalize_taxon.rank %><br>
-  taxon: <%= @normalize_taxon.name %><br>
-  test result: <%= @normalize_taxon.taxonomy_string %><br>
-</p>
+<% content_for(:title) { 'Normalize taxonomy' } %>
 
-<table class="no-auto-link">
-<tr>
-<td>
-<ul>
-  <li>kingdom: <%= @normalize_taxon.kingdom %></li>
-  <li>phylum: <%= @normalize_taxon.phylum if @normalize_taxon.phylum %></li>
-  <li>class: <%= @normalize_taxon.className if @normalize_taxon.className %></li>
-  <li>order: <%= @normalize_taxon.order if @normalize_taxon.order %></li>
-  <li>family: <%= @normalize_taxon.family if @normalize_taxon.family %></li>
-  <li>genus: <%= @normalize_taxon.genus if @normalize_taxon.genus %></li>
-  <li>species: <%= @normalize_taxon.species if @normalize_taxon.species %></li>
-</ul>
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
 
-</td>
-<td>
-  <h2>Taxonomy Sources</h2>
-  <ul>
-    <li><%= link_to 'GBIF', @normalize_taxon.gbif_link, target: "_blank" %></li>
-    <li><%= link_to 'Catalogue of Life', @normalize_taxon.col_link, target: "_blank" %></li>
-    <li><%= link_to 'Encyclopedia of Life', @normalize_taxon.eol_link, target: "_blank" %></li>
-    <li><%= link_to 'NCBI', @normalize_taxon.ncbi_link, target: "_blank" %></li>
-  </ul>
-</td>
-</tr>
-</table>
+<section class="main-content__body">
 
+  <p>
+    rank: <%= @normalize_taxon.rank %><br>
+    taxon: <%= @normalize_taxon.name %><br>
+    raw test result: <%= @normalize_taxon.taxonomy_string %><br>
+  </p>
 
-<% if @suggestions.present? || @more_suggestions.present? %>
-  <h2>Choose Existing Taxa</h2>
+  <table class="no-auto-link">
+    <tr>
+      <td>
+        <ul>
+          <li>kingdom: <%= @normalize_taxon.kingdom %></li>
+          <li>phylum: <%= @normalize_taxon.phylum if @normalize_taxon.phylum %></li>
+          <li>class: <%= @normalize_taxon.className if @normalize_taxon.className %></li>
+          <li>order: <%= @normalize_taxon.order if @normalize_taxon.order %></li>
+          <li>family: <%= @normalize_taxon.family if @normalize_taxon.family %></li>
+          <li>genus: <%= @normalize_taxon.genus if @normalize_taxon.genus %></li>
+          <li>species: <%= @normalize_taxon.species if @normalize_taxon.species %></li>
+        </ul>
+      </td>
+      <td>
+        <h3>Taxonomy Sources: <%= @normalize_taxon.taxa.last %></h3>
+        <ul>
+          <li><%= link_to 'GBIF', @normalize_taxon.gbif_link, target: "_blank" %></li>
+          <li><%= link_to 'Catalogue of Life', @normalize_taxon.col_link, target: "_blank" %></li>
+          <li><%= link_to 'Encyclopedia of Life', @normalize_taxon.eol_link, target: "_blank" %></li>
+          <li><%= link_to 'NCBI', @normalize_taxon.ncbi_link, target: "_blank" %></li>
+        </ul>
+      </td>
+    </tr>
+  </table>
 
-  <% @suggestions.each do |suggestion| %>
-    <%= render 'suggestion', suggestion: suggestion %>
-    <% if suggestion.acceptedNameUsageID.present? %>
-      <%= render 'suggestion', suggestion: suggestion.accepted %>
+  <% if @suggestions.present? || @more_suggestions.present? %>
+    <h2>Choose Existing Taxa</h2>
+
+    <% @suggestions.each do |suggestion| %>
+      <% if suggestion.acceptedNameUsageID.present? %>
+        <%= render 'suggestion', suggestion: suggestion.accepted %>
+      <% end %>
+      <%= render 'suggestion', suggestion: suggestion %>
     <% end %>
+
+    <% @more_suggestions.each do |suggestion| %>
+      <% if suggestion.acceptedNameUsageID.present? %>
+        <%= render 'suggestion', suggestion: suggestion.accepted %>
+      <% end %>
+      <%= render 'suggestion', suggestion: suggestion %>
+    <% end %>
+
+  <% else %>
+    <div id="create-taxa-form" class="js"></div>
   <% end %>
 
-  <% @more_suggestions.each do |suggestion| %>
-    <%= render 'suggestion', suggestion: suggestion %>
-    <% if suggestion.acceptedNameUsageID.present? %>
-      <%= render 'suggestion', suggestion: suggestion.accepted %>
-    <% end %>
-  <% end %>
-
-<% else %>
-  <h2>Create New Taxa</h2>
-
-  <div id="create-taxa-form"></div>
-
-
-
-<% end %>
+</section>

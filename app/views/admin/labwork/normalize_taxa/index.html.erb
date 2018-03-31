@@ -1,4 +1,4 @@
-<% content_for(:title) { 'Normalize taxonomy from test results' } %>
+<% content_for(:title) { 'Normalize taxonomy for test results' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -7,11 +7,18 @@
 </header>
 
 <section class="main-content__body">
-  <% @taxa.each do |taxon| %>
-    <p>
-      <%= taxon.rank %><br>
-      <%= taxon.taxonomy_string %><br>
-      <%= link_to 'Edit', admin_labwork_normalize_taxon_path(taxon) %>
-    </p>
-  <% end %>
+  <table  class="no-auto-link">
+    <tr>
+      <th>rank</th>
+      <th>DNA test results</th>
+      <th></th>
+    <tr>
+    <% @taxa.each do |taxon| %>
+    <tr>
+      <td><%= taxon.rank %></td>
+      <td><%= taxon.taxonomy_string %></td>
+      <td><%= link_to 'Edit', admin_labwork_normalize_taxon_path(taxon) %></td>
+    </tr>
+    <% end %>
+  </table>
 </section>

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1>Search</h1>
+    <h2>Search Existing Taxa</h2>
 
     <autocomplete
-      url="http://localhost:3000/api/v1/taxa"
+      :url='getTaxaRoute'
       param='query'
       anchor="canonicalName"
       label="taxonRank"
@@ -22,89 +22,139 @@
       <li v-if="selectedTaxon.genus">genus: {{ selectedTaxon.genus }}</li>
       <li v-if="selectedTaxon.specificEpithet">species: {{ selectedTaxon.genus }} {{ selectedTaxon.specificEpithet }} </li>
       <li v-if="selectedTaxon.scientificName">scientific name: {{ selectedTaxon.scientificName }}</li>
-      <li v-if="selectedTaxon.taxonomicStatus">taxonomic status: {{ selectedTaxon.taxonomicStatus }}</li>
       <li v-if="selectedTaxon.canonicalName">canonical name: {{ selectedTaxon.canonicalName }}</li>
+      <li v-if="selectedTaxon.taxonomicStatus">taxonomic status: {{ selectedTaxon.taxonomicStatus }}</li>
       <li v-if="selectedTaxon.taxonRank">taxon rank: {{ selectedTaxon.taxonRank }}</li>
       <li v-if="selectedTaxon.taxa_dataset.name">source: {{ selectedTaxon.taxa_dataset.name }}</li>
-      <!-- <li v-if="selectedTaxon.taxa_dataset.datasetID">datasetID: {{ selectedTaxon.taxa_dataset.datasetID }}</li> -->
-      <!-- <li v-if="selectedTaxon.taxonID">taxonID: {{ selectedTaxon.taxonID }}</li> -->
-      <!-- <li v-if="selectedTaxon.hierarchy">hierarchy: {{ selectedTaxon.hierarchy }}</li> -->
-      <!-- <li v-if="selectedTaxon.status">status: {{ selectedTaxon.status }}</li> -->
-
     </ul>
 
+    <h2>Create New Taxon</h2>
+
+    <div>
+      <ul class="form-errors">
+        <li v-for="error in errors">{{error}}</li>
+      </ul>
+    </div>
+
     <form  @submit="handleSubmit">
-      <label for="kingdom">kingdom</label>
-      <input :disabled="isKingdom" type="text" id="kingdom" v-model="newTaxon.kingdom">
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isKingdom"
+        label="Kingdom"
+        field="kingdom"
+      />
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isPhylum"
+        label="Phylum"
+        field="phylum"
+      />
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isClass"
+        label="Class"
+        field="className"
+      />
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isOrder"
+        label="Order"
+        field="order"
+      />
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isFamily"
+        label="Family"
+        field="family"
+      />
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isGenus"
+        label="Genus"
+        field="genus"
+      />
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isSpecies"
+        label="Species"
+        field="specificEpithet"
+      />
+      <TextField
+        v-bind:model="newTaxon"
+        label="Scientific Name"
+        field="scientificName"
+      />
 
-      <label for="phylum">phylum</label>
-      <input :disabled="isPhylum" type="text" id="phylum" v-model="newTaxon.phylum">
+      <div class="field-unit">
+        <div class="field-unit__label">
+          <label>taxonomy rank</label>
+        </div>
+        <div class="field-unit__field">
+          <select v-model="newTaxon.taxonRank">
+            <option disabled value="">Select Rank</option>
+            <option
+              v-bind:key="rank"
+              v-for="rank in taxonRanks"
+            >
+              {{ rank }}
+            </option>
+          </select>
+        </div>
+      </div>
 
-      <label for="class">class</label>
-      <input :disabled="isClass"  type="text" id="class" v-model="newTaxon.className">
+      <div class="field-unit">
+        <div class="field-unit__label">
+          <label>taxonomic status</label>
+        </div>
+        <div class="field-unit__field">
+          <select v-model="newTaxon.taxonomicStatus">
+            <option disabled value="">Select Status</option>
+            <option v-bind:key="status" v-for="status in taxonomicStatuses">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+      </div>
 
-      <label for="order">order</label>
-      <input :disabled="isOrder" type="text" id="order" v-model="newTaxon.order">
+      <div class="field-unit">
+        <div class="field-unit__label">
+          <label>taxonomy source</label>
+        </div>
+        <div class="field-unit__field">
+          <select v-model="newTaxon.datasetID">
+            <option disabled value="">Select Source</option>
+            <option
+              v-bind:key="dataset.name"
+              v-for="dataset in taxaDatasets"
+              v-bind:value="dataset.datasetID"
+            >
+              {{ dataset.name }}
+            </option>
+          </select>
+        </div>
+      </div>
 
-      <label for="family">family</label>
-      <input :disabled="isFamily" type="text" id="family" v-model="newTaxon.family">
-
-      <label for="genus">genus</label>
-      <input :disabled="isGenus" type="text" id="genus" v-model="newTaxon.genus">
-
-      <label for="species">species</label>
-      <input :disabled="isSpecies" type="text" id="species" v-model="newTaxon.specificEpithet">
-
-      <label for="scientificName">scientificName</label>
-      <input type="text" id="scientificName" v-model="newTaxon.scientificName">
-
-      <label>taxonomy rank</label>
-      <select v-model="newTaxon.taxonRank">
-        <option disabled value="">Select Rank</option>
-        <option
-          v-bind:key="rank"
-          v-for="rank in taxonRanks"
-        >
-          {{ rank }}
-        </option>
-      </select>
-
-      <label>taxonomic status</label>
-      <select v-model="newTaxon.taxonomicStatus">
-        <option disabled value="">Select Status</option>
-        <option v-bind:key="status" v-for="status in taxonomicStatuses">
-          {{ status }}
-        </option>
-      </select>
-
-      <label>taxonomy source</label>
-      <select v-model="newTaxon.datasetID">
-        <option disabled value="">Select Source</option>
-        <option
-          v-bind:key="dataset.name"
-          v-for="dataset in taxaDatasets"
-          v-bind:value="dataset.datasetID"
-        >
-          {{ dataset.name }}
-        </option>
-      </select>
-
-      <input type="submit" value="Submit">
+      <div class="field-unit">
+        <div class="field-unit__label">
+        </div>
+        <div class="field-unit__field">
+          <input type="submit" value="Submit">
+        </div>
+      </div>
     </form>
-    {{newTaxon}}<br>
-    {{selectedTaxon}}
 
   </div>
-
 
 </template>
 
 <script>
   import Autocomplete from 'vue2-autocomplete-js';
   require('vue2-autocomplete-js/dist/style/vue2-autocomplete.css')
+  import api from '../utils/api_routes';
+  import TextField from './form/text_field';
 
-export default {
-    components: { Autocomplete },
+  export default {
+    components: { Autocomplete, TextField },
     data () {
       return  {
         selectedTaxon: {
@@ -113,16 +163,20 @@ export default {
         newTaxon: {},
         taxaDatasets: [
           {
+            name: 'GBIF',
+            datasetID: 'd7dddbf4-2cf0-4f39-9b2a-bb099caae36c'
+          },
+          {
             name: 'Catalogue of Life',
             datasetID: '7ddf754f-d193-4cc9-b351-99906754a03b'
           },
           {
             name: 'Encyclopedia of Life',
-            datasetID: 'cal-eol'
+            datasetID: 'e632b198-5b2f-47ee-b7a6-6531ea435fa3'
           },
           {
-            name: 'NCIB',
-            datasetID: 'cal-ncib'
+            name: 'NCBI',
+            datasetID: 'fab88965-e69d-4491-a04d-e3198b626e52'
           },
         ],
         taxonomicStatuses: [
@@ -133,14 +187,16 @@ export default {
           'kingdom', 'phylum', 'class', 'order', 'family', 'genus',
           'species'
         ],
+        getTaxaRoute: api.routes.taxa,
+        errors: [],
       }
     },
     methods: {
       processJSON(json) {
         const res = json.data.map((record) => record.attributes);
-        console.log(res)
         return res
       },
+
       handleSelect(data) {
         this.selectedTaxon = data
         this.newTaxon.kingdom = data.kingdom
@@ -153,25 +209,65 @@ export default {
         this.newTaxon.parentNameUsageID = data.taxonID
       },
 
+      processSpecies(newTaxon) {
+        if (newTaxon.specificEpithet === undefined) { return; }
+        let species = newTaxon.specificEpithet.trim();
+        let parts = species.match(/^[A-Z]\w+ (.*?$)/);
+
+        if (parts) {
+          species = parts[1];
+        }
+        return species;
+      },
+
+      processCanonicalName(newTaxon) {
+        let canonicalName;
+
+        if (newTaxon.taxonRank === 'species') {
+          if (!newTaxon.specificEpithet) { return; }
+          if (!newTaxon.genus) { return; }
+
+          const species = this.processSpecies(newTaxon);
+          canonicalName = `${newTaxon.genus.trim()} ${species}`
+        } else if (newTaxon.taxonRank === 'class') {
+          if (!newTaxon.className) { return; }
+
+          canonicalName = newTaxon.className.trim();
+        } else {
+          if (!newTaxon[newTaxon.taxonRank]) { return; }
+
+          canonicalName = newTaxon[newTaxon.taxonRank].trim();
+        }
+        return canonicalName;
+      },
+
+      handleFormSuccess(res) {
+        if(res.errors) {
+          this.errors = res.errors
+        } else {
+          window.location = "/admin/labwork";
+        }
+      },
+
+      handleFormError(res) {
+        console.log(res)
+      },
+
+      trimObject(object) {
+        const newObject = {...object};
+        Object.keys(newObject).forEach((field) => {
+          if(newObject[field] && typeof newObject[field] === 'string') {
+            newObject[field] = newObject[field].trim();
+          }
+        });
+        return newObject;
+      },
+
       handleSubmit(e) {
         e.preventDefault();
 
-        let species;
-        if (/ /.test(this.newTaxon.specificEpithet)) {
-          species = this.newTaxon.specificEpithet.split(' ')[1];
-        } else {
-          species = this.newTaxon.specificEpithet;
-        }
-
-        let canonicalName;
-        if (this.newTaxon.taxonomyRank === 'species') {
-          canonicalName = `${this.newTaxon.genus} ${species}`
-        } else if (this.newTaxon.taxonomyRank === 'class') {
-          canonicalName = this.newTaxon.className
-        } else {
-          canonicalName = this.newTaxon[this.newTaxon.taxonomyRank]
-        }
-
+        const species = this.processSpecies(this.newTaxon);
+        const canonicalName = this.processCanonicalName(this.newTaxon);
         const body = {
           kingdom: this.newTaxon.kingdom,
           phylum: this.newTaxon.phylum,
@@ -182,13 +278,16 @@ export default {
           specificEpithet: species,
           datasetID: this.newTaxon.datasetID,
           taxonomicStatus: this.newTaxon.taxonomicStatus,
-          taxonomyRank: this.newTaxon.taxonomyRank,
+          taxonRank: this.newTaxon.taxonRank,
           parentNameUsageID: this.newTaxon.parentNameUsageID,
           hierarchy: this.selectedTaxon.hierarchy,
           scientificName: this.newTaxon.scientificName,
-          canonicalName
+          canonicalName,
         }
 
+        api.createTaxa(this.trimObject(body))
+          .then(this.handleFormSuccess)
+          .catch(this.handleFormError);
       },
 
       calculateRank(num) {
@@ -221,4 +320,3 @@ export default {
     }
   };
 </script>
-taxonRank

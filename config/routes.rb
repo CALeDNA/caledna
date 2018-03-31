@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :taxa
+      resources :taxa, only: [:index]
     end
   end
 
@@ -59,8 +59,6 @@ Rails.application.routes.draw do
       end
 
       resources :normalize_taxa
-
-
     end
 
     controller 'batch_actions' do

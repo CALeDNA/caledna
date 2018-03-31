@@ -3,7 +3,7 @@ const formatRequest = (url, { method, body } = { body: {} }) => {
     method: method,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content'),
+      'X-CSRF-Token': document.getElementsByName('csrf-token')[0].getAttribute('content'),
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     },

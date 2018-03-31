@@ -12,7 +12,6 @@ module Admin
         @new_taxon = Taxon.new
         @suggestions = suggestions
         @more_suggestions = suggestions.present? ? [] : more_suggestions
-        @query_suggestions = query_suggestions
       end
 
       def update
@@ -21,10 +20,6 @@ module Admin
         else
           render 'show'
         end
-      end
-
-      def create
-        debugger
       end
 
       private
@@ -46,17 +41,10 @@ module Admin
 
       def more_suggestions
         @more_suggestions ||= Taxon.where(
-          canonicalName: normalize_taxon.name,
+          canonicalName: normalize_taxon.name
         ).or(Taxon.where(scientificName: normalize_taxon.name))
-        .order(:taxonomicStatus)
+                                   .order(:taxonomicStatus)
       end
-
-      def query_suggestions
-        @query_suggestions ||= Taxon.where(
-          canonicalName: params[:query]
-        ).order(:taxonomicStatus)
-      end
-
     end
   end
 end

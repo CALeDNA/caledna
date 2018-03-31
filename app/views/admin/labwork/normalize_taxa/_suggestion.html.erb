@@ -1,4 +1,6 @@
 <p>
+  canonical name: <%= suggestion.canonicalName %><br>
+  scientific name: <%= suggestion.scientificName %><br>
   kingdom: <%= suggestion.kingdom %><br>
   phylum: <%= suggestion.phylum %><br>
   class: <%= suggestion.className %><br>
@@ -8,11 +10,13 @@
   <% if suggestion.specificEpithet %>
     species: <%= suggestion.genus %> <%= suggestion.specificEpithet %><br>
   <% end %>
-  scientific name: <%= suggestion.scientificName %><br>
   source: <%= suggestion.taxa_dataset.name %><br>
   status: <%= suggestion.taxonomicStatus %><br>
+  <% if suggestion.acceptedNameUsageID.present? %>
+    also see: <%= suggestion.accepted.canonicalName %><br>
+  <% end %>
 
-  <%= simple_form_for @taxon, url: admin_labwork_normalize_taxon_path, method: :put do |f| %>
+  <%= simple_form_for @normalize_taxon, url: admin_labwork_normalize_taxon_path, method: :put do |f| %>
     <%= f.hidden_field :taxonID, value: suggestion.taxonID  %>
     <%= f.submit 'Use this taxon' %>
   <% end %>
