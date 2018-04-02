@@ -41,3 +41,10 @@ en:
         kobo_id: 'Kobo ID'
       field_data_project:
         kobo_id: 'Kobo ID'
+  # NOTE: adding attributes because error message turns canonicalName
+  # into "Canonicalname"
+  attributes:
+    parentNameUsageID: 'Parent Name Usage ID'
+    canonicalName: 'Canonical Name'
+    taxonRank: 'Taxon Rank'
+    taxonomicStatus: 'Taxonomic Status'

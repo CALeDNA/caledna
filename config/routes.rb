@@ -80,7 +80,7 @@ Rails.application.routes.draw do
   resource :search, only: %i[show]
   resource :taxa_search, only: %i[show]
   resources :field_data_projects, only: %i[index show]
-  resources :taxa, only: %i[index show]
+  resources :taxa, only: %i[index show create]
 
   root 'samples#index'
 end

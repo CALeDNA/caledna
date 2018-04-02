@@ -30,6 +30,7 @@ class NormalizeTaxa < ApplicationRecord
   def ncbi_link
     "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?name=#{query}"
   end
+
   def query
     taxa.last
   end
