@@ -12,19 +12,6 @@ class TaxaController < ApplicationController
     @samples = paginated_samples
   end
 
-  def create
-    cal_taxon = CalTaxon.new(create_params)
-    if cal_taxon.save
-      Taxon.create(cal_taxon.reload.attributes)
-      render json: { status: :ok }
-    else
-      render json: {
-        status: :unprocessable_entity,
-        errors: cal_taxon.errors.full_messages
-      }
-    end
-  end
-
   private
 
   def taxon
@@ -74,28 +61,4 @@ class TaxaController < ApplicationController
     query[:field_data_project_id] = project_id if project_id
     query
   end
-
-  # rubocop:disable Metrics/MethodLength
-  def create_params
-    params.require(:taxon).permit(
-      :kingdom,
-      :phylum,
-      :className,
-      :order,
-      :family,
-      :genus,
-      :specificEpithet,
-      :datasetID,
-      :parentNameUsageID,
-      :taxonomicStatus,
-      :taxonRank,
-      :parentNameUsageID,
-      :scientificName,
-      :canonicalName,
-      hierarchy: %i[
-        kingdom phylum class order family genus species
-      ]
-    )
-  end
-  # rubocop:enable Metrics/MethodLength
 end

@@ -16,7 +16,7 @@
     also see: <%= suggestion.accepted.canonicalName %><br>
   <% end %>
 
-  <%= simple_form_for @normalize_taxon, url: admin_labwork_normalize_taxon_path, method: :put do |f| %>
+  <%= simple_form_for @cal_taxon, url: admin_labwork_normalize_taxon_update_existing_path(@cal_taxon), method: :put do |f| %>
     <%= f.hidden_field :taxonID, value: suggestion.taxonID  %>
     <%= f.submit 'Use this taxon' %>
   <% end %>

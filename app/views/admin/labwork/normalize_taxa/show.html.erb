@@ -1,4 +1,3 @@
-<%= javascript_pack_tag 'application' %>
 <%= javascript_pack_tag 'auto' %>
 
 <% content_for(:title) { 'Normalize taxonomy' } %>
@@ -12,31 +11,31 @@
 <section class="main-content__body">
 
   <p>
-    rank: <%= @normalize_taxon.rank %><br>
-    taxon: <%= @normalize_taxon.name %><br>
-    raw test result: <%= @normalize_taxon.taxonomy_string %><br>
+    rank: <%= @cal_taxon.taxonRank %><br>
+    taxon: <%= @cal_taxon.name %><br>
+    raw test result: <%= @cal_taxon.original_taxonomy %><br>
   </p>
 
   <table class="no-auto-link">
     <tr>
       <td>
         <ul>
-          <li>kingdom: <%= @normalize_taxon.kingdom %></li>
-          <li>phylum: <%= @normalize_taxon.phylum if @normalize_taxon.phylum %></li>
-          <li>class: <%= @normalize_taxon.className if @normalize_taxon.className %></li>
-          <li>order: <%= @normalize_taxon.order if @normalize_taxon.order %></li>
-          <li>family: <%= @normalize_taxon.family if @normalize_taxon.family %></li>
-          <li>genus: <%= @normalize_taxon.genus if @normalize_taxon.genus %></li>
-          <li>species: <%= @normalize_taxon.species if @normalize_taxon.species %></li>
+          <li>kingdom: <%= @cal_taxon.h_kingdom %></li>
+          <li>phylum: <%= @cal_taxon.h_phylum if @cal_taxon.h_phylum %></li>
+          <li>class: <%= @cal_taxon.h_class_name if @cal_taxon.h_class_name %></li>
+          <li>order: <%= @cal_taxon.h_order if @cal_taxon.h_order %></li>
+          <li>family: <%= @cal_taxon.h_family if @cal_taxon.h_family %></li>
+          <li>genus: <%= @cal_taxon.h_genus if @cal_taxon.h_genus %></li>
+          <li>species: <%= @cal_taxon.h_species if @cal_taxon.h_species %></li>
         </ul>
       </td>
       <td>
-        <h3>Taxonomy Sources: <%= @normalize_taxon.taxa.last %></h3>
+        <h3>Taxonomy Sources: <%= @cal_taxon.taxa.last %></h3>
         <ul>
-          <li><%= link_to 'GBIF', @normalize_taxon.gbif_link, target: "_blank" %></li>
-          <li><%= link_to 'Catalogue of Life', @normalize_taxon.col_link, target: "_blank" %></li>
-          <li><%= link_to 'Encyclopedia of Life', @normalize_taxon.eol_link, target: "_blank" %></li>
-          <li><%= link_to 'NCBI', @normalize_taxon.ncbi_link, target: "_blank" %></li>
+          <li><%= link_to 'GBIF', @cal_taxon.gbif_link, target: "_blank" %></li>
+          <li><%= link_to 'Catalogue of Life', @cal_taxon.col_link, target: "_blank" %></li>
+          <li><%= link_to 'Encyclopedia of Life', @cal_taxon.eol_link, target: "_blank" %></li>
+          <li><%= link_to 'NCBI', @cal_taxon.ncbi_link, target: "_blank" %></li>
         </ul>
       </td>
     </tr>

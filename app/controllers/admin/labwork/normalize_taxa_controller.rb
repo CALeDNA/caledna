@@ -4,45 +4,87 @@ module Admin
   module Labwork
     class NormalizeTaxaController < Admin::ApplicationController
       def index
-        @taxa = NormalizeTaxa.where(normalized: false).order(:rank_cd, :taxonomy_string)
+        @taxa = CalTaxon.where(normalized: false)
+                        .order(:taxonRank, :original_taxonomy)
       end
 
       def show
-        @normalize_taxon = normalize_taxon
+        @cal_taxon = cal_taxon
         @new_taxon = Taxon.new
         @suggestions = suggestions
         @more_suggestions = suggestions.present? ? [] : more_suggestions
       end
 
-      def update
-        if normalize_taxon.update(allowed_params.merge(normalized: true))
+      def update_existing
+        cal_taxon.taxonID = update_existing_params[:taxonID]
+        cal_taxon.normalized = true
+        if cal_taxon.save(validate: false)
           redirect_to admin_labwork_normalize_taxa_path
         else
           render 'show'
         end
       end
 
-      private
+      def update_create
+        ActiveRecord::Base.transaction do
+          cal_taxon.update!(create_params.merge(normalized: true))
+          Taxon.create!(create_params)
+        end
+        render json: { status: :ok }
 
-      def allowed_params
-        params.require(:normalize_taxa).permit(:taxonID, :query)
+      rescue ActiveRecord::RecordInvalid => exception
+        render json: {
+          status: :unprocessable_entity,
+          errors: exception.message.split('Validation failed: ').last.split(', ')
+        }
       end
 
-      def normalize_taxon
-        @normalize_taxon ||= NormalizeTaxa.find(params[:id])
+      private
+
+      def update_existing_params
+        params.require(:cal_taxon).permit(:taxonID)
+      end
+
+      def create_params
+        params.require(:normalize_taxon).permit(
+          :taxonID,
+          :kingdom,
+          :phylum,
+          :className,
+          :order,
+          :family,
+          :genus,
+          :specificEpithet,
+          :datasetID,
+          :parentNameUsageID,
+          :taxonomicStatus,
+          :taxonRank,
+          :parentNameUsageID,
+          :scientificName,
+          :canonicalName,
+          :genericName,
+          hierarchy: %i[
+            kingdom phylum class order family genus species
+          ]
+        )
+      end
+
+      def cal_taxon
+        id = params[:id] || params[:normalize_taxon_id]
+        @cal_taxon ||= CalTaxon.find(id)
       end
 
       def suggestions
         @suggestions ||= Taxon.where(
-          canonicalName: normalize_taxon.name,
-          taxonRank: normalize_taxon.rank
+          canonicalName: cal_taxon.name,
+          taxonRank: cal_taxon.taxonRank
         ).order(:taxonomicStatus)
       end
 
       def more_suggestions
         @more_suggestions ||= Taxon.where(
-          canonicalName: normalize_taxon.name
-        ).or(Taxon.where(scientificName: normalize_taxon.name))
+          canonicalName: cal_taxon.name
+        ).or(Taxon.where(scientificName: cal_taxon.name))
                                    .order(:taxonomicStatus)
       end
     end

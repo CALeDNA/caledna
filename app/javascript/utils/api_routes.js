@@ -1,4 +1,4 @@
-import { get, post } from './http';
+import { get, put } from './http';
 
 const baseUrl = '/api/v1';
 
@@ -6,11 +6,11 @@ const routes = {
   taxa: `${baseUrl}/taxa`
 };
 
-const createTaxa = (body) => {
-  return post('/taxa', { body })
+const createUpdateTaxa = (id, body) => {
+  return put(`${id}/update_create`, { body })
 }
 
 export default {
   routes,
-  createTaxa
+  createUpdateTaxa
 }

@@ -1,18 +1,9 @@
 # frozen_string_literal: true
 
-# kingdom phylum class order family genus species
-module TaxonomyNormalization
-  require 'taxa_data/phylums'
-  include Phylums
-
-  # CALEDNA_PHYLUM_TO_GBIF_PHYLUM = {
-  #   'Streptophyta': 'Bryophyta',
-  #   'Mucoromycota': 'Glomeromycota'
-  # }.freeze
-
+module ProcessTestResults
   def find_taxon_from_string(taxonomy_string)
-    rank = getTaxonRank(taxonomy_string)
-    hierarchy = getHierarchy(taxonomy_string)
+    rank = get_taxon_rank(taxonomy_string)
+    hierarchy = get_hierarchy(taxonomy_string)
     taxon = rank && hierarchy ? find_accepted_taxon(hierarchy, rank) : nil
     string = get_complete_taxon_string(taxonomy_string)
     {
@@ -20,24 +11,11 @@ module TaxonomyNormalization
       taxonID: taxon.try(:taxonID),
       rank: rank,
       hierarchy: hierarchy,
-      taxonomy_string: string,
+      taxonomy_string: string
     }
   end
 
-  private
-
-  def get_kingdom(phylum)
-    PHYLUM_TO_KINGDOM[phylum.to_sym]
-  end
-
-  # def get_phylum(phylum)
-  #   convert_phylum = CALEDNA_PHYLUM_TO_GBIF_PHYLUM[phylum.to_sym]
-  #   phylum = convert_phylum ? convert_phylum : phylum
-  #   raise TaxaError, 'invalid phlyum' unless PHYLUMS.include?(phylum.to_sym)
-  #   phylum
-  # end
-
-  def getTaxonRank(string)
+  def get_taxon_rank(string)
     return if string == 'NA'
     return if string == ';;;;;'
 
@@ -57,7 +35,7 @@ module TaxonomyNormalization
     end
   end
 
-  def getHierarchy(string)
+  def get_hierarchy(string)
     hierarchy = {}
     return hierarchy if string == 'NA'
     return hierarchy if string == ';;;;;'
@@ -73,10 +51,29 @@ module TaxonomyNormalization
     hierarchy
   end
 
+  def find_accepted_taxon(hierarchy, rank)
+    taxon = find_exact_taxon(hierarchy, rank)
+    # debugger
+    return if taxon.nil?
+
+    if taxon.acceptedNameUsageID.present?
+      taxon = Taxon.find_by(acceptedNameUsageID: taxon.acceptedNameUsageID)
+    end
+    taxon
+  end
+
+  # NOTE: adds kingdom to taxonomy string since test results don't include kingdom
   def get_complete_taxon_string(string)
     phylum = string.split(';', -1).first
     kingdom = get_kingdom(phylum)
     kingdom.present? ? "#{kingdom};#{string}" : "NA;#{string}"
+  end
+
+  private
+
+  def get_kingdom(phylum)
+    taxon = Taxon.where(taxonRank: 'phylum', phylum: phylum).first
+    taxon.kingdom if taxon.present?
   end
 
   def taxa_present(taxa)
@@ -85,16 +82,6 @@ module TaxonomyNormalization
       !taxa.start_with?('uncultured') &&
       !taxa.end_with?('environmental sample') &&
       !taxa.end_with?('sp.')
-  end
-
-  def find_accepted_taxon(hierarchy, rank)
-    taxon = find_exact_taxon(hierarchy, rank)
-    return if taxon.nil?
-
-    if taxon.acceptedNameUsageID.present?
-      taxon = Taxon.find_by(acceptedNameUsageID: taxon.acceptedNameUsageID)
-    end
-    taxon
   end
 
   def find_exact_taxon(hierarchy, rank)
@@ -139,7 +126,7 @@ module TaxonomyNormalization
             elsif hierarchy[:phylum]
               hierarchy[:phylum]
             end
-
+    # debugger
     Taxon.where(canonicalName: taxon, taxonRank: rank).first
   end
 end

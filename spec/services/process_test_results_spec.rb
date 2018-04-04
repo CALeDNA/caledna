@@ -2,51 +2,12 @@
 
 require 'rails_helper'
 
-describe TaxonomyNormalization do
-  TaxonomyNormalization::PHYLUM_TO_KINGDOM = { Phylum: 'Kingdom' }.freeze
-  let(:dummy_class) { Class.new { extend TaxonomyNormalization } }
+describe ProcessTestResults do
+  let(:dummy_class) { Class.new { extend ProcessTestResults } }
 
-  describe '#kingdom' do
-    def subject(phylum)
-      dummy_class.kingdom(phylum)
-    end
-
-    it 'returns a kingdom for valid phlyum' do
-      expect(subject('Phylum')).to eq('Kingdom')
-    end
-
-    it 'accepts symbols' do
-      expect(subject(:Phylum)).to eq('Kingdom')
-    end
-
-    it 'raises error for invalid phylum' do
-      expect { subject('random') }
-        .to raise_error(TaxaError, 'invalid kingdom')
-    end
-  end
-
-  # describe '#phylum' do
-  #   def subject(phylum)
-  #     dummy_class.phylum(phylum)
-  #   end
-
-  #   it 'returns valid phylum' do
-  #     expect(subject('Aquificae')).to eq('Aquificae')
-  #   end
-
-  #   it 'converts CALeDNA phylum' do
-  #     expect(subject('Streptophyta')).to eq('Bryophyta')
-  #   end
-
-  #   it 'raises error for invalid phylum' do
-  #     expect { subject('random') }
-  #       .to raise_error(TaxaError, 'invalid phlyum')
-  #   end
-  # end
-
-  describe '#getTaxonRank' do
+  describe '#get_taxon_rank' do
     def subject(string)
-      dummy_class.getTaxonRank(string)
+      dummy_class.get_taxon_rank(string)
     end
 
     it 'returns species if it exists' do
@@ -98,20 +59,15 @@ describe TaxonomyNormalization do
       string = ';;;;;'
       expect(subject(string)).to eq(nil)
     end
-
-    it 'otherwise throw error' do
-      string = 'NA;NA;NA;NA;NA;uncultured eukaryote'
-      expect { subject(string) }
-        .to raise_error(TaxaError, "invalid taxa rank: #{string}")
-    end
   end
 
-  describe '#getHierarchy' do
+  describe '#get_hierarchy' do
     def subject(string)
-      dummy_class.getHierarchy(string)
+      dummy_class.get_hierarchy(string)
     end
 
     it 'returns a hash of taxonomy names' do
+      create(:taxon, kingdom: 'Kingdom', phylum: 'Phylum', taxonRank: 'phylum')
       string = 'Phylum;Class;Order;Family;Genus;Species'
 
       expect(subject(string)[:kingdom]).to eq('Kingdom')
@@ -124,6 +80,7 @@ describe TaxonomyNormalization do
     end
 
     it 'returns nil for missing taxa' do
+      create(:taxon, kingdom: 'Kingdom', phylum: 'Phylum', taxonRank: 'phylum')
       string = 'Phylum;Class;;Family;Genus;'
 
       expect(subject(string)[:kingdom]).to eq('Kingdom')
@@ -136,6 +93,7 @@ describe TaxonomyNormalization do
     end
 
     it 'returns nil for "NA" taxa' do
+      create(:taxon, kingdom: 'Kingdom', phylum: 'Phylum', taxonRank: 'phylum')
       string = 'Phylum;Class;NA;Family;Genus;NA'
 
       expect(subject(string)[:kingdom]).to eq('Kingdom')
@@ -155,6 +113,65 @@ describe TaxonomyNormalization do
     it 'retuns empty hash when entire string is ";;;;;"' do
       string = ';;;;;'
       expect(subject(string)).to eq({})
+    end
+  end
+
+  describe '#find_accepted_taxon' do
+    def subject(hierarchy, rank)
+      dummy_class.find_accepted_taxon(hierarchy, rank)
+    end
+
+    it 'returns matching Taxon for a taxon string' do
+      rank = 'phylum'
+      taxon = create(
+        :taxon,
+        kingdom: 'Kingdom',
+        phylum: 'Phylum',
+        taxonRank: rank,
+        canonicalName: 'Phylum'
+      )
+      string = 'Phylum;;;;;'
+      hierarchy = dummy_class.get_hierarchy(string)
+
+      expect(subject(hierarchy, rank)).to eq (taxon)
+    end
+
+    it 'returns accepted Taxon for a taxon string' do
+      rank = 'phylum'
+      taxon_accepted = create(
+        :taxon,
+        kingdom: 'Kingdom',
+        phylum: 'Phylum',
+        taxonRank: rank,
+        canonicalName: 'Phylum'
+      )
+      string = 'Phylum;;;;;'
+      hierarchy = dummy_class.get_hierarchy(string)
+
+      expect(subject(hierarchy, rank)).to eq (taxon)
+    end
+
+
+  end
+
+  describe '#get_complete_taxon_string' do
+    def subject(string)
+      dummy_class.get_complete_taxon_string(string)
+    end
+
+    it 'adds kingdom to taxomony if phylum has a kingdom' do
+      create(:taxon, kingdom: 'Kingdom', phylum: 'Phylum', taxonRank: 'phylum')
+      string = 'Phylum;Class;Order;Family;Genus;Species'
+      expected = 'Kingdom;Phylum;Class;Order;Family;Genus;Species'
+
+      expect(subject(string)).to eq(expected)
+    end
+
+    it 'adds "NA" to taxomony if phylum does have a kingdom' do
+      string = 'Phylum;Class;Order;Family;Genus;Species'
+      expected = 'NA;Phylum;Class;Order;Family;Genus;Species'
+
+      expect(subject(string)).to eq(expected)
     end
   end
 end

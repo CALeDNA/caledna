@@ -58,7 +58,10 @@ Rails.application.routes.draw do
         post 'asvs' => 'dna_results#asvs_create'
       end
 
-      resources :normalize_taxa
+      resources :normalize_taxa, only: %i[index show] do
+        put 'update_existing' => 'normalize_taxa#update_existing'
+        put 'update_create' => 'normalize_taxa#update_create'
+      end
     end
 
     controller 'batch_actions' do

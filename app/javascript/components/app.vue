@@ -268,6 +268,8 @@
 
         const species = this.processSpecies(this.newTaxon);
         const canonicalName = this.processCanonicalName(this.newTaxon);
+        const id = Number(window.location.pathname.split('normalize_taxa/')[1]);
+
         const body = {
           kingdom: this.newTaxon.kingdom,
           phylum: this.newTaxon.phylum,
@@ -280,12 +282,14 @@
           taxonomicStatus: this.newTaxon.taxonomicStatus,
           taxonRank: this.newTaxon.taxonRank,
           parentNameUsageID: this.newTaxon.parentNameUsageID,
-          hierarchy: this.selectedTaxon.hierarchy,
+          hierarchy: { ...this.selectedTaxon.hierarchy, [this.newTaxon.taxonRank]: id},
           scientificName: this.newTaxon.scientificName,
           canonicalName,
+          taxonID: id,
+          genericName: this.newTaxon.genus
         }
 
-        api.createTaxa(this.trimObject(body))
+        api.createUpdateTaxa(id, this.trimObject(body))
           .then(this.handleFormSuccess)
           .catch(this.handleFormError);
       },
