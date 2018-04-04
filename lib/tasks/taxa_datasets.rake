@@ -16,6 +16,23 @@ namespace :taxa_datasets do
       )
     end
   end
+
+  task import_eol_ncbi: :environment do
+    datasets = [
+      {
+        name: 'Encyclopedia of Life',
+        datasetID: 'e632b198-5b2f-47ee-b7a6-6531ea435fa3',
+        citation: 'Encyclopedia of Life (EOL). Encyclopedia of Life. Checklist Dataset https://doi.org/10.15468/sxtqyz accessed via GBIF.org on 2018-04-03.'
+      },
+      {
+        name: 'NCBI',
+        datasetID: 'fab88965-e69d-4491-a04d-e3198b626e52',
+        citation: 'National Center for Biotechnology Information (NCBI). NCBI Taxonomy. Checklist Dataset https://doi.org/10.15468/rhydar accessed via GBIF.org on 2018-04-03.'
+      }
+    ]
+
+    TaxaDataset.create(datasets)
+  end
 end
 
 class GbifImport
