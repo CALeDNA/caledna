@@ -67,17 +67,35 @@
   </h1>
 </header>
 
-  <section class="main-content__body">
-    <ul>
-      <li>
-        <%= link_to "Delete data", admin_delete_data_path, data: {confirm: "You sure?"} %>:
-        delete all field data projects, samples, extractions, ASVs, photos
-      </li>
-      <li>
-        <%= link_to "Delete data and create demo data", admin_delete_and_seed_data_path, data: {confirm: "You sure?"} %>:
-        delete all field data projects, samples, extractions, ASVs, photos,
-        then create a Demo project with samples, extractions, and ASVs
-      </li>
-    </ul>
-  </section>
+<section class="main-content__body">
+  <ul>
+    <li>
+      <%= link_to "Delete data", admin_delete_data_path, data: {confirm: "You sure?"} %>:
+      delete all field data projects, samples, extractions, ASVs, photos
+    </li>
+    <li>
+      <%= link_to "Delete data and create demo data", admin_delete_and_seed_data_path, data: {confirm: "You sure?"} %>:
+      delete all field data projects, samples, extractions, ASVs, photos,
+      then create a Demo project with samples, extractions, and ASVs
+    </li>
+  </ul>
+</section>
 <% end %>
+
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    CSV Templates
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <ul>
+    <li>
+      <%= link_to "Samples CSV", '/csv/example.samples.csv'  %>
+    </li>
+    <li>
+      <%= link_to "DNA test results CSV", '/csv/example.test_results.csv'  %>
+    </li>
+  </ul>
+</section>

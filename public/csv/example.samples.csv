@@ -1,0 +1,3 @@
+Kit,Tubes,16S,18S,CO1,FITS,PITS,Reserve,Notes,Latitude,Longitude,Elevatr Altitude (meters),Altitude,GPS Precision,Substrate,Soil- Temperature (Celsius),Soil- pH,Soil- Moisture,Soil- Light,Sediment- Temperature (Celsius),Sediment-Total Dissolved Solids (TDS),Sediment-Record pH
+K0024,LA-S2,X16S_K0024.A2.S1.L001,X18S_K0024.A2.S1.L001,CO1_K0024.A2.S1.L001,FITS_K0024.A2.S1.L001,PITS_K0024.A2.S1.L001,Santa Ynez Canyon,Santa Ynez stream,34.083974,-118.567312,199.01,200.593072521504,5,sediment,,,,,15,514,8
+K0056,LB-S1,X16S_K0056.B1.S65.L001,X18S_K0056.B1.S65.L001,CO1_K0056.B1.S65.L001,FITS_K0056.B1.S65.L001,PITS_K0056.B1.S65.L001,San Joaquin Marsh Reserve,,33.658987,-117.848428,2.94,2.50727844238281,1699,sediment,,,,,,,
