@@ -1,4 +1,4 @@
-<% content_for(:title) { 'Import ASVs from test results' } %>
+<% content_for(:title) { 'Import ASV form DNA Results' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -7,6 +7,7 @@
 </header>
 
 <section class="main-content__body">
+  <p>Upload CSV to import ASVs from DNA test results.</p>
 
   <%= form_tag admin_labwork_asvs_path, multipart: true do %>
     <%= file_field_tag :file %>

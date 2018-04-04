@@ -7,7 +7,7 @@
 </header>
 
 <section class="main-content__body">
-  <ul>
+  <ol>
     <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
       <li>
         <%= link_to 'Import Kobo Projects', admin_labwork_import_kobo_path %>:
@@ -38,25 +38,32 @@
 
     <% if policy('Labwork::ImportCsv'.to_sym).index? %>
       <li>
-        <%= link_to 'Import Samples csv', admin_labwork_samples_csv_path %>:
-        create or update samples via csv upload
+        <%= link_to 'Import Samples', admin_labwork_samples_csv_path %>:
+        Create or update samples via CSV upload
       </li>
     <% end %>
 
     <% if policy('Labwork::DnaResult'.to_sym).index? %>
       <li>
-        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_taxa_path %>:
-        Add new taxonomy from DNA test results
+        <%= link_to 'Import Taxonomy from DNA Results', admin_labwork_taxa_path %>:
+        Import taxonomy from DNA test results via CSV upload
       </li>
     <% end %>
 
     <% if policy('Labwork::DnaResult'.to_sym).index? %>
       <li>
-        <%= link_to 'Process DNA Results', admin_labwork_asvs_path %>:
-        upload DNA results csv
+        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_normalize_taxa_path	 %>:
+        Create new taxa from DNA test results
       </li>
     <% end %>
-  </ul>
+
+    <% if policy('Labwork::DnaResult'.to_sym).index? %>
+      <li>
+        <%= link_to 'Import ASV form DNA Results', admin_labwork_asvs_path %>:
+        Import ASVs from DNA test results via CSV upload
+      </li>
+    <% end %>
+  </ol>
 </section>
 
 

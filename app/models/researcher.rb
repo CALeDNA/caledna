@@ -14,6 +14,7 @@ class Researcher < ApplicationRecord
           map: :string
 
   scope :active, -> { where(active: true) }
+  scope :sample_processors, -> { where(role_cd: :sample_processor) }
 
   def self.select_options
     Researcher.active.all.map { |e| [e.username, e.id] }
