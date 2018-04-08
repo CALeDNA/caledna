@@ -1,0 +1,24 @@
+<h1 class="title"><%= @project.name %></h1>
+
+<p><%= @project.description %></p>
+
+<h2>Organisms from ASVs</h2>
+<ul>
+<% @taxa.each do |taxon| %>
+  <li>
+    <%= taxon.taxonRank %>:
+    <%= link_to taxon.canonicalName, taxon_path(taxon) %>
+    <%= taxon.common_names %>
+  </li>
+<% end %>
+</ul>
+
+<h2>Samples</h2>
+
+<% if params[:view] == 'list' %>
+  <%= render partial: "samples/list",
+    locals: { samples: @samples }  %>
+<% else %>
+  <%= render partial: "samples/map", locals: { samples: @samples,
+  initial_lat: nil, initial_lng: nil } %>
+<% end %>

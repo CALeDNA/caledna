@@ -1,0 +1,15 @@
+<h1 class="title">Research Projects</h1>
+
+<table class="table">
+  <tr>
+    <th>Name</th>
+  </tr>
+
+  <% @projects.each do |project| %>
+    <tr class="clickable_row" data-path='<%=  research_project_path project%>' >
+      <td><%= project.name %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= paginate @projects %>

@@ -14,6 +14,7 @@ class Extraction < ApplicationRecord
                                          foreign_key: 'processor_id',
                                          optional: true
   has_many :asvs
+  has_many :research_projects
 
   as_enum :priority_sequencing, %i[none low high], map: :string
   as_enum :brand_beads, %i[AmpureXP Serapure Other], map: :string

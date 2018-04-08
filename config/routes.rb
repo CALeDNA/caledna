@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: 'labwork/home#index'
+    resources :research_projects
     resources :field_data_projects
     resources :samples
     resources :photos
@@ -84,6 +85,7 @@ Rails.application.routes.draw do
   resource :taxa_search, only: %i[show]
   resources :field_data_projects, only: %i[index show]
   resources :taxa, only: %i[index show create]
+  resources :research_projects, only: %i[index show]
 
   root 'samples#index'
 end

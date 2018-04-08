@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -10,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180402071258) do
+ActiveRecord::Schema.define(version: 20180408203335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,8 +44,8 @@ ActiveRecord::Schema.define(version: 20180402071258) do
     t.string  "original_taxonomy"
     t.jsonb   "original_hierarchy"
     t.boolean "normalized",         default: false
-    t.string  "genericName"
     t.integer "taxonID"
+    t.string  "genericName"
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
 
@@ -181,6 +183,22 @@ ActiveRecord::Schema.define(version: 20180402071258) do
     t.index ["sample_id"], name: "index_photos_on_sample_id", using: :btree
   end
 
+  create_table "research_project_extractions", force: :cascade do |t|
+    t.integer  "research_project_id"
+    t.integer  "extraction_id"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.index ["extraction_id"], name: "index_research_project_extractions_on_extraction_id", using: :btree
+    t.index ["research_project_id"], name: "index_research_project_extractions_on_research_project_id", using: :btree
+  end
+
+  create_table "research_projects", force: :cascade do |t|
+    t.string   "name"
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "researchers", force: :cascade do |t|
     t.string   "email",                  default: "",                 null: false
     t.string   "encrypted_password",     default: "",                 null: false
@@ -267,11 +285,19 @@ ActiveRecord::Schema.define(version: 20180402071258) do
     t.string  "genus",                    limit: 255
     t.jsonb   "hierarchy"
     t.integer "asvs_count",                           default: 0
+    t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
-    t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
-    t.index ["datasetID"], name: "index_taxa_on_datasetID", using: :btree
+    t.index ["asvs_count"], name: "taxa_asvs_count_idx", using: :btree
+    t.index ["canonicalName", "taxonRank"], name: "taxa_canonicalName_taxonRank_idx", using: :btree
+    t.index ["datasetID"], name: "taxa_datasetID_idx", using: :btree
+    t.index ["genus"], name: "taxa_genus_idx", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
+    t.index ["kingdom", "genus"], name: "taxa_kingdom_genus_idx", using: :btree
+    t.index ["kingdom", "phylum", "className", "order", "family", "genus", "specificEpithet", "infraspecificEpithet"], name: "taxa_kingdom_phylum_className_order_family_genus_specificEpithe", using: :btree
+    t.index ["parentNameUsageID"], name: "taxa_parentNameUsageID_idx", using: :btree
+    t.index ["scientificName"], name: "taxa_scientificName_idx", using: :btree
+    t.index ["taxonRank"], name: "taxa_taxonRank_idx", using: :btree
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end
 
@@ -301,5 +327,7 @@ ActiveRecord::Schema.define(version: 20180402071258) do
   add_foreign_key "extractions", "researchers", column: "sra_adder_id"
   add_foreign_key "extractions", "samples"
   add_foreign_key "photos", "samples"
+  add_foreign_key "research_project_extractions", "extractions"
+  add_foreign_key "research_project_extractions", "research_projects"
   add_foreign_key "samples", "field_data_projects"
 end
