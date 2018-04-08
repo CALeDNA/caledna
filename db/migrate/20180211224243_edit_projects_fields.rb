@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EditProjectsFields < ActiveRecord::Migration[5.0]
   def change
     remove_column :projects, :kobo_name, :string

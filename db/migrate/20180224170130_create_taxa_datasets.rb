@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateTaxaDatasets < ActiveRecord::Migration[5.0]
   def up
     create_table :taxa_datasets, id: false do |t|

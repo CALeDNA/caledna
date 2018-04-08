@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddPrimersToSamples < ActiveRecord::Migration[5.0]
   def change
     add_column :samples, :primer_16s, :string

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UpdateCalTaxa < ActiveRecord::Migration[5.0]
   def up
     add_column :cal_taxa, :original_taxonomy, :string

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddAsvCountToTaxon < ActiveRecord::Migration[5.0]
   def change
     add_index :asvs, :taxonID

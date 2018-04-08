@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeToExtractionForSpecimens < ActiveRecord::Migration[5.0]
   def change
     remove_reference :specimens, :sample, foreign_key: true

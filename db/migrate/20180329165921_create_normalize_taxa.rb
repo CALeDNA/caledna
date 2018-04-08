@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateNormalizeTaxa < ActiveRecord::Migration[5.0]
   def change
     create_table :normalize_taxa do |t|

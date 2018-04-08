@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ImportTaxonomyTables < ActiveRecord::Migration[5.0]
   class SchemaMigration < ActiveRecord::Base; self.primary_key = :version; end
 

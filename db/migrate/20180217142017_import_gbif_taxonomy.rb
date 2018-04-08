@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ImportGbifTaxonomy < ActiveRecord::Migration[5.0]
   class SchemaMigration < ActiveRecord::Base; self.primary_key = :version; end
 
