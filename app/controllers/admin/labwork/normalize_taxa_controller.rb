@@ -6,6 +6,7 @@ module Admin
       def index
         @taxa = CalTaxon.where(normalized: false)
                         .order(:taxonRank, :original_taxonomy)
+                        .page params[:page]
       end
 
       def show
@@ -15,6 +16,7 @@ module Admin
         @more_suggestions = suggestions.present? ? [] : more_suggestions
       end
 
+      # NOTE: used when matching test result to existing taxon
       def update_existing
         cal_taxon.taxonID = update_existing_params[:taxonID]
         cal_taxon.normalized = true
@@ -26,6 +28,7 @@ module Admin
       end
 
       # rubocop:disable Metrics/MethodLength
+      # NOTE: used when creating new taxon for test results
       def update_create
         ActiveRecord::Base.transaction do
           cal_taxon.update!(create_params.merge(normalized: true))
@@ -40,6 +43,12 @@ module Admin
         }
       end
       # rubocop:enable Metrics/MethodLength
+
+      def duplicate
+        new_attributes = cal_taxon.attributes.except('id')
+        CalTaxon.create(new_attributes)
+        redirect_to admin_labwork_normalize_taxa_path
+      end
 
       private
 

@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       resources :normalize_taxa, only: %i[index show] do
         put 'update_existing' => 'normalize_taxa#update_existing'
         put 'update_create' => 'normalize_taxa#update_create'
+        post 'duplicate' => 'normalize_taxa#duplicate'
       end
     end
 

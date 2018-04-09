@@ -23,7 +23,9 @@ class CalTaxon < ApplicationRecord
   end
 
   def taxa
-    original_taxonomy.split(';').compact
+    original_taxonomy
+      .split(';')
+      .select { |i| i != 'NA' && i.present? }
   end
 
   def col_link
