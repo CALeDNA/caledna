@@ -38,8 +38,8 @@
 
     <% if policy('Labwork::ImportCsv'.to_sym).index? %>
       <li>
-        <%= link_to 'Import Samples', admin_labwork_samples_csv_path %>:
-        Create or update samples via CSV upload
+        <%= link_to 'Import Samples for Research Project', admin_labwork_samples_csv_path %>:
+        Add samples for a research project via CSV upload
       </li>
     <% end %>
 

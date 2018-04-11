@@ -5,7 +5,7 @@ module ImportCsv
     require 'csv'
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def import_sample_csv(file)
+    def import_sample_csv(file, research_project_id)
       CSV.foreach(file.path, headers: true) do |row|
         barcode = "#{row['Kit']}-#{row['Tubes']}"
         update_data = update_data_fields(row)
@@ -23,7 +23,13 @@ module ImportCsv
           sample: sample,
           extraction_type: ExtractionType.first
         }
-        Extraction.where(extraction_data).first_or_create
+        extraction = Extraction.where(extraction_data).first_or_create
+
+        research_extraction_data = {
+          extraction: extraction,
+          research_project_id: research_project_id
+        }
+        ResearchProjectExtraction.where(research_extraction_data).first_or_create
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
@@ -36,7 +42,8 @@ module ImportCsv
         primer_cO1: row['CO1'],
         primer_fits: row['FITS'],
         primer_pits: row['PITS'],
-        status_cd: 'results_completed',
+        # TODO: decide on what status to use
+        # status_cd: 'submitted',
         csv_data: row.to_h
       }
     end

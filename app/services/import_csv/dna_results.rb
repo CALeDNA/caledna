@@ -95,9 +95,10 @@ module ImportCsv
         next if row[cell].to_i < 1
         extraction = extractions[cell]
         next if extraction.nil?
-        puts "cell: #{cell}, extraction: #{extraction.id}, " \
-             "taxon: #{taxon[:taxonID]}, count:  #{row[cell]}"
-        Asv.create(extraction_id: extraction.id, taxonID: taxon[:taxonID])
+        # puts "cell: #{cell}, extraction: #{extraction.id}, " \
+        #      "taxon: #{taxon[:taxonID]}, count:  #{row[cell]}"
+        Asv.where(extraction_id: extraction.id, taxonID: taxon[:taxonID])
+           .first_or_create
       end
     end
 
