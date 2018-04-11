@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180408203335) do
+ActiveRecord::Schema.define(version: 20180411133159) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20180408203335) do
     t.boolean "normalized",         default: false
     t.integer "taxonID"
     t.string  "genericName"
+    t.string  "complete_taxonomy"
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
 
@@ -289,14 +290,20 @@ ActiveRecord::Schema.define(version: 20180408203335) do
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
     t.index ["asvs_count"], name: "taxa_asvs_count_idx", using: :btree
-    t.index ["canonicalName", "taxonRank"], name: "taxa_canonicalName_taxonRank_idx", using: :btree
+    t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank", using: :btree
     t.index ["datasetID"], name: "taxa_datasetID_idx", using: :btree
+    t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["genus"], name: "taxa_genus_idx", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
-    t.index ["kingdom", "genus"], name: "taxa_kingdom_genus_idx", using: :btree
-    t.index ["kingdom", "phylum", "className", "order", "family", "genus", "specificEpithet", "infraspecificEpithet"], name: "taxa_kingdom_phylum_className_order_family_genus_specificEpithe", using: :btree
+    t.index ["kingdom"], name: "index_taxa_on_kingdom", using: :btree
+    t.index ["kingdom"], name: "taxa_kingdom_idx", using: :btree
+    t.index ["parentNameUsageID"], name: "index_taxa_on_parentNameUsageID", using: :btree
     t.index ["parentNameUsageID"], name: "taxa_parentNameUsageID_idx", using: :btree
+    t.index ["phylum"], name: "index_taxa_on_phylum", using: :btree
+    t.index ["phylum"], name: "taxa_phylum_idx", using: :btree
+    t.index ["scientificName"], name: "index_taxa_on_scientificName", using: :btree
     t.index ["scientificName"], name: "taxa_scientificName_idx", using: :btree
+    t.index ["taxonRank"], name: "index_taxa_on_taxonRank", using: :btree
     t.index ["taxonRank"], name: "taxa_taxonRank_idx", using: :btree
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end
