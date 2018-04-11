@@ -7,6 +7,6 @@ class ColApi
   base_uri 'webservice.catalogueoflife.org/col/webservice'
 
   def taxa(keyword)
-    self.class.get('/', query: { name: keyword, format: 'json'})
+    self.class.get('/', query: { name: keyword, format: 'json' })
   end
 end

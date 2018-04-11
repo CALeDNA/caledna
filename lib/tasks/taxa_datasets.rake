@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 namespace :taxa_datasets do
   desc 'import dataset info from gbif'
 
@@ -18,6 +19,7 @@ namespace :taxa_datasets do
   end
 
   task import_eol_ncbi: :environment do
+    # rubocop:disable Metrics/LineLength
     datasets = [
       {
         name: 'Encyclopedia of Life',
@@ -30,10 +32,12 @@ namespace :taxa_datasets do
         citation: 'National Center for Biotechnology Information (NCBI). NCBI Taxonomy. Checklist Dataset https://doi.org/10.15468/rhydar accessed via GBIF.org on 2018-04-03.'
       }
     ]
+    # rubocop:enable Metrics/LineLength
 
     TaxaDataset.create(datasets)
   end
 end
+# rubocop:enable Metrics/BlockLength
 
 class GbifImport
   def gbif_api

@@ -9,6 +9,7 @@ AllCops:
     - 'app/dashboards/*.rb'
     - 'db/data/*.sql'
     - 'z_ignore/**/*'
+    - 'node_modules/**/*'
 
 Style/Documentation:
   Enabled: false
@@ -21,4 +22,7 @@ Metrics/BlockLength:
     - 'spec/**/*.rb'
 
 Style/StructInheritance:
+  Enabled: false
+
+Naming/UncommunicativeMethodParamName:
   Enabled: false

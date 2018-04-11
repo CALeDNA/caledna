@@ -68,7 +68,6 @@ group :development, :test do
   gem 'pry-rails', '~> 0.3'
   gem 'rspec-rails', '~> 3.7'
   gem 'rubocop', '~> 0.52'
-  gem 'shoulda-matchers', '~> 3.1'
 end
 
 group :test do
@@ -77,6 +76,6 @@ group :test do
   gem 'launchy', '~> 2.4'
   gem 'rails-controller-testing', '~> 1.0.2'
   gem 'rspec-sidekiq', '~> 3.0'
-  gem 'shoulda-matchers', '~> 3.1', require: false
+  gem 'shoulda-matchers', '~> 3.1'
   gem 'timecop', '~> 0.9'
 end

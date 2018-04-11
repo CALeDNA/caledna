@@ -25,19 +25,21 @@ module Admin
         end
       end
 
+      # rubocop:disable Metrics/MethodLength
       def update_create
         ActiveRecord::Base.transaction do
           cal_taxon.update!(create_params.merge(normalized: true))
           Taxon.create!(create_params)
         end
         render json: { status: :ok }
-
       rescue ActiveRecord::RecordInvalid => exception
         render json: {
           status: :unprocessable_entity,
-          errors: exception.message.split('Validation failed: ').last.split(', ')
+          errors: exception.message.split('Validation failed: ').last
+                           .split(', ')
         }
       end
+      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -45,6 +47,7 @@ module Admin
         params.require(:cal_taxon).permit(:taxonID)
       end
 
+      # rubocop:disable Metrics/MethodLength
       def create_params
         params.require(:normalize_taxon).permit(
           :taxonID,
@@ -68,6 +71,7 @@ module Admin
           ]
         )
       end
+      # rubocop:enable Metrics/MethodLength
 
       def cal_taxon
         id = params[:id] || params[:normalize_taxon_id]

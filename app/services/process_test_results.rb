@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module ProcessTestResults
+  # rubocop:disable Metrics/MethodLength
   def find_taxon_from_string(taxonomy_string)
     rank = get_taxon_rank(taxonomy_string)
     hierarchy = get_hierarchy(taxonomy_string)
@@ -14,7 +16,10 @@ module ProcessTestResults
       taxonomy_string: string
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def get_taxon_rank(string)
     return if string == 'NA'
     return if string == ';;;;;'
@@ -50,10 +55,11 @@ module ProcessTestResults
     hierarchy[:kingdom] = get_kingdom(taxa[0]) if taxa_present(taxa[0])
     hierarchy
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def find_accepted_taxon(hierarchy, rank)
     taxon = find_exact_taxon(hierarchy, rank)
-    # debugger
     return if taxon.nil?
 
     if taxon.acceptedNameUsageID.present?
@@ -62,7 +68,8 @@ module ProcessTestResults
     taxon
   end
 
-  # NOTE: adds kingdom to taxonomy string since test results don't include kingdom
+  # NOTE: adds kingdom to taxonomy string since test results don't include
+  # kingdom
   def get_complete_taxon_string(string)
     phylum = string.split(';', -1).first
     kingdom = get_kingdom(phylum)
@@ -96,17 +103,21 @@ module ProcessTestResults
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def get_species(hierarchy)
     Taxon.where(
       kingdom: hierarchy[:kingdom],
       canonicalName: hierarchy[:species],
       taxonRank: 'species'
-    ).or(Taxon.where(
+    ).or(
+      Taxon.where(
         kingdom: hierarchy[:kingdom],
         scientificName: hierarchy[:species],
         taxonRank: 'species'
-    )).first
+      )
+    ).first
   end
+  # rubocop:enable Metrics/MethodLength
 
   def get_genus(hierarchy)
     Taxon.where(
@@ -126,49 +137,10 @@ module ProcessTestResults
             elsif hierarchy[:phylum]
               hierarchy[:phylum]
             end
-    # debugger
     Taxon.where(canonicalName: taxon, taxonRank: rank).first
   end
 end
+# rubocop:enable Metrics/ModuleLength
 
 class TaxaError < StandardError
 end
-
-=begin
--- every accepted genus has a unique kingdom
-select count(*) , "kingdom", genus
-from taxa
-where "taxonRank" = 'genus'
-and "taxonomicStatus" = 'accepted'
-group by  "kingdom", genus
-having count(*) > 1;
-
---  5 animal, 1 plant  species don't have specificEpithet or canonicalName, but have scientitic name
-select *
-from taxa
-where "taxonRank" = 'species'
-and "taxonomicStatus" = 'accepted'
-and "canonicalName" is null
-and "specificEpithet" is null
-and kingdom != 'Viruses';
-
--- 8000  virus, 5 animal, 1 plant  species don't have specificEpithet or canonicalName, but have scientitic name
-select count(*), kingdom
-from taxa
-where "taxonRank" = 'species'
-and "taxonomicStatus" = 'accepted'
-and "canonicalName" is null
-and "specificEpithet" is null
-group by  kingdom;
-
--- only 34 canonicalName have more than one appaearnce when grouped with kingdoms
-select count(*) , "canonicalName", kingdom
-from taxa
-where "taxonRank" = 'species'
-and "taxonomicStatus" = 'accepted'
-and kingdom  is not null
-and "canonicalName"  is not null
-group by  "canonicalName",  kingdom
-having count(*) > 1;
-
-=end

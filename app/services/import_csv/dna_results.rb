@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 module ImportCsv
   module DnaResults
     require 'csv'
     include ProcessTestResults
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def normalize_taxonomy(file)
       missing_taxonomy = []
 
@@ -26,8 +29,9 @@ module ImportCsv
         OpenStruct.new(valid?: true, errors: [])
       end
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_dna_results(file)
       extractions = {}
       sample_cells = []
@@ -58,6 +62,7 @@ module ImportCsv
         OpenStruct.new(valid?: true, errors: [])
       end
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     private
 
@@ -85,13 +90,13 @@ module ImportCsv
       valid_extractions
     end
 
-
     def create_asvs(row, sample_cells, extractions, taxon)
       sample_cells.each do |cell|
         next if row[cell].to_i < 1
         extraction = extractions[cell]
         next if extraction.nil?
-        puts "cell: #{cell}, extraction: #{extraction.id}, taxon: #{taxon[:taxonID]}, count:  #{row[cell]}"
+        puts "cell: #{cell}, extraction: #{extraction.id}, " \
+             "taxon: #{taxon[:taxonID]}, count:  #{row[cell]}"
         Asv.create(extraction_id: extraction.id, taxonID: taxon[:taxonID])
       end
     end
@@ -99,7 +104,7 @@ module ImportCsv
     def create_demo_extraction(barcode)
       project = FieldDataProject.first
       sample = Sample.where(barcode: barcode, field_data_project: project)
-                    .first_or_create
+                     .first_or_create
       Extraction.create(sample: sample, extraction_type: ExtractionType.first)
     end
   end

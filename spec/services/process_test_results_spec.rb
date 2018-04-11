@@ -133,12 +133,12 @@ describe ProcessTestResults do
       string = 'Phylum;;;;;'
       hierarchy = dummy_class.get_hierarchy(string)
 
-      expect(subject(hierarchy, rank)).to eq (taxon)
+      expect(subject(hierarchy, rank)).to eq(taxon)
     end
 
     it 'returns accepted Taxon for a taxon string' do
       rank = 'phylum'
-      taxon_accepted = create(
+      taxon = create(
         :taxon,
         kingdom: 'Kingdom',
         phylum: 'Phylum',
@@ -148,10 +148,8 @@ describe ProcessTestResults do
       string = 'Phylum;;;;;'
       hierarchy = dummy_class.get_hierarchy(string)
 
-      expect(subject(hierarchy, rank)).to eq (taxon)
+      expect(subject(hierarchy, rank)).to eq(taxon)
     end
-
-
   end
 
   describe '#get_complete_taxon_string' do

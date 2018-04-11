@@ -79,6 +79,7 @@ class CalTaxon < ApplicationRecord
   def at_least_one_taxa
     fields = [phylum, className, order, family, genus, specificEpithet]
     return if fields.any?(&:present?)
-    errors.add(:at_least_one_taxa, ': At least one taxonomy field must be entered')
+    errors.add(:at_least_one_taxa,
+               ': At least one taxonomy field must be entered')
   end
 end

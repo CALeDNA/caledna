@@ -15,6 +15,6 @@ class GbifApi
   end
 
   def taxa(keyword)
-    self.class.get('/species/match', query: {name: keyword})
+    self.class.get('/species/match', query: { name: keyword })
   end
 end
