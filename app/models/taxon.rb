@@ -29,14 +29,14 @@ class Taxon < ApplicationRecord
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def taxonomy_tree
     tree = []
-    tree.push(name: :kingdom, value: kingdom, id: hierarchy['kingdom']) if kingdom.present?
-    tree.push(name: :phylum, value: phylum, id: hierarchy['phylum']) if phylum.present?
-    tree.push(name: :class, value: className, id: hierarchy['class']) if className.present?
-    tree.push(name: :order, value: order, id: hierarchy['order']) if order.present?
-    tree.push(name: :family, value: family, id: hierarchy['family']) if family.present?
-    tree.push(name: :genus, value: genus, id: hierarchy['genus']) if genus.present?
-    tree.push(name: :species, value: specificEpithet, id: hierarchy['species']) if specificEpithet.present?
-    tree.push(name: :subspecies, value: infraspecificEpithet, id: hierarchy['subspecies']) if infraspecificEpithet.present?
+    tree.push(name: :kingdom, value: kingdom_display, id: hierarchy['kingdom']) if kingdom.present?
+    tree.push(name: :phylum, value: phylum_display, id: hierarchy['phylum']) if phylum.present?
+    tree.push(name: :class, value: class_name_display, id: hierarchy['class']) if className.present?
+    tree.push(name: :order, value: order_display, id: hierarchy['order']) if order.present?
+    tree.push(name: :family, value: family_display, id: hierarchy['family']) if family.present?
+    tree.push(name: :genus, value: genus_display, id: hierarchy['genus']) if genus.present?
+    tree.push(name: :species, value: species_display, id: hierarchy['species']) if specificEpithet.present?
+    tree.push(name: :subspecies, value: subspecies_display, id: hierarchy['subspecies']) if infraspecificEpithet.present?
     tree
   end
   # rubocop:enable Metrics/LineLength, Metrics/AbcSize,
@@ -91,6 +91,42 @@ class Taxon < ApplicationRecord
   end
 
   private
+
+  def kingdom_display
+    taxonRank == 'kingdom' ? canonicalName : kingdom
+  end
+
+  def phylum_display
+    taxonRank == 'phylum' ? canonicalName : phylum
+  end
+
+  def class_name_display
+    taxonRank == 'class' ? canonicalName : className
+  end
+
+  def order_display
+    taxonRank == 'order' ? canonicalName : order
+  end
+
+  def family_display
+    taxonRank == 'family' ? canonicalName : family
+  end
+
+  def genus_display
+    if taxonRank == 'species' || taxonRank == 'genus' || taxonRank == 'subspecies'
+      genericName
+    else
+      genus
+    end
+  end
+
+  def species_display
+    "#{genericName} #{specificEpithet}"
+  end
+
+  def subspecies_display
+    canonicalName
+  end
 
   def common_names_string(names)
     max = 3
