@@ -32,7 +32,7 @@ module Admin
     def models
       [
         Highlight, Asv, ResearchProjectExtraction, Extraction,
-        ExtractionType, CalTaxon, ResearchProject
+        ExtractionType, CalTaxon
       ]
     end
   end

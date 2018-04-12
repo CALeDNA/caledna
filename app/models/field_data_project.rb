@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class FieldDataProject < ApplicationRecord
+  DEFAULT_PROJECT = FieldDataProject.find_by(name: 'unknown')
+
   validates :kobo_id, uniqueness: true
 
   has_many :samples, dependent: :destroy

@@ -26,7 +26,10 @@ class ResearchProjectsController < ApplicationController
       'FROM extractions ' \
       'JOIN research_project_extractions ' \
       'ON extractions.id = research_project_extractions.extraction_id ' \
-      "WHERE research_project_extractions.research_project_id = #{params[:id]};"
+      'JOIN samples ' \
+      'ON samples.id = extractions.sample_id ' \
+      'WHERE samples.latitude is NOT NULL AND samples.longitude IS NOT NULL ' \
+      "AND research_project_extractions.research_project_id = #{params[:id]};"
 
     @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
                                       .pluck('sample_id')

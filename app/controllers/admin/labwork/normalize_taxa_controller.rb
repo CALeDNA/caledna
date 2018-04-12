@@ -5,7 +5,7 @@ module Admin
     class NormalizeTaxaController < Admin::ApplicationController
       def index
         @taxa = CalTaxon.where(normalized: false)
-                        .order(:taxonRank, :original_taxonomy)
+                        .order(:taxonRank, :complete_taxonomy)
                         .page params[:page]
       end
 

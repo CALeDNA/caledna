@@ -1,6 +1,4 @@
 <p>
-  canonical name: <%= suggestion.canonicalName %><br>
-  scientific name: <%= suggestion.scientificName %><br>
   kingdom: <%= suggestion.kingdom %><br>
   phylum: <%= suggestion.phylum %><br>
   class: <%= suggestion.className %><br>
@@ -10,6 +8,8 @@
   <% if suggestion.specificEpithet %>
     species: <%= suggestion.genus %> <%= suggestion.specificEpithet %><br>
   <% end %>
+  canonical name: <%= suggestion.canonicalName %><br>
+  scientific name: <%= suggestion.scientificName %><br>
   source: <%= suggestion.taxa_dataset.name %><br>
   status: <%= suggestion.taxonomicStatus %><br>
   <% if suggestion.acceptedNameUsageID.present? %>

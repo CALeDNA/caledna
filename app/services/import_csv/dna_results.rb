@@ -1,114 +1,160 @@
 # frozen_string_literal: true
 
 module ImportCsv
+  # rubocop:disable Metrics/ModuleLength
   module DnaResults
     require 'csv'
     include ProcessTestResults
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def normalize_taxonomy(file)
-      missing_taxonomy = []
-
-      CSV.foreach(file.path, headers: true) do |row|
-        taxonomy_string = row[row.headers.first]
-        results = find_taxon_from_string(taxonomy_string)
-        if results[:taxonID].blank? && results[:rank].present?
-          missing_taxonomy.push(results)
-          CalTaxon.create(
-            taxonRank: results[:rank],
-            original_hierarchy: results[:hierarchy],
-            original_taxonomy: results[:taxonomy_string],
-            normalized: false
-          )
-        end
-      end
-
-      if invalid_taxonomy.present?
-        OpenStruct.new(valid?: false, errors: invalid_taxonomy)
-      else
-        OpenStruct.new(valid?: true, errors: [])
-      end
-    end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def import_dna_results(file)
+    def import_dna_results(file, research_project_id, extraction_type_id)
       extractions = {}
       sample_cells = []
-      invalid_taxonomy = false
+      missing_taxonomy = 0
 
       CSV.foreach(file.path, headers: true) do |row|
         if extractions.empty?
           sample_cells = row.headers[1..row.headers.size]
-          extractions = get_extractions_from_headers(sample_cells)
+          extractions = get_extractions_from_headers(
+            sample_cells, research_project_id, extraction_type_id
+          )
         end
 
         taxonomy_string = row[row.headers.first]
         taxon = find_taxon_from_string(taxonomy_string)
         if taxon.present? && taxon[:taxonID].present?
-          # puts "========= valid taxonomy: #{taxon}"
-
           create_asvs(row, sample_cells, extractions, taxon)
         else
-          invalid_taxonomy = true
-          # invalid_taxonomy.push(taxonomy_string)
-          puts "========= invalid taxonomy: #{taxonomy_string}"
+          missing_taxonomy += 1
         end
       end
 
-      if invalid_taxonomy
-        OpenStruct.new(valid?: false, errors: [])
+      if missing_taxonomy.zero?
+        OpenStruct.new(valid?: true, errors: nil)
       else
-        OpenStruct.new(valid?: true, errors: [])
+        message = "#{missing_taxonomy} taxonomies were not imported " \
+          'because no match was found.'
+        OpenStruct.new(valid?: false, errors: message)
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+    def convert_header_to_barcode(cell)
+      sample = cell.split('_').last
+      if /K\d{4}/.match?(sample)
+        parts = sample.split('.')
+        kit = parts.first
+        location_letter = parts.second.split('').first
+        sample_number = parts.second.split('').second
+        "#{kit}-L#{location_letter}-S#{sample_number}"
+      else
+        sample.split('.').first
+      end
+    end
+
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def find_sample(barcode)
+      samples = Sample.includes(:extractions).where(barcode: barcode)
+
+      if samples.count.zero?
+        sample = Sample.create(
+          barcode: barcode,
+          status_cd: :missing_coordinates,
+          field_data_project: FieldDataProject::DEFAULT_PROJECT
+        )
+        raise ImportError, "Sample #{barcode} not created" unless sample.valid?
+
+      elsif samples.all?(&:rejected?) || samples.all?(&:duplicate_barcode?)
+        raise ImportError, "Sample #{barcode} was previously rejected"
+      elsif samples.count == 1
+        sample = samples.first
+
+        unless sample.missing_coordinates?
+          sample.update(status_cd: :results_completed)
+        end
+      else
+        temp_samples =
+          samples.reject { |s| s.duplicate_barcode? || s.rejected? }
+
+        if temp_samples.count > 1
+          raise ImportError, "multiple samples with barcode #{barcode}"
+        end
+
+        sample = temp_samples.first
+
+        unless sample.missing_coordinates?
+          sample.update(status_cd: :results_completed)
+        end
+      end
+      sample
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
     private
 
-    def find_extraction(cell)
-      # TODO: deal with different cell names
-      sample = Sample.includes(:extractions).find_by(primer_pits: cell)
-      return unless sample.present?
+    def convert_header_to_primer(cell)
+      cell.split('_').first
+    end
 
-      extraction = sample.extractions.last
-      if extraction.nil?
-        extraction = Extraction.create(
-          sample: sample,
-          extraction_type: ExtractionType.first
-        )
+    def find_extraction(cell, extraction_type_id)
+      barcode = convert_header_to_barcode(cell)
+      sample = find_sample(barcode)
+
+      extraction =
+        Extraction
+        .where(sample_id: sample.id, extraction_type_id: extraction_type_id)
+        .first_or_create
+
+      unless extraction.valid?
+        raise ImportError, "Extraction #{barcode} not created"
       end
       extraction
     end
 
-    def get_extractions_from_headers(sample_cells)
+    # rubocop:disable Metrics/MethodLength
+    def get_extractions_from_headers(
+      sample_cells, research_project_id, extraction_type_id
+    )
       valid_extractions = {}
+
       sample_cells.each do |cell|
-        extraction = find_extraction(cell)
-        valid_extractions[cell] = extraction if extraction.present?
+        extraction = find_extraction(cell, extraction_type_id)
+        valid_extractions[cell] = extraction
+        project =
+          ResearchProjectExtraction
+          .where(extraction: extraction,
+                 research_project_id: research_project_id)
+          .first_or_create
+
+        unless project.valid?
+          raise ImportError, 'ResearchProjectExtraction not created'
+        end
       end
       valid_extractions
     end
+    # rubocop:enable Metrics/MethodLength
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def create_asvs(row, sample_cells, extractions, taxon)
       sample_cells.each do |cell|
         next if row[cell].to_i < 1
+
         extraction = extractions[cell]
-        next if extraction.nil?
-        # puts "cell: #{cell}, extraction: #{extraction.id}, " \
-        #      "taxon: #{taxon[:taxonID]}, count:  #{row[cell]}"
-        Asv.where(extraction_id: extraction.id, taxonID: taxon[:taxonID])
-           .first_or_create
+        asv = Asv.where(extraction_id: extraction.id, taxonID: taxon[:taxonID])
+                 .first_or_create
+        raise ImportError, "ASV #{cell} not created" unless asv.valid?
+
+        primer = convert_header_to_primer(cell)
+        next if asv.primers.include?(primer)
+        asv.primers << primer
+        asv.save
       end
     end
-
-    def create_demo_extraction(barcode)
-      project = FieldDataProject.first
-      sample = Sample.where(barcode: barcode, field_data_project: project)
-                     .first_or_create
-      Extraction.create(sample: sample, extraction_type: ExtractionType.first)
-    end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
+  # rubocop:enable Metrics/ModuleLength
 end
 
 class ImportError < StandardError

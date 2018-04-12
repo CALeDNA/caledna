@@ -12,8 +12,9 @@ module ProcessTestResults
       taxon_hierarchy: taxon.try(:hierarchy),
       taxonID: taxon.try(:taxonID),
       rank: rank,
-      hierarchy: hierarchy,
-      taxonomy_string: string
+      original_hierarchy: hierarchy,
+      complete_taxonomy: string,
+      original_taxonomy: taxonomy_string
     }
   end
   # rubocop:enable Metrics/MethodLength

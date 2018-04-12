@@ -65,7 +65,8 @@ class TaxaController < ApplicationController
     # https://stackoverflow.com/a/36251296
     # Query postgres jsonb by value
 
-    'where exists (select 1 from jsonb_each_text(taxa.hierarchy) ' \
+    'WHERE samples.latitude is NOT NULL AND samples.longitude IS NOT NULL ' \
+    'AND exists (select 1 from jsonb_each_text(taxa.hierarchy) ' \
     "pair where pair.value = '#{params[:id]}');"
 
     # "where taxa.\"taxonID\" = #{params[:id]}"

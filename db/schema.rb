@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,16 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180411133159) do
+ActiveRecord::Schema.define(version: 20180421041543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "asvs", force: :cascade do |t|
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.integer  "extraction_id"
     t.integer  "taxonID"
+    t.text     "primers",       default: [],              array: true
     t.index ["extraction_id"], name: "index_asvs_on_extraction_id", using: :btree
     t.index ["taxonID"], name: "index_asvs_on_taxonID", using: :btree
   end
@@ -250,13 +249,7 @@ ActiveRecord::Schema.define(version: 20180411133159) do
     t.decimal  "altitude"
     t.integer  "gps_precision"
     t.string   "location"
-    t.string   "primer_16s"
-    t.string   "primer_18s"
-    t.string   "primer_cO1"
-    t.string   "primer_fits"
-    t.string   "primer_pits"
     t.decimal  "elevatr_altitude"
-    t.jsonb    "csv_data"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
