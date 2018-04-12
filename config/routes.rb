@@ -76,7 +76,6 @@ Rails.application.routes.draw do
 
     controller 'reseed_database' do
       get 'delete_data' => 'reseed_database#delete_data'
-      get 'delete_and_seed_data' => 'reseed_database#delete_and_seed_data'
     end
   end
 
