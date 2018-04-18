@@ -1,24 +1,36 @@
+<div class="page-header">
+  <h1>Organisms</h1>
+  <p>
+    Here's some of organisms (bacteria, plants, animals, etc.) that have been
+    identified in our eDNA data.
+  </p>
+</div>
+
 <div class="taxa-search-menu">
   <%= render partial: "taxa_searches/form" %>
 </div>
 
-
+<% if @highlights.present? %>
 <h1>Featured</h1>
-<% @highlights.each do |highlight| %>
-  <li>
-    <%= highlight.highlightable.taxon.taxonRank %>: <%= link_to highlight.highlightable.taxon.canonicalName, taxon_path(highlight.highlightable.taxon) %>
-    <%= highlight.highlightable.taxon.common_names %>
-    <br>Project: <%= link_to highlight.project.name, field_data_project_path(highlight.project) %>
-    , Sample: <%= link_to highlight.sample.barcode, sample_path(highlight.sample) %>
-  </li>
+  <ul>
+  <% @highlights.each do |highlight| %>
+    <li>
+      <%= highlight.highlightable.taxon.taxonRank %>: <%= link_to highlight.highlightable.taxon.canonicalName, taxon_path(highlight.highlightable.taxon) %>
+      <%= highlight.highlightable.taxon.common_names %>
+      <br>Project: <%= link_to highlight.project.name, field_data_project_path(highlight.project) %>
+      , Sample: <%= link_to highlight.sample.barcode, sample_path(highlight.sample) %>
+    </li>
+  <% end %>
+  </ul>
 <% end %>
 
 <h1>Most Commonly Found</h1>
+<ul>
 <% @top_taxa.each do |taxon| %>
  <li>
   <%= taxon.taxonRank %>:
   <%= link_to taxon.canonicalName, taxon_path(taxon) %>
   <%= taxon.common_names %> (<%= pluralize taxon.asvs_count, 'sample' %>)
-
   </li>
 <% end %>
+</ul>
