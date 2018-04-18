@@ -29,7 +29,8 @@ module ImportCsv
           extraction: extraction,
           research_project_id: research_project_id
         }
-        ResearchProjectExtraction.where(research_extraction_data).first_or_create
+        ResearchProjectExtraction.where(research_extraction_data)
+                                 .first_or_create
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

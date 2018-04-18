@@ -7,7 +7,6 @@ module Admin
 
       def samples
         @projects = ResearchProject.all.collect { |p| [p.name, p.id] }
-
       end
 
       def samples_create

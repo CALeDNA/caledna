@@ -27,7 +27,8 @@ class ResearchProjectsController < ApplicationController
       'ON extractions.id = research_project_extractions.extraction_id ' \
       "WHERE research_project_extractions.research_project_id = #{params[:id]};"
 
-    @sample_ids ||= ActiveRecord::Base.connection.execute(sql).pluck('sample_id')
+    @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
+                                      .pluck('sample_id')
   end
 
   def extraction_ids

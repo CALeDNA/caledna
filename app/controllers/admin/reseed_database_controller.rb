@@ -24,7 +24,8 @@ module Admin
 
       sql = 'ALTER SEQUENCE cal_taxa_taxonID_seq  RESTART WITH 2000000000;'
       ActiveRecord::Base.connection.execute(sql)
-      sql = 'ALTER TABLE cal_taxa ALTER "taxonID" SET DEFAULT NEXTVAL(\'cal_taxa_taxonID_seq\');'
+      sql = 'ALTER TABLE cal_taxa ALTER "taxonID" SET DEFAULT ' \
+        'NEXTVAL(\'cal_taxa_taxonID_seq\');'
       ActiveRecord::Base.connection.execute(sql)
     end
 
