@@ -70,6 +70,10 @@ group :development, :test do
   gem 'rubocop', '~> 0.52'
 end
 
+group :production, :staging do
+  gem 'sendgrid-ruby', '~> 5.2.0'
+end
+
 group :test do
   gem 'capybara-webkit', '~> 1.14'
   gem 'database_cleaner', '~> 1.6'
