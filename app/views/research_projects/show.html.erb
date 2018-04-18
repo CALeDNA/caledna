@@ -4,6 +4,7 @@
 
 <p><%= @project.description %></p>
 
+<% if @taxa.present? %>
 <h2>Organisms from ASVs</h2>
 <ul>
 <% @taxa.each do |taxon| %>
@@ -14,8 +15,20 @@
   </li>
 <% end %>
 </ul>
+<% end %>
 
 <h2>Samples</h2>
+
+<div class="samples-menu">
+  <div class="btn-group" role="group" >
+    <a href="<%= research_project_path(id: params[:id]) %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+    </a>
+    <a href="<%= research_project_path(id: params[:id], view: :list) %>" class="btn btn-default">
+      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+    </a>
+  </div>
+</div>
 
 <% if params[:view] == 'list' %>
   <%= render partial: "samples/list",

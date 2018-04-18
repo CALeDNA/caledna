@@ -8,7 +8,8 @@ class ResearchProjectsController < ApplicationController
   end
 
   def show
-    @taxa = Taxon.where(taxonID: taxon_ids).order(:taxonRank, :canonicalName)
+    # @taxa = Taxon.where(taxonID: taxon_ids).order(:taxonRank, :canonicalName)
+    @taxa = []
     @samples = paginated_samples
     @project = ResearchProject.find(params[:id])
   end
