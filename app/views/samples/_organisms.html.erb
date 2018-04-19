@@ -1,0 +1,15 @@
+<% sample.extractions.each do |extraction| %>
+  <h2><%= sample.asvs_count %> Organisms from ASVs</h2>
+  <% if sample.extractions.length > 1%>
+    <h3><%= extraction.extraction_type.name %></h3>
+  <% end %>
+  <ul>
+  <% extraction.sorted_taxa.each do |taxon| %>
+    <li>
+      <%= taxon.taxonRank %>:
+      <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
+      <%= SamplesHelper.common_names(taxon.vernaculars) %>
+    </li>
+  <% end %>
+  </ul>
+<% end %>

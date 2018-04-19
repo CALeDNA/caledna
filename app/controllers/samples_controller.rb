@@ -9,7 +9,8 @@ class SamplesController < ApplicationController
   end
 
   def show
-    @sample = Sample.find(params[:id])
+    @sample = Sample.includes(extractions: { asvs: { taxon: :vernaculars } })
+                    .find(params[:id])
   end
 
   private

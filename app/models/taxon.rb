@@ -15,7 +15,8 @@ class Taxon < ApplicationRecord
   scope :valid, -> { where(taxonomicStatus: 'accepted') }
 
   def common_names(parenthesis = true)
-    names = vernaculars.english.pluck(:vernacularName)
+    names = vernaculars.select { |v| v.language == 'en' }
+                       .pluck(:vernacularName)
                        .map(&:titleize).uniq
     return if names.blank?
     parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
@@ -41,6 +42,10 @@ class Taxon < ApplicationRecord
   end
   # rubocop:enable Metrics/LineLength, Metrics/AbcSize,
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  def taxonomy_string
+    taxonomy_tree.map { |taxon| taxon[:value] }.join(', ')
+  end
 
   def image
     inaturalist_photo || gbif_photo
@@ -113,7 +118,8 @@ class Taxon < ApplicationRecord
   end
 
   def genus_display
-    if taxonRank == 'species' || taxonRank == 'genus' || taxonRank == 'subspecies'
+    if taxonRank == 'species' || taxonRank == 'genus' ||
+       taxonRank == 'subspecies'
       genericName
     else
       genus

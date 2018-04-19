@@ -23,21 +23,6 @@
     <% end %>
 
     <tr>
-      <td>Organisms from ASV</td>
-      <td>
-        <ul>
-        <% extraction.asvs.each do |s| %>
-          <li>
-            <%= s.taxon.taxonRank %>:
-            <%= link_to s.taxon.canonicalName, taxon_path(s.taxon) %>
-            <%= s.taxon.canonicalName %>
-          </li>
-        <% end %>
-        </ul>
-      </td>
-    </tr>
-
-    <tr>
       <td>processor</td>
       <td>
         <%= extraction.processor.username if extraction.processor.present? %>

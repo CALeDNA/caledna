@@ -29,4 +29,14 @@ class Extraction < ApplicationRecord
   # validates :metabarcoding_primers, inclusion: { in: METABARCODING_PRIMERS }
   # validates :barcoding_pcr_number_of_replicates,
   #           inclusion: { in: NUMBER_OF_REPLICATES }
+
+  def sorted_taxa
+    asvs.map(&:taxon)
+        .sort_by do |t|
+          [
+            t.kingdom, t.phylum, t.className, t.order, t.family, t.genus,
+            t.specificEpithet, t.infraspecificEpithet
+          ].compact
+        end
+  end
 end
