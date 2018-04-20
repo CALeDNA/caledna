@@ -85,7 +85,7 @@ module KoboApi
       data.barcode = "#{kit_number}-#{location_letter}-#{site_number}"
       data.gps = data.Get_the_GPS_Location_e_this_more_accurate
       data.substrate = data.What_type_of_substrate_did_you
-      data.notes = data.Notes_on_recent_mana_the_sample_location
+      data.field_notes = data.Notes_on_recent_mana_the_sample_location
       data.location = data.Where_are_you_A_UC_serve_or_in_Yosemite
       data.field_data_project_id = field_data_project_id
 
@@ -101,7 +101,7 @@ module KoboApi
         data.barcode = "#{kit_number}-#{prefix[:tube]}"
         data.gps = data.send(prefix[:gps]) || ''
         data.substrate = data.send("#{prefix[:other]}SS")
-        data.notes = data.send("#{prefix[:other]}comments")
+        data.field_notes = data.send("#{prefix[:other]}comments")
         data.location =
           [data.somewhere, data.where, data.reserves].compact.join('; ')
         data.field_data_project_id = field_data_project_id
@@ -139,7 +139,7 @@ module KoboApi
         altitude: data.gps.split.third,
         gps_precision: data.gps.split.fourth,
         substrate: data.substrate,
-        notes: data.notes
+        field_notes: data.field_notes
       )
     end
 

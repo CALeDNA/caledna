@@ -64,9 +64,9 @@ class ExtractionDashboard < Administrate::BaseDashboard
     assoc_field_blank: Field::String,
     assoc_extraction_blank: Field::String,
     assoc_pcr_blank: Field::String,
-    notes_sample_processor: Field::String,
-    notes_lab_manager: Field::String,
-    notes_director: Field::String,
+    notes_sample_processor: Field::Text,
+    notes_lab_manager: Field::Text,
+    notes_director: Field::Text,
     status_cd: EnumField,
   }.freeze
 

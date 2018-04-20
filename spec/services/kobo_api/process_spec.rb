@@ -192,7 +192,7 @@ describe KoboApi::Process do
         expect(sample.altitude).to eq(10)
         expect(sample.gps_precision).to eq(0)
         expect(sample.substrate).to eq(:soil)
-        expect(sample.notes).to eq('notes')
+        expect(sample.field_notes).to eq('notes')
         expect(sample.kobo_data).to eq(data)
       end
     end
@@ -282,7 +282,7 @@ describe KoboApi::Process do
         expect(sample_a1.altitude).to eq(1)
         expect(sample_a1.gps_precision).to eq(1)
         expect(sample_a1.substrate).to eq(:soil)
-        expect(sample_a1.notes).to eq('comment A1')
+        expect(sample_a1.field_notes).to eq('comment A1')
         expect(sample_a1.kobo_data).to eq(data)
 
         sample_a2 = Sample.second
@@ -292,7 +292,7 @@ describe KoboApi::Process do
         expect(sample_a2.altitude).to eq(2)
         expect(sample_a2.gps_precision).to eq(2)
         expect(sample_a2.substrate).to eq(:sediment)
-        expect(sample_a2.notes).to eq('comment A2')
+        expect(sample_a2.field_notes).to eq('comment A2')
 
         sample_b1 = Sample.third
         expect(sample_b1.barcode).to eq('K1-LB-S1')
@@ -301,7 +301,7 @@ describe KoboApi::Process do
         expect(sample_b1.altitude).to eq(3)
         expect(sample_b1.gps_precision).to eq(3)
         expect(sample_b1.substrate).to eq(:soil)
-        expect(sample_b1.notes).to eq('comment B1')
+        expect(sample_b1.field_notes).to eq('comment B1')
 
         sample_b2 = Sample.fourth
         expect(sample_b2.barcode).to eq('K1-LB-S2')
@@ -310,7 +310,7 @@ describe KoboApi::Process do
         expect(sample_b2.altitude).to eq(4)
         expect(sample_b2.gps_precision).to eq(4)
         expect(sample_b2.substrate).to eq(:sediment)
-        expect(sample_b2.notes).to eq('comment B2')
+        expect(sample_b2.field_notes).to eq('comment B2')
 
         sample_c1 = Sample.fifth
         expect(sample_c1.barcode).to eq('K1-LC-S1')
@@ -319,7 +319,7 @@ describe KoboApi::Process do
         expect(sample_c1.altitude).to eq(5)
         expect(sample_c1.gps_precision).to eq(5)
         expect(sample_c1.substrate).to eq(:soil)
-        expect(sample_c1.notes).to eq('comment C1')
+        expect(sample_c1.field_notes).to eq('comment C1')
 
         sample_c2 = Sample.last
         expect(sample_c2.barcode).to eq('K1-LC-S2')
@@ -328,7 +328,7 @@ describe KoboApi::Process do
         expect(sample_c2.altitude).to eq(6)
         expect(sample_c2.gps_precision).to eq(6)
         expect(sample_c2.substrate).to eq(:sediment)
-        expect(sample_c2.notes).to eq('comment C2')
+        expect(sample_c2.field_notes).to eq('comment C2')
       end
 
       it 'creates samples with identical values' do
