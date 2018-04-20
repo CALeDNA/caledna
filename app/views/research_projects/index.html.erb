@@ -8,11 +8,15 @@
 <table class="table">
   <tr>
     <th>Name</th>
+        <th>Name</th>
+
   </tr>
 
   <% @projects.each do |project| %>
     <tr class="clickable_row" data-path='<%=  research_project_path project%>' >
       <td><%= project.name %></td>
+            <td><%= project.extractions.count %></td>
+
     </tr>
   <% end %>
 </table>

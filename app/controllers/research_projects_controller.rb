@@ -17,7 +17,7 @@ class ResearchProjectsController < ApplicationController
   private
 
   def samples
-    Sample.includes(:field_data_project).approved.order(:barcode)
+    Sample.includes(:field_data_project).order(:barcode)
           .where(id: sample_ids)
   end
 

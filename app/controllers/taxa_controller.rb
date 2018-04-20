@@ -3,8 +3,18 @@
 class TaxaController < ApplicationController
   def index
     # TODO: r-enable highlights
-    @highlights = Highlight.asv
-    @top_taxa = Taxon.order(asvs_count: :desc).limit(10)
+    # @highlights = Highlight.asv
+    @highlights = []
+    @top_taxa = Taxon.includes(:vernaculars)
+                     .order(asvs_count: :desc)
+                     .limit(20)
+                     .sort_by do |t|
+                       [
+                         -t.asvs_count,
+                         t.kingdom, t.phylum, t.className, t.order, t.family,
+                         t.genus, t.specificEpithet, t.infraspecificEpithet
+                       ].compact
+                     end
   end
 
   def show
@@ -15,7 +25,7 @@ class TaxaController < ApplicationController
   private
 
   def taxon
-    @taxon ||= Taxon.includes(:vernaculars).find(params[:id])
+    @taxon ||= Taxon.includes(:vernaculars, :taxa_dataset).find(params[:id])
   end
 
   def paginated_samples
@@ -34,7 +44,7 @@ class TaxaController < ApplicationController
     sql = 'SELECT samples.id, samples.barcode, ' \
     'asvs."taxonID" as "taxonID", taxa."canonicalName", samples.latitude, ' \
     'samples.longitude, field_data_project_id, ' \
-    'field_data_projects.name as project_name ' \
+    'field_data_projects.name as field_data_project_name ' \
     'FROM asvs ' \
     'INNER JOIN taxa ON asvs."taxonID" = taxa."taxonID" ' \
     'INNER JOIN extractions ON asvs.extraction_id = extractions.id ' \

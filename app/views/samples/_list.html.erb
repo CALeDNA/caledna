@@ -1,10 +1,11 @@
 <table class="table">
   <tr>
-    <th>Barcode</th>
-    <th>Project</th>
+    <th>Sample</th>
+    <th>Field Data Project</th>
     <th>Latitude</th>
     <th>Longitude</th>
     <th>Status</th>
+    <th>Organisms from ASV</th>
   </tr>
 
   <% samples.each do |sample| %>
@@ -14,6 +15,7 @@
       <td><%= sample.latitude %> </td>
       <td><%= sample.longitude %></td>
       <td><%= sample.status_display %></td>
+      <td><%= sample.asvs_count %></td>
     </tr>
   <% end %>
 </table>

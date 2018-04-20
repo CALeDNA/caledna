@@ -29,7 +29,7 @@
 <% @top_taxa.each do |taxon| %>
  <li>
   <%= taxon.taxonRank %>:
-  <%= link_to taxon.canonicalName, taxon_path(taxon) %>
+  <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
   <%= taxon.common_names %> (<%= pluralize taxon.asvs_count, 'sample' %>)
   </li>
 <% end %>
