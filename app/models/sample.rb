@@ -18,6 +18,7 @@ class Sample < ApplicationRecord
   scope :approved, (lambda do
     where.not(status_cd: :submitted).where.not(status_cd: :rejected)
     .where.not(status_cd: :missing_coordinates)
+    .where.not(status_cd: :duplicate_barcode)
   end)
 
   as_enum :status,
