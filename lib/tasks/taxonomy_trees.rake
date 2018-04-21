@@ -1,67 +1,200 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength, Metrics/LineLength
 namespace :taxonomy_trees do
   desc 'create sql file for taxonomy_trees'
+  # kingdm, phylum, class, order, family are unique
+  # genus and species are not unique
   task create_file: :environment do
-    file = Rails.root.join('db').join('data').join('taxonomy_trees.sql')
-    File.open(file, 'w') { |f| f.write('') }
+    taxa_trees = TaxaTrees.new
+    taxa_trees.kingdoms
+    taxa_trees.phylums
+    taxa_trees.class_names
+    taxa_trees.orders
+    taxa_trees.families
+    taxa_trees.genuses
+    taxa_trees.species
+    taxa_trees.subspecies
+  end
+end
+
+# rubocop:disable Metrics/MethodLength, Metrics/LineLength, Metrics/ClassLength
+# rubocop:disable Metrics/AbcSize
+class TaxaTrees
+  def accepted_taxa(rank, field)
+    Taxon.where(taxonRank: rank, taxonomicStatus: 'accepted').pluck(field, :taxonID)
+  end
+
+  def not_accepted_taxa(rank, field)
+    Taxon.where(taxonRank: rank).where.not(taxonomicStatus: 'accepted').pluck(field, :taxonID)
+  end
+
+  def kingdoms(path = 'kingdom.sql')
+    file = create_file(path)
 
     puts 'write kingdoms...'
-    kingdoms = Taxon.valid.distinct.where(taxonRank: :kingdom).pluck(:kingdom, :taxonID)
-    kingdoms.each do |kingdom|
-      sql = "\nUPDATE taxa SET hierarchy = '{\"kingdom\": #{kingdom[1]}}' WHERE kingdom = '#{kingdom[0]}';"
-      File.open(file, 'a') { |f| f.write(sql) }
-    end
-
-    # puts 'write phylums...'
-    phylums = Taxon.valid.distinct.where(taxonRank: :phylum).pluck(:phylum, :taxonID)
-    phylums.each do |phylum|
-      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{phylum}', '#{phylum[1]}'::jsonb) WHERE phylum = '#{phylum[0]}';"
-      File.open(file, 'a') { |f| f.write(sql) }
-    end
-
-    puts 'write classes...'
-    class_names = Taxon.valid.distinct.where(taxonRank: :class).pluck(:className, :taxonID)
-    class_names.each do |class_name|
-      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{class}', '#{class_name[1]}'::jsonb) WHERE \"className\" = '#{class_name[0]}';"
-      File.open(file, 'a') { |f| f.write(sql) }
-    end
-
-    puts 'write orders...'
-    orders = Taxon.valid.distinct.where(taxonRank: :order).pluck(:order, :taxonID)
-    orders.each do |order|
-      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{order}', '#{order[1]}'::jsonb) WHERE \"order\" = '#{order[0]}';"
-      File.open(file, 'a') { |f| f.write(sql) }
-    end
-
-    puts 'write families...'
-    families = Taxon.valid.distinct.where(taxonRank: :family).pluck(:family, :taxonID)
-    families.each do |family|
-      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{family}', '#{family[1]}'::jsonb) WHERE family = '#{family[0]}';"
-      File.open(file, 'a') { |f| f.write(sql) }
-    end
-
-    puts 'write genuses...'
-    genuses = Taxon.valid.distinct.where(taxonRank: :genus).pluck(:genus, :taxonID, :parentNameUsageID)
-    genuses.each do |genus|
-      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{genus}', '#{genus[1]}'::jsonb) WHERE genus = '#{genus[0]}' AND \"parentNameUsageID\" = #{genus[2]};"
-      File.open(file, 'a') { |f| f.write(sql) }
-    end
-
-    puts 'write specific_epithets...'
-    specific_epithets = Taxon.valid.distinct.where(taxonRank: :species).pluck(:specificEpithet, :taxonID, :parentNameUsageID)
-    specific_epithets.each do |specific_epithet|
-      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{species}', '#{specific_epithet[1]}'::jsonb) WHERE \"specificEpithet\" = '#{specific_epithet[0]}' AND \"parentNameUsageID\" = #{specific_epithet[2]};"
-      File.open(file, 'a') { |f| f.write(sql) }
-    end
-
-    puts 'write infraspecific_epithets...'
-    infraspecific_epithets = Taxon.valid.distinct.where(taxonRank: :subspecies).pluck(:infraspecificEpithet, :taxonID, :parentNameUsageID)
-    infraspecific_epithets.each do |infraspecific_epithet|
-      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{subspecies}', '#{infraspecific_epithet[1]}'::jsonb) WHERE \"infraspecificEpithet\" = '#{infraspecific_epithet[0]}' AND \"parentNameUsageID\" = #{infraspecific_epithet[2]};"
+    taxa = Taxon.where(taxonRank: :kingdom).pluck(:kingdom, :taxonID)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = '{\"kingdom\": #{taxon[1]}}' " \
+      ', rank_order = 1 ' \
+      "WHERE kingdom = '#{taxon[0]}';"
       File.open(file, 'a') { |f| f.write(sql) }
     end
   end
+
+  def phylums(path = 'phylum.sql')
+    file = create_file(path)
+
+    puts 'write phylums...'
+    taxa = accepted_taxa(:phylum, :phylum)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{phylum}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 2 ' \
+      "WHERE phylum = '#{taxon[0]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+
+    taxa = not_accepted_taxa(:phylum, :phylum)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{phylum}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 2 ' \
+      "WHERE \"taxonID\" = '#{taxon[1]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+  end
+
+  def class_names(path = 'class.sql')
+    file = create_file(path)
+
+    puts 'write classes...'
+    taxa = accepted_taxa(:class, :className)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{class}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 3 ' \
+      "WHERE \"className\" = '#{taxon[0]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+
+    taxa = not_accepted_taxa(:class, :className)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{class}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 3 ' \
+      "WHERE \"taxonID\" = '#{taxon[1]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+  end
+
+  def orders(path = 'order.sql')
+    file = create_file(path)
+
+    puts 'write orders...'
+    taxa = accepted_taxa(:order, :order)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{order}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 4 ' \
+      "WHERE \"order\" = '#{taxon[0]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+
+    taxa = not_accepted_taxa(:order, :order)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{order}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 4 ' \
+      "WHERE \"taxonID\" = '#{taxon[1]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+  end
+
+  def families(path = 'family.sql')
+    file = create_file(path)
+
+    puts 'write families...'
+    taxa = accepted_taxa(:family, :family)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{family}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 5 ' \
+      "WHERE family = '#{taxon[0]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+
+    taxa = not_accepted_taxa(:family, :family)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{family}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 5 ' \
+      "WHERE \"taxonID\" = '#{taxon[1]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+  end
+
+  def genuses(path = 'genus.sql')
+    file = create_file(path)
+
+    puts 'write genuses...'
+    taxa = Taxon.where(taxonRank: :genus, taxonomicStatus: 'accepted')
+                .pluck(:genus, :taxonID, :kingdom)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{genus}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 6 ' \
+      "WHERE genus = '#{taxon[0]}' " \
+      "AND kingdom = '#{taxon[2]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+
+    taxa = Taxon.where(taxonRank: :genus)
+                .where.not(taxonomicStatus: 'accepted')
+                .pluck(:genus, :taxonID)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{genus}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 6 ' \
+      "WHERE \"taxonID\" = '#{taxon[1]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+  end
+
+  def species(path = 'species.sql')
+    file = create_file(path)
+
+    puts 'write specific_epithets...'
+    taxa = Taxon.where(taxonRank: :species, taxonomicStatus: 'accepted')
+                .pluck(:specificEpithet, :taxonID, :kingdom, :genus)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{species}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 7 ' \
+      "WHERE \"specificEpithet\" = '#{taxon[0]}' " \
+      "AND kingdom = '#{taxon[2]}' AND genus = '#{taxon[3]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+
+    taxa = Taxon.where(taxonRank: :species)
+                .where.not(taxonomicStatus: 'accepted')
+                .pluck(:specificEpithet, :taxonID)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{species}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 7 ' \
+      "WHERE \"taxonID\" = '#{taxon[1]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+  end
+
+  def subspecies(path = 'subspecies.sql')
+    file = create_file(path)
+
+    puts 'write infraspecific_epithets...'
+    taxa = Taxon.where(taxonRank: :subspecies)
+                .pluck(:infraspecificEpithet, :taxonID, :kingdom, :genus, :specificEpithet)
+    taxa.each do |taxon|
+      sql = "\nUPDATE taxa SET hierarchy = jsonb_set(hierarchy, '{subspecies}', '#{taxon[1]}'::jsonb) " \
+      ', rank_order = 8 ' \
+      "WHERE \"canonicalName\" = '#{taxon[3]} #{taxon[4]} #{taxon[0]}' " \
+      "AND kingdom = '#{taxon[2]}';"
+      File.open(file, 'a') { |f| f.write(sql) }
+    end
+  end
+
+  def create_file(path)
+    file = Rails.root.join('db').join('data').join('trees').join(path)
+    File.open(file, 'w') { |f| f.write('') }
+    file
+  end
 end
-# rubocop:enable Metrics/BlockLength, Metrics/LineLength
+# rubocop:enable Metrics/MethodLength, Metrics/LineLength, Metrics/ClassLength
+# rubocop:enable Metrics/AbcSize

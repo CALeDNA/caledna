@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20180422130724) do
     t.string  "genericName"
     t.integer "taxonID"
     t.string  "complete_taxonomy"
+    t.integer "rank_order"
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
 
@@ -280,6 +281,7 @@ ActiveRecord::Schema.define(version: 20180422130724) do
     t.string  "genus",                    limit: 255
     t.jsonb   "hierarchy"
     t.integer "asvs_count",                           default: 0
+    t.integer "rank_order"
     t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
@@ -288,6 +290,7 @@ ActiveRecord::Schema.define(version: 20180422130724) do
     t.index ["datasetID"], name: "index_taxa_on_datasetID", using: :btree
     t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
+    t.index ["kingdom", "phylum", "className", "order", "family", "genus", "canonicalName", "taxonRank"], name: "taxonomy_idx", using: :btree
     t.index ["kingdom"], name: "index_taxa_on_kingdom", using: :btree
     t.index ["parentNameUsageID"], name: "index_taxa_on_parentNameUsageID", using: :btree
     t.index ["phylum"], name: "index_taxa_on_phylum", using: :btree
