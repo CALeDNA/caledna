@@ -6,21 +6,42 @@ Rails app that handles the data management flow for [CALeDNA](http://ucedna.com)
 
 ## Setup
 
-```
+```bash
 $ bundle install
 $ rake newb
+$ yarn
+```
+
+## Start server
+
+```bash
+$ bin/rails s
+
+# optionally run sidekiq
+$ bundle exec sidekiq -q default -q mailer
+```
+
+This app uses Webpacker to handle javascript bundling on some pages.
+
+```bash
+# optionally run webpack dev server to live reload javascript changes
+$ ./bin/webpack-dev-server
 ```
 
 ## Tech Stack
 
-- Rails 5
+- [Rails 5](http://rubyonrails.org)
+- [Vue.js](https://vuejs.org)
+- [yarn](https://yarnpkg.com/en/) javascript package manager
 - [KoBo](http://www.kobotoolbox.org) to collect field data
 - [leaflet](http://leafletjs.com) for the map
 - [administrate](https://github.com/thoughtbot/administrate) for the admin dashboard
 - [devise](https://github.com/plataformatec/devise) for authenication
 - [pundit](https://github.com/varvet/pundit) for authorization
+- [webpacker](https://github.com/rails/webpacker) to bundle javascript
+- [chart.js](http://chartjs.org) for charts
 
 ## Data Sources
 
-We are using the database from [Itegrated Taxonomic Information System (ITIS)](https://itis.gov) as
+We are using [Global Biodiversity Information Facility (GBIF)](http://gbif.org) as
 the basis for our taxonomy data.
