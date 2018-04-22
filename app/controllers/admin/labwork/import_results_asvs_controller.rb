@@ -15,8 +15,7 @@ module Admin
       def create
         authorize 'Labwork::ImportCsv'.to_sym, :create?
 
-        results =
-          import_dna_results(file, research_project_id, extraction_type_id)
+        results = import_csv(file, research_project_id, extraction_type_id)
         if results.valid?
           flash[:success] = 'DNA results imported'
         else

@@ -7,7 +7,7 @@ module ImportCsv
     include ProcessTestResults
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def import_dna_results(file, research_project_id, extraction_type_id)
+    def import_csv(file, research_project_id, extraction_type_id)
       extractions = {}
       sample_cells = []
       missing_taxonomy = 0

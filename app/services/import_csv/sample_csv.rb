@@ -5,7 +5,7 @@ module ImportCsv
     require 'csv'
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def import_sample_csv(file, research_project_id)
+    def import_csv(file, research_project_id)
       CSV.foreach(file.path, headers: true) do |row|
         barcode = "#{row['Kit']}-#{row['Tubes']}"
         update_data = update_data_fields(row)

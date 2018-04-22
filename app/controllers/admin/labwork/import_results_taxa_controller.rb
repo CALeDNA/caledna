@@ -12,7 +12,7 @@ module Admin
       def create
         authorize 'Labwork::ImportCsv'.to_sym, :create?
 
-        results = normalize_taxonomy(file)
+        results = import_csv(file)
         if results.valid?
           flash[:success] = 'Taxonomies are valid'
           redirect_to admin_labwork_taxa_path

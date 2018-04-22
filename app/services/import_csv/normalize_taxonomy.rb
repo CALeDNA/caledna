@@ -6,7 +6,7 @@ module ImportCsv
     include ProcessTestResults
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def normalize_taxonomy(file)
+    def import_csv(file)
       missing_taxonomy = 0
 
       CSV.foreach(file.path, headers: true) do |row|
