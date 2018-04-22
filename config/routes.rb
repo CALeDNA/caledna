@@ -75,8 +75,8 @@ Rails.application.routes.draw do
       post 'batch_process_extractions' => 'batch_actions#process_extractions'
     end
 
-    controller 'reseed_database' do
-      get 'delete_data' => 'reseed_database#delete_data'
+    controller 'reset_database' do
+      get 'delete_data' => 'labwork/reset_database#delete_data'
     end
   end
 
