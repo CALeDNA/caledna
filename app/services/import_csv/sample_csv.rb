@@ -20,8 +20,7 @@ module ImportCsv
         end
 
         extraction_data = {
-          sample: sample,
-          extraction_type: ExtractionType.first
+          sample: sample
         }
         extraction = Extraction.where(extraction_data).first_or_create
 
@@ -38,14 +37,8 @@ module ImportCsv
     def update_data_fields(row)
       {
         elevatr_altitude: row['Elevatr Altitude (meters)'],
-        primer_16s: row['16S'],
-        primer_18s: row['18S'],
-        primer_cO1: row['CO1'],
-        primer_fits: row['FITS'],
-        primer_pits: row['PITS'],
         # TODO: decide on what status to use
         # status_cd: 'submitted',
-        csv_data: row.to_h
       }
     end
 
@@ -58,7 +51,7 @@ module ImportCsv
         altitude: row['Altitude'],
         gps_precision: row['GPS Precision'],
         location: row['Reserve'],
-        notes: row['Notes'],
+        field_notes: row['Notes'],
         substrate_cd: row['Substrate'],
         field_data_project_id: FieldDataProject.find_by(name: 'unknown').id
       }
