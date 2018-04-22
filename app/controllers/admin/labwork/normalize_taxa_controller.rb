@@ -4,12 +4,16 @@ module Admin
   module Labwork
     class NormalizeTaxaController < Admin::ApplicationController
       def index
+        authorize 'Labwork::NormalizeTaxon'.to_sym, :index?
+
         @taxa = CalTaxon.where(normalized: false)
                         .order(:taxonRank, :complete_taxonomy)
                         .page params[:page]
       end
 
       def show
+        authorize 'Labwork::NormalizeTaxon'.to_sym, :show?
+
         @cal_taxon = cal_taxon
         @new_taxon = Taxon.new
         @suggestions = suggestions
@@ -18,6 +22,8 @@ module Admin
 
       # NOTE: used when matching test result to existing taxon
       def update_existing
+        authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
+
         cal_taxon.taxonID = update_existing_params[:taxonID]
         cal_taxon.normalized = true
         if cal_taxon.save(validate: false)
@@ -27,9 +33,11 @@ module Admin
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       # NOTE: used when creating new taxon for test results
       def update_create
+        authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
+
         ActiveRecord::Base.transaction do
           cal_taxon.update!(create_params.merge(normalized: true))
           Taxon.create!(create_params)
@@ -42,9 +50,11 @@ module Admin
                            .split(', ')
         }
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       def duplicate
+        authorize 'Labwork::NormalizeTaxon'.to_sym, :create?
+
         new_attributes = cal_taxon.attributes.except('id')
         CalTaxon.create(new_attributes)
         redirect_to admin_labwork_normalize_taxa_path

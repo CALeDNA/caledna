@@ -6,7 +6,7 @@ module Labwork
       user.director?
     end
 
-    def import?
+    def create?
       user.director?
     end
   end

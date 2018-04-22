@@ -2,33 +2,19 @@
 
 module Admin
   module Labwork
-    class DnaResultsController < Admin::ApplicationController
+    class ImportResultsAsvsController < Admin::ApplicationController
       include ImportCsv::DnaResults
-      include ImportCsv::NormalizeTaxonomy
 
-      def taxa; end
+      def index
+        authorize 'Labwork::ImportCsv'.to_sym, :index?
 
-      def normalize_taxa
-        @missing_taxa = NormalizeTaxa.all
-      end
-
-      def taxa_create
-        results = normalize_taxonomy(file)
-        if results.valid?
-          flash[:success] = 'Taxonomies are valid'
-          redirect_to admin_labwork_taxa_path
-        else
-          flash[:error] = results.errors
-          redirect_to admin_labwork_normalize_taxa_path
-        end
-      end
-
-      def asvs
         @projects = ResearchProject.all.collect { |p| [p.name, p.id] }
         @extraction_types = ExtractionType.all.collect { |p| [p.name, p.id] }
       end
 
-      def asvs_create
+      def create
+        authorize 'Labwork::ImportCsv'.to_sym, :create?
+
         results =
           import_dna_results(file, research_project_id, extraction_type_id)
         if results.valid?

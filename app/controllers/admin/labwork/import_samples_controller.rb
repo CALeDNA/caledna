@@ -2,14 +2,18 @@
 
 module Admin
   module Labwork
-    class ImportCsvController < Admin::ApplicationController
-      include ImportCsv::SampleCsv
+    class ImportSamplesController < Admin::ApplicationController
+      include ::ImportCsv::SampleCsv
 
-      def samples
+      def index
+        authorize 'Labwork::ImportCsv'.to_sym, :index?
+
         @projects = ResearchProject.all.collect { |p| [p.name, p.id] }
       end
 
-      def samples_create
+      def create
+        authorize 'Labwork::ImportCsv'.to_sym, :create?
+
         import_sample_csv(params[:file], research_project_id)
         redirect_to admin_root_path, notice: 'Samples imported.'
       end

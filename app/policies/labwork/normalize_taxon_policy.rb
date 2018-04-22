@@ -13,5 +13,9 @@ module Labwork
     def create?
       user.director? || user.lab_manager?
     end
+
+    def update?
+      user.director? || user.lab_manager?
+    end
   end
 end

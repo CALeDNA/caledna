@@ -9,7 +9,7 @@
 <section class="main-content__body">
   <p>Upload CSV to import taxonomy from DNA test results.</p>
 
-  <%= form_tag admin_labwork_taxa_path, multipart: true do %>
+  <%= form_tag admin_labwork_import_results_taxa_path, multipart: true do %>
     <%= file_field_tag :file %>
     <%= submit_tag "Import" %>
   <% end %>

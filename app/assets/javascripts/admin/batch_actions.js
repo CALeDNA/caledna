@@ -19,7 +19,7 @@
 
     $.ajax({
       type: "POST",
-      url: "/admin/batch_" + action,
+      url: "/admin/labwork/batch_" + action,
       data: data,
       success: successHandler
     });

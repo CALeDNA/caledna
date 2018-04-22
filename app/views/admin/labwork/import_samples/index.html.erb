@@ -9,7 +9,7 @@
 <section class="main-content__body">
   <p>Upload CSV to add samples for a research project.</p>
 
-  <%= form_tag admin_labwork_samples_csv_path, multipart: true do %>
+  <%= form_tag admin_labwork_import_samples_path, multipart: true do %>
     <%= select(:research_project, :id, @projects, {include_blank: 'Select research project'}) %>
     <%= file_field_tag :file %>
     <%= submit_tag "Import" %>

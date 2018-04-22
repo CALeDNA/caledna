@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Labwork
-  class AssignSamplesPolicy < Struct.new(:user, :import_kobo)
+  class AssignSamplesPolicy < ApplicationPolicy
     def index?
       user.director? || user.lab_manager?
     end

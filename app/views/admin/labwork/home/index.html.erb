@@ -38,28 +38,28 @@
 
     <% if policy('Labwork::ImportCsv'.to_sym).index? %>
       <li>
-        <%= link_to 'Import Samples for Research Project', admin_labwork_samples_csv_path %>:
+        <%= link_to 'Import Samples for Research Project', admin_labwork_import_samples_path %>:
         Add samples for a research project via CSV upload
       </li>
     <% end %>
 
-    <% if policy('Labwork::DnaResult'.to_sym).index? %>
+    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
       <li>
-        <%= link_to 'Import Taxonomy from DNA Results', admin_labwork_taxa_path %>:
+        <%= link_to 'Import Taxonomy from DNA Results', admin_labwork_import_results_taxa_path %>:
         Import taxonomy from DNA test results via CSV upload
       </li>
     <% end %>
 
-    <% if policy('Labwork::DnaResult'.to_sym).index? %>
+    <% if policy('Labwork::NormalizeTaxon'.to_sym).index? %>
       <li>
         <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_normalize_taxa_path	 %>:
         Create new taxa from DNA test results
       </li>
     <% end %>
 
-    <% if policy('Labwork::DnaResult'.to_sym).index? %>
+    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
       <li>
-        <%= link_to 'Import ASV form DNA Results', admin_labwork_asvs_path %>:
+        <%= link_to 'Import ASV form DNA Results', admin_labwork_import_results_asvs_path %>:
         Import ASVs from DNA test results via CSV upload
       </li>
     <% end %>

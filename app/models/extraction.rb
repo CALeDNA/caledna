@@ -5,7 +5,7 @@ class Extraction < ApplicationRecord
   NUMBER_OF_REPLICATES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].freeze
 
   belongs_to :sample
-  belongs_to :extraction_type
+  belongs_to :extraction_type, optional: true
   belongs_to :processor, class_name: 'Researcher', foreign_key: 'processor_id',
                          optional: true
   belongs_to :sra_adder, class_name: 'Researcher', foreign_key: 'processor_id',

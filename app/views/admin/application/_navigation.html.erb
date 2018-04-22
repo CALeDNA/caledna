@@ -14,10 +14,10 @@
 
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
     <%
-      non_model_dashboards = ['labwork/process_extractions',  'labwork/home', 'labwork/kobo',
-      'labwork/assign_samples', 'labwork/approve_samples', 'batch_actions',
-      'labwork/import_csv', 'labwork/dna_results', 'labwork/normalize_taxa']
+      non_model_dashboards = []
       next if non_model_dashboards.include?(resource.resource)
+      next if resource.resource.starts_with?('labwork')
+
       next unless policy(resource.name.to_s.singularize.to_sym).index?
     %>
 

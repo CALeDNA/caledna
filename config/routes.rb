@@ -29,8 +29,8 @@ Rails.application.routes.draw do
 
       controller 'kobo' do
         get 'import_kobo'
-        post 'import_projects' => 'kobo#import_projects'
-        post 'import_samples/:id' => 'kobo#import_samples', as: :import_samples
+        post 'import_kobo_projects' => 'kobo#import_projects'
+        post 'import_kobo_samples/:id' => 'kobo#import_samples', as: :import_kobo_samples
       end
 
       controller 'assign_samples' do
@@ -47,17 +47,9 @@ Rails.application.routes.draw do
         put 'update_multiple'
       end
 
-      controller 'import_csv' do
-        get 'samples_csv' => 'import_csv#samples'
-        post 'samples_csv' => 'import_csv#samples_create'
-      end
-
-      controller 'dna_results' do
-        get 'taxa' => 'dna_results#taxa'
-        post 'taxa' => 'dna_results#taxa_create'
-        get 'asvs' => 'dna_results#asvs'
-        post 'asvs' => 'dna_results#asvs_create'
-      end
+      resources :import_samples, only: %i[index create]
+      resources :import_results_asvs, only: %i[index create]
+      resources :import_results_taxa, only: %i[index create]
 
       resources :normalize_taxa, only: %i[index show] do
         put 'update_existing' => 'normalize_taxa#update_existing'
@@ -67,12 +59,16 @@ Rails.application.routes.draw do
     end
 
     controller 'batch_actions' do
-      post 'batch_approve_samples' => 'batch_actions#approve_samples'
-      post 'batch_reject_samples' => 'batch_actions#reject_samples'
-      post 'batch_duplicate_barcode_samples' =>
-        'batch_actions#duplicate_barcode_samples'
-      post 'batch_assign_samples' => 'batch_actions#assign_samples'
-      post 'batch_process_extractions' => 'batch_actions#process_extractions'
+      post 'labwork/batch_approve_samples' =>
+        'labwork/batch_actions#approve_samples'
+      post 'labwork/batch_reject_samples' =>
+        'labwork/batch_actions#reject_samples'
+      post 'labwork/batch_duplicate_barcode_samples' =>
+        'labwork/batch_actions#duplicate_barcode_samples'
+      post 'labwork/batch_assign_samples' =>
+        'labwork/batch_actions#assign_samples'
+      post 'labwork/batch_process_extractions' =>
+        'labwork/batch_actions#process_extractions'
     end
 
     controller 'reset_database' do
