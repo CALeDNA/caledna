@@ -73,7 +73,6 @@ class ExtractionDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :sample,
     :processor,
-    :asvs,
     :status_cd,
   ].freeze
 
@@ -81,7 +80,6 @@ class ExtractionDashboard < Administrate::BaseDashboard
     :sample,
     :extraction_type,
     :processor,
-    :asvs,
     :status_cd,
     :priority_sequencing_cd,
     :prepub_share,
@@ -146,7 +144,6 @@ class ExtractionDashboard < Administrate::BaseDashboard
     :sample,
     :extraction_type,
     :processor,
-    :asvs,
     :status_cd,
     :priority_sequencing_cd,
     :prepub_share,
