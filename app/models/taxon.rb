@@ -5,6 +5,9 @@ class Taxon < ApplicationRecord
   # taxonomicStatus: [accepted, doubtful, heterotypic synonym,
   # homotypic synonym, misapplied, proparte synonym, synonym]
 
+  # taxonRank: kingdom phylum class order family genus species subspecies
+  # variety unranked form
+
   has_many :vernaculars, foreign_key: 'taxonID'
   has_many :asvs, foreign_key: 'taxonID'
   has_many :multimedia, foreign_key: 'taxonID'

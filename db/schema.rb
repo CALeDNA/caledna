@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180422130724) do
+ActiveRecord::Schema.define(version: 20180422130726) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -282,17 +282,15 @@ ActiveRecord::Schema.define(version: 20180422130724) do
     t.jsonb   "hierarchy"
     t.integer "asvs_count",                           default: 0
     t.integer "rank_order"
+    t.string  "iucn_status"
     t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
     t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank", using: :btree
-    t.index ["datasetID"], name: "index_taxa_on_datasetID", using: :btree
     t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
-    t.index ["kingdom", "phylum", "className", "order", "family", "genus", "canonicalName", "taxonRank"], name: "taxonomy_idx", using: :btree
     t.index ["kingdom"], name: "index_taxa_on_kingdom", using: :btree
-    t.index ["parentNameUsageID"], name: "index_taxa_on_parentNameUsageID", using: :btree
     t.index ["phylum"], name: "index_taxa_on_phylum", using: :btree
     t.index ["scientificName"], name: "index_taxa_on_scientificName", using: :btree
     t.index ["taxonRank"], name: "index_taxa_on_taxonRank", using: :btree
