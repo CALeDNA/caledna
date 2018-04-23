@@ -10,7 +10,8 @@ module Admin
         if results.all?(&:valid?)
           flash[:success] = 'Samples approved'
         else
-          errors = results.map { |r| r.errors.messages.values }.flatten.join('; ')
+          errors =
+            results.map { |r| r.errors.messages.values }.flatten.join('; ')
           flash[:error] = errors
         end
       end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module ImportCsv
-  # rubocop:disable Metrics/ModuleLength
   module DnaResults
     require 'csv'
     include ProcessTestResults
@@ -52,65 +51,10 @@ module ImportCsv
       end
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-    def find_sample(barcode)
-      samples = Sample.includes(:extractions).where(barcode: barcode)
-
-      if samples.count.zero?
-        sample = Sample.create(
-          barcode: barcode,
-          status_cd: :missing_coordinates,
-          field_data_project: FieldDataProject::DEFAULT_PROJECT
-        )
-        raise ImportError, "Sample #{barcode} not created" unless sample.valid?
-
-      elsif samples.all?(&:rejected?) || samples.all?(&:duplicate_barcode?)
-        raise ImportError, "Sample #{barcode} was previously rejected"
-      elsif samples.count == 1
-        sample = samples.first
-
-        unless sample.missing_coordinates?
-          sample.update(status_cd: :results_completed)
-        end
-      else
-        temp_samples =
-          samples.reject { |s| s.duplicate_barcode? || s.rejected? }
-
-        if temp_samples.count > 1
-          raise ImportError, "multiple samples with barcode #{barcode}"
-        end
-
-        sample = temp_samples.first
-
-        unless sample.missing_coordinates?
-          sample.update(status_cd: :results_completed)
-        end
-      end
-      sample
-    end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
     private
 
     def convert_header_to_primer(cell)
       cell.split('_').first
-    end
-
-    def find_extraction(cell, extraction_type_id)
-      barcode = convert_header_to_barcode(cell)
-      sample = find_sample(barcode)
-
-      extraction =
-        Extraction
-        .where(sample_id: sample.id, extraction_type_id: extraction_type_id)
-        .first_or_create
-
-      unless extraction.valid?
-        raise ImportError, "Extraction #{barcode} not created"
-      end
-      extraction
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -120,7 +64,8 @@ module ImportCsv
       valid_extractions = {}
 
       sample_cells.each do |cell|
-        extraction = find_extraction(cell, extraction_type_id)
+        barcode = convert_header_to_barcode(cell)
+        extraction = find_extraction_from_barcode(barcode, extraction_type_id)
         valid_extractions[cell] = extraction
         project =
           ResearchProjectExtraction
@@ -154,7 +99,6 @@ module ImportCsv
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
-  # rubocop:enable Metrics/ModuleLength
 end
 
 class ImportError < StandardError

@@ -5,16 +5,7 @@ class TaxaController < ApplicationController
     # TODO: r-enable highlights
     # @highlights = Highlight.asv
     @highlights = []
-    @top_taxa = Taxon.includes(:vernaculars)
-                     .order(asvs_count: :desc)
-                     .limit(20)
-                     .sort_by do |t|
-                       [
-                         -t.asvs_count,
-                         t.kingdom, t.phylum, t.className, t.order, t.family,
-                         t.genus, t.specificEpithet, t.infraspecificEpithet
-                       ].compact
-                     end
+    @top_taxa = top_taxa
   end
 
   def show
@@ -23,6 +14,21 @@ class TaxaController < ApplicationController
   end
 
   private
+
+  # rubocop:disable Metrics/AbcSize
+  def top_taxa
+    @top_taxa ||= Taxon.includes(:vernaculars)
+                       .order(asvs_count: :desc)
+                       .limit(20)
+                       .sort_by do |t|
+                         [
+                           -t.asvs_count,
+                           t.kingdom, t.phylum, t.className, t.order, t.family,
+                           t.genus, t.specificEpithet, t.infraspecificEpithet
+                         ].compact
+                       end
+  end
+  # rubocop:enable Metrics/AbcSize
 
   def taxon
     @taxon ||= Taxon.includes(:vernaculars, :taxa_dataset).find(params[:id])

@@ -77,6 +77,60 @@ module ProcessTestResults
     kingdom.present? ? "#{kingdom};#{string}" : "NA;#{string}"
   end
 
+  def find_extraction_from_barcode(barcode, extraction_type_id)
+    sample = find_sample_from_barcode(barcode)
+
+    extraction =
+      Extraction
+      .where(sample_id: sample.id, extraction_type_id: extraction_type_id)
+      .first_or_create
+
+    unless extraction.valid?
+      raise ImportError, "Extraction #{barcode} not created"
+    end
+    extraction
+  end
+
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def find_sample_from_barcode(barcode)
+    samples = Sample.includes(:extractions).where(barcode: barcode)
+
+    if samples.count.zero?
+      sample = Sample.create(
+        barcode: barcode,
+        status_cd: :missing_coordinates,
+        field_data_project: FieldDataProject::DEFAULT_PROJECT,
+      )
+      raise ImportError, "Sample #{barcode} not created" unless sample.valid?
+
+    elsif samples.all?(&:rejected?) || samples.all?(&:duplicate_barcode?)
+      raise ImportError, "Sample #{barcode} was previously rejected"
+    elsif samples.count == 1
+      sample = samples.first
+
+      unless sample.missing_coordinates?
+        sample.update(status_cd: :results_completed)
+      end
+    else
+      temp_samples =
+        samples.reject { |s| s.duplicate_barcode? || s.rejected? }
+
+      if temp_samples.count > 1
+        raise ImportError, "multiple samples with barcode #{barcode}"
+      end
+
+      sample = temp_samples.first
+
+      unless sample.missing_coordinates?
+        sample.update(status_cd: :results_completed)
+      end
+    end
+    sample
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
   private
 
   def get_kingdom(phylum)

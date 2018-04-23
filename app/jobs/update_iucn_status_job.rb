@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UpdateIucnStatusJob < ApplicationJob
   queue_as :default
 
