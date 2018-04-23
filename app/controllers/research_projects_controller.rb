@@ -4,17 +4,35 @@ class ResearchProjectsController < ApplicationController
   include PaginatedSamples
 
   def index
-    @projects = ResearchProject.order(:name).page params[:page]
+    @projects = Kaminari.paginate_array(projects.to_a).page(params[:page])
   end
 
   def show
     # @taxa = Taxon.where(taxonID: taxon_ids).order(:taxonRank, :canonicalName)
     @taxa = []
     @samples = paginated_samples
-    @project = ResearchProject.find(params[:id])
+    @project = ResearchProject.includes(extractions: :sample).find(params[:id])
   end
 
   private
+
+  def projects
+    # NOTE: this query provides the samples count per project
+    sql = 'SELECT research_projects.id, research_projects.name, ' \
+    'COUNT(DISTINCT(samples.id)) ' \
+    'FROM research_projects ' \
+    'LEFT JOIN research_project_extractions ' \
+    'ON research_projects.id = ' \
+    'research_project_extractions.research_project_id ' \
+    'LEFT JOIN extractions ' \
+    'ON research_project_extractions.extraction_id = extractions.id ' \
+    'LEFT JOIN samples ' \
+    'ON extractions.sample_id = samples.id ' \
+    'AND latitude is not null ' \
+    'GROUP BY research_projects.id ' \
+    'ORDER BY research_projects.name;'
+    @projects ||= ActiveRecord::Base.connection.execute(sql)
+  end
 
   def samples
     Sample.includes(:field_data_project).order(:barcode)
