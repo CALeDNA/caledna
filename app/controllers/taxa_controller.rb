@@ -6,6 +6,8 @@ class TaxaController < ApplicationController
     # @highlights = Highlight.asv
     @highlights = []
     @top_taxa = top_taxa
+    @top_plant_taxa = top_plant_taxa
+    @top_animal_taxa = top_animal_taxa
   end
 
   def show
@@ -15,24 +17,38 @@ class TaxaController < ApplicationController
 
   private
 
-  # rubocop:disable Metrics/AbcSize
   def top_taxa
-    @top_taxa ||= Taxon.includes(:vernaculars)
-                       .order(asvs_count: :desc)
-                       .limit(20)
-                       .sort_by do |t|
-                         [
-                           -t.asvs_count,
-                           t.kingdom, t.phylum, t.className, t.order, t.family,
-                           t.genus, t.specificEpithet, t.infraspecificEpithet
-                         ].compact
-                       end
+    @top_taxa ||= ordered_taxa.sort_by { |t| sort_taxa_fields(t) }
   end
-  # rubocop:enable Metrics/AbcSize
+
+  def top_plant_taxa
+    @top_plant_taxa ||= ordered_taxa.where(kingdom: 'Plantae')
+                                    .sort_by { |t| sort_taxa_fields(t) }
+  end
+
+  def top_animal_taxa
+    @top_animal_taxa ||= ordered_taxa.where(kingdom: 'Animalia')
+                                     .sort_by { |t| sort_taxa_fields(t) }
+  end
 
   def taxon
     @taxon ||= Taxon.includes(:vernaculars, :taxa_dataset).find(params[:id])
   end
+
+  def ordered_taxa
+    @ordered_taxa = Taxon.includes(:vernaculars).order(asvs_count: :desc)
+                         .limit(10)
+  end
+
+  def sort_taxa_fields(taxon)
+    [
+      -taxon.asvs_count,
+      taxon.kingdom, taxon.phylum, taxon.className, taxon.order, taxon.family,
+      taxon.genus, taxon.specificEpithet, taxon.infraspecificEpithet
+    ].compact
+  end
+
+
 
   def paginated_samples
     if params[:view]

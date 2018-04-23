@@ -34,3 +34,25 @@
   </li>
 <% end %>
 </ul>
+
+<h1>Most Commonly Found Plants</h1>
+<ul>
+<% @top_plant_taxa.each do |taxon| %>
+ <li>
+  <%= taxon.taxonRank %>:
+  <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
+  <%= taxon.common_names %> (<%= pluralize taxon.asvs_count, 'sample' %>)
+  </li>
+<% end %>
+</ul>
+
+<h1>Most Commonly Found Animals</h1>
+<ul>
+<% @top_animal_taxa.each do |taxon| %>
+ <li>
+  <%= taxon.taxonRank %>:
+  <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
+  <%= taxon.common_names %> (<%= pluralize taxon.asvs_count, 'sample' %>)
+  </li>
+<% end %>
+</ul>
