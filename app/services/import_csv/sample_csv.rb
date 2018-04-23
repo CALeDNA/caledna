@@ -59,3 +59,6 @@ module ImportCsv
     # rubocop:enable Metrics/MethodLength
   end
 end
+
+class ImportError < StandardError
+end

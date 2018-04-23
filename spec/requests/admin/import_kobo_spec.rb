@@ -38,7 +38,7 @@ describe 'ImportKobo' do
       it 'creates a new project' do
         stub_connect_projects
 
-        expect { post admin_labwork_import_projects_path }
+        expect { post admin_labwork_import_kobo_projects_path }
           .to change(FieldDataProject, :count).by(1)
       end
     end
@@ -49,7 +49,7 @@ describe 'ImportKobo' do
 
         project = create(:field_data_project, kobo_id: 1)
 
-        expect { post admin_labwork_import_samples_path(id: project.id) }
+        expect { post admin_labwork_import_kobo_samples_path(id: project.id) }
           .to change(Sample, :count).by(1)
       end
     end
@@ -68,7 +68,7 @@ describe 'ImportKobo' do
       it 'does not create a new project' do
         stub_connect_projects
 
-        expect { post admin_labwork_import_projects_path }
+        expect { post admin_labwork_import_kobo_projects_path }
           .to change(FieldDataProject, :count).by(0)
       end
     end

@@ -16,13 +16,11 @@ class Extraction < ApplicationRecord
   has_many :asvs
   has_many :research_projects
 
-  as_enum :priority_sequencing, %i[none low high], map: :string
+  # TODO: decide what to do with priority_sequencing
+  # as_enum :priority_sequencing, %i[none low high], map: :string
   as_enum :brand_beads, %i[AmpureXP Serapure Other], map: :string
   as_enum :select_indices, %i[Nextera Illumina], map: :string
   as_enum :index_brand_beads, %i[AmpureXP Serapure Other], map: :string
-  as_enum :sequencing_platform, %i[HiSeq 2500 HiSeq4000 Miseq TruSeq],
-          map: :string
-
   as_enum :status, %i[assigned analyzed results_completed],
           map: :string
 

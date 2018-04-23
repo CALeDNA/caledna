@@ -31,8 +31,15 @@
 
     <% if policy('Labwork::ProcessExtractions'.to_sym).index? %>
       <li>
-        <%= link_to 'Process Extractions', admin_labwork_process_extractions_path %>:
-        enter extraction data
+        <%= link_to 'Processing eDNA', admin_labwork_process_extractions_path %>:
+        Add info about processing eDNA samples via a form
+      </li>
+    <% end %>
+
+    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+      <li>
+        <%= link_to 'Import Processing eDNA', admin_labwork_import_processing_extractions_path %>:
+        Add info about processing eDNA samples via CSV upload
       </li>
     <% end %>
 

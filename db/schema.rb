@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180422130726) do
+ActiveRecord::Schema.define(version: 20180422173744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,8 +43,8 @@ ActiveRecord::Schema.define(version: 20180422130726) do
     t.string  "original_taxonomy"
     t.jsonb   "original_hierarchy"
     t.boolean "normalized",         default: false
+    t.integer "taxonID",            default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
     t.string  "genericName"
-    t.integer "taxonID"
     t.string  "complete_taxonomy"
     t.integer "rank_order"
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
@@ -86,13 +86,13 @@ ActiveRecord::Schema.define(version: 20180422130726) do
     t.boolean  "stat_barcoding_pcr_done",               default: false
     t.datetime "stat_barcoding_pcr_done_date"
     t.integer  "barcoding_pcr_number_of_replicates"
-    t.boolean  "reamps_needed"
+    t.string   "reamps_needed"
     t.boolean  "stat_barcoding_pcr_pooled",             default: false
     t.datetime "stat_barcoding_pcr_pooled_date"
     t.boolean  "stat_barcoding_pcr_bead_cleaned",       default: false
     t.datetime "stat_barcoding_pcr_bead_cleaned_date"
     t.string   "brand_beads_cd"
-    t.decimal  "cleaned_concentration"
+    t.string   "cleaned_concentration"
     t.string   "loc_stored"
     t.string   "select_indices_cd"
     t.string   "index_1_name"
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 20180422130726) do
     t.boolean  "stat_index_pcr_bead_cleaned",           default: false
     t.datetime "stat_index_pcr_bead_cleaned_date"
     t.string   "index_brand_beads_cd"
-    t.decimal  "index_cleaned_concentration"
+    t.string   "index_cleaned_concentration"
     t.string   "index_loc_stored"
     t.boolean  "stat_libraries_pooled",                 default: false
     t.datetime "stat_libraries_pooled_date"
@@ -110,14 +110,16 @@ ActiveRecord::Schema.define(version: 20180422130726) do
     t.boolean  "stat_sequenced",                        default: false
     t.datetime "stat_sequenced_date"
     t.string   "intended_sequencing_depth_per_barcode"
-    t.string   "sequencing_platform_cd"
-    t.string   "assoc_field_blank"
-    t.string   "assoc_extraction_blank"
-    t.string   "assoc_pcr_blank"
-    t.text     "notes_sample_processor"
-    t.text     "notes_lab_manager"
-    t.text     "notes_director"
+    t.string   "sequencing_platform"
+    t.text     "assoc_field_blank"
+    t.text     "assoc_extraction_blank"
+    t.text     "assoc_pcr_blank"
+    t.text     "sample_processor_notes"
+    t.text     "lab_manager_notes"
+    t.text     "director_notes"
     t.string   "status_cd"
+    t.string   "sum_taxonomy_example"
+    t.boolean  "priority_sequencing"
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
@@ -251,7 +253,7 @@ ActiveRecord::Schema.define(version: 20180422130726) do
     t.integer  "gps_precision"
     t.string   "location"
     t.decimal  "elevatr_altitude"
-    t.text     "notes_director"
+    t.text     "director_notes"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
@@ -279,20 +281,24 @@ ActiveRecord::Schema.define(version: 20180422130726) do
     t.string  "order",                    limit: 255
     t.string  "family",                   limit: 255
     t.string  "genus",                    limit: 255
-    t.jsonb   "hierarchy"
+    t.jsonb   "hierarchy",                            default: {}
     t.integer "asvs_count",                           default: 0
     t.integer "rank_order"
-    t.string  "iucn_status"
+    t.string  "iucn_status",              limit: 255
     t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
     t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank", using: :btree
+    t.index ["className"], name: "index_taxa_on_classname", using: :btree
+    t.index ["family"], name: "index_taxa_on_family", using: :btree
     t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
     t.index ["kingdom"], name: "index_taxa_on_kingdom", using: :btree
+    t.index ["order"], name: "index_taxa_on_order", using: :btree
     t.index ["phylum"], name: "index_taxa_on_phylum", using: :btree
     t.index ["scientificName"], name: "index_taxa_on_scientificName", using: :btree
+    t.index ["specificEpithet"], name: "index_taxa_on_specificepithet", using: :btree
     t.index ["taxonRank"], name: "index_taxa_on_taxonRank", using: :btree
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end

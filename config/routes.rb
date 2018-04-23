@@ -30,7 +30,8 @@ Rails.application.routes.draw do
       controller 'kobo' do
         get 'import_kobo'
         post 'import_kobo_projects' => 'kobo#import_projects'
-        post 'import_kobo_samples/:id' => 'kobo#import_samples', as: :import_kobo_samples
+        post 'import_kobo_samples/:id' => 'kobo#import_samples',
+             as: :import_kobo_samples
       end
 
       controller 'assign_samples' do
@@ -50,6 +51,7 @@ Rails.application.routes.draw do
       resources :import_samples, only: %i[index create]
       resources :import_results_asvs, only: %i[index create]
       resources :import_results_taxa, only: %i[index create]
+      resources :import_processing_extractions, only: %i[index create]
 
       resources :normalize_taxa, only: %i[index show] do
         put 'update_existing' => 'normalize_taxa#update_existing'

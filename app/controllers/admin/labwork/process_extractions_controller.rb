@@ -85,13 +85,13 @@ module Admin
           :stat_sequenced,
           :stat_sequenced_date,
           :intended_sequencing_depth_per_barcode,
-          :sequencing_platform_cd,
+          :sequencing_platform,
           :assoc_field_blank,
           :assoc_extraction_blank,
           :assoc_pcr_blank,
-          :notes_sample_processor,
-          :notes_lab_manager,
-          :notes_director,
+          :sample_processor_notes,
+          :lab_manager_notes,
+          :director_notes,
           :status_cd
         )
       end

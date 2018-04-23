@@ -60,13 +60,13 @@ class ExtractionDashboard < Administrate::BaseDashboard
     stat_sequenced: Field::Boolean,
     stat_sequenced_date: Field::DateTime,
     intended_sequencing_depth_per_barcode: Field::String,
-    sequencing_platform_cd: EnumField,
-    assoc_field_blank: Field::String,
-    assoc_extraction_blank: Field::String,
-    assoc_pcr_blank: Field::String,
-    notes_sample_processor: Field::Text,
-    notes_lab_manager: Field::Text,
-    notes_director: Field::Text,
+    sequencing_platform: Field::String,
+    assoc_field_blank: Field::Text,
+    assoc_extraction_blank: Field::Text,
+    assoc_pcr_blank: Field::Text,
+    sample_processor_notes: Field::Text,
+    lab_manager_notes: Field::Text,
+    director_notes: Field::Text,
     status_cd: EnumField,
   }.freeze
 
@@ -131,13 +131,13 @@ class ExtractionDashboard < Administrate::BaseDashboard
     :stat_sequenced,
     :stat_sequenced_date,
     :intended_sequencing_depth_per_barcode,
-    :sequencing_platform_cd,
+    :sequencing_platform,
     :assoc_field_blank,
     :assoc_extraction_blank,
     :assoc_pcr_blank,
-    :notes_sample_processor,
-    :notes_lab_manager,
-    :notes_director,
+    :sample_processor_notes,
+    :lab_manager_notes,
+    :director_notes,
   ].freeze
 
   FORM_ATTRIBUTES = [
@@ -195,13 +195,13 @@ class ExtractionDashboard < Administrate::BaseDashboard
     :stat_sequenced,
     :stat_sequenced_date,
     :intended_sequencing_depth_per_barcode,
-    :sequencing_platform_cd,
+    :sequencing_platform,
     :assoc_field_blank,
     :assoc_extraction_blank,
     :assoc_pcr_blank,
-    :notes_sample_processor,
-    :notes_lab_manager,
-    :notes_director,
+    :sample_processor_notes,
+    :lab_manager_notes,
+    :director_notes,
   ].freeze
 
   # Overwrite this method to customize how extractions are displayed

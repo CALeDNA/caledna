@@ -68,13 +68,13 @@ FactoryBot.define do
       stat_sequenced true
       stat_sequenced_date Time.zone.now
       intended_sequencing_depth_per_barcode { Faker::Lorem.words(2).join(' ') }
-      sequencing_platform_cd { Extraction.sequencing_platforms.keys.sample }
+      sequencing_platform 'sequencing platform'
       assoc_field_blank { Faker::Lorem.words(2).join(' ') }
       assoc_extraction_blank { Faker::Lorem.words(2).join(' ') }
       assoc_pcr_blank { Faker::Lorem.words(2).join(' ') }
-      notes_sample_processor { "Sample Processor. #{Faker::Lorem.paragraph}" }
-      notes_lab_manager { "Lab Manager. #{Faker::Lorem.paragraph}" }
-      notes_director { "Director. #{Faker::Lorem.paragraph}" }
+      sample_processor_notes { "Sample Processor. #{Faker::Lorem.paragraph}" }
+      lab_manager_notes { "Lab Manager. #{Faker::Lorem.paragraph}" }
+      director_notes { "Director. #{Faker::Lorem.paragraph}" }
     end
   end
 end
