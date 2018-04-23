@@ -17,8 +17,9 @@ class ImportIucn
   def update_iucn_status(hash)
     data = hash.with_indifferent_access
     taxon = find_taxon(data)
+    return if taxon.blank?
 
-    taxon.update(iucn_status: data[:category]) if taxon.present?
+    taxon.update(iucn_status: data[:category], iucn_taxonid: data[:taxonid])
   end
 
   def form_canonical_name(data)

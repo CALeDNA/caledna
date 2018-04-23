@@ -8,6 +8,19 @@ class Taxon < ApplicationRecord
   # taxonRank: kingdom phylum class order family genus species subspecies
   # variety unranked form
 
+  IUCN_CATEGORIES = {
+    EX: 'Extinct',
+    EW: 'Extinct in the Wild',
+    CR: 'Critically Endangered',
+    EN: 'Endangered',
+    VU: 'Vulnerable',
+    NT: 'Near Threatened',
+    LC: 'Least Concern',
+    DD: 'Data Deficient',
+    NE: 'Not Evaluated'
+  }.freeze
+
+
   has_many :vernaculars, foreign_key: 'taxonID'
   has_many :asvs, foreign_key: 'taxonID'
   has_many :multimedia, foreign_key: 'taxonID'
@@ -76,18 +89,23 @@ class Taxon < ApplicationRecord
   end
 
   def iucn_link
-    return if iucn_record.blank?
-    "http://www.iucnredlist.org/details/#{iucn_record['taxonid']}"
+    return unless conservation_status?
+    "http://www.iucnredlist.org/details/#{iucn_taxonid}"
   end
 
   def conservation_status?
     return unless taxonRank == 'species' || taxonRank == 'subspecies'
-    iucn_record.present?
+    conservation_status.present?
   end
 
   def conservation_status
-    return if iucn_record.blank?
-    ::IucnApi::CATEGORIES[iucn_record['category'].to_sym]
+    return if iucn_status.blank?
+    IUCN_CATEGORIES[iucn_status.to_sym]
+  end
+
+  def threatened?
+    statuses = %w[EX EW CR EN VU NT]
+    statuses.include?(iucn_status)
   end
 
   def synonyms
@@ -186,17 +204,6 @@ class Taxon < ApplicationRecord
     response = JSON.parse(eol_taxa.body)
     # return if response.first['error'].present?
     @eol_record ||= response['results'].last
-  end
-
-  def iucn_species
-    puts '---- iucn'
-    service = ::IucnApi.new
-    @iucn_species ||= service.species(canonicalName)
-  end
-
-  def iucn_record
-    return if JSON.parse(iucn_species.body)['value'] == '0'
-    @iucn_record ||= JSON.parse(iucn_species.body)['result'].first
   end
 end
 # rubocop:enable Metrics/ClassLength

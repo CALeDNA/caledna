@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180422173744) do
+ActiveRecord::Schema.define(version: 20180423105941) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -285,6 +285,7 @@ ActiveRecord::Schema.define(version: 20180422173744) do
     t.integer "asvs_count",                           default: 0
     t.integer "rank_order"
     t.string  "iucn_status",              limit: 255
+    t.integer "iucn_taxonid"
     t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
@@ -294,6 +295,7 @@ ActiveRecord::Schema.define(version: 20180422173744) do
     t.index ["family"], name: "index_taxa_on_family", using: :btree
     t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
+    t.index ["iucn_status"], name: "index_taxa_on_iucn_status", using: :btree
     t.index ["kingdom"], name: "index_taxa_on_kingdom", using: :btree
     t.index ["order"], name: "index_taxa_on_order", using: :btree
     t.index ["phylum"], name: "index_taxa_on_phylum", using: :btree
