@@ -15,7 +15,7 @@ module Admin
         results = import_csv(file)
         if results.valid?
           flash[:success] = 'Taxonomies are valid'
-          redirect_to admin_labwork_taxa_path
+          redirect_to admin_labwork_path
         else
           flash[:error] = results.errors
           redirect_to admin_labwork_normalize_taxa_path
