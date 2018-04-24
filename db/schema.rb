@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180423105941) do
+ActiveRecord::Schema.define(version: 20180423160753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,27 +26,29 @@ ActiveRecord::Schema.define(version: 20180423105941) do
   end
 
   create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
-    t.string  "datasetID"
-    t.string  "parentNameUsageID"
-    t.text    "scientificName"
-    t.string  "canonicalName"
-    t.string  "taxonRank"
-    t.string  "taxonomicStatus"
-    t.string  "kingdom"
-    t.string  "phylum"
-    t.string  "className"
-    t.string  "order"
-    t.string  "family"
-    t.string  "genus"
-    t.string  "specificEpithet"
-    t.jsonb   "hierarchy"
-    t.string  "original_taxonomy"
-    t.jsonb   "original_hierarchy"
-    t.boolean "normalized",         default: false
-    t.integer "taxonID",            default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
-    t.string  "genericName"
-    t.string  "complete_taxonomy"
-    t.integer "rank_order"
+    t.string   "datasetID"
+    t.string   "parentNameUsageID"
+    t.text     "scientificName"
+    t.string   "canonicalName"
+    t.string   "taxonRank"
+    t.string   "taxonomicStatus"
+    t.string   "kingdom"
+    t.string   "phylum"
+    t.string   "className"
+    t.string   "order"
+    t.string   "family"
+    t.string   "genus"
+    t.string   "specificEpithet"
+    t.jsonb    "hierarchy"
+    t.string   "original_taxonomy"
+    t.jsonb    "original_hierarchy"
+    t.boolean  "normalized",         default: false
+    t.integer  "taxonID",            default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
+    t.string   "genericName"
+    t.string   "complete_taxonomy"
+    t.integer  "rank_order"
+    t.datetime "created_at",         default: '2018-04-23 16:12:39',                              null: false
+    t.datetime "updated_at",         default: '2018-04-23 16:12:39',                              null: false
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
 
@@ -82,7 +84,7 @@ ActiveRecord::Schema.define(version: 20180423105941) do
     t.datetime "dna_extraction_date"
     t.string   "protocol_dna_extraction"
     t.string   "changes_protocol_dna_extraction"
-    t.string   "metabarcoding_primers",                 default: [],    array: true
+    t.string   "metabarcoding_primers",                 default: [],                                 array: true
     t.boolean  "stat_barcoding_pcr_done",               default: false
     t.datetime "stat_barcoding_pcr_done_date"
     t.integer  "barcoding_pcr_number_of_replicates"
@@ -120,6 +122,8 @@ ActiveRecord::Schema.define(version: 20180423105941) do
     t.string   "status_cd"
     t.string   "sum_taxonomy_example"
     t.boolean  "priority_sequencing"
+    t.datetime "created_at",                            default: '2018-04-23 16:12:39', null: false
+    t.datetime "updated_at",                            default: '2018-04-23 16:12:39', null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
