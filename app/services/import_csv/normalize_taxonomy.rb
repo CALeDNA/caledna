@@ -4,21 +4,23 @@ module ImportCsv
   module NormalizeTaxonomy
     require 'csv'
     include ProcessTestResults
+    include CsvUtils
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file)
       missing_taxonomy = 0
+      delimiter = delimiter_detector(file)
 
-      CSV.foreach(file.path, headers: true) do |row|
+      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
         taxonomy_string = row[row.headers.first]
         results = find_taxon_from_string(taxonomy_string)
+
+        cal_taxon =
+          CalTaxon.find_by(original_taxonomy: results[:original_taxonomy])
+        next if cal_taxon.present?
+
         if results[:taxonID].blank? && results[:rank].present?
           missing_taxonomy += 1
-
-          cal_taxon =
-            CalTaxon.find_by(original_taxonomy: results[:original_taxonomy])
-          next if cal_taxon.present?
-
           CalTaxon.create(
             taxonRank: results[:rank],
             original_hierarchy: results[:original_hierarchy],

@@ -20,7 +20,6 @@ class Taxon < ApplicationRecord
     NE: 'Not Evaluated'
   }.freeze
 
-
   has_many :vernaculars, foreign_key: 'taxonID'
   has_many :asvs, foreign_key: 'taxonID'
   has_many :multimedia, foreign_key: 'taxonID'

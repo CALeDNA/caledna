@@ -176,19 +176,20 @@ describe ImportCsv::DnaResults do
       stub_const('FieldDataProject::DEFAULT_PROJECT', project)
     end
 
-    def subject(file, extraction_type_id)
-      dummy_class.import_csv(file, extraction_type_id)
+    def subject(file, research_project_id, extraction_type_id)
+      dummy_class.import_csv(file, research_project_id, extraction_type_id)
     end
 
-    let(:csv) { File.dirname(__FILE__) + '/processing_extraction.csv' }
+    let(:csv) { './spec/fixtures/import_csv/processing_extraction.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
     let(:extraction_type) { create(:extraction_type) }
+    let(:research_project) { create(:research_project) }
 
     context 'when matching sample does not exists' do
       it 'creates sample & extraction' do
         create(:researcher, username: 'user1')
 
-        expect { subject(file, extraction_type.id) }
+        expect { subject(file, research_project.id, extraction_type.id) }
           .to change { Sample.count }
           .by(1)
           .and change { Extraction.count }
@@ -201,7 +202,7 @@ describe ImportCsv::DnaResults do
         create(:researcher, username: 'user1')
         create(:sample, barcode: 'K0001-LA-S1')
 
-        expect { subject(file, extraction_type.id) }
+        expect { subject(file, research_project.id, extraction_type.id) }
           .to change { Sample.count }
           .by(0)
           .and change { Extraction.count }
@@ -215,7 +216,7 @@ describe ImportCsv::DnaResults do
         sample = create(:sample, barcode: 'K0001-LA-S1')
         create(:extraction, sample: sample, extraction_type: extraction_type)
 
-        expect { subject(file, extraction_type.id) }
+        expect { subject(file, research_project.id, extraction_type.id) }
           .to change { Sample.count }
           .by(0)
           .and change { Extraction.count }
@@ -230,7 +231,7 @@ describe ImportCsv::DnaResults do
         date1 = Time.parse('1-Feb-18')
         date2 = Time.parse('July 2018')
         date3 = Time.parse('1-Jan-18')
-        subject(file, extraction_type.id)
+        subject(file, research_project.id, extraction_type.id)
         extraction.reload
         user2 = Researcher.second
 
@@ -298,6 +299,20 @@ describe ImportCsv::DnaResults do
         expect(extraction.lab_manager_notes).to eq('lab manager notes')
         expect(extraction.director_notes).to eq('director notes')
         expect(extraction.status_cd).to eq('results_completed')
+      end
+    end
+
+    context 'when file is tab delimited' do
+      it 'creates sample & extraction when they do not exist' do
+        create(:researcher, username: 'user1')
+        csv = './spec/fixtures/import_csv/processing_extraction_tabs.csv'
+        file = fixture_file_upload(csv, 'text/csv')
+
+        expect { subject(file, research_project.id, extraction_type.id) }
+          .to change { Sample.count }
+          .by(1)
+          .and change { Extraction.count }
+          .by(1)
       end
     end
   end

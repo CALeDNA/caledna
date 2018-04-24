@@ -4,14 +4,16 @@ module ImportCsv
   module DnaResults
     require 'csv'
     include ProcessTestResults
+    include CsvUtils
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file, research_project_id, extraction_type_id)
       extractions = {}
       sample_cells = []
       missing_taxonomy = 0
+      delimiter = delimiter_detector(file)
 
-      CSV.foreach(file.path, headers: true) do |row|
+      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
         if extractions.empty?
           sample_cells = row.headers[1..row.headers.size]
           extractions = get_extractions_from_headers(
@@ -38,18 +40,31 @@ module ImportCsv
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def convert_header_to_barcode(cell)
       sample = cell.split('_').last
       if /K\d{4}/.match?(sample)
         parts = sample.split('.')
-        kit = parts.first
-        location_letter = parts.second.split('').first
-        sample_number = parts.second.split('').second
-        "#{kit}-L#{location_letter}-S#{sample_number}"
+
+        if parts.length == 4
+          kit = parts.first
+          location_letter = parts.second.split('').first
+          sample_number = parts.second.split('').second
+          "#{kit}-L#{location_letter}-S#{sample_number}"
+        elsif parts.length == 3
+          match = /(K\d{4})(\w)(\d)/.match(cell)
+          kit = match[1]
+          location_letter = match[2]
+          sample_number = match[3]
+          "#{kit}-L#{location_letter}-S#{sample_number}"
+        else
+          raise ImportError, 'invalid sample format'
+        end
       else
         sample.split('.').first
       end
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     private
 

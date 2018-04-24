@@ -3,10 +3,11 @@
 module ImportCsv
   module SampleCsv
     require 'csv'
+    include CsvUtils
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def import_csv(file, research_project_id)
-      CSV.foreach(file.path, headers: true) do |row|
+      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
         barcode = "#{row['Kit']}-#{row['Tubes']}"
         update_data = update_data_fields(row)
         create_data = create_data_fields(row, barcode)

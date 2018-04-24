@@ -5,9 +5,13 @@ module ImportCsv
   module ProcessingExtractions
     require 'csv'
     include ProcessTestResults
+    include CsvUtils
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def import_csv(file, research_project_id, extraction_type_id)
-      CSV.foreach(file.path, headers: true) do |row|
+      delimiter = delimiter_detector(file)
+
+      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
         next if row['Sample Name'].blank?
         next unless processing_started?(row['processor'])
 
@@ -21,6 +25,7 @@ module ImportCsv
         extraction.update(clean_up_hash(update_data))
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def find_researcher(raw_string)
       name = raw_string.strip
@@ -76,12 +81,15 @@ module ImportCsv
     def form_barcode(raw_string)
       raw_barcode = raw_string.strip
 
+      # handles "K0030 B1"
       if raw_barcode.include?(' ')
         parts = raw_barcode.split(' ')
         kit = parts.first
         location_letter = parts.second.split('').first
         sample_number = parts.second.split('').second
         "#{kit}-L#{location_letter}-S#{sample_number}"
+
+      # handles "K0030B1"
       elsif /^K\d{4}\w\d$/.match?(raw_barcode)
         match = /(K\d{4})(\w)(\d)/.match(raw_barcode)
         kit = match[1]

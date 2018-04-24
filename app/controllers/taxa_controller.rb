@@ -48,8 +48,6 @@ class TaxaController < ApplicationController
     ].compact
   end
 
-
-
   def paginated_samples
     if params[:view]
       Kaminari.paginate_array(samples).page(params[:page])

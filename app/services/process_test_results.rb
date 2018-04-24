@@ -100,7 +100,7 @@ module ProcessTestResults
       sample = Sample.create(
         barcode: barcode,
         status_cd: :missing_coordinates,
-        field_data_project: FieldDataProject::DEFAULT_PROJECT,
+        field_data_project: FieldDataProject::DEFAULT_PROJECT
       )
       raise ImportError, "Sample #{barcode} not created" unless sample.valid?
 

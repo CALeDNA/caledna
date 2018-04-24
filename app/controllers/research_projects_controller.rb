@@ -16,6 +16,7 @@ class ResearchProjectsController < ApplicationController
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def projects
     # NOTE: this query provides the samples count per project
     sql = 'SELECT research_projects.id, research_projects.name, ' \
@@ -33,6 +34,7 @@ class ResearchProjectsController < ApplicationController
     'ORDER BY research_projects.name;'
     @projects ||= ActiveRecord::Base.connection.execute(sql)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def samples
     Sample.includes(:field_data_project).order(:barcode)
