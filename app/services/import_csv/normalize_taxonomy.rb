@@ -21,14 +21,26 @@ module ImportCsv
 
         if results[:taxonID].blank? && results[:rank].present?
           missing_taxonomy += 1
-          CalTaxon.create(
+          create_data = {
             taxonRank: results[:rank],
             original_hierarchy: results[:original_hierarchy],
             original_taxonomy: results[:original_taxonomy],
             complete_taxonomy: results[:complete_taxonomy],
-            normalized: false
-          )
+            normalized: false,
+            exact_gbif_match: false
+          }
+        elsif results[:taxonID].present? && results[:rank].present?
+          create_data = {
+            taxonRank: results[:rank],
+            original_hierarchy: results[:original_hierarchy],
+            original_taxonomy: results[:original_taxonomy],
+            complete_taxonomy: results[:complete_taxonomy],
+            normalized: true,
+            exact_gbif_match: true,
+            taxonID: results[:taxonID]
+          }
         end
+        ImportCsvCreateCalTaxonJob.perform_later(create_data)
       end
 
       if missing_taxonomy.zero?

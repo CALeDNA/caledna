@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180423160753) do
+ActiveRecord::Schema.define(version: 20180424135133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,12 +43,13 @@ ActiveRecord::Schema.define(version: 20180423160753) do
     t.string   "original_taxonomy"
     t.jsonb    "original_hierarchy"
     t.boolean  "normalized",         default: false
-    t.integer  "taxonID",            default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
+    t.integer  "taxonID",            default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "genericName"
     t.string   "complete_taxonomy"
     t.integer  "rank_order"
     t.datetime "created_at",         default: '2018-04-23 16:12:39',                              null: false
     t.datetime "updated_at",         default: '2018-04-23 16:12:39',                              null: false
+    t.boolean  "exact_gbif_match",   default: false
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
 

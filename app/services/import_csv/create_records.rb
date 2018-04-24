@@ -31,6 +31,10 @@ module ImportCsv
       extraction.update(clean_up_hash(update_data))
     end
 
+    def create_cal_taxon(data)
+      CalTaxon.create(data)
+    end
+
     private
 
     def convert_header_to_primer(cell)
