@@ -7,6 +7,7 @@
 </header>
 
 <section class="main-content__body">
+  <h3>Kobo</h3>
   <ol>
     <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
       <li>
@@ -14,21 +15,40 @@
         import projects and sample from Kobo
       </li>
     <% end %>
-
     <% if policy('Labwork::ApproveSamples'.to_sym).index? %>
       <li>
         <%= link_to 'Approve Samples', admin_labwork_approve_samples_path %>:
         approve samples submitted by citizen scientists and researchers
       </li>
     <% end %>
+  </ol>
 
+  <h3 class="subtitle">Import Samples</h3>
+  <p>Use "Samples CSV" template</p>
+
+  <ol>
+    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+      <li>
+        <%= link_to 'Import Samples for Research Project', admin_labwork_import_samples_path %>:
+        Add samples for a research project via CSV upload
+      </li>
+    <% end %>
+  </ol>
+
+  <h3>Assign Processor</h3>
+  <ol>
     <% if policy('Labwork::AssignSamples'.to_sym).index? %>
       <li>
         <%= link_to 'Assign Samples', admin_labwork_assign_samples_path %>:
         assign samples to sample processors
       </li>
     <% end %>
+  </ol>
 
+  <h3 class="subtitle">Processing eDNA</h3>
+  <p>Use "Processing eDNA" template</p>
+
+  <ol>
     <% if policy('Labwork::ProcessExtractions'.to_sym).index? %>
       <li>
         <%= link_to 'Processing eDNA', admin_labwork_process_extractions_path %>:
@@ -42,14 +62,12 @@
         Add info about processing eDNA samples via CSV upload
       </li>
     <% end %>
+  </ol>
 
-    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
-      <li>
-        <%= link_to 'Import Samples for Research Project', admin_labwork_import_samples_path %>:
-        Add samples for a research project via CSV upload
-      </li>
-    <% end %>
+  <h3 class="subtitle">Import eDNA test results</h3>
+  <p>Use "DNA test results CSV" template</p>
 
+  <ol>
     <% if policy('Labwork::ImportCsv'.to_sym).index? %>
       <li>
         <%= link_to 'Import Taxonomy from DNA Results', admin_labwork_import_results_taxa_path %>:
@@ -102,6 +120,9 @@
   <ul>
     <li>
       <%= link_to "Samples CSV", '/csv/example.samples.csv'  %>
+    </li>
+    <li>
+      <%= link_to "Processing eDNA", '/csv/example.processing_edna.csv'  %>
     </li>
     <li>
       <%= link_to "DNA test results CSV", '/csv/example.test_results.csv'  %>
