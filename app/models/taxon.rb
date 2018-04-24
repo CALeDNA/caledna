@@ -22,7 +22,6 @@ class Taxon < ApplicationRecord
 
   has_many :vernaculars, foreign_key: 'taxonID'
   has_many :asvs, foreign_key: 'taxonID'
-  has_many :multimedia, foreign_key: 'taxonID'
   has_many :highlights, as: :highlightable
   belongs_to :taxa_dataset, foreign_key: 'datasetID'
   validates :taxonID, presence: true
@@ -63,7 +62,7 @@ class Taxon < ApplicationRecord
   end
 
   def image
-    inaturalist_photo || gbif_photo
+    inaturalist_photo
   end
 
   def inaturalist_link
@@ -160,14 +159,10 @@ class Taxon < ApplicationRecord
   end
 
   def gbif_photo
-    photo = multimedia.select(&:image?).first
-    return if photo.blank?
-    {
-      url: photo.identifier,
-      attribution: photo.rightsHolder,
-      source: photo.publisher,
-      taxa_url: gbif_link
-    }
+    # TODO: get correct fields returned by api for media
+    return if inaturalist_record.blank?
+    return if inaturalist_record['results'].blank?
+    {}
   end
 
   def inaturalist_photo
@@ -203,6 +198,18 @@ class Taxon < ApplicationRecord
     response = JSON.parse(eol_taxa.body)
     # return if response.first['error'].present?
     @eol_record ||= response['results'].last
+  end
+
+  def gbif_media
+    service = ::GbifApi.new
+    @gbif_media ||= service.media(id)
+  end
+
+  def gbif_record
+    response = JSON.parse(gbif_media.body)
+    debugger
+    # return if response.first['error'].present?
+    @gbif_record ||= response['results'].last
   end
 end
 # rubocop:enable Metrics/ClassLength

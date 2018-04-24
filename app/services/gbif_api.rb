@@ -17,4 +17,8 @@ class GbifApi
   def taxa(keyword)
     self.class.get('/species/match', query: { name: keyword })
   end
+
+  def media(id)
+    self.class.get("/species/#{id}/media", @options)
+  end
 end

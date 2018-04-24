@@ -6,7 +6,6 @@ class TaxonDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     vernaculars: Field::HasMany,
     asvs: Field::HasMany,
-    multimedia: Field::HasMany,
     highlights: Field::HasMany,
     taxonID: Field::Number,
     datasetID: Field::String,
@@ -38,14 +37,12 @@ class TaxonDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :vernaculars,
     :asvs,
-    :multimedia,
     :highlights,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :vernaculars,
     :asvs,
-    :multimedia,
     :highlights,
     :taxonID,
     :datasetID,
@@ -77,7 +74,6 @@ class TaxonDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
     :vernaculars,
     :asvs,
-    :multimedia,
     :highlights,
     :taxonID,
     :datasetID,

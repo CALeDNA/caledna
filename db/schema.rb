@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180424135133) do
+ActiveRecord::Schema.define(version: 20180424144423) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,22 +152,6 @@ ActiveRecord::Schema.define(version: 20180424135133) do
     t.datetime "updated_at",         null: false
     t.index ["highlightable_id"], name: "index_highlights_on_highlightable_id", using: :btree
     t.index ["highlightable_type"], name: "index_highlights_on_highlightable_type", using: :btree
-  end
-
-  create_table "multimedia", id: false, force: :cascade do |t|
-    t.integer "taxonID",                  null: false
-    t.text    "identifier"
-    t.text    "references"
-    t.text    "title"
-    t.text    "description"
-    t.text    "license"
-    t.text    "creator"
-    t.string  "created",      limit: 255
-    t.string  "contributor",  limit: 255
-    t.string  "publisher",    limit: 255
-    t.text    "rightsHolder"
-    t.text    "source"
-    t.index ["taxonID"], name: "multimedia_taxonid_idx", using: :btree
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
