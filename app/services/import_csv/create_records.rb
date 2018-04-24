@@ -2,6 +2,8 @@
 
 module ImportCsv
   module CreateRecords
+    include ProcessingExtractions
+
     def create_asv(cell, extraction, taxon)
       asv = Asv.where(extraction_id: extraction.id, taxonID: taxon[:taxonID])
                .first_or_create
@@ -22,6 +24,11 @@ module ImportCsv
 
       return if project.valid?
       raise ImportError, 'ResearchProjectExtraction not created'
+    end
+
+    def update_extraction_details(extraction_type_id, row)
+      update_data = format_update_data(row, extraction_type_id)
+      extraction.update(clean_up_hash(update_data))
     end
 
     private

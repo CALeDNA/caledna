@@ -7,7 +7,7 @@ module ImportCsv
     include ProcessTestResults
     include CsvUtils
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength
     def import_csv(file, research_project_id, extraction_type_id)
       delimiter = delimiter_detector(file)
 
@@ -17,15 +17,15 @@ module ImportCsv
 
         barcode = form_barcode(row['Sample Name'])
         extraction = find_extraction_from_barcode(barcode, extraction_type_id)
-        ResearchProjectExtraction.create(
-          research_project_id: research_project_id,
-          extraction_id: extraction.id
-        )
-        update_data = format_update_data(row, extraction_type_id)
-        extraction.update(clean_up_hash(update_data))
+
+        ImportCsvCreateResearchProjectExtractionJob
+          .perform_later(extraction, research_project_id)
+
+        ImportCsvUpdateExtractionDetailsJob
+          .perform_later(extraction_type_id, row)
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength
 
     def find_researcher(raw_string)
       name = raw_string.strip
@@ -113,7 +113,7 @@ module ImportCsv
     end
 
     def create_researcher(name)
-      email = "#{name}#{rand(1000)}.example.com"
+      email = "#{name}#{rand(1000)}@example.com"
       researcher = Researcher.new(username: name, email: email)
       researcher.save(validate: false)
       researcher
