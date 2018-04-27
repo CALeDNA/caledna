@@ -15,7 +15,7 @@ module KoboApi
 
     def import_samples(project_id, kobo_id, hash_payload)
       results = hash_payload.map do |sample_data|
-        next if sample_ids.include?(sample_data['_id'])
+        next if kobo_sample_ids.include?(sample_data['_id'])
         save_sample_data(project_id, kobo_id, sample_data)
       end
       results.compact.all? { |r| r }
@@ -53,8 +53,12 @@ module KoboApi
       clean_kit_number.try(:upcase)
     end
 
-    def sample_ids
+    def kobo_sample_ids
       Sample.pluck(:kobo_id)
+    end
+
+    def non_kobo_barcodes
+      Sample.where(kobo_id: nil).pluck(:barcode)
     end
 
     def project(kobo_id)
@@ -125,22 +129,28 @@ module KoboApi
     end
 
     def save_sample(data, hash_payload)
-      ::Sample.create(
+      sample_data = {
         field_data_project_id: data.field_data_project_id,
         kobo_id: data._id,
         kobo_data: hash_payload,
         collection_date: data.Enter_the_sampling_date_and_time,
         submission_date: data._submission_time,
         location: data.location,
-        status: :submitted,
-        barcode: data.barcode,
         latitude: data.gps.split.first,
         longitude: data.gps.split.second,
         altitude: data.gps.split.third,
         gps_precision: data.gps.split.fourth,
         substrate: data.substrate,
         field_notes: data.field_notes
-      )
+      }
+
+      if non_kobo_barcodes.include?(data.barcode)
+        ::Sample.update(sample_data).where(barcode: data.barcode)
+      else
+        sample_data[:status] = :submitted
+        sample_data[:barcode] = data.barcode
+        ::Sample.create(sample_data)
+      end
     end
 
     def save_photos(sample_id, hash_payload)
