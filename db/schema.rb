@@ -43,12 +43,12 @@ ActiveRecord::Schema.define(version: 20180504031351) do
     t.string   "original_taxonomy"
     t.jsonb    "original_hierarchy"
     t.boolean  "normalized",         default: false
-    t.integer  "taxonID",            default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "genericName"
+    t.integer  "taxonID",            default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "complete_taxonomy"
     t.integer  "rank_order"
-    t.datetime "created_at",         default: '2018-04-23 16:12:39',                              null: false
-    t.datetime "updated_at",         default: '2018-04-23 16:12:39',                              null: false
+    t.datetime "created_at",         default: '2018-04-27 10:58:51',                              null: false
+    t.datetime "updated_at",         default: '2018-04-27 10:58:51',                              null: false
     t.boolean  "exact_gbif_match",   default: false
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
@@ -123,8 +123,8 @@ ActiveRecord::Schema.define(version: 20180504031351) do
     t.string   "status_cd"
     t.string   "sum_taxonomy_example"
     t.boolean  "priority_sequencing"
-    t.datetime "created_at",                            default: '2018-04-23 16:12:39', null: false
-    t.datetime "updated_at",                            default: '2018-04-23 16:12:39', null: false
+    t.datetime "created_at",                            default: '2018-04-27 10:58:51', null: false
+    t.datetime "updated_at",                            default: '2018-04-27 10:58:51', null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
@@ -274,26 +274,22 @@ ActiveRecord::Schema.define(version: 20180504031351) do
     t.string  "order",                    limit: 255
     t.string  "family",                   limit: 255
     t.string  "genus",                    limit: 255
-    t.jsonb   "hierarchy",                            default: {}
+    t.jsonb   "hierarchy"
     t.integer "asvs_count",                           default: 0
     t.integer "rank_order"
-    t.string  "iucn_status",              limit: 255
+    t.string  "iucn_status"
     t.integer "iucn_taxonid"
     t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
     t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank", using: :btree
-    t.index ["className"], name: "index_taxa_on_classname", using: :btree
-    t.index ["family"], name: "index_taxa_on_family", using: :btree
     t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
     t.index ["iucn_status"], name: "index_taxa_on_iucn_status", using: :btree
     t.index ["kingdom"], name: "index_taxa_on_kingdom", using: :btree
-    t.index ["order"], name: "index_taxa_on_order", using: :btree
     t.index ["phylum"], name: "index_taxa_on_phylum", using: :btree
     t.index ["scientificName"], name: "index_taxa_on_scientificName", using: :btree
-    t.index ["specificEpithet"], name: "index_taxa_on_specificepithet", using: :btree
     t.index ["taxonRank"], name: "index_taxa_on_taxonRank", using: :btree
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end

@@ -5,7 +5,8 @@ class ImportCsvUpdateExtractionDetailsJob < ApplicationJob
 
   queue_as :default
 
-  def perform(extraction_type_id, row)
-    update_extraction_details(extraction_type_id, row)
+  def perform(extraction, extraction_type_id, row)
+    # debugger
+    update_extraction_details(extraction, extraction_type_id, row)
   end
 end

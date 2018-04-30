@@ -13,8 +13,8 @@ describe 'Samples' do
 
   describe 'samples show page' do
     # TODO: enable test to work with webpacker
-    xit 'returns OK' do
-      sample = create(:sample)
+    it 'returns OK' do
+      sample = create(:sample, status_cd: :approved)
       get sample_path(id: sample.id)
 
       expect(response.status).to eq(200)

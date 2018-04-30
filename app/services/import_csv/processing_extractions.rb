@@ -22,7 +22,7 @@ module ImportCsv
           .perform_later(extraction, research_project_id)
 
         ImportCsvUpdateExtractionDetailsJob
-          .perform_later(extraction_type_id, row)
+          .perform_later(extraction, extraction_type_id, row.to_json)
       end
     end
     # rubocop:enable Metrics/MethodLength

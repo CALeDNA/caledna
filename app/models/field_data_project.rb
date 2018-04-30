@@ -2,8 +2,8 @@
 
 class FieldDataProject < ApplicationRecord
   DEFAULT_PROJECT = FieldDataProject.find_by(name: 'unknown')
-  MULTI_SAMPLE_FORM_IDS = [95_481, 87_534, 95_664, 83_937].freeze
-  SINGLE_SAMPLE_FORM_V1_IDS = [136_577, 130_560, 138_676, 170_620].freeze
+  MULTI_SAMPLE_PROJECTS = [95_481, 87_534, 95_664, 83_937].freeze
+  SINGLE_SAMPLE_PROJECTS_V1 = [136_577, 130_560, 138_676, 170_620].freeze
 
   validates :kobo_id, uniqueness: true
 
@@ -24,14 +24,14 @@ class FieldDataProject < ApplicationRecord
   end
 
   def multi_sample_form?
-    MULTI_SAMPLE_FORM_IDS.include?(kobo_id)
+    MULTI_SAMPLE_PROJECTS.include?(kobo_id)
   end
 
   def single_sample_v1_form?
-    SINGLE_SAMPLE_FORM_V1_IDS.include?(kobo_id)
+    SINGLE_SAMPLE_PROJECTS_V1.include?(kobo_id)
   end
 
   def single_sample_v2_form?
-    !(MULTI_SAMPLE_FORM_IDS + SINGLE_SAMPLE_FORM_V1_IDS).include?(kobo_id)
+    !(MULTI_SAMPLE_PROJECTS + SINGLE_SAMPLE_PROJECTS_V1).include?(kobo_id)
   end
 end

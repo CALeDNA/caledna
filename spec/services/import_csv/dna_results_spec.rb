@@ -30,6 +30,8 @@ describe ImportCsv::DnaResults do
   end
 
   describe('#import_csv') do
+    include ActiveJob::TestHelper
+
     before(:each) do
       project = create(:field_data_project, name: 'unknown')
       stub_const('FieldDataProject::DEFAULT_PROJECT', project)
@@ -88,9 +90,9 @@ describe ImportCsv::DnaResults do
                kingdom: 'Kingdom', phylum: 'Phylum', taxonRank: 'phylum')
       end
 
-      it 'does not creates asv' do
+      it 'does not add ImportCsvCreateAsvJob to queue' do
         expect { subject(file, research_project.id, extraction_type.id) }
-          .to change { Asv.count }.by(0)
+          .to_not have_enqueued_job(ImportCsvCreateAsvJob)
       end
 
       it 'returns invalid' do
@@ -115,9 +117,9 @@ describe ImportCsv::DnaResults do
                taxonRank: 'genus', canonicalName: 'Genus')
       end
 
-      it 'creates asv' do
+      it 'adds ImportCsvCreateAsvJob to queue' do
         expect { subject(file, research_project.id, extraction_type.id) }
-          .to change { Asv.count }.by(2)
+          .to_not have_enqueued_job(ImportCsvCreateAsvJob)
       end
 
       it 'returns valid' do

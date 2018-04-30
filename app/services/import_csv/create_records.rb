@@ -26,9 +26,10 @@ module ImportCsv
       raise ImportError, 'ResearchProjectExtraction not created'
     end
 
-    def update_extraction_details(extraction_type_id, row)
+    def update_extraction_details(extraction, extraction_type_id, row)
       update_data = format_update_data(row, extraction_type_id)
       extraction.update(clean_up_hash(update_data))
+      extraction
     end
 
     def create_cal_taxon(data)

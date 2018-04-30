@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'sidekiq/testing'
+Sidekiq::Testing.fake!
+
 RSpec.configure do |config|
   # rspec-expectations config goes here.
   config.expect_with :rspec do |expectations|

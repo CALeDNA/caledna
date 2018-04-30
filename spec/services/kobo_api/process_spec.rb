@@ -156,8 +156,8 @@ describe KoboApi::Process do
     let(:field_data_project) { create(:field_data_project) }
     let(:project_id) { field_data_project.id }
 
-    context 'when incoming data has one sample' do
-      let(:kobo_id) { 1 }
+    context 'when incoming data has one sample V1' do
+      let(:kobo_id) { FieldDataProject::SINGLE_SAMPLE_PROJECTS_V1.first }
       let(:data) do
         {
           'What_is_your_kit_number_e_g_K0021' => 'K2',
@@ -166,7 +166,9 @@ describe KoboApi::Process do
           'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
           'What_type_of_substrate_did_you' => 'soil',
           'Notes_on_recent_mana_the_sample_location' => 'notes',
+          '_Optional_Regarding_rns_to_share_with_us' => 'notes2',
           'Where_are_you_A_UC_serve_or_in_Yosemite' => 'location',
+          'Location' => 'location2',
           'Enter_the_sampling_date_and_time' => '2010-01-01',
           '_submission_time' => '2010-01-02',
           '_id' => 200,
@@ -184,7 +186,54 @@ describe KoboApi::Process do
         expect(sample.field_data_project_id).to eq(project_id)
         expect(sample.collection_date).to eq('2010-01-01')
         expect(sample.submission_date).to eq('2010-01-02')
-        expect(sample.location).to eq('location')
+        expect(sample.location).to eq('location location2')
+        expect(sample.status_cd).to eq('submitted')
+        expect(sample.barcode).to eq('K2-LB-S2')
+        expect(sample.latitude).to eq(90)
+        expect(sample.longitude).to eq(40)
+        expect(sample.altitude).to eq(10)
+        expect(sample.gps_precision).to eq(0)
+        expect(sample.substrate).to eq(:soil)
+        expect(sample.field_notes).to eq('notes notes2')
+        expect(sample.kobo_data).to eq(data)
+      end
+    end
+
+    context 'when incoming data has one sample V2' do
+      let(:kobo_id) { 1 }
+      let(:data) do
+        {
+          'What_is_your_kit_number_e_g_K0021' => 'K2',
+          'Which_location_lette_codes_LA_LB_or_LC' => 'LB',
+          'You_re_at_your_first_r_barcodes_S1_or_S2' => 'S2',
+          'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
+          'What_type_of_substrate_did_you' => 'soil',
+          '_Optional_Regarding_rns_to_share_with_us' => 'notes',
+          'Where_are_you_A_UC_serve_or_in_Yosemite' => 'location',
+          'Location' => 'location2',
+          '_optional_Describe_ou_are_sampling_from' => 'habitat',
+          '_optional_What_dept_re_your_samples_from' => 'depth',
+          'Choose_from_common_environment' => 'features',
+          'If_other_describe_t_nvironmental_feature' => 'features2',
+          'Describe_the_environ_tions_from_this_list' => 'settings',
+          'Enter_the_sampling_date_and_time' => '2010-01-01',
+          '_submission_time' => '2010-01-02',
+          '_id' => 200,
+          '_attachments' => [
+            { 'filename' => 'photo/c.jpg' }
+          ]
+        }
+      end
+
+      it 'creates a sample with incoming data' do
+        expect { subject.save_sample_data(project_id, kobo_id, data) }
+          .to change { Sample.count }.by(1)
+
+        sample = Sample.first
+        expect(sample.field_data_project_id).to eq(project_id)
+        expect(sample.collection_date).to eq('2010-01-01')
+        expect(sample.submission_date).to eq('2010-01-02')
+        expect(sample.location).to eq('location location2')
         expect(sample.status_cd).to eq('submitted')
         expect(sample.barcode).to eq('K2-LB-S2')
         expect(sample.latitude).to eq(90)
@@ -193,12 +242,16 @@ describe KoboApi::Process do
         expect(sample.gps_precision).to eq(0)
         expect(sample.substrate).to eq(:soil)
         expect(sample.field_notes).to eq('notes')
+        expect(sample.habitat).to eq('habitat')
+        expect(sample.depth).to eq('depth')
+        expect(sample.environmental_features).to eq('features features2')
+        expect(sample.environmental_settings).to eq('settings')
         expect(sample.kobo_data).to eq(data)
       end
     end
 
     context 'when incoming data has multiple samples' do
-      let(:kobo_id) { KoboApi::Process::MULTI_SAMPLE_PROJECTS.first }
+      let(:kobo_id) { FieldDataProject::MULTI_SAMPLE_PROJECTS.first }
 
       let(:data) do
         {
