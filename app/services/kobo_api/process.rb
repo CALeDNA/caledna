@@ -3,8 +3,6 @@
 module KoboApi
   # rubocop:disable Metrics/ClassLength
   class Process
-    MULTI_SAMPLE_PROJECTS = [95_481, 87_534, 95_664].freeze
-
     def import_projects(hash_payload)
       results = hash_payload.map do |project_data|
         next if project_ids.include?(project_data['id'])
@@ -35,10 +33,13 @@ module KoboApi
     end
 
     def save_sample_data(field_data_project_id, kobo_id, hash_payload)
-      if MULTI_SAMPLE_PROJECTS.include?(kobo_id)
+      case kobo_id
+      when 95_481, 87_534, 95_664, 83_937
         process_multi_samples(field_data_project_id, hash_payload)
+      when 136_577, 130_560, 138_676, 170_620
+        process_single_sample_v1(field_data_project_id, hash_payload)
       else
-        process_single_sample(field_data_project_id, hash_payload)
+        process_single_sample_v2(field_data_project_id, hash_payload)
       end
     end
 
@@ -81,7 +82,7 @@ module KoboApi
       ]
     end
 
-    def process_single_sample(field_data_project_id, hash_payload)
+    def process_single_sample_v1(field_data_project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
       kit_number = clean_kit_number(data.What_is_your_kit_number_e_g_K0021)
       location_letter = data.Which_location_lette_codes_LA_LB_or_LC.try(:upcase)
@@ -89,9 +90,41 @@ module KoboApi
       data.barcode = "#{kit_number}-#{location_letter}-#{site_number}"
       data.gps = data.Get_the_GPS_Location_e_this_more_accurate
       data.substrate = data.What_type_of_substrate_did_you
-      data.field_notes = data.Notes_on_recent_mana_the_sample_location
-      data.location = data.Where_are_you_A_UC_serve_or_in_Yosemite
+      data.field_notes = [
+        data.Notes_on_recent_mana_the_sample_location,
+        data._Optional_Regarding_rns_to_share_with_us
+      ].compact.join(' ')
+      data.location = [
+        data.Where_are_you_A_UC_serve_or_in_Yosemite,
+        data.Location
+      ].compact.join(' ')
       data.field_data_project_id = field_data_project_id
+
+      sample = save_sample(data, hash_payload)
+      save_photos(sample.id, hash_payload)
+    end
+
+    def process_single_sample_v2(field_data_project_id, hash_payload)
+      data = OpenStruct.new(hash_payload)
+      kit_number = clean_kit_number(data.What_is_your_kit_number_e_g_K0021)
+      location_letter = data.Which_location_lette_codes_LA_LB_or_LC.try(:upcase)
+      site_number = data.You_re_at_your_first_r_barcodes_S1_or_S2.try(:upcase)
+      data.barcode = "#{kit_number}-#{location_letter}-#{site_number}"
+      data.gps = data.Get_the_GPS_Location_e_this_more_accurate
+      data.substrate = data.What_type_of_substrate_did_you
+      data.field_notes = data._Optional_Regarding_rns_to_share_with_us
+      data.location = [
+        data.Where_are_you_A_UC_serve_or_in_Yosemite,
+        data.Location
+      ].compact.join(' ')
+      data.field_data_project_id = field_data_project_id
+      data.habitat = data._optional_Describe_ou_are_sampling_from
+      data.depth = data._optional_What_dept_re_your_samples_from
+      data.environmental_features = [
+        data.Choose_from_common_environment,
+        data.If_other_describe_t_nvironmental_feature
+      ].compact.join(' ')
+      data.environmental_settings = data.Describe_the_environ_tions_from_this_list
 
       sample = save_sample(data, hash_payload)
       save_photos(sample.id, hash_payload)
@@ -141,7 +174,11 @@ module KoboApi
         altitude: data.gps.split.third,
         gps_precision: data.gps.split.fourth,
         substrate: data.substrate,
-        field_notes: data.field_notes
+        field_notes: data.field_notes,
+        habitat: data.habitat,
+        depth: data.depth,
+        environmental_features: data.environmental_features,
+        environmental_settings: data.environmental_settings
       }
 
       if non_kobo_barcodes.include?(data.barcode)
@@ -177,10 +214,18 @@ module KoboApi
 end
 
 # PROJECT = {
-#   '138676': ['CALeDNA mountains', 'SINGLE_SAMPLE_FIELDS_A', '24 records'],
-#   '130560': ['Sedgwick', 'SINGLE_SAMPLE_FIELDS_A', '173 records'],
-#   '136577': ['CALeDNA coastal', 'SINGLE_SAMPLE_FIELDS_A', '86 records'],
-#   '95481': ['CALeDNA_test20170418', 'MULTI_SAMPLE_FIELDS_A', '5 records'],
-#   '87534': ['Welcome to CALeDNA!', 'MULTI_SAMPLE_FIELDS_A', '50 records'],
-#   '95664': ['CALeDNA_test20170419', 'MULTI_SAMPLE_FIELDS_A', '40 records']
+#   '98565': ['Yosemite', '?', '0 records'],
+#   '154164': ['Mojave_CALeDNA / CALeDNA Mojave Bioblitz 1', '?', '0 records'],
+
+#   '95481': ['CALeDNA_test20170418 / CALeDNA Coastal Bioblitz 1', 'MULTI_SAMPLE_FIELDS_A', '5 records'],
+#   '87534': ['Welcome to CALeDNA! / CALeDNA Spring Bioblitz 1', 'MULTI_SAMPLE_FIELDS_A', '50 records'],
+#   '95664': ['CALeDNA_test20170419 / CALeDNA Bioblitz Spring and Fall 1', 'MULTI_SAMPLE_FIELDS_A', '40 records'],
+#   '83937': ['CALeDNA_iOS / Pillar_Point_1', 'MULTI_SAMPLE_FIELDS_A', '12 records'],
+
+#   '138676': ['CALeDNA mountains / CALeDNA Mountain Bioblitz 1', 'SINGLE_SAMPLE_FIELDS_v1', '24 records'],
+#   '130560': ['Sedgwick / CALeDNA Fall Bioblitz 1', 'SINGLE_SAMPLE_FIELDS_v1', '173 records'],
+#   '136577': ['CALeDNA coastal / CALeDNA Coastal Bioblitz 2', 'SINGLE_SAMPLE_FIELDS_v1', '86 records'],
+#   '170620': ['younger lagoon', 'SINGLE_SAMPLE_FIELDS_v1', '86 records'],
+
+#   '168570': ['CALeDNA 2018', 'MULTI_SAMPLE_FIELDS_v2', '40 records'],
 # }

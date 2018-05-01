@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180424144423) do
+ActiveRecord::Schema.define(version: 20180501145311) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20180424144423) do
     t.datetime "updated_at",         default: '2018-04-23 16:12:39',                              null: false
     t.boolean  "exact_gbif_match",   default: false
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
+    t.index ["original_taxonomy"], name: "cal_taxa_original_taxonomy_idx", unique: true, using: :btree
   end
 
   create_table "extraction_types", force: :cascade do |t|
@@ -231,10 +232,10 @@ ActiveRecord::Schema.define(version: 20180424144423) do
     t.string   "barcode"
     t.jsonb    "kobo_data"
     t.text     "field_notes"
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.datetime "collection_date"
-    t.string   "status_cd",             default: "submitted"
+    t.string   "status_cd",              default: "submitted"
     t.string   "substrate_cd"
     t.string   "ecosystem_category_cd"
     t.string   "alt_id"
@@ -243,6 +244,10 @@ ActiveRecord::Schema.define(version: 20180424144423) do
     t.string   "location"
     t.decimal  "elevatr_altitude"
     t.text     "director_notes"
+    t.string   "habitat"
+    t.string   "depth"
+    t.string   "environmental_features"
+    t.string   "environmental_settings"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end
