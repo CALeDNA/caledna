@@ -4,7 +4,10 @@ class FieldDataProjectsController < ApplicationController
   include PaginatedSamples
 
   def index
-    @projects = FieldDataProject.order(:name).page params[:page]
+    @projects =
+      FieldDataProject
+      .where('id IN (SELECT DISTINCT(field_data_project_id) from samples)')
+      .order(:name).page params[:page]
   end
 
   def show
