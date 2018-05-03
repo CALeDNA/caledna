@@ -48,12 +48,13 @@
 
 <div class="row">
   <div class="col col-md-6">
-    <h3><%= @sample.asvs_count %> Organisms from ASVs</h3>
+    <% unless @sample.asvs_count.zero? %>
+      <h3><%= @sample.asvs_count %> Organisms from ASVs</h3>
 
-    <% @sample.extractions.each do |extraction| %>
-      <canvas id="kingdom-chart-<%= extraction.id %>" width="400" height="400"></canvas>
+      <% @sample.extractions.each do |extraction| %>
+        <canvas id="kingdom-chart-<%= extraction.id %>" width="400" height="400"></canvas>
+      <% end %>
     <% end %>
-
   </div>
   <div class="col col-md-6">
   </div>

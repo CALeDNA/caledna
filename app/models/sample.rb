@@ -37,7 +37,7 @@ class Sample < ApplicationRecord
   end
 
   def asvs_count
-    return nil if extractions.last.nil?
+    return 0 if extractions.last.nil?
 
     extractions.sum { |e| e.asvs.count }
   end

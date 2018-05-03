@@ -6,18 +6,27 @@
 
 <ul class="nav nav-tabs" role="tablist">
   <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
-  <li role="presentation"><a href="#organisms" aria-controls="organisms" role="tab" data-toggle="tab">All Organisms</a></li>
-  <li role="presentation"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Labwork Details</a></li>
+  <% unless @sample.asvs_count.zero? %>
+    <li role="presentation"><a href="#organisms" aria-controls="organisms" role="tab" data-toggle="tab">All Organisms</a></li>
+  <% end %>
+  <% if @sample.extractions.first && @sample.extractions.first.local_fastq_storage_url.present? %>
+    <li role="presentation"><a href="#details" aria-controls="details" role="tab" data-toggle="tab">Labwork Details</a></li>
+  <% end %>
 </ul>
 
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="overview">
     <%= render partial: "overview", locals: { sample: @sample } %>
   </div>
-  <div role="tabpanel" class="tab-pane" id="organisms">
-    <%= render partial: "organisms", locals: { sample: @sample } %>
-  </div>
-  <div role="tabpanel" class="tab-pane" id="details">
-    <%= render partial: "details", locals: { sample: @sample } %>
-  </div>
+  <% unless @sample.asvs_count.zero? %>
+    <div role="tabpanel" class="tab-pane" id="organisms">
+      <%= render partial: "organisms", locals: { sample: @sample } %>
+    </div>
+  <% end %>
+
+  <% if @sample.extractions.first && @sample.extractions.first.local_fastq_storage_url.present? %>
+    <div role="tabpanel" class="tab-pane" id="details">
+      <%= render partial: "labwork_details", locals: { sample: @sample } %>
+    </div>
+  <% end %>
 </div>

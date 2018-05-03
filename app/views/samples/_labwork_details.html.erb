@@ -7,12 +7,6 @@
     <td>Barcode</td>
     <td><%= sample.barcode %></td>
   </tr>
-  <tr>
-    <td>Lat/Long</td>
-    <td>
-      <%= sample.latitude %>, <%= sample.longitude %>
-    </td>
-  </tr>
 
   <% sample.extractions.each do |extraction| %>
    <% if sample.extractions.length > 1%>
