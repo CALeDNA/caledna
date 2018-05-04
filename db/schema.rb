@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180501145311) do
+ActiveRecord::Schema.define(version: 20180504031351) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,7 +51,6 @@ ActiveRecord::Schema.define(version: 20180501145311) do
     t.datetime "updated_at",         default: '2018-04-23 16:12:39',                              null: false
     t.boolean  "exact_gbif_match",   default: false
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
-    t.index ["original_taxonomy"], name: "cal_taxa_original_taxonomy_idx", unique: true, using: :btree
   end
 
   create_table "extraction_types", force: :cascade do |t|
@@ -230,7 +229,7 @@ ActiveRecord::Schema.define(version: 20180501145311) do
     t.decimal  "longitude"
     t.datetime "submission_date"
     t.string   "barcode"
-    t.jsonb    "kobo_data"
+    t.jsonb    "kobo_data",              default: "{}"
     t.text     "field_notes"
     t.datetime "created_at",                                   null: false
     t.datetime "updated_at",                                   null: false
