@@ -1,0 +1,92 @@
+<table class="table">
+  <tr>
+    <td>Project</td>
+    <td><%= link_to sample.field_data_project.name, field_data_project_path(sample.field_data_project) %></td>
+  </tr>
+  <tr>
+    <td>Barcode</td>
+    <td><%= sample.barcode %></td>
+  </tr>
+  <tr>
+    <td>Lat/Long</td>
+    <td><%= sample.latitude %>, <%= sample.longitude %></td>
+  </tr>
+  <tr>
+    <td>Altitude</td>
+    <td><%= sample.altitude %></td>
+  </tr>
+  <tr>
+    <td>GPS Precision</td>
+    <td><%= sample.gps_precision %></td>
+  </tr>
+    <tr>
+    <td>location</td>
+    <td><%= sample.location %></td>
+  </tr>
+  <tr>
+    <td>Collection Date</td>
+    <td><%= sample.collection_date %></td>
+  </tr>
+  <tr>
+    <td>Submission Date</td>
+    <td><%= sample.submission_date %></td>
+  </tr>
+  <tr>
+    <td>Field Notes</td>
+    <td><%= sample.field_notes %></td>
+  </tr>
+  <tr>
+    <td>Substrate</td>
+    <td><%= sample.substrate_cd %></td>
+  </tr>
+  <% if sample.field_data_project.single_sample_v2_form? %>
+    <tr>
+      <td>Ecosystem Category</td>
+      <td><%= sample.ecosystem_category_cd %></td>
+    </tr>
+    <tr>
+      <td>Habitat</td>
+      <td><%= sample.habitat_display %></td>
+    </tr>
+    <tr>
+      <td>Depth of Sample</td>
+      <td><%= sample.depth_display %></td>
+    </tr>
+    <tr>
+      <td>Environmental Features</td>
+      <td><%= sample.environmental_features_display %></td>
+    </tr>
+    <tr>
+      <td>Environmental Settings</td>
+      <td><%= sample.environmental_settings_display %></td>
+    </tr>
+  <% end %>
+  <tr>
+    <td>Soil Meter: Temperature Celsius</td>
+    <td><%= sample.kobo_data['Temperature_Celsius'] %></td>
+  </tr>
+  <tr>
+    <td>Soil Meter: PH</td>
+    <td><%= sample.ph_display %></td>
+  </tr>
+  <tr>
+    <td>Soil Meter: Moisture</td>
+    <td><%= sample.moisture_display %></td>
+  </tr>
+  <tr>
+    <td>Soil Meter: Light</td>
+    <td><%= sample.light_display %></td>
+  </tr>
+  <tr>
+    <td>Purple Meter: Temperature Celsius</td>
+    <td><%= sample.kobo_data['Temperature_Celsius_001'] %></td>
+  </tr>
+  <tr>
+    <td>Purple Meter: Total Dissolved_Solids TDS</td>
+    <td><%= sample.kobo_data['Total_Dissolved_Solids_TDS'] %></td>
+  </tr>
+  <tr>
+    <td>Yellow Meter: PH</td>
+    <td><%= sample.kobo_data['Record_pH'] %></td>
+  </tr>
+</table>
