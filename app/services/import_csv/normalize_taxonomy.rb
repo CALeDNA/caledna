@@ -7,10 +7,11 @@ module ImportCsv
     include CsvUtils
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def import_csv(file)
       missing_taxonomy = 0
       delimiter = delimiter_detector(file)
-
+      # rubocop:disable Metrics/BlockLength
       CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
         taxonomy_string = row[row.headers.first]
         results = find_taxon_from_string(taxonomy_string)
@@ -40,6 +41,8 @@ module ImportCsv
             taxonID: results[:taxonID]
           }
         end
+        # rubocop:enable Metrics/BlockLength
+
         ImportCsvCreateCalTaxonJob.perform_later(create_data)
       end
 
@@ -52,5 +55,6 @@ module ImportCsv
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   end
 end

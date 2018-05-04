@@ -207,7 +207,6 @@ class Taxon < ApplicationRecord
 
   def gbif_record
     response = JSON.parse(gbif_media.body)
-    debugger
     # return if response.first['error'].present?
     @gbif_record ||= response['results'].last
   end

@@ -124,7 +124,8 @@ module KoboApi
         data.Choose_from_common_environment,
         data.If_other_describe_t_nvironmental_feature
       ].compact.join(' ')
-      data.environmental_settings = data.Describe_the_environ_tions_from_this_list
+      data.environmental_settings =
+        data.Describe_the_environ_tions_from_this_list
 
       sample = save_sample(data, hash_payload)
       save_photos(sample.id, hash_payload)
@@ -217,14 +218,21 @@ end
 #   '98565': ['Yosemite', '?', '0 records'],
 #   '154164': ['Mojave_CALeDNA / CALeDNA Mojave Bioblitz 1', '?', '0 records'],
 
-#   '95481': ['CALeDNA_test20170418 / CALeDNA Coastal Bioblitz 1', 'MULTI_SAMPLE_FIELDS_A', '5 records'],
-#   '87534': ['Welcome to CALeDNA! / CALeDNA Spring Bioblitz 1', 'MULTI_SAMPLE_FIELDS_A', '50 records'],
-#   '95664': ['CALeDNA_test20170419 / CALeDNA Bioblitz Spring and Fall 1', 'MULTI_SAMPLE_FIELDS_A', '40 records'],
-#   '83937': ['CALeDNA_iOS / Pillar_Point_1', 'MULTI_SAMPLE_FIELDS_A', '12 records'],
+#   '95481': ['CALeDNA_test20170418 / CALeDNA Coastal Bioblitz 1',
+#   'MULTI_SAMPLE_FIELDS_A', '5 records'],
+#   '87534': ['Welcome to CALeDNA! / CALeDNA Spring Bioblitz 1',
+#   'MULTI_SAMPLE_FIELDS_A', '50 records'],
+#   '95664': ['CALeDNA_test20170419 / CALeDNA Bioblitz Spring and Fall 1',
+#   'MULTI_SAMPLE_FIELDS_A', '40 records'],
+#   '83937': ['CALeDNA_iOS / Pillar_Point_1', 'MULTI_SAMPLE_FIELDS_A',
+#   '12 records'],
 
-#   '138676': ['CALeDNA mountains / CALeDNA Mountain Bioblitz 1', 'SINGLE_SAMPLE_FIELDS_v1', '24 records'],
-#   '130560': ['Sedgwick / CALeDNA Fall Bioblitz 1', 'SINGLE_SAMPLE_FIELDS_v1', '173 records'],
-#   '136577': ['CALeDNA coastal / CALeDNA Coastal Bioblitz 2', 'SINGLE_SAMPLE_FIELDS_v1', '86 records'],
+#   '138676': ['CALeDNA mountains / CALeDNA Mountain Bioblitz 1',
+#   'SINGLE_SAMPLE_FIELDS_v1', '24 records'],
+#   '130560': ['Sedgwick / CALeDNA Fall Bioblitz 1',
+#   'SINGLE_SAMPLE_FIELDS_v1', '173 records'],
+#   '136577': ['CALeDNA coastal / CALeDNA Coastal Bioblitz 2',
+#   'SINGLE_SAMPLE_FIELDS_v1', '86 records'],
 #   '170620': ['younger lagoon', 'SINGLE_SAMPLE_FIELDS_v1', '86 records'],
 
 #   '168570': ['CALeDNA 2018', 'MULTI_SAMPLE_FIELDS_v2', '40 records'],
