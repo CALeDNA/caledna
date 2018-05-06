@@ -9,5 +9,10 @@ namespace :ncbi do
     puts 'insert canonical name...'
     insert_canonical_name
   end
+
+  desc 'update lineages'
+  task update_lineages: :environment do
+    puts 'update lineages...'
+    update_lineages
   end
 end
