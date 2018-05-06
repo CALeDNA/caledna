@@ -168,6 +168,7 @@ ActiveRecord::Schema.define(version: 20180505233251) do
     t.text    "name"
     t.string  "unique_name", limit: 255
     t.string  "name_class",  limit: 255
+    t.index ["name_class"], name: "index_ncbi_names_on_name_class", using: :btree
     t.index ["taxon_id"], name: "ncbi_names_taxonid_idx", using: :btree
   end
 
@@ -184,6 +185,7 @@ ActiveRecord::Schema.define(version: 20180505233251) do
     t.boolean "genbank_hidden"
     t.boolean "hidden_subtree_root"
     t.text    "comments"
+    t.string  "canonical_name"
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
@@ -316,6 +318,7 @@ ActiveRecord::Schema.define(version: 20180505233251) do
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
     t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank", using: :btree
+    t.index ["className"], name: "index_taxa_on_classname", using: :btree
     t.index ["family"], name: "index_taxa_on_family", using: :btree
     t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
