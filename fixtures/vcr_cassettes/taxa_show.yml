@@ -1,0 +1,138 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://api.inaturalist.org/v1/taxa?q=abc
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Methods
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS, PUT, DELETE
+      Cache-Control:
+      - public, max-age=300
+      X-Content-Type-Options:
+      - nosniff
+      Content-Type:
+      - application/json; charset=utf-8
+      Etag:
+      - W/"1fab-cv4nMUX8dS4nZIeDdvEynURYWYo"
+      Vary:
+      - Accept-Encoding
+      Date:
+      - Sun, 06 May 2018 16:00:57 GMT
+      Age:
+      - '143'
+      X-Cache:
+      - HIT
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1690'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: '{"total_results":12,"page":1,"per_page":30,"results":[{"observations_count":6,"taxon_schemes_count":1,"ancestry":"48460/1/2/355675/40151/41573/41636/41637/41641","is_active":true,"wikipedia_url":"http://en.wikipedia.org/wiki/ABC_Islands_bear","current_synonymous_taxon_ids":null,"iconic_taxon_id":40151,"rank_level":5,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":41641,"name":"Ursus
+        arctos sitkensis","rank":"subspecies","extinct":false,"id":147159,"default_photo":{"square_url":"https://static.inaturalist.org/photos/1491897/square.jpg?1421556745","attribution":"(c)
+        Donna Pomeroy, some rights reserved (CC BY-NC)","flags":[],"medium_url":"https://static.inaturalist.org/photos/1491897/medium.jpg?1421556745","id":1491897,"license_code":"cc-by-nc","original_dimensions":{"width":2048,"height":1365},"url":"https://static.inaturalist.org/photos/1491897/square.jpg?1421556745"},"ancestor_ids":[48460,1,2,355675,40151,41573,41636,41637,41641,147159],"matched_term":"ABC
+        Islands Brown Bear","iconic_taxon_name":"Mammalia","preferred_common_name":"Coastal
+        Grizzly Bear"},{"observations_count":2,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/47181/48064/55869/55859","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":5,"taxon_changes_count":6,"atlas_id":null,"complete_species_count":null,"parent_id":55859,"name":"Cyclamen
+        coum caucasicum","rank":"subspecies","extinct":false,"id":55864,"default_photo":{"square_url":"https://static.inaturalist.org/photos/92723/square.jpg","attribution":"(c)
+        ttadevosyan, some rights reserved (CC BY), uploaded by Tigran Tadevosyan","flags":[],"medium_url":"https://static.inaturalist.org/photos/92723/medium.jpg","id":92723,"license_code":"cc-by","original_dimensions":{"width":1033,"height":795},"url":"https://static.inaturalist.org/photos/92723/square.jpg"},"ancestor_ids":[48460,47126,211194,47125,47124,47181,48064,55869,55859,55864],"matched_term":"Cyclamen
+        abchasicum","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/47366/48567/60001","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":60001,"name":"Dianthus
+        abchasicus","rank":"species","extinct":false,"id":60000,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,47366,48567,60001,60000],"matched_term":"Dianthus
+        abchasicus","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/47126/211194/47125/47124/71289/58227/58228","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":58228,"name":"Paeonia
+        abchasica","rank":"species","extinct":false,"id":410855,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,71289,58227,58228,410855],"matched_term":"Paeonia
+        abchasica","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/47123/47122/507502/548591/47407","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":47407,"name":"Genista
+        abchasica","rank":"species","extinct":false,"id":327611,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,47123,47122,507502,548591,47407,327611],"matched_term":"Genista
+        abchasica","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/47126/211194/47125/47124/47605/47604/632790/461542/439301","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":439301,"name":"Kemulariella
+        abchasica","rank":"species","extinct":false,"id":439302,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,47605,47604,632790,461542,439301,439302],"matched_term":"Kemulariella
+        abchasica","iconic_taxon_name":"Plantae","conservation_status":{"status_name":"vulnerable","iucn":30,"authority":"IUCN
+        Red List","geoprivacy":"obscured","source_id":9164,"place_id":null,"status":"vu"}},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/47126/211194/47125/47124/71275/47204/446658","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":446658,"name":"Callothlaspi
+        abchasicum","rank":"species","extinct":false,"id":438110,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,71275,47204,446658,438110],"matched_term":"Callothlaspi
+        abchasicum","iconic_taxon_name":"Plantae","conservation_status":{"status_name":"vulnerable","iucn":30,"authority":"IUCN
+        Red List","geoprivacy":"obscured","source_id":9164,"place_id":null,"status":"vu"}},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/1/2/355675/26036/26172/85552/35360/35361/35387","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":26036,"rank_level":5,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":35387,"name":"Darevskia
+        derjugini abchasica","rank":"subspecies","extinct":false,"id":115593,"default_photo":null,"ancestor_ids":[48460,1,2,355675,26036,26172,85552,35360,35361,35387,115593],"matched_term":"Darevskia
+        derjugini abchasica","iconic_taxon_name":"Reptilia"},{"observations_count":0,"taxon_schemes_count":4,"ancestry":"48460/1/47115/47114/246139/85525/533748/82220/86922","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47115,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":86922,"name":"Belgrandiella
+        abchasica","rank":"species","extinct":false,"id":150148,"default_photo":null,"ancestor_ids":[48460,1,47115,47114,246139,85525,533748,82220,86922,150148],"matched_term":"Belgrandiella
+        abchasica","iconic_taxon_name":"Mollusca"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/48232/48231/48230","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":48230,"name":"Ranunculus
+        abchasicus","rank":"species","extinct":false,"id":117494,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,48232,48231,48230,117494],"matched_term":"Ranunculus
+        abchasicus","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/1/47120/245097/47119/47367/526560/354553/245376/527014/527018","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47119,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":527018,"name":"Buresiolla
+        abchasica","rank":"species","extinct":false,"id":527133,"default_photo":null,"ancestor_ids":[48460,1,47120,245097,47119,47367,526560,354553,245376,527014,527018,527133],"matched_term":"Buresiolla
+        abchasica","iconic_taxon_name":"Arachnida"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/1/47120/372739/47158/184884/47208/71130/372852/176269/51146/154472/373660/373854/61902","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47158,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":61902,"name":"Chrysolina
+        abchasica","rank":"species","extinct":false,"id":496286,"default_photo":null,"ancestor_ids":[48460,1,47120,372739,47158,184884,47208,71130,372852,176269,51146,154472,373660,373854,61902,496286],"matched_term":"Chrysolina
+        abchasica","iconic_taxon_name":"Insecta"}]}'
+    http_version: 
+  recorded_at: Sun, 06 May 2018 16:03:19 GMT
+- request:
+    method: get
+    uri: http://eol.org/api/search/abc.json?exact=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 06 May 2018 16:03:20 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Status:
+      - 200 OK
+      X-Ua-Compatible:
+      - IE=Edge,chrome=1
+      Etag:
+      - '"680789d112bac3b8a0e94196c54f58b4"'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 462f7340dae2b42d7cf287b2059844f2
+      X-Runtime:
+      - '0.010168'
+      X-Rack-Cache:
+      - miss
+      Vary:
+      - Origin
+      Age:
+      - '0'
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '64'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"totalResults":0,"startIndex":1,"itemsPerPage":30,"results":[]}'
+    http_version: 
+  recorded_at: Sun, 06 May 2018 16:03:20 GMT
+recorded_with: VCR 4.0.0

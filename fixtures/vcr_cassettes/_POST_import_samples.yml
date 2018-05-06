@@ -1,0 +1,71 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://kc.kobotoolbox.org/api/v1/data/10
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Token 8c876c4caafefb1bbc7940958a085e4c326a76af
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Date:
+      - Sun, 06 May 2018 16:09:03 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '194'
+      Connection:
+      - keep-alive
+      Server:
+      - nginx/1.10.3 (Ubuntu)
+      Location:
+      - https://kc.kobotoolbox.org/api/v1/data/10
+    body:
+      encoding: UTF-8
+      string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n<body
+        bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\n<hr><center>nginx/1.10.3
+        (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+    http_version: 
+  recorded_at: Sun, 06 May 2018 16:09:03 GMT
+- request:
+    method: get
+    uri: https://kc.kobotoolbox.org/api/v1/data/10
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Authorization:
+      - Token 8c876c4caafefb1bbc7940958a085e4c326a76af
+  response:
+    status:
+      code: 404
+      message: NOT FOUND
+    headers:
+      Date:
+      - Sun, 06 May 2018 16:09:03 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - nginx/1.10.3 (Ubuntu)
+      Vary:
+      - Accept, Accept-Language, Cookie
+      Content-Language:
+      - en
+      Allow:
+      - GET, POST, PATCH, HEAD, OPTIONS
+    body:
+      encoding: UTF-8
+      string: '{"detail":"Not found."}'
+    http_version: 
+  recorded_at: Sun, 06 May 2018 16:09:04 GMT
+recorded_with: VCR 4.0.0

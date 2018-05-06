@@ -97,13 +97,15 @@ describe Admin::Labwork::KoboController do
     end
 
     it 'displays flash message if imported records are not saved' do
-      stub_kobo_connect
-      allow(KoboApi::Process)
-        .to receive_message_chain(:new, :import_samples).and_return(false)
+      VCR.use_cassette '#POST import_samples' do
+        stub_kobo_connect
+        allow(KoboApi::Process)
+          .to receive_message_chain(:new, :import_samples).and_return(false)
 
-      post :import_samples, params: { id: project.id }
+        post :import_samples, params: { id: project.id }
 
-      expect(flash[:error]).to be_present
+        expect(flash[:error]).to be_present
+      end
     end
   end
 end

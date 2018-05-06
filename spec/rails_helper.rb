@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'pundit/rspec'
+require 'vcr'
 
 ENV['RAILS_ENV'] ||= 'test'
 
@@ -37,4 +38,10 @@ Shoulda::Matchers.configure do |config|
     with.test_framework :rspec
     with.library :rails
   end
+end
+
+VCR.configure do |config|
+  config.cassette_library_dir = 'fixtures/vcr_cassettes'
+  # config.allow_http_connections_when_no_cassette = true
+  config.hook_into :webmock
 end

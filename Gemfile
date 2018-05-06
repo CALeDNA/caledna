@@ -68,6 +68,8 @@ group :development, :test do
   gem 'pry-rails', '~> 0.3'
   gem 'rspec-rails', '~> 3.7'
   gem 'rubocop', '~> 0.52'
+  gem 'vcr', '~> 4.0.0'
+  gem 'webmock', '~> 3.4.1'
 end
 
 group :production, :staging do
