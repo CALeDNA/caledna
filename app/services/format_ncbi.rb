@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
 module FormatNcbi
+  def valid_rank?(node)
+    node.rank != 'no rank'
+  end
+
   def update_lineages
     nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
 
     nodes.each do |node|
       node.lineage = []
       node.lineage << [node.taxon_id, node.canonical_name, node.rank]
+      node.hierarchy = { "#{node.rank}": node.taxon_id } if valid_rank?(node)
       node.save
-      update_lineage(node)
+
+      update_lineage_hierarchy(node)
     end
   end
 
@@ -35,18 +41,33 @@ module FormatNcbi
 
   private
 
-  # rubocop:disable Metrics/AbcSize
-  def update_lineage(parent_node)
+  def update_lineage_hierarchy(parent_node)
     child_nodes = NcbiNode.where(parent_taxon_id: parent_node.taxon_id)
     return if child_nodes.blank?
 
     child_nodes.each do |child|
-      child.lineage = [] if child.lineage.blank?
-      parent_node.lineage.each { |n| child.lineage << n }
-      child.lineage << [child.taxon_id, child.canonical_name, child.rank]
+      child = update_lineage(parent_node, child)
+      child = update_hierarchy(parent_node, child)
       child.save
-      update_lineage(child)
+
+      update_lineage_hierarchy(child)
     end
   end
-  # rubocop:enable Metrics/AbcSize
+
+  def update_lineage(parent_node, child)
+    child.lineage = [] if child.lineage.blank?
+    parent_node.lineage.each { |n| child.lineage << n }
+    child.lineage << [child.taxon_id, child.canonical_name, child.rank]
+    child
+  end
+
+  def update_hierarchy(parent_node, child)
+    if valid_rank?(child)
+      child.hierarchy =
+        parent_node.hierarchy.merge("#{child.rank}": child.taxon_id)
+    else
+      child.hierarchy = parent_node.hierarchy
+    end
+    child
+  end
 end
