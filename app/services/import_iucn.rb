@@ -47,6 +47,7 @@ class ImportIucn
   def find_taxon(data)
     rank = find_rank(data)
     canonical_name = form_canonical_name(data)
+    # TODO: decide whether to switch to NcbiNode
     Taxon.where(canonicalName: canonical_name, taxonRank: rank).first
   end
 end

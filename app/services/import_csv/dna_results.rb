@@ -23,7 +23,7 @@ module ImportCsv
 
         taxonomy_string = row[row.headers.first]
         taxon = find_taxon_from_string(taxonomy_string)
-        if taxon.present? && taxon[:taxonID].present?
+        if taxon.present? && taxon[:taxon_id].present?
           create_asvs(row, sample_cells, extractions, taxon)
         else
           missing_taxonomy += 1

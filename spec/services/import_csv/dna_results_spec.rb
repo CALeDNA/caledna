@@ -86,8 +86,12 @@ describe ImportCsv::DnaResults do
 
     context 'when matching taxon does not exist' do
       before(:each) do
-        create(:taxon,
-               kingdom: 'Kingdom', phylum: 'Phylum', taxonRank: 'phylum')
+        create(
+          :ncbi_node,
+          canonical_name: 'Phylum',
+          rank: 'phylum',
+          lineage: [[3, 'Phylum', 'phylum']]
+        )
       end
 
       it 'does not add ImportCsvCreateAsvJob to queue' do
@@ -103,18 +107,32 @@ describe ImportCsv::DnaResults do
 
     context 'when matching taxon does exist' do
       before(:each) do
-        create(:taxon,
-               kingdom: 'Kingdom', phylum: 'Phylum', taxonRank: 'phylum',
-               canonicalName: 'Phylum')
-        create(:taxon,
-               kingdom: 'Kingdom', phylum: 'Phylum', className: 'Class',
-               order: 'Order', family: 'Family', genus: 'Genus',
-               specificEpithet: 'Genus species', taxonRank: 'species',
-               canonicalName: 'Genus species')
-        create(:taxon,
-               kingdom: 'Kingdom', phylum: 'Phylum', className: 'Class',
-               order: 'Order', family: 'Family', genus: 'Genus',
-               taxonRank: 'genus', canonicalName: 'Genus')
+        create(
+          :ncbi_node,
+          canonical_name: 'Genus',
+          rank: 'genus',
+          lineage: [
+            [3, 'Phylum', 'phylum'],
+            [4, 'Class', 'class'],
+            [5, 'Order', 'order'],
+            [6, 'Family', 'family'],
+            [7, 'Genus', 'genus']
+          ]
+        )
+
+        create(
+          :ncbi_node,
+          canonical_name: 'Genus species',
+          rank: 'species',
+          lineage: [
+            [3, 'Phylum', 'phylum'],
+            [4, 'Class', 'class'],
+            [5, 'Order', 'order'],
+            [6, 'Family', 'family'],
+            [7, 'Genus', 'genus'],
+            [8, 'Genius species', 'species']
+          ]
+        )
       end
 
       it 'adds ImportCsvCreateAsvJob to queue' do

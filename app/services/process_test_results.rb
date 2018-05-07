@@ -5,15 +5,19 @@ module ProcessTestResults
   # rubocop:disable Metrics/MethodLength
   def find_taxon_from_string(taxonomy_string)
     rank = get_taxon_rank(taxonomy_string)
-    hierarchy = get_hierarchy(taxonomy_string)
-    taxon = rank && hierarchy ? find_accepted_taxon(hierarchy, rank) : nil
-    string = get_complete_taxon_string(taxonomy_string)
+    hierarchy = get_hierarchy(taxonomy_string, rank)
+
+    raise TaxaError('rank not found') if rank.blank?
+    raise TaxaError('hierarchy not found') if hierarchy.blank?
+
+    taxon = find_exact_taxon(hierarchy, rank) || nil
+    complete_taxonomy = get_complete_taxon_string(taxonomy_string)
     {
       taxon_hierarchy: taxon.try(:hierarchy),
-      taxonID: taxon.try(:taxonID),
+      taxon_id: taxon.try(:taxon_id),
       rank: rank,
       original_hierarchy: hierarchy,
-      complete_taxonomy: string,
+      complete_taxonomy: complete_taxonomy,
       original_taxonomy: taxonomy_string
     }
   end
@@ -22,8 +26,8 @@ module ProcessTestResults
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def get_taxon_rank(string)
-    return if string == 'NA'
-    return if string == ';;;;;'
+    return 'unknown' if string == 'NA'
+    return 'unknown' if string == ';;;;;'
 
     taxa = string.split(';', -1)
     if taxa_present(taxa[5])
@@ -38,10 +42,12 @@ module ProcessTestResults
       'class'
     elsif taxa_present(taxa[0])
       'phylum'
+    else
+      'unknown'
     end
   end
 
-  def get_hierarchy(string)
+  def get_hierarchy(string, rank)
     hierarchy = {}
     return hierarchy if string == 'NA'
     return hierarchy if string == ';;;;;'
@@ -53,28 +59,30 @@ module ProcessTestResults
     hierarchy[:order] = taxa[2] if taxa_present(taxa[2])
     hierarchy[:class] = taxa[1] if taxa_present(taxa[1])
     hierarchy[:phylum] = taxa[0] if taxa_present(taxa[0])
-    hierarchy[:kingdom] = get_kingdom(taxa[0]) if taxa_present(taxa[0])
+
+    taxon = find_partial_taxon(hierarchy, rank)
+
+    kingdom_superkingdom = get_kingdom_superkingdom(taxon)
+    hierarchy[:kingdom] = kingdom_superkingdom[:kingdom]
+    hierarchy[:superkingdom] = kingdom_superkingdom[:superkingdom]
+
     hierarchy
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def find_accepted_taxon(hierarchy, rank)
-    taxon = find_exact_taxon(hierarchy, rank)
-    return if taxon.nil?
-
-    if taxon.acceptedNameUsageID.present?
-      taxon = Taxon.find_by(acceptedNameUsageID: taxon.acceptedNameUsageID)
-    end
-    taxon
-  end
-
-  # NOTE: adds kingdom to taxonomy string since test results don't include
-  # kingdom
+  # NOTE: adds kingdoms to taxonomy string since test results don't include
+  # kingdoms
   def get_complete_taxon_string(string)
-    phylum = string.split(';', -1).first
-    kingdom = get_kingdom(phylum)
-    kingdom.present? ? "#{kingdom};#{string}" : "NA;#{string}"
+    rank = get_taxon_rank(string)
+    hierarchy = get_hierarchy(string, rank)
+
+    kingdom = hierarchy[:kingdom]
+    superkingdom = hierarchy[:superkingdom]
+
+    string = kingdom.present? ? "#{kingdom};#{string}" : ";#{string}"
+    string = superkingdom.present? ? "#{superkingdom};#{string}" : ";#{string}"
+    string
   end
 
   def find_extraction_from_barcode(barcode, extraction_type_id)
@@ -86,7 +94,7 @@ module ProcessTestResults
       .first_or_create
 
     unless extraction.valid?
-      raise ImportError, "Extraction #{barcode} not created"
+      raise TaxaError, "Extraction #{barcode} not created"
     end
     extraction
   end
@@ -102,12 +110,12 @@ module ProcessTestResults
         status_cd: :missing_coordinates,
         field_data_project: FieldDataProject::DEFAULT_PROJECT
       )
-      raise ImportError, "Sample #{barcode} not created" unless sample.valid?
+      raise TaxaError, "Sample #{barcode} not created" unless sample.valid?
 
     elsif samples.all?(&:rejected?) || samples.all?(&:duplicate_barcode?)
-      raise ImportError, "Sample #{barcode} was previously rejected"
+      raise TaxaError, "Sample #{barcode} was previously rejected"
     elsif samples.count == 1
-      sample = samples.first
+      sample = samples.take
 
       unless sample.missing_coordinates?
         sample.update(status_cd: :results_completed)
@@ -117,7 +125,7 @@ module ProcessTestResults
         samples.reject { |s| s.duplicate_barcode? || s.rejected? }
 
       if temp_samples.count > 1
-        raise ImportError, "multiple samples with barcode #{barcode}"
+        raise TaxaError, "multiple samples with barcode #{barcode}"
       end
 
       sample = temp_samples.first
@@ -131,68 +139,139 @@ module ProcessTestResults
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  private
-
-  def get_kingdom(phylum)
-    taxon = Taxon.where(taxonRank: 'phylum', phylum: phylum).first
-    taxon.kingdom if taxon.present?
-  end
-
-  def taxa_present(taxa)
-    taxa.present? &&
-      taxa != 'NA' &&
-      !taxa.start_with?('uncultured') &&
-      !taxa.end_with?('environmental sample') &&
-      !taxa.end_with?('sp.')
-  end
-
   def find_exact_taxon(hierarchy, rank)
-    unique_taxons = %w[family order class phylum kingdom]
+    unique_taxon_names = %w[species order class phylum kingdom superkingdom]
 
-    if unique_taxons.include?(rank)
+    if unique_taxon_names.include?(rank)
       get_unique_taxon(hierarchy, rank)
     elsif rank == 'genus'
       get_genus(hierarchy)
-    else
-      get_species(hierarchy)
+    elsif rank == 'family'
+      get_family(hierarchy)
     end
   end
 
+  def find_partial_taxon(hierarchy, rank)
+    unique_taxon_names = %w[species order class phylum kingdom superkingdom]
+
+    if unique_taxon_names.include?(rank)
+      get_unique_taxon(hierarchy, rank)
+    elsif rank == 'genus'
+      get_genus(hierarchy, partial: true)
+    elsif rank == 'family'
+      get_family(hierarchy)
+    end
+  end
+
+  def get_kingdom_superkingdom(taxon)
+    return {} if taxon.blank?
+    {
+      kingdom: get_kingdom(taxon),
+      superkingdom: get_superkingdom(taxon)
+    }
+  end
+
+  private
+
+  # NOTE: lineage is ["id", "name", "rank"]
+  def get_kingdom(taxon)
+    taxon.lineage.select { |l| l.third == 'kingdom' }.first.try(:second)
+  end
+
+  def get_superkingdom(taxon)
+    taxon.lineage.select { |l| l.third == 'superkingdom' }.first.try(:second)
+  end
+
+  def taxa_present(taxa)
+    taxa.present? && taxa != 'NA'
+  end
+
+  #  NOTE: family names are unique to phylums
   # rubocop:disable Metrics/MethodLength
-  def get_species(hierarchy)
-    Taxon.where(
-      kingdom: hierarchy[:kingdom],
-      canonicalName: hierarchy[:species],
-      taxonRank: 'species'
-    ).or(
-      Taxon.where(
-        kingdom: hierarchy[:kingdom],
-        scientificName: hierarchy[:species],
-        taxonRank: 'species'
-      )
-    ).first
+  def get_family(hierarchy)
+    taxon_name = hierarchy[:family].downcase
+
+    query = NcbiNode.joins(:ncbi_names)
+                    .where("lower(\"name\") = \'#{taxon_name}\'")
+                    .where(rank: 'family')
+
+    if hierarchy[:phylum].present?
+      # NOTE: this code searches nested arrays for name and rank
+      # 20 grabs 20 nested arrays from lineage
+      # [2,3] grabs 2nd item (name) and 3rd item (rank) from each nested array
+      sql = "'{#{hierarchy[:phylum]},phylum}'::text[] <@ lineage[20][2:3]"
+      query = query.where(sql)
+    else
+      sql = "'{phylum}'::text[] <@ lineage[20][2:3]"
+      query = query.where.not(sql)
+    end
+    query.take
   end
   # rubocop:enable Metrics/MethodLength
 
-  def get_genus(hierarchy)
-    Taxon.where(
-      kingdom: hierarchy[:kingdom],
-      genus: hierarchy[:genus],
-      taxonRank: 'genus'
-    ).first
+  #  NOTE: genus names are unique to kingdom, phylum, class, order, family
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  def get_genus(hierarchy, partial = false)
+    taxon_name = hierarchy[:genus].downcase
+
+    query = NcbiNode.joins(:ncbi_names)
+                    .where("lower(\"name\") = \'#{taxon_name}\'")
+                    .where(rank: 'genus')
+
+    if hierarchy[:kingdom].present?
+      sql = "'{#{hierarchy[:kingdom]},kingdom}'::text[] <@ lineage[20][2:3]"
+      query = query.where(sql)
+    elsif partial == false
+      sql = "'{kingdom}'::text[] <@ lineage[20][2:3]"
+      query = query.where.not(sql)
+    end
+
+    if hierarchy[:phylum].present?
+      sql = "'{#{hierarchy[:phylum]},phylum}'::text[] <@ lineage[20][2:3]"
+      query = query.where(sql)
+    else
+      sql = "'{phylum}'::text[] <@ lineage[20][2:3]"
+      query = query.where.not(sql)
+    end
+
+    if hierarchy[:class].present?
+      sql = "'{#{hierarchy[:class]},class}'::text[] <@ lineage[20][2:3]"
+      query = query.where(sql)
+    else
+      sql = "'{class}'::text[] <@ lineage[20][2:3]"
+      query = query.where.not(sql)
+    end
+
+    if hierarchy[:order].present?
+      sql = "'{#{hierarchy[:order]},order}'::text[] <@ lineage[20][2:3]"
+      query = query.where(sql)
+    else
+      sql = "'{order}'::text[] <@ lineage[20][2:3]"
+      query = query.where.not(sql)
+    end
+
+    if hierarchy[:family].present?
+      sql = "'{#{hierarchy[:family]},family}'::text[] <@ lineage[20][2:3]"
+      query = query.where(sql)
+    else
+      sql = "'{family}'::text[] <@ lineage[20][2:3]"
+      query = query.where.not(sql)
+    end
+    query.take
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
   def get_unique_taxon(hierarchy, rank)
-    taxon = if hierarchy[:family]
-              hierarchy[:family]
-            elsif hierarchy[:order]
-              hierarchy[:order]
-            elsif hierarchy[:class]
-              hierarchy[:class]
-            elsif hierarchy[:phylum]
-              hierarchy[:phylum]
-            end
-    Taxon.where(canonicalName: taxon, taxonRank: rank).first
+    taxon_name = hierarchy[rank.to_sym].downcase
+    if taxon_name.include?("'")
+      taxon_name.gsub!("'", "''")
+    end
+
+    # NOTE: ".first" calls order on primary key, ".take" does not
+    NcbiNode.joins(:ncbi_names).where("lower(\"name\") = '#{taxon_name}'")
+            .where(rank: rank).take
   end
 end
 # rubocop:enable Metrics/ModuleLength

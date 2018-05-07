@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180507012855) do
+ActiveRecord::Schema.define(version: 20180510024510) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,8 +47,8 @@ ActiveRecord::Schema.define(version: 20180507012855) do
     t.integer  "taxonID",            default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "complete_taxonomy"
     t.integer  "rank_order"
-    t.datetime "created_at",         default: '2018-05-07 02:05:46',                              null: false
-    t.datetime "updated_at",         default: '2018-05-07 02:05:46',                              null: false
+    t.datetime "created_at",         default: '2018-05-10 11:34:15',                              null: false
+    t.datetime "updated_at",         default: '2018-05-10 11:34:15',                              null: false
     t.boolean  "exact_gbif_match",   default: false
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
@@ -123,8 +123,8 @@ ActiveRecord::Schema.define(version: 20180507012855) do
     t.string   "status_cd"
     t.string   "sum_taxonomy_example"
     t.boolean  "priority_sequencing"
-    t.datetime "created_at",                            default: '2018-05-07 02:05:46', null: false
-    t.datetime "updated_at",                            default: '2018-05-07 02:05:46', null: false
+    t.datetime "created_at",                            default: '2018-05-10 11:34:15', null: false
+    t.datetime "updated_at",                            default: '2018-05-10 11:34:15', null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
@@ -177,6 +177,7 @@ ActiveRecord::Schema.define(version: 20180507012855) do
     t.text    "name"
     t.string  "unique_name", limit: 255
     t.string  "name_class",  limit: 255
+    t.index "lower(name)", name: "index_ncbi_names_on_name", using: :btree
     t.index ["name_class"], name: "index_ncbi_names_on_name_class", using: :btree
     t.index ["taxon_id"], name: "ncbi_names_taxonid_idx", using: :btree
   end
@@ -197,6 +198,7 @@ ActiveRecord::Schema.define(version: 20180507012855) do
     t.string  "canonical_name"
     t.text    "lineage",                                                       array: true
     t.jsonb   "hierarchy",                                        default: {}
+    t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name", using: :btree
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id", using: :btree
     t.index ["rank"], name: "index_ncbi_nodes_on_rank", using: :btree

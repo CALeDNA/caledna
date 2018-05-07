@@ -19,8 +19,7 @@ module ImportCsv
         cal_taxon =
           CalTaxon.find_by(original_taxonomy: results[:original_taxonomy])
         next if cal_taxon.present?
-
-        if results[:taxonID].blank? && results[:rank].present?
+        if results[:taxon_id].blank? && results[:rank].present?
           missing_taxonomy += 1
           create_data = {
             taxonRank: results[:rank],
@@ -30,7 +29,7 @@ module ImportCsv
             normalized: false,
             exact_gbif_match: false
           }
-        elsif results[:taxonID].present? && results[:rank].present?
+        elsif results[:taxon_id].present? && results[:rank].present?
           create_data = {
             taxonRank: results[:rank],
             original_hierarchy: results[:original_hierarchy],
@@ -38,7 +37,7 @@ module ImportCsv
             complete_taxonomy: results[:complete_taxonomy],
             normalized: true,
             exact_gbif_match: true,
-            taxonID: results[:taxonID]
+            taxonID: results[:taxon_id]
           }
         end
         # rubocop:enable Metrics/BlockLength
