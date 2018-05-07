@@ -15,4 +15,10 @@ namespace :ncbi do
     puts 'update lineages...'
     update_lineages
   end
+
+  desc 'create citations nodes'
+  task create_citations_nodes: :environment do
+    puts 'create citations nodes...'
+    create_citations_nodes
+  end
 end

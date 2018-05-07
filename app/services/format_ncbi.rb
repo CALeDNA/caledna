@@ -20,6 +20,19 @@ module FormatNcbi
     end
   end
 
+  def create_citations_nodes
+    NcbiCitation.find_each do |cite|
+      list = cite.taxon_id_list
+      next if list.blank?
+
+      taxon_ids = list.split(' ')
+      taxon_ids.each do |id|
+        NcbiCitationNode
+          .create(ncbi_node_id: id.to_i, ncbi_citation_id: cite.id)
+      end
+    end
+  end
+
   private
 
   # rubocop:disable Metrics/AbcSize

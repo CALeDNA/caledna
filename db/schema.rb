@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180506013932) do
+ActiveRecord::Schema.define(version: 20180506194735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,8 +47,8 @@ ActiveRecord::Schema.define(version: 20180506013932) do
     t.integer  "taxonID",            default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "complete_taxonomy"
     t.integer  "rank_order"
-    t.datetime "created_at",         default: '2018-05-06 10:12:02',                              null: false
-    t.datetime "updated_at",         default: '2018-05-06 10:12:02',                              null: false
+    t.datetime "created_at",         default: '2018-05-06 22:07:14',                              null: false
+    t.datetime "updated_at",         default: '2018-05-06 22:07:14',                              null: false
     t.boolean  "exact_gbif_match",   default: false
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
   end
@@ -123,8 +123,8 @@ ActiveRecord::Schema.define(version: 20180506013932) do
     t.string   "status_cd"
     t.string   "sum_taxonomy_example"
     t.boolean  "priority_sequencing"
-    t.datetime "created_at",                            default: '2018-05-06 10:12:02', null: false
-    t.datetime "updated_at",                            default: '2018-05-06 10:12:02', null: false
+    t.datetime "created_at",                            default: '2018-05-06 22:07:14', null: false
+    t.datetime "updated_at",                            default: '2018-05-06 22:07:14', null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
@@ -152,6 +152,15 @@ ActiveRecord::Schema.define(version: 20180506013932) do
     t.datetime "updated_at",         null: false
     t.index ["highlightable_id"], name: "index_highlights_on_highlightable_id", using: :btree
     t.index ["highlightable_type"], name: "index_highlights_on_highlightable_type", using: :btree
+  end
+
+  create_table "ncbi_citation_nodes", force: :cascade do |t|
+    t.integer  "ncbi_citation_id"
+    t.integer  "ncbi_node_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["ncbi_citation_id"], name: "index_ncbi_citation_nodes_on_ncbi_citation_id", using: :btree
+    t.index ["ncbi_node_id"], name: "index_ncbi_citation_nodes_on_ncbi_node_id", using: :btree
   end
 
   create_table "ncbi_citations", id: :integer, force: :cascade do |t|

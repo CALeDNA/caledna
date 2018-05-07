@@ -70,4 +70,27 @@ describe FormatNcbi do
       expect(node1.reload.lineage).to eq(nil)
     end
   end
+
+  describe '#create_citations_nodes' do
+    def subject
+      dummy_class.create_citations_nodes
+    end
+
+    it 'creates NcbiCitationNode for list of taxon ids' do
+      citation = create(:ncbi_citation, taxon_id_list: '1 2 3')
+      node1 = create(:ncbi_node, taxon_id: 1)
+      node2 = create(:ncbi_node, taxon_id: 2)
+      node3 = create(:ncbi_node, taxon_id: 3)
+
+      expect { subject }.to change(NcbiCitationNode, :count).by(3)
+
+      expect(NcbiCitationNode.first.ncbi_node).to eq(node1)
+      expect(NcbiCitationNode.second.ncbi_node).to eq(node2)
+      expect(NcbiCitationNode.third.ncbi_node).to eq(node3)
+
+      NcbiCitationNode.all.each do |cn|
+        expect(cn.ncbi_citation).to eq(citation)
+      end
+    end
+  end
 end
