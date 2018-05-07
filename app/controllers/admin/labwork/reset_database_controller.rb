@@ -19,7 +19,8 @@ module Admin
 
       def truncate_tables
         models.each do |model|
-          ActiveRecord::Base.connection.execute("TRUNCATE #{model.table_name}")
+          ActiveRecord::Base.connection
+                            .execute("TRUNCATE #{model.table_name} CASCADE")
         end
       end
 
