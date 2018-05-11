@@ -136,6 +136,102 @@ describe FormatNcbi do
     end
   end
 
+  describe '#create_taxonomy_strings' do
+    def subject
+      dummy_class.create_taxonomy_strings
+    end
+    let!(:node1) do
+      create(:ncbi_node, rank: 'superkingdom', canonical_name: 'Superkingdom',
+                         parent_taxon_id: 1)
+    end
+    let!(:node2) do
+      create(:ncbi_node, rank: 'kingdom', canonical_name: 'Kingdom',
+                         parent_taxon_id: node1.taxon_id)
+    end
+    let!(:node3) do
+      create(:ncbi_node, rank: 'no rank', canonical_name: 'node3',
+                         parent_taxon_id: node2.taxon_id)
+    end
+    let!(:node4) do
+      create(:ncbi_node, rank: 'phylum', canonical_name: 'Phylum',
+                         parent_taxon_id: node3.taxon_id)
+    end
+    let!(:node5) do
+      create(:ncbi_node, rank: 'no rank', canonical_name: 'node5',
+                         parent_taxon_id: node4.taxon_id)
+    end
+    let!(:node6) do
+      create(:ncbi_node, rank: 'family', canonical_name: 'Family',
+                         parent_taxon_id: node5.taxon_id)
+    end
+    let!(:node7) do
+      create(:ncbi_node, rank: 'species', canonical_name: 'Species',
+                         parent_taxon_id: node6.taxon_id)
+    end
+
+    it 'updates taxonomy string for superkingdoms' do
+      subject
+      node1.reload
+
+      expect(node1.short_taxonomy_string).to eq(nil)
+      expect(node1.full_taxonomy_string).to eq('Superkingdom')
+    end
+
+    it 'updates taxonomy string for kingdoms' do
+      subject
+      node2.reload
+
+      expect(node2.short_taxonomy_string).to eq(nil)
+      expect(node2.full_taxonomy_string).to eq('Superkingdom;Kingdom')
+    end
+
+    it 'updates taxonomy string for "no ranks" before phlyum' do
+      subject
+      node3.reload
+
+      expect(node3.short_taxonomy_string).to eq(nil)
+      expect(node3.full_taxonomy_string)
+        .to eq('Superkingdom;Kingdom;node3')
+    end
+
+    it 'updates taxonomy string for phylums' do
+      subject
+      node4.reload
+
+      expect(node4.short_taxonomy_string).to eq('Phylum')
+      expect(node4.full_taxonomy_string)
+        .to eq('Superkingdom;Kingdom;node3;Phylum')
+    end
+
+    it 'updates taxonomy string for "no ranks" after phlyum' do
+      subject
+      node5.reload
+
+      expect(node5.short_taxonomy_string).to eq('Phylum')
+      expect(node5.full_taxonomy_string)
+        .to eq('Superkingdom;Kingdom;node3;Phylum;node5')
+    end
+
+    it 'updates taxonomy string for family' do
+      subject
+      node6.reload
+
+      expect(node6.short_taxonomy_string).to eq('Phylum;;;Family')
+      expect(node6.full_taxonomy_string)
+        .to eq('Superkingdom;Kingdom;node3;Phylum;node5;Family')
+    end
+
+    it 'updates taxonomy string for species' do
+      subject
+      node7.reload
+
+      expect(node7.short_taxonomy_string)
+        .to eq('Phylum;;;Family;;Species')
+      expect(node7.full_taxonomy_string)
+        .to eq('Superkingdom;Kingdom;node3;Phylum;node5;Family;Species')
+    end
+  end
+
   describe '#create_citations_nodes' do
     def subject
       dummy_class.create_citations_nodes

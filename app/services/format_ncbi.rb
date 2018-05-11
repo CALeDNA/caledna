@@ -5,6 +5,32 @@ module FormatNcbi
     node.rank != 'no rank'
   end
 
+  def create_taxonomy_strings
+    nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
+    nodes.each do |node|
+      node.full_taxonomy_string = node.canonical_name
+      node.save
+      create_taxonomy_string(node)
+    end
+  end
+
+  def create_taxonomy_string(parent_node)
+    child_nodes = NcbiNode.where(parent_taxon_id: parent_node.taxon_id)
+    return if child_nodes.blank?
+
+    child_nodes.each do |child|
+      short = create_short_taxonomy_string(parent_node, child)
+      child.short_taxonomy_string = short
+
+      full = "#{parent_node.full_taxonomy_string};#{child.canonical_name}"
+      child.full_taxonomy_string = full
+
+      child.save
+
+      create_taxonomy_string(child)
+    end
+  end
+
   def update_lineages
     nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
 
@@ -40,6 +66,26 @@ module FormatNcbi
   end
 
   private
+
+  def format_short_taxonomy_string(parent_node, child, ranks)
+    temp = "#{parent_node.short_taxonomy_string};"
+    temp += ';' while temp.split(';', -1).count < ranks.index(child.rank) + 1
+    "#{temp}#{child.canonical_name}"
+  end
+
+  def create_short_taxonomy_string(parent_node, child)
+    ranks = %w[phylum class order family genus species]
+
+    if ranks.include?(child.rank)
+      if parent_node.short_taxonomy_string.blank?
+        child.canonical_name
+      else
+        format_short_taxonomy_string(parent_node, child, ranks)
+      end
+    elsif parent_node.short_taxonomy_string.present?
+      parent_node.short_taxonomy_string
+    end
+  end
 
   def update_lineage_hierarchy(parent_node)
     child_nodes = NcbiNode.where(parent_taxon_id: parent_node.taxon_id)

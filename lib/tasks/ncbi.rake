@@ -21,4 +21,10 @@ namespace :ncbi do
     puts 'create citations nodes...'
     create_citations_nodes
   end
+
+  desc 'create taxonomy strings'
+  task create_taxonomy_strings: :environment do
+    puts 'create taxonomy strings...'
+    create_taxonomy_strings
+  end
 end
