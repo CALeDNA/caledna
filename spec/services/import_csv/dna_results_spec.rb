@@ -107,7 +107,7 @@ describe ImportCsv::DnaResults do
 
     context 'when matching taxon does exist' do
       before(:each) do
-        create(
+        taxon = create(
           :ncbi_node,
           canonical_name: 'Genus',
           rank: 'genus',
@@ -119,8 +119,9 @@ describe ImportCsv::DnaResults do
             [7, 'Genus', 'genus']
           ]
         )
+        create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
 
-        create(
+        taxon = create(
           :ncbi_node,
           canonical_name: 'Genus species',
           rank: 'species',
@@ -133,6 +134,7 @@ describe ImportCsv::DnaResults do
             [8, 'Genius species', 'species']
           ]
         )
+        create(:ncbi_name, name: 'Genus species', taxon_id: taxon.id)
       end
 
       it 'adds ImportCsvCreateAsvJob to queue' do

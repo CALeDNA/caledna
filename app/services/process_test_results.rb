@@ -60,7 +60,7 @@ module ProcessTestResults
     hierarchy[:class] = taxa[1] if taxa_present(taxa[1])
     hierarchy[:phylum] = taxa[0] if taxa_present(taxa[0])
 
-    taxon = find_partial_taxon(hierarchy, rank)
+    taxon = find_exact_taxon(hierarchy, rank, skip_kingdom: true)
 
     kingdom_superkingdom = get_kingdom_superkingdom(taxon)
     hierarchy[:kingdom] = kingdom_superkingdom[:kingdom]
@@ -139,25 +139,13 @@ module ProcessTestResults
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def find_exact_taxon(hierarchy, rank)
+  def find_exact_taxon(hierarchy, rank, skip_kingdom: false)
     unique_taxon_names = %w[species order class phylum kingdom superkingdom]
 
     if unique_taxon_names.include?(rank)
       get_unique_taxon(hierarchy, rank)
     elsif rank == 'genus'
-      get_genus(hierarchy)
-    elsif rank == 'family'
-      get_family(hierarchy)
-    end
-  end
-
-  def find_partial_taxon(hierarchy, rank)
-    unique_taxon_names = %w[species order class phylum kingdom superkingdom]
-
-    if unique_taxon_names.include?(rank)
-      get_unique_taxon(hierarchy, rank)
-    elsif rank == 'genus'
-      get_genus(hierarchy, partial: true)
+      get_genus(hierarchy, skip_kingdom)
     elsif rank == 'family'
       get_family(hierarchy)
     end
@@ -187,7 +175,7 @@ module ProcessTestResults
   end
 
   #  NOTE: family names are unique to phylums
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def get_family(hierarchy)
     taxon_name = hierarchy[:family].downcase
 
@@ -197,81 +185,67 @@ module ProcessTestResults
 
     if hierarchy[:phylum].present?
       # NOTE: this code searches nested arrays for name and rank
-      # 20 grabs 20 nested arrays from lineage
+      # 100 grabs 100 nested arrays from lineage
       # [2,3] grabs 2nd item (name) and 3rd item (rank) from each nested array
-      sql = "'{#{hierarchy[:phylum]},phylum}'::text[] <@ lineage[20][2:3]"
+      sql = "'{#{hierarchy[:phylum]},phylum}'::text[] <@ lineage[100][2:3]"
       query = query.where(sql)
     else
-      sql = "'{phylum}'::text[] <@ lineage[20][2:3]"
+      sql = "'{phylum}'::text[] <@ lineage[100][2:3]"
       query = query.where.not(sql)
     end
+
+    return if query.size > 1
     query.take
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   #  NOTE: genus names are unique to kingdom, phylum, class, order, family
-  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-  def get_genus(hierarchy, partial = false)
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def get_genus(hierarchy, skip_kingdom = false)
     taxon_name = hierarchy[:genus].downcase
 
     query = NcbiNode.joins(:ncbi_names)
                     .where("lower(\"name\") = \'#{taxon_name}\'")
                     .where(rank: 'genus')
-
     if hierarchy[:kingdom].present?
-      sql = "'{#{hierarchy[:kingdom]},kingdom}'::text[] <@ lineage[20][2:3]"
+      sql = "'{#{hierarchy[:kingdom]},kingdom}'::text[] <@ lineage[100][2:3]"
       query = query.where(sql)
-    elsif partial == false
-      sql = "'{kingdom}'::text[] <@ lineage[20][2:3]"
+    elsif skip_kingdom == false
+      sql = "'{kingdom}'::text[] <@ lineage[100][2:3]"
       query = query.where.not(sql)
     end
 
-    if hierarchy[:phylum].present?
-      sql = "'{#{hierarchy[:phylum]},phylum}'::text[] <@ lineage[20][2:3]"
-      query = query.where(sql)
-    else
-      sql = "'{phylum}'::text[] <@ lineage[20][2:3]"
-      query = query.where.not(sql)
-    end
+    query = format_lineage_query('phylum', hierarchy, query)
+    query = format_lineage_query('class', hierarchy, query)
+    query = format_lineage_query('order', hierarchy, query)
+    query = format_lineage_query('family', hierarchy, query)
 
-    if hierarchy[:class].present?
-      sql = "'{#{hierarchy[:class]},class}'::text[] <@ lineage[20][2:3]"
-      query = query.where(sql)
-    else
-      sql = "'{class}'::text[] <@ lineage[20][2:3]"
-      query = query.where.not(sql)
-    end
-
-    if hierarchy[:order].present?
-      sql = "'{#{hierarchy[:order]},order}'::text[] <@ lineage[20][2:3]"
-      query = query.where(sql)
-    else
-      sql = "'{order}'::text[] <@ lineage[20][2:3]"
-      query = query.where.not(sql)
-    end
-
-    if hierarchy[:family].present?
-      sql = "'{#{hierarchy[:family]},family}'::text[] <@ lineage[20][2:3]"
-      query = query.where(sql)
-    else
-      sql = "'{family}'::text[] <@ lineage[20][2:3]"
-      query = query.where.not(sql)
-    end
+    return if query.size > 1
     query.take
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength,  Metrics/AbcSize
+
+  def format_lineage_query(rank, hierarchy, query)
+    if hierarchy[rank.to_sym].present?
+      sql = "'{#{hierarchy[rank.to_sym]},#{rank}}'::text[] <@ lineage[100][2:3]"
+      query.where(sql)
+    else
+      sql = "'{#{rank}}'::text[] <@ lineage[100][2:3]"
+      query.where.not(sql)
+    end
+  end
 
   def get_unique_taxon(hierarchy, rank)
     taxon_name = hierarchy[rank.to_sym].downcase
-    if taxon_name.include?("'")
-      taxon_name.gsub!("'", "''")
-    end
+    # NOTE: escape single quotes in sql query by using two single quotes
+    taxon_name.gsub!("'", "''") if taxon_name.include?("'")
 
+    taxa = NcbiNode.joins(:ncbi_names)
+                   .where("lower(\"name\") = '#{taxon_name}'")
+                   .where(rank: rank)
+    return if taxa.size > 1
     # NOTE: ".first" calls order on primary key, ".take" does not
-    NcbiNode.joins(:ncbi_names).where("lower(\"name\") = '#{taxon_name}'")
-            .where(rank: rank).take
+    taxa.take
   end
 end
 # rubocop:enable Metrics/ModuleLength

@@ -5,9 +5,9 @@ require 'rails_helper'
 describe FormatNcbi do
   let(:dummy_class) { Class.new { extend FormatNcbi } }
 
-  describe '#insert_canonical_name' do
+  describe '#create_canonical_name' do
     def subject
-      dummy_class.insert_canonical_name
+      dummy_class.create_canonical_name
     end
 
     it 'uses related "scientific names" to add canonical name to NcbiNode' do
@@ -31,9 +31,9 @@ describe FormatNcbi do
     end
   end
 
-  describe 'update_lineages' do
+  describe 'create_lineage_info' do
     def subject
-      dummy_class.update_lineages
+      dummy_class.create_lineage_info
     end
     let!(:node1) do
       create(:ncbi_node, rank: 'rank1', canonical_name: 'name1',

@@ -10,59 +10,6 @@ describe ProcessTestResults do
       dummy_class.find_taxon_from_string(string)
     end
 
-    it 'returns taxon data for Durinskia' do
-      lineage = [
-        [131_567, 'cellular organisms', 'no rank'],
-        [2_759, 'Eukaryota', 'superkingdom'],
-        [33_630, 'Alveolata', 'no rank'],
-        [2_864, 'Dinophyceae', 'class'],
-        [2_910, 'Peridiniales', 'order'],
-        [2_137_591, 'Kryptoperidiniaceae', 'family'],
-        [400_754, 'Durinskia', 'genus']
-      ]
-      taxon = create(:ncbi_node, lineage: lineage, canonical_name: 'Durinskia',
-                                 rank: 'genus')
-      create(:ncbi_name, name: 'Durinskia', taxon_id: taxon.id)
-
-      string = ';Dinophyceae;Peridiniales;Kryptoperidiniaceae;Durinskia;'
-      # string = ';Dinophyceae;Peridiniales;Peridiniaceae;Durinskia;'
-
-      expect(subject(string)[:complete_taxonomy])
-        .to eq("Eukaryota;;#{string}")
-      expect(subject(string)[:taxon_id]).to eq(taxon.id)
-    end
-
-    it 'returns taxon data for Astigmata' do
-      lineage = [
-        [131567, 'cellular organisms', 'no rank'],
-        [2759, 'Eukaryota', 'superkingdom'],
-        [33154, 'Opisthokonta', 'no rank'],
-        [33208, 'Metazoa', 'kingdom'],
-        [6072, 'Eumetazoa', 'no rank'],
-        [33213, 'Bilateria', 'no rank'],
-        [33317, 'Protostomia', 'no rank'],
-        [1206794, 'Ecdysozoa', 'no rank'],
-        [88770, 'Panarthropoda', 'no rank'],
-        [6656, 'Arthropoda', 'phylum'],
-        [6843, 'Chelicerata', 'subphylum'],
-        [6854, 'Arachnida', 'class'],
-        [6933, 'Acari', 'subclass'],
-        [6946, 'Acariformes', 'superorder'],
-        [83137, 'Sarcoptiformes', 'order'],
-        [6951, 'Astigmata', 'suborder']
-      ]
-      taxon = create(:ncbi_node, lineage: lineage, canonical_name: 'Sarcoptiformes',
-                                 rank: 'order')
-      create(:ncbi_name, name: 'Sarcoptiformes', taxon_id: taxon.id)
-
-      string = 'Arthropoda;Arachnida;Sarcoptiformes;NA;;'
-      # string = 'Arthropoda;Arachnida;Astigmata;NA;;'
-
-      expect(subject(string)[:complete_taxonomy])
-        .to eq("Eukaryota;Metazoa;#{string}")
-      expect(subject(string)[:taxon_id]).to eq(taxon.id)
-    end
-
     it 'returns a hash of taxon info when all ranks are present' do
       string = 'Phylum;Class;Order;Family;Genus;Species'
       lineage = [
@@ -199,6 +146,45 @@ describe ProcessTestResults do
       dummy_class.get_hierarchy(string, rank)
     end
 
+    it 'returns taxon data when taxon has long lineage' do
+      lineage = [
+        [131_567, 'cellular organisms', 'no rank'],
+        [2_759, 'Eukaryota', 'superkingdom'],
+        [33_154, 'Opisthokonta', 'no rank'],
+        [33_208, 'Metazoa', 'kingdom'],
+        [6_072, 'Eumetazoa', 'no rank'],
+        [33_213, 'Bilateria', 'no rank'],
+        [33_317, 'Protostomia', 'no rank'],
+        [1_206_794, 'Ecdysozoa', 'no rank'],
+        [88_770, 'Panarthropoda', 'no rank'],
+        [6_656, 'Arthropoda', 'phylum'],
+        [6_843, 'Chelicerata', 'subphylum'],
+        [6_854, 'Arachnida', 'class'],
+        [6_933, 'Acari', 'subclass'],
+        [6_946, 'Acariformes', 'superorder'],
+        [83_136, 'Trombidiformes', 'order'],
+        [6_947, 'Prostigmata', 'suborder'],
+        [83_138, 'Anystina', 'infraorder'],
+        [83_141, 'Parasitengona', 'no rank'],
+        [92_068, 'Hydracarina', 'no rank'],
+        [257_018, 'Lebertioidea', 'superfamily'],
+        [1_046_929, 'Teutoniidae', 'family'],
+        [1_046_930, 'Teutonia', 'genus']
+      ]
+      taxon = create(:ncbi_node, lineage: lineage, canonical_name: 'Teutonia',
+                                 rank: 'genus')
+      create(:ncbi_name, name: 'Teutonia', taxon_id: taxon.id)
+
+      string = 'Arthropoda;Arachnida;Trombidiformes;Teutoniidae;Teutonia;'
+      rank = 'genus'
+
+      expect(subject(string, rank)).to eq(
+        superkingdom: 'Eukaryota', kingdom: 'Metazoa', phylum: 'Arthropoda',
+        class: 'Arachnida',
+        order: 'Trombidiformes', family: 'Teutoniidae', genus: 'Teutonia'
+      )
+    end
+
     it 'returns a hash of taxonomy names' do
       taxon = create(
         :ncbi_node,
@@ -319,6 +305,115 @@ describe ProcessTestResults do
       }
     end
 
+    context 'when taxons have different lineages but same hierarchy' do
+      # rubocop:disable Metrics/MethodLength
+      def create_taxons(rank, name)
+        lineage1 = [
+          [1, 'Superkingdom', 'superkingdom'],
+          [4, 'node1', 'no rank'],
+          [3, name, rank]
+        ]
+        lineage2 = [
+          [1, 'Superkingdom', 'superkingdom'],
+          [3, name, rank]
+        ]
+
+        taxon1 = create(:ncbi_node, rank: rank, lineage: lineage1,
+                                    canonical_name: name)
+        create(:ncbi_name, taxon_id: taxon1.id, name: name)
+        taxon2 = create(:ncbi_node, rank: rank, lineage: lineage2,
+                                    canonical_name: name)
+        create(:ncbi_name, taxon_id: taxon2.id, name: name)
+
+        [taxon1, taxon2]
+      end
+      # rubocop:enable Metrics/MethodLength
+
+      it 'returns nil for phylums' do
+        name = 'Phylum'
+        rank = 'phylum'
+        hierarchy = {
+          superkingdom: 'Superkingdom', kingdom: nil,
+          phylum: name, class: nil, order: nil, family: nil,
+          genus: nil, species: nil
+        }
+
+        create_taxons(rank, name)
+
+        expect(subject(hierarchy, rank)).to eq(nil)
+      end
+
+      it 'returns nil for classes' do
+        name = 'Class'
+        rank = 'class'
+        hierarchy = {
+          superkingdom: 'Superkingdom', kingdom: nil,
+          phylum: nil, class: name, order: nil, family: nil,
+          genus: nil, species: nil
+        }
+
+        create_taxons(rank, name)
+
+        expect(subject(hierarchy, rank)).to eq(nil)
+      end
+
+      it 'returns nil for orders' do
+        name = 'Order'
+        rank = 'order'
+        hierarchy = {
+          superkingdom: 'Superkingdom', kingdom: nil,
+          phylum: nil, class: nil, order: name, family: nil,
+          genus: nil, species: nil
+        }
+
+        create_taxons(rank, name)
+
+        expect(subject(hierarchy, rank)).to eq(nil)
+      end
+
+      it 'returns nil for families' do
+        name = 'Family'
+        rank = 'family'
+        hierarchy = {
+          superkingdom: 'Superkingdom', kingdom: nil,
+          phylum: nil, class: nil, order: nil, family: name,
+          genus: nil, species: nil
+        }
+
+        create_taxons(rank, name)
+
+        expect(subject(hierarchy, rank)).to eq(nil)
+      end
+
+      it 'returns nil for genus' do
+        name = 'Genus'
+        rank = 'genus'
+        hierarchy = {
+          superkingdom: 'Superkingdom', kingdom: nil,
+          phylum: nil, class: nil, order: nil, family: nil,
+          genus: name, species: nil
+        }
+
+        create_taxons(rank, name)
+
+        expect(subject(hierarchy, rank)).to eq(nil)
+      end
+
+      it 'returns nil for species' do
+        name = 'Species'
+        rank = 'species'
+        hierarchy = {
+          superkingdom: 'Superkingdom', kingdom: nil,
+          phylum: nil, class: nil, order: nil, family: nil,
+          genus: nil, species: name
+        }
+
+        create_taxons(rank, name)
+
+        expect(subject(hierarchy, rank)).to eq(nil)
+      end
+    end
+
     context 'when taxon name has quotes' do
       it 'returns matching NcbiNode' do
         hierarchy = {
@@ -332,7 +427,6 @@ describe ProcessTestResults do
 
         expect(subject(hierarchy, rank)).to eq(taxon)
       end
-
     end
 
     context 'when rank has unique taxon names' do
