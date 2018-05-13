@@ -4,7 +4,7 @@
   </h1>
 </div>
 
-<h2><%= @taxon.common_names(false) %></h2>
+<h2><%= SamplesHelper.common_names(@taxon.vernaculars, false)%></h2>
 
 <ul class="nav nav-tabs" role="tablist">
   <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>

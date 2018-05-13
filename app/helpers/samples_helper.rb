@@ -4,8 +4,7 @@ module SamplesHelper
   # NOTE: can't use "l(field) format: :short" because it crashes if field is nil
   def self.common_names(vernaculars, parenthesis = true)
     names = vernaculars
-            .select { |v| v.language == 'en' }
-            .pluck(:vernacularName)
+            .pluck(:name)
             .map(&:titleize).uniq
     return if names.blank?
 
@@ -23,7 +22,7 @@ module SamplesHelper
     results = {}
     kingdoms.each do |kingdom|
       results[kingdom] =
-        asvs.select { |asv| asv.taxon.kingdom == kingdom }.count
+        asvs.select { |asv| asv.ncbi_node.kingdom == kingdom }.count
     end
     results
   end

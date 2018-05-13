@@ -30,11 +30,11 @@ class Extraction < ApplicationRecord
   #           inclusion: { in: NUMBER_OF_REPLICATES }
 
   def sorted_taxa
-    asvs.map(&:taxon)
+    asvs.map(&:ncbi_node)
         .sort_by do |t|
           [
             t.kingdom, t.phylum, t.className, t.order, t.family, t.genus,
-            t.specificEpithet, t.infraspecificEpithet
+            t.species
           ].compact
         end
   end

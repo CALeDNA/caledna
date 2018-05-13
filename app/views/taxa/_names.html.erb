@@ -16,7 +16,9 @@
   <% end %>
 </table>
 
-<p>Taxonomic status: <%= taxon.taxonomicStatus %></p>
+<% if taxon.taxonomicStatus %>
+  <p>Taxonomic status: <%= taxon.taxonomicStatus %></p>
+<% end %>
 <% if taxon.acceptedNameUsageID %>
   <p>Accepted name: <%= link_to taxon.accepted_taxon.canonicalName, taxon_path(taxon.accepted_taxon) %></p>
 <% end %>

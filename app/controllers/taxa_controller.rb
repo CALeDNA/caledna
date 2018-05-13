@@ -32,7 +32,7 @@ class TaxaController < ApplicationController
   end
 
   def taxon
-    @taxon ||= Taxon.includes(:vernaculars, :taxa_dataset).find(params[:id])
+    @taxon ||= NcbiNode.includes(:ncbi_names).find(params[:id])
   end
 
   def ordered_taxa
