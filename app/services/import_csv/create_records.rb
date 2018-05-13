@@ -5,11 +5,12 @@ module ImportCsv
     include ProcessingExtractions
 
     def create_asv(cell, extraction, taxon)
-      asv = Asv.where(extraction_id: extraction.id, taxonID: taxon[:taxonID])
+      asv = Asv.where(extraction_id: extraction.id, taxonID: taxon.taxon_id)
                .first_or_create
-      raise ImportError, "ASV #{cell} not created" unless asv.valid?
+      raise ImportError, "ASV #{cell}: #{asv.errors}" unless asv.valid?
 
       primer = convert_header_to_primer(cell)
+      return if primer.blank?
       return if asv.primers.include?(primer)
       asv.primers << primer
       asv.save
@@ -39,6 +40,7 @@ module ImportCsv
     private
 
     def convert_header_to_primer(cell)
+      return unless cell.include?('_')
       cell.split('_').first
     end
   end

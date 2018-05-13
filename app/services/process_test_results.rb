@@ -23,6 +23,10 @@ module ProcessTestResults
   end
   # rubocop:enable Metrics/MethodLength
 
+  def find_cal_taxon_from_string(string)
+    CalTaxon.where(original_taxonomy: string, normalized: true).first
+  end
+
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def get_taxon_rank(string)

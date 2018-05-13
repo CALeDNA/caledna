@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :speciman, class: 'Asv' do
-    sample
-    taxonomic_unit
+  factory :asv do
   end
 end

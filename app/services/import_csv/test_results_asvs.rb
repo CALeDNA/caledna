@@ -1,41 +1,34 @@
 # frozen_string_literal: true
 
 module ImportCsv
-  module DnaResults
+  module TestResultsAsvs
     require 'csv'
     include ProcessTestResults
     include CsvUtils
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file, research_project_id, extraction_type_id)
-      extractions = {}
-      sample_cells = []
-      missing_taxonomy = 0
       delimiter = delimiter_detector(file)
 
-      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
-        if extractions.empty?
-          sample_cells = row.headers[1..row.headers.size]
-          extractions = get_extractions_from_headers(
-            sample_cells, research_project_id, extraction_type_id
-          )
-        end
+      ImportAsvCsvJob.perform_later(
+        file.path, research_project_id, extraction_type_id, delimiter
+      )
 
+      OpenStruct.new(valid?: true, errors: nil)
+    end
+
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def import_asv_csv(path, research_project_id, extraction_type_id, delimiter)
+      data = CSV.read(path, headers: true, col_sep: delimiter)
+      first_row = data.first
+      sample_cells = first_row.headers[1..first_row.headers.size]
+      extractions = get_extractions_from_headers(
+        sample_cells, research_project_id, extraction_type_id
+      )
+
+      data.each do |row|
         taxonomy_string = row[row.headers.first]
-        taxon = find_taxon_from_string(taxonomy_string)
-        if taxon.present? && taxon[:taxon_id].present?
-          create_asvs(row, sample_cells, extractions, taxon)
-        else
-          missing_taxonomy += 1
-        end
-      end
-
-      if missing_taxonomy.zero?
-        OpenStruct.new(valid?: true, errors: nil)
-      else
-        message = "#{missing_taxonomy} taxonomies were not imported " \
-          'because no match was found.'
-        OpenStruct.new(valid?: false, errors: message)
+        taxon = find_cal_taxon_from_string(taxonomy_string)
+        create_asvs(row, sample_cells, extractions, taxon) if taxon.present?
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize

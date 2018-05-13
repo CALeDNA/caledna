@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'csv'
 
-describe ImportCsv::DnaResults do
+describe ImportCsv::ProcessingExtractions do
   let(:dummy_class) { Class.new { extend ImportCsv::ProcessingExtractions } }
 
   describe '#find_researcher' do

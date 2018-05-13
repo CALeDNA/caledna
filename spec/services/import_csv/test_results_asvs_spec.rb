@@ -2,22 +2,28 @@
 
 require 'rails_helper'
 
-describe ImportCsv::DnaResults do
-  let(:dummy_class) { Class.new { extend ImportCsv::DnaResults } }
+describe ImportCsv::TestResultsAsvs do
+  let(:dummy_class) { Class.new { extend ImportCsv::TestResultsAsvs } }
 
   describe '#convert_header_to_barcode' do
     def subject(header)
       dummy_class.convert_header_to_barcode(header)
     end
 
-    it 'converts header into valid kit number' do
+    it 'converts kit.number header into valid kit number' do
       header = 'X16S_K0078.C2.S59.L001'
 
       expect(subject(header)).to eq('K0078-LC-S2')
     end
 
-    it 'converts header into valid kit number' do
+    it 'converts kitnumber header into valid kit number' do
       header = 'PITS_K0001A1.S1.L001'
+
+      expect(subject(header)).to eq('K0001-LA-S1')
+    end
+
+    it 'converts header without primer into valid kit number' do
+      header = 'K0001A1.S1.L001'
 
       expect(subject(header)).to eq('K0001-LA-S1')
     end
@@ -32,13 +38,38 @@ describe ImportCsv::DnaResults do
   describe('#import_csv') do
     include ActiveJob::TestHelper
 
+    def subject(file, research_project_id, extraction_type_id)
+      dummy_class.import_csv(file, research_project_id, extraction_type_id)
+    end
+
+    let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
+    let(:file) { fixture_file_upload(csv, 'text/csv') }
+    let(:extraction_type) { create(:extraction_type) }
+    let(:research_project) { create(:research_project) }
+
+    it 'adds ImportAsvCsvJob to queue' do
+      expect { subject(file, research_project.id, extraction_type.id) }
+        .to have_enqueued_job(ImportAsvCsvJob)
+    end
+
+    it 'returns valid' do
+      expect(subject(file, research_project.id, extraction_type.id).valid?)
+        .to eq(true)
+    end
+  end
+
+  describe('#import_asv_csv') do
+    include ActiveJob::TestHelper
+
     before(:each) do
       project = create(:field_data_project, name: 'unknown')
       stub_const('FieldDataProject::DEFAULT_PROJECT', project)
     end
 
     def subject(file, research_project_id, extraction_type_id)
-      dummy_class.import_csv(file, research_project_id, extraction_type_id)
+      delimiter = "\t"
+      dummy_class.import_asv_csv(file.path, research_project_id,
+                                 extraction_type_id, delimiter)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
@@ -98,11 +129,6 @@ describe ImportCsv::DnaResults do
         expect { subject(file, research_project.id, extraction_type.id) }
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
       end
-
-      it 'returns invalid' do
-        expect(subject(file, research_project.id, extraction_type.id).valid?)
-          .to eq(false)
-      end
     end
 
     context 'when matching taxon does exist' do
@@ -140,11 +166,6 @@ describe ImportCsv::DnaResults do
       it 'adds ImportCsvCreateAsvJob to queue' do
         expect { subject(file, research_project.id, extraction_type.id) }
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
-      end
-
-      it 'returns valid' do
-        expect(subject(file, research_project.id, extraction_type.id).valid?)
-          .to eq(true)
       end
     end
   end
