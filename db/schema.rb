@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180513184002) do
+ActiveRecord::Schema.define(version: 20180514002745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -276,7 +276,9 @@ ActiveRecord::Schema.define(version: 20180513184002) do
     t.text    "full_taxonomy_string"
     t.text    "short_taxonomy_string"
     t.integer "cal_division_id"
+    t.integer "asvs_count",                                       default: 0
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name", using: :btree
+    t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count", using: :btree
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id", using: :btree
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx", using: :btree
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
@@ -478,6 +480,7 @@ ActiveRecord::Schema.define(version: 20180513184002) do
   add_foreign_key "extractions", "researchers", column: "processor_id"
   add_foreign_key "extractions", "researchers", column: "sra_adder_id"
   add_foreign_key "extractions", "samples"
+  add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
   add_foreign_key "photos", "samples"
   add_foreign_key "research_project_extractions", "extractions"
   add_foreign_key "research_project_extractions", "research_projects"

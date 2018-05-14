@@ -8,4 +8,12 @@ namespace :counter_reset do
       Taxon.reset_counters id, :asvs
     end
   end
+
+  desc 'reset ncbi_nodes asvs_count'
+  task ncbi_nodes_asvs_count: :environment do
+    Asv.pluck(:taxonID).uniq.each do |id|
+      print '.'
+      NcbiNode.reset_counters id, :asvs
+    end
+  end
 end
