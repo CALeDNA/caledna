@@ -85,8 +85,8 @@ class TaxaController < ApplicationController
 
   def sql_select
     'SELECT samples.id, samples.barcode, ' \
-    'asvs."taxonID" as "taxonID", ncbi_nodes."canonical_name", samples.latitude, ' \
-    'samples.longitude, field_data_project_id, ' \
+    'asvs."taxonID" as "taxonID", ncbi_nodes."canonical_name", ' \
+    ' samples.latitude, samples.longitude, field_data_project_id, ' \
     'field_data_projects.name as field_data_project_name ' \
     'FROM asvs ' \
     'INNER JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \

@@ -47,8 +47,9 @@ class SearchesController < ApplicationController
   end
 
   def multisearch_samples
-    @multisearch_samples ||= Sample.includes(:field_data_project)
-      .approved.where(id: multisearch_ids)
+    @multisearch_samples ||=
+      Sample.includes(:field_data_project).approved
+            .where(id: multisearch_ids)
   end
 
   def search_params

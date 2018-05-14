@@ -38,7 +38,7 @@ class Sample < ApplicationRecord
   end
 
   def research_projects
-    extractions.map { |e| e.research_projects }.flatten
+    extractions.map(&:research_projects).flatten
   end
 
   def ph_display

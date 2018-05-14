@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class NcbiNode < ApplicationRecord
   has_many :ncbi_names, foreign_key: 'taxon_id'
   has_many :ncbi_citation_nodes
@@ -31,9 +32,11 @@ class NcbiNode < ApplicationRecord
     rank_name('kingdom')
   end
 
+  # rubocop:disable Naming/MethodName
   def className
     rank_name('class')
   end
+  # rubocop:enable Naming/MethodName
 
   def order
     rank_name('order')
@@ -55,6 +58,7 @@ class NcbiNode < ApplicationRecord
     rank_name('phylum')
   end
 
+  # rubocop:disable Naming/MethodName
   def taxonRank
     rank
   end
@@ -62,6 +66,7 @@ class NcbiNode < ApplicationRecord
   def canonicalName
     canonical_name
   end
+  # rubocop:enable Naming/MethodName
 
   def taxonomy_string
     [
@@ -89,9 +94,11 @@ class NcbiNode < ApplicationRecord
 
   def image; end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/LineLength
   def taxonomy_tree
     tree = []
-    tree.push(name: :superkingdom, value: superkingdom, id: hierarchy['kingdom']) if superkingdom.present?
+    tree.push(name: :superkingdom, value: superkingdom, id: hierarchy['superkingdom']) if superkingdom.present?
     tree.push(name: :kingdom, value: kingdom, id: hierarchy['kingdom']) if kingdom.present?
     tree.push(name: :phylum, value: phylum, id: hierarchy['phylum']) if phylum.present?
     tree.push(name: :class, value: className, id: hierarchy['class']) if className.present?
@@ -101,6 +108,8 @@ class NcbiNode < ApplicationRecord
     tree.push(name: :species, value: species, id: hierarchy['species']) if species.present?
     tree
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/LineLength
 
   def conservation_status; end
 
@@ -119,11 +128,13 @@ class NcbiNode < ApplicationRecord
     "mode=Info&id=#{taxon_id}&lvl=3"
   end
 
+  # rubocop:disable Naming/MethodName
   # no-op methods to match gbif taxonomy
   def taxonomicStatus; end
 
   # no-op methods to match gbif taxonomy
   def acceptedNameUsageID; end
+  # rubocop:enable Naming/MethodName
 
   private
 
@@ -140,3 +151,4 @@ class NcbiNode < ApplicationRecord
     names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
   end
 end
+# rubocop:enable Metrics/ClassLength
