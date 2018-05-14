@@ -1,6 +1,8 @@
 <h3>Links</h3>
 <ul>
-  <li><a href="<%= taxon.gbif_link %>">Global Biodiversity Information Facility</a></li>
+  <% if taxon.gbif_link %>
+    <li><a href="<%= taxon.gbif_link %>">Global Biodiversity Information Facility</a></li>
+  <% end %>
   <% if taxon.inaturalist_link %>
     <li><a href="<%= taxon.inaturalist_link %>">iNaturalist</a></li>
     <li><a href="<%= taxon.wikipedia_link %>">Wikipedia</a></li>
@@ -8,6 +10,10 @@
   <% if taxon.eol_link %>
     <li><a href="<%= taxon.eol_link %>">Encyclopedia of Life</a></li>
   <% end%>
+  <% if taxon.ncbi_link %>
+    <li><a href="<%= taxon.ncbi_link %>">
+    National Center for Biotechnology Information (NCBI)</a></li>
+  <% end %>
   <% if taxon.conservation_status? %>
     <li><a href="<%= taxon.iucn_link %>">International Union for the Conservation of Nature (IUCN) Red List</a></li>
   <% end %>

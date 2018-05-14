@@ -65,7 +65,7 @@
     <% end %>
   </table>
   <p class='data-source'>
-    Scientific Names Source: <%= link_to TaxaDataset.gbif_backbone.name, TaxaDataset.gbif_backbone.url %><br>
-    <%= TaxaDataset.gbif_backbone.citation %>
+    Scientific Names Source: <%= link_to NcbiNode.taxa_dataset.name, NcbiNode.taxa_dataset.url %><br>
+    <%= NcbiNode.taxa_dataset.citation %>
   </p>
 <% end %>

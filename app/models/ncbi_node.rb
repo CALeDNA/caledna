@@ -7,6 +7,22 @@ class NcbiNode < ApplicationRecord
   belongs_to :ncbi_division, foreign_key: 'cal_division_id'
   has_many :asvs, foreign_key: 'taxonID'
 
+  def self.taxa_dataset
+    OpenStruct.new(
+      name: 'NCBI Taxonomy',
+      url: 'https://www.ncbi.nlm.nih.gov/taxonomy',
+      citation: 'NCBI Taxonomy database. November 2017.'
+    )
+  end
+
+  def taxa_dataset
+    OpenStruct.new(
+      name: 'NCBI Taxonomy',
+      url: 'https://www.ncbi.nlm.nih.gov/taxonomy',
+      citation: 'NCBI Taxonomy database. November 2017.'
+    )
+  end
+
   def superkingdom
     rank_name('superkingdom')
   end
@@ -86,10 +102,6 @@ class NcbiNode < ApplicationRecord
     tree
   end
 
-  def taxa_dataset
-    OpenStruct.new(name: 'NCBI', url: 'http://www.ncbi.nlm.nih.gov/')
-  end
-
   def conservation_status; end
 
   def conservation_status?; end
@@ -101,6 +113,11 @@ class NcbiNode < ApplicationRecord
   def inaturalist_link; end
 
   def eol_link; end
+
+  def ncbi_link
+    'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?' \
+    "mode=Info&id=#{taxon_id}&lvl=3"
+  end
 
   # no-op methods to match gbif taxonomy
   def taxonomicStatus; end
