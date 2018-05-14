@@ -21,13 +21,13 @@ class TaxaSearchesController < ApplicationController
   end
 
   def taxa_matches
-    Taxon.where("lower(\"canonicalName\") = '#{query}'")
+    NcbiNode.where("lower(\"canonical_name\") = '#{query}'")
   end
 
   def vernaculars_matches
     vernacular_ids =
-      Vernacular.where("lower(\"vernacularName\") = '#{query}'").pluck(:taxonID)
-    Taxon.where(taxonID: vernacular_ids)
+      NcbiName.where("lower(\"name\") = '#{query}'").pluck(:taxon_id)
+    NcbiNode.where(taxon_id: vernacular_ids)
   end
 
   def query
