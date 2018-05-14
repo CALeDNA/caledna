@@ -20,7 +20,7 @@
         <% end %>
         <p>
           <%= taxon.taxonRank %>: <%= link_to taxon.canonicalName, taxon_path(id: taxon.id) %><br>
-          <%= SamplesHelper.common_names(taxon.vernaculars) %>
+          <%= taxon.common_names %>
         </p>
       </td>
     </tr>

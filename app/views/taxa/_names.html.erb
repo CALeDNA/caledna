@@ -33,27 +33,19 @@
   <table class="table table-condensed ">
     <tr>
       <th>Name</th>
-      <th>Language</th>
-      <th>source</th>
+      <th>Type</th>
     </tr>
 
     <% taxon.vernaculars.each do |vernacular|%>
       <tr>
-        <td>
-          <%= vernacular.vernacularName %>
-        </td>
-        <td>
-          <%= vernacular.language_name %>
-        </td>
-        <td>
-          <%= vernacular.source %>
-        </td>
+        <td><%= vernacular.name %></td>
+        <td><%= vernacular.name_class %></td>
       </tr>
     <% end %>
   </table>
   <p class='data-source'>
-    Common Names Source: <%= link_to TaxaDataset.gbif_backbone.name, TaxaDataset.gbif_backbone.url %><br>
-    <%= TaxaDataset.gbif_backbone.citation %>
+    Common Names Source: <%= link_to NcbiNode.taxa_dataset.name, NcbiNode.taxa_dataset.url %><br>
+    <%= NcbiNode.taxa_dataset.citation %>
   </p>
 <% end%>
 
@@ -67,8 +59,8 @@
 
     <% taxon.synonyms.each do |synonym|%>
       <tr>
-        <td><%= link_to synonym.canonicalName, taxon_path(synonym) %></td>
-        <td><%=synonym.taxonomicStatus %></td>
+        <td><%= link_to synonym.name, taxon_path(taxonID: synonym.taxon_id) %></td>
+        <td><%= synonym.name_class %></td>
       </tr>
     <% end %>
   </table>

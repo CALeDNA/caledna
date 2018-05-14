@@ -54,7 +54,21 @@ class NcbiNode < ApplicationRecord
   end
 
   def vernaculars
-    ::NcbiName.where(name_class: 'common name', taxon_id: taxon_id)
+    ncbi_names.where(taxon_id: taxon_id)
+              .where("name_class = 'common name' OR " \
+              "name_class = 'genbank common name'")
+  end
+
+  def synonyms
+    ncbi_names.where.not(name_class: 'common name')
+              .where.not(name_class: 'genbank common name')
+  end
+
+  def common_names(parenthesis = true)
+    names = vernaculars.pluck(:name).map(&:titleize).uniq
+    return if names.blank?
+
+    parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
   end
 
   def image; end
@@ -82,10 +96,6 @@ class NcbiNode < ApplicationRecord
 
   def threatened?; end
 
-  def synonyms
-    ncbi_names.where(name_class: 'synonym')
-  end
-
   def gbif_link; end
 
   def inaturalist_link; end
@@ -106,5 +116,10 @@ class NcbiNode < ApplicationRecord
 
   def rank_name(rank)
     rank_info(rank).try(:second)
+  end
+
+  def common_names_string(names)
+    max = 3
+    names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
   end
 end

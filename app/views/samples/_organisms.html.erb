@@ -9,7 +9,7 @@
       <%= taxon.ncbi_division.name %>
       <%= taxon.taxonRank %>:
       <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-      <%= SamplesHelper.common_names(taxon.vernaculars) %>
+      <%= taxon.common_names %>
     </li>
   <% end %>
   </ul>
