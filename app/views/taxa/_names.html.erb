@@ -1,15 +1,15 @@
 <h3>Classification</h3>
 <table class="table table-condensed taxonomy-tree">
-  <% taxon.taxonomy_tree.each do |taxon|%>
+  <% taxon.lineage.each do |lineage|%>
     <tr>
     <td>
-      <%= taxon[:name] %>
+      <%= lineage.third %>
     </td>
     <td>
-    <% if taxon[:id] %>
-      <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
+    <% if lineage.first %>
+      <%= link_to lineage.second, taxon_path(id: lineage.first) %>
     <% else %>
-      <%= taxon[:value] %>
+      <%= lineage.second %>
     <% end %>
   </td>
     </tr>
