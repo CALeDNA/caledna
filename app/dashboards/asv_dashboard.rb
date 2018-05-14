@@ -5,7 +5,7 @@ require "administrate/base_dashboard"
 class AsvDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     extraction: Field::BelongsTo,
-    taxon: Field::BelongsTo,
+    ncbi_node: Field::BelongsTo,
     id: Field::Number,
     extraction_id: Field::Number,
     taxonID: Field::Number,
@@ -15,12 +15,12 @@ class AsvDashboard < Administrate::BaseDashboard
 
   COLLECTION_ATTRIBUTES = [
     :extraction,
-    :taxon
+    :ncbi_node
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :extraction,
-    :taxon,
+    :ncbi_node,
     :created_at,
     :updated_at,
   ].freeze
