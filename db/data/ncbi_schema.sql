@@ -33,6 +33,14 @@ CREATE TABLE public.ncbi_nodes (
     comments text
 );
 
+CREATE TABLE public.ncbi_divisions (
+  id integer NOT NULL,
+  cde character varying(255),
+  name character varying(255),
+  comments character varying(255)
+);
+
+
 ALTER TABLE ONLY ncbi_citations
     ADD CONSTRAINT ncbi_citations_pkey PRIMARY KEY ("id");
 
@@ -40,3 +48,7 @@ ALTER TABLE ONLY ncbi_nodes
     ADD CONSTRAINT ncbi_nodes_pkey PRIMARY KEY ("taxon_id");
 
 CREATE INDEX ncbi_names_taxonid_idx ON ncbi_names USING btree ("taxon_id");
+CREATE INDEX ncbi_nodes_divisionid_idx ON ncbi_nodes USING btree ("division_id");
+
+ALTER TABLE ONLY ncbi_divisions
+    ADD CONSTRAINT ncbi_divisions_pkey PRIMARY KEY ("id");

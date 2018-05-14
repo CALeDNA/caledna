@@ -231,6 +231,12 @@ ActiveRecord::Schema.define(version: 20180513184002) do
     t.text    "taxon_id_list"
   end
 
+  create_table "ncbi_divisions", id: :integer, force: :cascade do |t|
+    t.string "cde",      limit: 255
+    t.string "name",     limit: 255
+    t.string "comments", limit: 255
+  end
+
   create_table "ncbi_names", id: false, force: :cascade do |t|
     t.integer "taxon_id",                null: false
     t.text    "name"
@@ -269,7 +275,10 @@ ActiveRecord::Schema.define(version: 20180513184002) do
     t.jsonb   "hierarchy",                                        default: {}
     t.text    "full_taxonomy_string"
     t.text    "short_taxonomy_string"
+    t.integer "cal_division_id"
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name", using: :btree
+    t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id", using: :btree
+    t.index ["division_id"], name: "ncbi_nodes_divisionid_idx", using: :btree
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id", using: :btree
     t.index ["rank"], name: "index_ncbi_nodes_on_rank", using: :btree
