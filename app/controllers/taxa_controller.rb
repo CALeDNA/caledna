@@ -85,11 +85,11 @@ class TaxaController < ApplicationController
 
   def sql_select
     'SELECT samples.id, samples.barcode, ' \
-    'asvs."taxonID" as "taxonID", taxa."canonicalName", samples.latitude, ' \
+    'asvs."taxonID" as "taxonID", ncbi_nodes."canonical_name", samples.latitude, ' \
     'samples.longitude, field_data_project_id, ' \
     'field_data_projects.name as field_data_project_name ' \
     'FROM asvs ' \
-    'INNER JOIN taxa ON asvs."taxonID" = taxa."taxonID" ' \
+    'INNER JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \
     'INNER JOIN extractions ON asvs.extraction_id = extractions.id ' \
     'INNER JOIN samples ON samples.id = extractions.sample_id ' \
     'INNER JOIN field_data_projects ON samples.field_data_project_id ' \
@@ -101,7 +101,7 @@ class TaxaController < ApplicationController
     # Query postgres jsonb by value
 
     'WHERE samples.latitude is NOT NULL AND samples.longitude IS NOT NULL ' \
-    'AND exists (select 1 from jsonb_each_text(taxa.hierarchy) ' \
+    'AND exists (select 1 from jsonb_each_text(ncbi_nodes.hierarchy) ' \
     "pair where pair.value = '#{params[:id]}');"
 
     # "where taxa.\"taxonID\" = #{params[:id]}"
