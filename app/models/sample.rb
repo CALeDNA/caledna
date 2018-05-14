@@ -37,10 +37,8 @@ class Sample < ApplicationRecord
     field_data_project.name
   end
 
-  def asvs_count
-    return 0 if extractions.last.nil?
-
-    extractions.sum { |e| e.asvs.count }
+  def research_projects
+    extractions.map { |e| e.research_projects }.flatten
   end
 
   def ph_display

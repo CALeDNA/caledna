@@ -1,7 +1,15 @@
 <table class="table">
   <tr>
-    <td>Project</td>
+    <td>Field Data Project</td>
     <td><%= link_to sample.field_data_project.name, field_data_project_path(sample.field_data_project) %></td>
+  </tr>
+  <tr>
+    <td>Research Projects</td>
+    <td>
+      <% sample.research_projects.each do |project| %>
+        <%= link_to project.name, research_project_path(project) %>
+      <% end %>
+    </td>
   </tr>
   <tr>
     <td>Barcode</td>

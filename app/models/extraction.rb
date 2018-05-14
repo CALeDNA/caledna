@@ -15,7 +15,8 @@ class Extraction < ApplicationRecord
              foreign_key: 'local_fastq_storage_adder_id',
              optional: true
   has_many :asvs
-  has_many :research_projects
+  has_many :research_projects, through: :research_project_extractions
+  has_many :research_project_extractions
 
   # TODO: decide what to do with priority_sequencing
   # as_enum :priority_sequencing, %i[none low high], map: :string
