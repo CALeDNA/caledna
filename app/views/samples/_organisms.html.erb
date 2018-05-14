@@ -1,5 +1,5 @@
 <% sample.extractions.each do |extraction| %>
-  <h2><%= sample.asvs_count %> Organisms from ASVs</h2>
+  <h2><%= SamplesHelper.asvs_count(asvs_count, sample) %> Organisms from ASVs</h2>
   <% if sample.extractions.length > 1%>
     <h3><%= extraction.extraction_type.name %></h3>
   <% end %>

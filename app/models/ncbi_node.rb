@@ -5,6 +5,7 @@ class NcbiNode < ApplicationRecord
   has_many :ncbi_citation_nodes
   has_many :ncbi_citations, through: :ncbi_citation_nodes
   belongs_to :ncbi_division, foreign_key: 'cal_division_id'
+  has_many :asvs, foreign_key: 'taxonID'
 
   def superkingdom
     rank_name('superkingdom')

@@ -6,9 +6,11 @@ class SamplesController < ApplicationController
   def index
     @samples = paginated_samples
     @display_name = display_name
+    @asvs_count = asvs_count
   end
 
   def show
+    @asvs_count = asvs_count(params[:sample_id])
     @sample = Sample.approved
                     .includes(extractions: { asvs: { ncbi_node: :ncbi_names } })
                     .find(params[:id])

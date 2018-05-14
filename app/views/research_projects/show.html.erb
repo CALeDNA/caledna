@@ -32,8 +32,9 @@
 
 <% if params[:view] == 'list' %>
   <%= render partial: "samples/list",
-    locals: { samples: @samples }  %>
+    locals: { samples: @samples, asvs_count: @asvs_count }  %>
 <% else %>
   <%= render partial: "samples/map", locals: { samples: @samples,
+  asvs_count: @asvs_count,
   initial_lat: nil, initial_lng: nil } %>
 <% end %>

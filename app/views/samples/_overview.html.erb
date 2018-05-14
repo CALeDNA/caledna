@@ -48,8 +48,8 @@
 
 <div class="row">
   <div class="col col-md-6">
-    <% unless @sample.asvs_count.zero? %>
-      <h3><%= @sample.asvs_count %> Organisms from ASVs</h3>
+    <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
+      <h3><%= SamplesHelper.asvs_count(@asvs_count, @sample) %> Organisms from ASVs</h3>
 
       <% @sample.extractions.each do |extraction| %>
         <canvas id="kingdom-chart-<%= extraction.id %>" width="400" height="400"></canvas>
@@ -65,6 +65,7 @@
   <div class="col col-md-6">
     <h3>Map</h3>
     <%= render partial: "samples/map", locals: { samples: [sample],
+      asvs_count: @asvs_count,
       initial_lat: sample.latitude, initial_lng: sample.longitude } %>
   </div>
   <div class="col col-md-6">

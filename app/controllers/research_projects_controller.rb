@@ -12,6 +12,7 @@ class ResearchProjectsController < ApplicationController
     @taxa = []
     @samples = paginated_samples
     @project = ResearchProject.includes(extractions: :sample).find(params[:id])
+    @asvs_count = asvs_count
   end
 
   private

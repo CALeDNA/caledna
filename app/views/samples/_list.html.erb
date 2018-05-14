@@ -15,7 +15,7 @@
       <td><%= sample.latitude %> </td>
       <td><%= sample.longitude %></td>
       <td><%= sample.status_display %></td>
-      <td><%= sample.asvs_count %></td>
+      <td><%= SamplesHelper.asvs_count(asvs_count, sample) %></td>
     </tr>
   <% end %>
 </table>

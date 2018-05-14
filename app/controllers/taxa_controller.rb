@@ -13,9 +13,20 @@ class TaxaController < ApplicationController
   def show
     @taxon = taxon
     @samples = paginated_samples
+    @asvs_count = asvs_count
   end
 
   private
+
+  def asvs_count
+    sql = 'SELECT sample_id, COUNT(*) ' \
+          'FROM asvs ' \
+          'JOIN extractions ' \
+          'ON asvs.extraction_id = extractions.id ' \
+          "WHERE \"taxonID\" = #{params[:id]} " \
+          'GROUP BY sample_id '
+    @asvs_count ||= ActiveRecord::Base.connection.execute(sql)
+  end
 
   def top_taxa
     @top_taxa ||= ordered_taxa.sort_by { |t| sort_taxa_fields(t) }

@@ -13,6 +13,7 @@ class FieldDataProjectsController < ApplicationController
   def show
     @samples = paginated_samples
     @project = FieldDataProject.find(params[:id])
+    @asvs_count = asvs_count
   end
 
   private

@@ -10,7 +10,7 @@
   <% if @sample.extractions.first && @sample.extractions.first.local_fastq_storage_url.present? %>
     <li role="presentation"><a href="#labwork_details" aria-controls="labwork_details" role="tab" data-toggle="tab">Labwork</a></li>
   <% end %>
-  <% unless @sample.asvs_count.zero? %>
+  <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
     <li role="presentation"><a href="#organisms" aria-controls="organisms" role="tab" data-toggle="tab">DNA Results</a></li>
   <% end %>
 </ul>
@@ -27,9 +27,9 @@
       <%= render partial: "labwork_details", locals: { sample: @sample } %>
     </div>
   <% end %>
-  <% unless @sample.asvs_count.zero? %>
+  <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
     <div role="tabpanel" class="tab-pane" id="organisms">
-      <%= render partial: "organisms", locals: { sample: @sample } %>
+      <%= render partial: "organisms", locals: { sample: @sample, asvs_count: @asvs_count } %>
     </div>
   <% end %>
 </div>
