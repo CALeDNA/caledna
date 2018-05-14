@@ -3,7 +3,7 @@
 module Admin
   module Labwork
     class ImportResultsTaxaController < Admin::ApplicationController
-      include ImportCsv::NormalizeTaxonomy
+      include ImportCsv::TestResultsTaxa
 
       def index
         authorize 'Labwork::ImportCsv'.to_sym, :index?
