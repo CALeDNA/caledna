@@ -2,12 +2,11 @@
 
 module SamplesHelper
   def self.kingdom_count(asvs)
-    kingdoms =
-      %w[Animalia Archaea Bacteria Chromista Fungi Plantae Protozoa Viruses]
+    kingdoms = %w[Archaea Animals Bacteria Fungi Plants Viruses]
     results = {}
     kingdoms.each do |kingdom|
       results[kingdom] =
-        asvs.select { |asv| asv.ncbi_node.kingdom == kingdom }.count
+        asvs.select { |asv| asv.ncbi_node.ncbi_division.name == kingdom }.count
     end
     results
   end
