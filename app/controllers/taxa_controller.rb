@@ -33,12 +33,16 @@ class TaxaController < ApplicationController
   end
 
   def top_plant_taxa
-    @top_plant_taxa ||= ordered_taxa.where(kingdom: 'Plantae')
+    division = NcbiDivision.find_by(name: 'Plants')
+    return [] if division.blank?
+    @top_plant_taxa ||= ordered_taxa.where(cal_division_id: division.id)
                                     .sort_by { |t| sort_taxa_fields(t) }
   end
 
   def top_animal_taxa
-    @top_animal_taxa ||= ordered_taxa.where(kingdom: 'Animalia')
+    division = NcbiDivision.find_by(name: 'Animals')
+    return [] if division.blank?
+    @top_animal_taxa ||= ordered_taxa.where(cal_division_id: division.id)
                                      .sort_by { |t| sort_taxa_fields(t) }
   end
 
@@ -47,15 +51,15 @@ class TaxaController < ApplicationController
   end
 
   def ordered_taxa
-    @ordered_taxa = Taxon.includes(:vernaculars).order(asvs_count: :desc)
-                         .limit(10)
+    @ordered_taxa ||= NcbiNode.includes(:ncbi_names).order(asvs_count: :desc)
+                              .limit(10)
   end
 
   def sort_taxa_fields(taxon)
     [
       -taxon.asvs_count,
       taxon.kingdom, taxon.phylum, taxon.className, taxon.order, taxon.family,
-      taxon.genus, taxon.specificEpithet, taxon.infraspecificEpithet
+      taxon.genus, taxon.species
     ].compact
   end
 
