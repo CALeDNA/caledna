@@ -15,8 +15,8 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: 'labwork/home#index'
-    resources :research_projects
     resources :field_data_projects
+    resources :research_projects
     resources :samples
     resources :photos
     resources :extraction_types

@@ -6,7 +6,7 @@ FactoryBot.define do
       sample
       extraction_type
 
-      priority_sequencing_cd { Extraction.priority_sequencings.keys.sample }
+      priority_sequencing false
       sequence(:sra_url) { |n| "http://example.com/sra_#{n}" }
       sra_add_date Time.zone.now
       sequence(:local_fastq_storage_url) { |n| "http://example.com/fastq_#{n}" }
@@ -23,7 +23,7 @@ FactoryBot.define do
       sample
       extraction_type
 
-      priority_sequencing_cd { Extraction.priority_sequencings.keys.sample }
+      priority_sequencing false
       sequence(:sra_url) { |n| "http://example.com/sra_#{n}" }
       sra_add_date Time.zone.now
       sequence(:local_fastq_storage_url) { |n| "http://example.com/fastq_#{n}" }

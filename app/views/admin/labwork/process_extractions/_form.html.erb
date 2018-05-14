@@ -21,8 +21,7 @@
       select_options: select_field_values(:processor_id, Researcher.select_options) )%>
     <%= render_admin_field(:select, :status_cd, form: f,
       select_options: enum_field_values(:status_cd, Extraction.statuses) )%>
-    <%= render_admin_field(:select, :priority_sequencing_cd, form: f,
-      select_options: enum_field_values(:priority_sequencing_cd, Extraction.priority_sequencings) )%>
+    <%= render_admin_field(:checkbox, :priority_sequencing, form: f)%>
     <%= render_admin_field(:checkbox, :prepub_share, form: f)%>
     <%= render_admin_field(:text, :prepub_share_group, form: f )%>
     <%= render_admin_field(:checkbox, :prepub_filter_sensitive_info, form: f)%>
