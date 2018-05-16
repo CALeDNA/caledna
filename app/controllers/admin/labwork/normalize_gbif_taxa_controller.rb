@@ -2,7 +2,7 @@
 
 module Admin
   module Labwork
-    class NormalizeTaxaController < Admin::ApplicationController
+    class NormalizeGbifTaxaController < Admin::ApplicationController
       def index
         authorize 'Labwork::NormalizeTaxon'.to_sym, :index?
 
@@ -57,7 +57,7 @@ module Admin
 
         new_attributes = cal_taxon.attributes.except('id')
         CalTaxon.create(new_attributes)
-        redirect_to admin_labwork_normalize_taxa_path
+        redirect_to admin_labwork_normalize_gbif_taxa_path
       end
 
       private
@@ -93,7 +93,7 @@ module Admin
       # rubocop:enable Metrics/MethodLength
 
       def cal_taxon
-        id = params[:id] || params[:normalize_taxon_id]
+        id = params[:id] || params[:normalize_gbif_taxon_id]
         @cal_taxon ||= CalTaxon.find(id)
       end
 

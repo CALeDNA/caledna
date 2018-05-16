@@ -75,17 +75,21 @@
       </li>
     <% end %>
 
-    <% if policy('Labwork::NormalizeTaxon'.to_sym).index? %>
-      <li>
-        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_normalize_taxa_path	 %>:
-        Create new taxa from DNA test results
-      </li>
-    <% end %>
-
     <% if policy('Labwork::ImportCsv'.to_sym).index? %>
       <li>
         <%= link_to 'Import ASV form DNA Results', admin_labwork_import_results_asvs_path %>:
         Import ASVs from DNA test results via CSV upload
+      </li>
+    <% end %>
+  </ol>
+
+  <h3 class="subtitle">Normalize Taxonomy </h3>
+
+  <ol>
+    <% if policy('Labwork::NormalizeTaxon'.to_sym).index? %>
+      <li>
+        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_normalize_gbif_taxa_path	 %>:
+        Match taxonomy from test results to GBIF taxonomy
       </li>
     <% end %>
   </ol>

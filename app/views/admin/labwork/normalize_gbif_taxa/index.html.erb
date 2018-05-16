@@ -18,8 +18,8 @@
       <td><%= taxon.taxonRank %></td>
       <td><%= taxon.complete_taxonomy %></td>
       <td>
-        <%= link_to 'Edit', admin_labwork_normalize_taxon_path(taxon) %>
-        <%= link_to 'Duplicate', admin_labwork_normalize_taxon_duplicate_path(taxon), method: :post %>
+        <%= link_to 'Edit', admin_labwork_normalize_gbif_taxon_path(taxon) %>
+        <%= link_to 'Duplicate', admin_labwork_normalize_gbif_taxon_duplicate_path(taxon), method: :post %>
       </td>
     </tr>
     <% end %>
