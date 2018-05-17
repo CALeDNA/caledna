@@ -1,0 +1,11 @@
+<ol>
+<% suggestion.lineage.each do |lineage|%>
+  <li><%= lineage.third %>: <%= lineage.second  %></li>
+<% end %>
+</ol>
+
+<%= simple_form_for @cal_taxon, url: admin_labwork_normalize_ncbi_taxon_update_existing_path(@cal_taxon), method: :put do |f| %>
+  <%= f.hidden_field :taxon_id, value: suggestion.taxon_id  %>
+  <%= f.submit 'Use this taxon' %>
+<% end %>
+<hr>

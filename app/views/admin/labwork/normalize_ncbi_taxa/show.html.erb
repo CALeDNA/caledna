@@ -1,0 +1,50 @@
+<%= javascript_pack_tag 'auto' %>
+
+<% content_for(:title) { 'Normalize taxonomy' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+
+  <p>
+    rank: <%= @cal_taxon.taxonRank %><br>
+    taxon: <%= @cal_taxon.name %><br>
+    raw test result: <%= @cal_taxon.original_taxonomy %><br>
+  </p>
+
+  <table class="no-auto-link">
+    <tr>
+      <td>
+        <ul>
+          <li>kingdom: <%= @cal_taxon.h_kingdom %></li>
+          <li>phylum: <%= @cal_taxon.h_phylum if @cal_taxon.h_phylum %></li>
+          <li>class: <%= @cal_taxon.h_class_name if @cal_taxon.h_class_name %></li>
+          <li>order: <%= @cal_taxon.h_order if @cal_taxon.h_order %></li>
+          <li>family: <%= @cal_taxon.h_family if @cal_taxon.h_family %></li>
+          <li>genus: <%= @cal_taxon.h_genus if @cal_taxon.h_genus %></li>
+          <li>species: <%= @cal_taxon.h_species if @cal_taxon.h_species %></li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <% if @suggestions.present? || @more_suggestions.present? %>
+    <h2>Choose Existing Taxa</h2>
+
+    <% @suggestions.each do |suggestion| %>
+      <% if suggestion.acceptedNameUsageID.present? %>
+        <%= render 'suggestion', suggestion: suggestion.accepted %>
+      <% end %>
+      <%= render 'suggestion', suggestion: suggestion %>
+    <% end %>
+    <br>
+    <%= link_to "Back", :back, class: 'button' %>
+  <% else %>
+    <p>No matching taxa</p>
+  <% end %>
+
+</section>

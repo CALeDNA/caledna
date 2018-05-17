@@ -53,10 +53,15 @@ Rails.application.routes.draw do
       resources :import_results_taxa, only: %i[index create]
       resources :import_processing_extractions, only: %i[index create]
 
-      resources :normalize_gbif_taxa, only: %i[index show] do
-        put 'update_existing' => 'normalize_gbif_taxa#update_existing'
-        put 'update_create' => 'normalize_gbif_taxa#update_create'
-        post 'duplicate' => 'normalize_gbif_taxa#duplicate'
+      # resources :normalize_gbif_taxa, only: %i[index show] do
+      #   put 'update_existing' => 'normalize_gbif_taxa#update_existing'
+      #   put 'update_create' => 'normalize_gbif_taxa#update_create'
+      #   post 'duplicate' => 'normalize_gbif_taxa#duplicate'
+      # end
+
+      resources :normalize_ncbi_taxa, only: %i[index show] do
+        put 'update_existing' => 'normalize_ncbi_taxa#update_existing'
+        put 'update_create' => 'normalize_ncbi_taxa#update_create'
       end
     end
 

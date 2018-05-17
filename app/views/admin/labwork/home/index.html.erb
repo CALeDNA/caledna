@@ -88,8 +88,8 @@
   <ol>
     <% if policy('Labwork::NormalizeTaxon'.to_sym).index? %>
       <li>
-        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_normalize_gbif_taxa_path	 %>:
-        Match taxonomy from test results to GBIF taxonomy
+        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_normalize_ncbi_taxa_path	 %>:
+        Match taxonomy from test results to NCBI taxonomy
       </li>
     <% end %>
   </ol>
