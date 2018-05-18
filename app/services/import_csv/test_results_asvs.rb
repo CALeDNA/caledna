@@ -27,8 +27,9 @@ module ImportCsv
 
       data.each do |row|
         taxonomy_string = row[row.headers.first]
-        taxon = find_cal_taxon_from_string(taxonomy_string)
-        create_asvs(row, sample_cells, extractions, taxon) if taxon.present?
+        cal_taxon = find_cal_taxon_from_string(taxonomy_string)
+        next if cal_taxon.blank?
+        create_asvs(row, sample_cells, extractions, cal_taxon)
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -77,12 +78,12 @@ module ImportCsv
       valid_extractions
     end
 
-    def create_asvs(row, sample_cells, extractions, taxon)
+    def create_asvs(row, sample_cells, extractions, cal_taxon)
       sample_cells.each do |cell|
         next if row[cell].to_i < 1
 
         extraction = extractions[cell]
-        ImportCsvCreateAsvJob.perform_later(cell, extraction, taxon)
+        ImportCsvCreateAsvJob.perform_later(cell, extraction, cal_taxon)
       end
     end
   end

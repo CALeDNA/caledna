@@ -114,7 +114,7 @@ module SeedData
 
     FactoryBot.create(
       :extraction_type,
-      name: 'default',
+      name: 'default'
     )
   end
 

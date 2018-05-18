@@ -4,8 +4,8 @@ module ImportCsv
   module CreateRecords
     include ProcessingExtractions
 
-    def create_asv(cell, extraction, taxon)
-      asv = Asv.where(extraction_id: extraction.id, taxonID: taxon.taxonID)
+    def create_asv(cell, extraction, cal_taxon)
+      asv = Asv.where(extraction_id: extraction.id, taxonID: cal_taxon.taxonID)
                .first_or_create
       raise ImportError, "ASV #{cell}: #{asv.errors}" unless asv.valid?
 
