@@ -54,8 +54,6 @@ module Admin
             )
           end
 
-          SampleAssignmentWorker.perform_async(mail_hash)
-
           flash[:success] = 'Samples assigned'
           success_handler
         else
@@ -65,15 +63,6 @@ module Admin
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       private
-
-      def mail_hash
-        processor = Researcher.find(processor_id)
-        JSON.generate(
-          'name': processor.username,
-          'email': processor.email,
-          'samples_count': processor.extractions.count
-        )
-      end
 
       def processor_id
         return if batch_params['data'].blank?
