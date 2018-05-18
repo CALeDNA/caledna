@@ -6,11 +6,21 @@ class DBSeeds
   include SeedData
   include SeedImport
 
-  def seed
+  def seed_basic
+    delete_records
+    reset_search
+    seed_people
+    seed_projects
+    seed_extraction_types
+    puts 'done seeding'
+  end
+
+  def seed_fake_data
     delete_records
     reset_search
     people = seed_people
     project = seed_projects
+    seed_extraction_types
     seed_samples(project)
     seed_extractions(people[:processor1], people[:processor2],
                      people[:director])
@@ -29,4 +39,6 @@ db_seeds = DBSeeds.new
 has_taxa = Vernacular.count.positive?
 db_seeds.import_taxonomy_data if import_taxa && !has_taxa
 db_seeds.import_taxa_datasets if import_taxa_datasets
-db_seeds.seed if !Rails.env.production? && import_main && has_taxa
+db_seeds.seed_fake_data if !Rails.env.production? && import_main && has_taxa
+
+db_seeds.seed_basic

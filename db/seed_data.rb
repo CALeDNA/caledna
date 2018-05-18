@@ -26,8 +26,8 @@ module SeedData
     FactoryBot.create(
       :field_data_project,
       kobo_id: nil,
-      name: 'Demo project',
-      description: Faker::Lorem.paragraph
+      name: 'unknown',
+      description: nil
     )
   end
 
@@ -107,6 +107,15 @@ module SeedData
       processor1: processor1,
       processor2: processor2
     }
+  end
+
+  def seed_extraction_types
+    puts 'seeding extraction types...'
+
+    FactoryBot.create(
+      :extraction_type,
+      name: 'default',
+    )
   end
 
   def seed_extractions(processor1, processor2, director)
