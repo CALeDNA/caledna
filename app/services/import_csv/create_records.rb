@@ -5,7 +5,7 @@ module ImportCsv
     include ProcessingExtractions
 
     def create_asv(cell, extraction, taxon)
-      asv = Asv.where(extraction_id: extraction.id, taxonID: taxon.taxon_id)
+      asv = Asv.where(extraction_id: extraction.id, taxonID: taxon.taxonID)
                .first_or_create
       raise ImportError, "ASV #{cell}: #{asv.errors}" unless asv.valid?
 
