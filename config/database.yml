@@ -5,7 +5,7 @@ default: &default
 
 development:
   <<: *default
-  database: caledna_development2
+  database: caledna_development
 
 test:
   <<: *default

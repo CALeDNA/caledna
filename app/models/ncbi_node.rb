@@ -2,11 +2,26 @@
 
 # rubocop:disable Metrics/ClassLength
 class NcbiNode < ApplicationRecord
+  LINKS = %i[
+    bold_link
+    calflora_link
+    cites_link
+    cnps_link
+    eol_link
+    gbif_link
+    inaturalist_link
+    itis_link
+    wikipedia_link
+    worms_link
+  ].freeze
+
   has_many :ncbi_names, foreign_key: 'taxon_id'
   has_many :ncbi_citation_nodes
   has_many :ncbi_citations, through: :ncbi_citation_nodes
   belongs_to :ncbi_division, foreign_key: 'cal_division_id'
   has_many :asvs, foreign_key: 'taxonID'
+  delegate *LINKS, to: :wikidata_data
+  delegate :wikidata_entity, to: :wikidata_data
 
   def self.taxa_dataset
     OpenStruct.new(
@@ -117,15 +132,31 @@ class NcbiNode < ApplicationRecord
 
   def threatened?; end
 
-  def gbif_link; end
-
-  def inaturalist_link; end
-
-  def eol_link; end
-
   def ncbi_link
-    'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?' \
-    "mode=Info&id=#{taxon_id}&lvl=3"
+    id = taxon_id
+    return if id.blank?
+    url = 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?' \
+          'mode=Info&id='
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}&lvl=3",
+      text: 'National Center for Biotechnology Information (NCBI)'
+    )
+  end
+
+  def wikipedia_link
+    return if wikidata_entity.blank?
+    results = WikidataApi.new.wikipedia_page(wikidata_entity)
+
+    return if results['entities'].blank?
+    return if results['entities'][wikidata_entity]['sitelinks'].blank?
+
+    id = results['entities'][wikidata_entity]['sitelinks']['enwiki']['title']
+    OpenStruct.new(
+      id: id,
+      url: "https://en.wikipedia.org/wiki/#{id}",
+      text: 'Wikipedia'
+    )
   end
 
   # rubocop:disable Naming/MethodName
@@ -136,7 +167,12 @@ class NcbiNode < ApplicationRecord
   def acceptedNameUsageID; end
   # rubocop:enable Naming/MethodName
 
+
   private
+
+  def wikidata_data
+    @wikidata_data ||= Wikidata.new(taxon_id)
+  end
 
   def rank_info(rank)
     lineage.select { |l| l.third == rank }.first

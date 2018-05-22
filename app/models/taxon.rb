@@ -177,10 +177,8 @@ class Taxon < ApplicationRecord
   end
 
   def inaturalist_taxa
-    puts '---- inat'
-
-    inat = ::InaturalistApi.new(canonicalName)
-    @inaturalist_taxa ||= inat.taxa
+    inat = ::InaturalistApi.new
+    @inaturalist_taxa ||= inat.taxa_search(canonicalName)
   end
 
   def inaturalist_record
@@ -188,8 +186,6 @@ class Taxon < ApplicationRecord
   end
 
   def eol_taxa
-    puts '---- eol'
-
     service = ::EolApi.new
     @eol_taxa ||= service.taxa(canonicalName)
   end
