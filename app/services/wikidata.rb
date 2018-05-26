@@ -123,12 +123,12 @@ class Wikidata
   end
 
   def cnps_link
-    id = results['CITES_Species__ID']
+    id = results['CNPS_ID']
     return if id.blank?
-    url = 'http://speciesplus.net/#/taxon_concepts/'
+    url = 'http://www.rareplants.cnps.org/detail/'
     OpenStruct.new(
       id: id,
-      url: "#{url}#{id}/legal",
+      url: "#{url}#{id}.html",
       text: 'California Native Plant Society (CNPS)'
     )
   end
