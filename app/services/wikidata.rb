@@ -27,7 +27,7 @@ class Wikidata
       ?ICTV_virus_genome_compositionLabel ?AlgaeBase_URL
       ?IRMNG_taxon_ID ?uBio_ID ?Index_Fungorum_ID
       ?Flora_of_North_America_taxon_ID ?Flora_of_China_ID ?FloraBase_ID
-      ?GRIN_URL ?BOLD_Systems_taxon_ID ?CNPS_ID
+      ?GRIN_URL ?BOLD_Systems_taxon_ID ?CNPS_ID ?image
       WHERE {
         ?item wdt:P685 ?ncbi_id.
     SPARQL
@@ -70,12 +70,24 @@ class Wikidata
       OPTIONAL { ?item wdt:P524 ?temporal_range_end. }
       OPTIONAL { ?item wdt:P183 ?endemic_to. }
       OPTIONAL { ?item wdt:P141 ?IUCN_conservation_status. }
+      OPTIONAL { ?item wdt:P18 ?image. }
       }
     SPARQL
 
     parts
   end
   # rubocop:enable Metrics/MethodLength
+
+  def wikidata_image
+    image = results['image']
+    return if image.blank?
+    OpenStruct.new(
+      url: image.to_s,
+      attribution: 'commons.wikimedia.org',
+      source: 'wikimedia',
+      taxa_url: image.to_s
+    )
+  end
 
   def bold_link
     id = results['BOLD_Systems_taxon_ID']

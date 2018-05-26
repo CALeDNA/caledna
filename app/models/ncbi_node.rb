@@ -20,8 +20,10 @@ class NcbiNode < ApplicationRecord
   has_many :ncbi_citations, through: :ncbi_citation_nodes
   belongs_to :ncbi_division, foreign_key: 'cal_division_id'
   has_many :asvs, foreign_key: 'taxonID'
+  # rubocop:disable Lint/AmbiguousOperator
   delegate *LINKS, to: :wikidata_data
-  delegate :wikidata_entity, to: :wikidata_data
+  # rubocop:enable Lint/AmbiguousOperator
+  delegate :wikidata_entity, :wikidata_image, to: :wikidata_data
 
   def self.taxa_dataset
     OpenStruct.new(
@@ -107,8 +109,6 @@ class NcbiNode < ApplicationRecord
     parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
   end
 
-  def image; end
-
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/LineLength
   def taxonomy_tree
@@ -132,6 +132,10 @@ class NcbiNode < ApplicationRecord
 
   def threatened?; end
 
+  def image
+    wikidata_image || inaturalist_image || eol_image
+  end
+
   def ncbi_link
     id = taxon_id
     return if id.blank?
@@ -144,6 +148,7 @@ class NcbiNode < ApplicationRecord
     )
   end
 
+  # rubocop:disable Metrics/AbcSize
   def wikipedia_link
     return if wikidata_entity.blank?
     results = WikidataApi.new.wikipedia_page(wikidata_entity)
@@ -158,6 +163,7 @@ class NcbiNode < ApplicationRecord
       text: 'Wikipedia'
     )
   end
+  # rubocop:enable Metrics/AbcSize
 
   # rubocop:disable Naming/MethodName
   # no-op methods to match gbif taxonomy
@@ -167,8 +173,66 @@ class NcbiNode < ApplicationRecord
   def acceptedNameUsageID; end
   # rubocop:enable Naming/MethodName
 
-
   private
+
+  def inaturalist_api
+    @inaturalist_api ||= ::InaturalistApi.new
+  end
+
+  def inaturalist_taxa
+    return if inaturalist_link.blank?
+
+    id = inaturalist_link.id
+    @inaturalist_taxa ||= begin
+      results = inaturalist_api.fetch_taxa(id)
+      JSON.parse(results.body)['results'].first
+    end
+  end
+
+  def inaturalist_image
+    return if inaturalist_taxa.blank?
+
+    default_photo = inaturalist_taxa['default_photo']
+    return if default_photo.blank?
+
+    OpenStruct.new(
+      url: default_photo['medium_url'],
+      attribution: default_photo['attribution'],
+      source: 'iNaturalist',
+      taxa_url: inaturalist_link.url
+    )
+  end
+
+  def eol_api
+    @eol_api ||= ::EolApi.new
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def eol_image
+    return if eol_image_id.blank?
+
+    media_results = eol_api.fetch_media(eol_image_id)
+    return if media_results.response.class == 'Net::HTTPNotFound'
+
+    media = media_results['dataObjects'].first
+    OpenStruct.new(
+      url: media['eolMediaURL'],
+      attribution: media['agents'].first['full_name'],
+      source: 'Encyclopedia of Life.',
+      taxa_url: eol_link.url
+    )
+  end
+  # rubocop:enable Metrics/AbcSize
+
+  def eol_image_id
+    return if eol_link.blank?
+
+    page_results = eol_api.fetch_page(eol_link.id)
+    return if page_results.response.class == 'Net::HTTPNotFound'
+    return if page_results['dataObjects'].blank?
+
+    page_results['dataObjects'].first['identifier']
+  end
 
   def wikidata_data
     @wikidata_data ||= Wikidata.new(taxon_id)

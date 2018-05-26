@@ -4,11 +4,11 @@ class InaturalistApi
   include HTTParty
   base_uri 'api.inaturalist.org/v1'
 
-  def initialize(keyword)
-    @options = { query: { q: keyword } }
+  def taxa_search(keyword)
+    self.class.get('/taxa', query: { q: keyword })
   end
 
-  def taxa
-    self.class.get('/taxa', @options)
+  def fetch_taxa(id)
+    self.class.get("/taxa/#{id}")
   end
 end

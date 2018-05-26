@@ -21,7 +21,8 @@ describe 'Taxa' do
   describe 'taxa show page' do
     it 'returns OK for valid id' do
       VCR.use_cassette 'taxa show' do
-        taxon = create(:ncbi_node, canonical_name: 'abc', lineage: [])
+        taxon =
+          create(:ncbi_node, taxon_id: 10, canonical_name: 'abc', lineage: [])
         get taxon_path(id: taxon.id)
 
         expect(response.status).to eq(200)

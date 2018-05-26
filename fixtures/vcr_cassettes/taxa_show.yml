@@ -2,87 +2,109 @@
 http_interactions:
 - request:
     method: get
-    uri: http://api.inaturalist.org/v1/taxa?q=abc
+    uri: https://query.wikidata.org/sparql?query=%20%20%20%20%20%20SELECT%20?item%20?Global_Biodiversity_Information_Facility_ID%20?IUCN_taxon_ID%0A%20%20%20%20%20%20?Encyclopedia_of_Life_ID%20?ITIS_TSN%20?BioLib_ID%20?iNaturalist_taxon_ID%0A%20%20%20%20%20%20?WoRMS_ID%20?NCBI_Taxonomy_ID%20?taxon_range_map_image%0A%20%20%20%20%20%20?temporal_range_start%20?temporal_range_startLabel%20?temporal_range_end%0A%20%20%20%20%20%20?temporal_range_endLabel%20?endemic_to%20?endemic_toLabel%20?ADW_taxon_ID%0A%20%20%20%20%20%20?ARKive_ID%20?MSW_ID%20?CITES_Species__ID%20?IUCN_conservation_status%0A%20%20%20%20%20%20?IUCN_conservation_statusLabel%20?BHL_Page_ID%20?FishBase_species_ID%0A%20%20%20%20%20%20?IPNI_plant_ID%20?MycoBank_taxon_name_ID%20?PlantList_ID%0A%20%20%20%20%20%20?Plants_of_the_World_online_ID%20?ICTV_virus_genome_composition%0A%20%20%20%20%20%20?ICTV_virus_genome_compositionLabel%20?AlgaeBase_URL%0A%20%20%20%20%20%20?IRMNG_taxon_ID%20?uBio_ID%20?Index_Fungorum_ID%0A%20%20%20%20%20%20?Flora_of_North_America_taxon_ID%20?Flora_of_China_ID%20?FloraBase_ID%0A%20%20%20%20%20%20?GRIN_URL%20?BOLD_Systems_taxon_ID%20?CNPS_ID%20?image%0A%20%20%20%20%20%20WHERE%20%7B%0A%20%20%20%20%20%20%20%20?item%20wdt:P685%20?ncbi_id.FILTER(?ncbi_id%20=%20%2710%27).%20%20%20%20%20%20SERVICE%20wikibase:label%20%7B%20bd:serviceParam%20wikibase:language%20%22en%22.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P4024%20?ADW_taxon_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1348%20?AlgaeBase_URL.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P2833%20?ARKive_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P687%20?BHL_Page_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P838%20?BioLib_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P3606%20?BOLD_Systems_taxon_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P3420%20?Calflora_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P2040%20?CITES_Species__ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P4194%20?CNPS_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P830%20?Encyclopedia_of_Life_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P938%20?FishBase_species_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1747%20?Flora_of_China_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1727%20?Flora_of_North_America_taxon_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P3101%20?FloraBase_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P846%20?Global_Biodiversity_Information_Facility_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1421%20?GRIN_URL.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1832%20?GrassBase_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1391%20?Index_Fungorum_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P3151%20?iNaturalist_taxon_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1076%20?ICTV_virus_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P961%20?IPNI_plant_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P815%20?ITIS_TSN.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P627%20?IUCN_taxon_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P959%20?MSW_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P962%20?MycoBank_taxon_name_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P1070%20?PlantList_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P685%20?NCBI_Taxonomy_ID.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P850%20?WoRMS_ID.%20%7D%0A%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P181%20?taxon_range_map_image.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P523%20?temporal_range_start.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P524%20?temporal_range_end.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P183%20?endemic_to.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P141%20?IUCN_conservation_status.%20%7D%0A%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P18%20?image.%20%7D%0A%20%20%20%20%20%20%7D
     body:
       encoding: US-ASCII
       string: ''
     headers:
+      Accept:
+      - application/sparql-results+json, application/sparql-results+xml, text/boolean,
+        text/tab-separated-values;q=0.8, text/csv;q=0.2, */*;q=0.1
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
       User-Agent:
       - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Access-Control-Allow-Origin:
-      - "*"
-      Access-Control-Allow-Headers:
-      - Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Methods
-      Access-Control-Allow-Methods:
-      - GET, POST, OPTIONS, PUT, DELETE
-      Cache-Control:
-      - public, max-age=300
-      X-Content-Type-Options:
-      - nosniff
-      Content-Type:
-      - application/json; charset=utf-8
-      Etag:
-      - W/"1fab-cv4nMUX8dS4nZIeDdvEynURYWYo"
-      Vary:
-      - Accept-Encoding
-      Date:
-      - Sun, 06 May 2018 16:00:57 GMT
-      Age:
-      - '143'
-      X-Cache:
-      - HIT
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '1690'
       Connection:
       - keep-alive
+      Keep-Alive:
+      - '120'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 26 May 2018 21:20:09 GMT
+      Content-Type:
+      - application/sparql-results+json
+      Content-Length:
+      - '594'
+      Connection:
+      - keep-alive
+      Server:
+      - nginx/1.13.6
+      X-Served-By:
+      - wdqs2002
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - public, max-age=300
+      Vary:
+      - Accept, Accept-Encoding
+      X-Varnish:
+      - 68573533, 132096514
+      Via:
+      - 1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1)
+      Age:
+      - '0'
+      X-Cache:
+      - cp2012 miss, cp2025 miss
+      X-Cache-Status:
+      - miss
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Set-Cookie:
+      - WMF-Last-Access-Global=26-May-2018;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Wed,
+        27 Jun 2018 12:00:00 GMT
+      - WMF-Last-Access=26-May-2018;Path=/;HttpOnly;secure;Expires=Wed, 27 Jun 2018
+        12:00:00 GMT
+      X-Analytics:
+      - https=1;nocookies=1
+      X-Client-Ip:
+      - 2606:6000:6222:7700:8121:42ac:4623:a757
+      Accept-Ranges:
+      - bytes
     body:
       encoding: ASCII-8BIT
-      string: '{"total_results":12,"page":1,"per_page":30,"results":[{"observations_count":6,"taxon_schemes_count":1,"ancestry":"48460/1/2/355675/40151/41573/41636/41637/41641","is_active":true,"wikipedia_url":"http://en.wikipedia.org/wiki/ABC_Islands_bear","current_synonymous_taxon_ids":null,"iconic_taxon_id":40151,"rank_level":5,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":41641,"name":"Ursus
-        arctos sitkensis","rank":"subspecies","extinct":false,"id":147159,"default_photo":{"square_url":"https://static.inaturalist.org/photos/1491897/square.jpg?1421556745","attribution":"(c)
-        Donna Pomeroy, some rights reserved (CC BY-NC)","flags":[],"medium_url":"https://static.inaturalist.org/photos/1491897/medium.jpg?1421556745","id":1491897,"license_code":"cc-by-nc","original_dimensions":{"width":2048,"height":1365},"url":"https://static.inaturalist.org/photos/1491897/square.jpg?1421556745"},"ancestor_ids":[48460,1,2,355675,40151,41573,41636,41637,41641,147159],"matched_term":"ABC
-        Islands Brown Bear","iconic_taxon_name":"Mammalia","preferred_common_name":"Coastal
-        Grizzly Bear"},{"observations_count":2,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/47181/48064/55869/55859","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":5,"taxon_changes_count":6,"atlas_id":null,"complete_species_count":null,"parent_id":55859,"name":"Cyclamen
-        coum caucasicum","rank":"subspecies","extinct":false,"id":55864,"default_photo":{"square_url":"https://static.inaturalist.org/photos/92723/square.jpg","attribution":"(c)
-        ttadevosyan, some rights reserved (CC BY), uploaded by Tigran Tadevosyan","flags":[],"medium_url":"https://static.inaturalist.org/photos/92723/medium.jpg","id":92723,"license_code":"cc-by","original_dimensions":{"width":1033,"height":795},"url":"https://static.inaturalist.org/photos/92723/square.jpg"},"ancestor_ids":[48460,47126,211194,47125,47124,47181,48064,55869,55859,55864],"matched_term":"Cyclamen
-        abchasicum","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/47366/48567/60001","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":60001,"name":"Dianthus
-        abchasicus","rank":"species","extinct":false,"id":60000,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,47366,48567,60001,60000],"matched_term":"Dianthus
-        abchasicus","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/47126/211194/47125/47124/71289/58227/58228","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":58228,"name":"Paeonia
-        abchasica","rank":"species","extinct":false,"id":410855,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,71289,58227,58228,410855],"matched_term":"Paeonia
-        abchasica","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/47123/47122/507502/548591/47407","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":47407,"name":"Genista
-        abchasica","rank":"species","extinct":false,"id":327611,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,47123,47122,507502,548591,47407,327611],"matched_term":"Genista
-        abchasica","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/47126/211194/47125/47124/47605/47604/632790/461542/439301","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":439301,"name":"Kemulariella
-        abchasica","rank":"species","extinct":false,"id":439302,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,47605,47604,632790,461542,439301,439302],"matched_term":"Kemulariella
-        abchasica","iconic_taxon_name":"Plantae","conservation_status":{"status_name":"vulnerable","iucn":30,"authority":"IUCN
-        Red List","geoprivacy":"obscured","source_id":9164,"place_id":null,"status":"vu"}},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/47126/211194/47125/47124/71275/47204/446658","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":446658,"name":"Callothlaspi
-        abchasicum","rank":"species","extinct":false,"id":438110,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,71275,47204,446658,438110],"matched_term":"Callothlaspi
-        abchasicum","iconic_taxon_name":"Plantae","conservation_status":{"status_name":"vulnerable","iucn":30,"authority":"IUCN
-        Red List","geoprivacy":"obscured","source_id":9164,"place_id":null,"status":"vu"}},{"observations_count":0,"taxon_schemes_count":2,"ancestry":"48460/1/2/355675/26036/26172/85552/35360/35361/35387","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":26036,"rank_level":5,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":35387,"name":"Darevskia
-        derjugini abchasica","rank":"subspecies","extinct":false,"id":115593,"default_photo":null,"ancestor_ids":[48460,1,2,355675,26036,26172,85552,35360,35361,35387,115593],"matched_term":"Darevskia
-        derjugini abchasica","iconic_taxon_name":"Reptilia"},{"observations_count":0,"taxon_schemes_count":4,"ancestry":"48460/1/47115/47114/246139/85525/533748/82220/86922","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47115,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":86922,"name":"Belgrandiella
-        abchasica","rank":"species","extinct":false,"id":150148,"default_photo":null,"ancestor_ids":[48460,1,47115,47114,246139,85525,533748,82220,86922,150148],"matched_term":"Belgrandiella
-        abchasica","iconic_taxon_name":"Mollusca"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/47126/211194/47125/47124/48232/48231/48230","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47126,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":48230,"name":"Ranunculus
-        abchasicus","rank":"species","extinct":false,"id":117494,"default_photo":null,"ancestor_ids":[48460,47126,211194,47125,47124,48232,48231,48230,117494],"matched_term":"Ranunculus
-        abchasicus","iconic_taxon_name":"Plantae"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/1/47120/245097/47119/47367/526560/354553/245376/527014/527018","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47119,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":527018,"name":"Buresiolla
-        abchasica","rank":"species","extinct":false,"id":527133,"default_photo":null,"ancestor_ids":[48460,1,47120,245097,47119,47367,526560,354553,245376,527014,527018,527133],"matched_term":"Buresiolla
-        abchasica","iconic_taxon_name":"Arachnida"},{"observations_count":0,"taxon_schemes_count":1,"ancestry":"48460/1/47120/372739/47158/184884/47208/71130/372852/176269/51146/154472/373660/373854/61902","is_active":true,"wikipedia_url":null,"current_synonymous_taxon_ids":null,"iconic_taxon_id":47158,"rank_level":10,"taxon_changes_count":0,"atlas_id":null,"complete_species_count":null,"parent_id":61902,"name":"Chrysolina
-        abchasica","rank":"species","extinct":false,"id":496286,"default_photo":null,"ancestor_ids":[48460,1,47120,372739,47158,184884,47208,71130,372852,176269,51146,154472,373660,373854,61902,496286],"matched_term":"Chrysolina
-        abchasica","iconic_taxon_name":"Insecta"}]}'
+      string: |-
+        {
+          "head" : {
+            "vars" : [ "item", "Global_Biodiversity_Information_Facility_ID", "IUCN_taxon_ID", "Encyclopedia_of_Life_ID", "ITIS_TSN", "BioLib_ID", "iNaturalist_taxon_ID", "WoRMS_ID", "NCBI_Taxonomy_ID", "taxon_range_map_image", "temporal_range_start", "temporal_range_startLabel", "temporal_range_end", "temporal_range_endLabel", "endemic_to", "endemic_toLabel", "ADW_taxon_ID", "ARKive_ID", "MSW_ID", "CITES_Species__ID", "IUCN_conservation_status", "IUCN_conservation_statusLabel", "BHL_Page_ID", "FishBase_species_ID", "IPNI_plant_ID", "MycoBank_taxon_name_ID", "PlantList_ID", "Plants_of_the_World_online_ID", "ICTV_virus_genome_composition", "ICTV_virus_genome_compositionLabel", "AlgaeBase_URL", "IRMNG_taxon_ID", "uBio_ID", "Index_Fungorum_ID", "Flora_of_North_America_taxon_ID", "Flora_of_China_ID", "FloraBase_ID", "GRIN_URL", "BOLD_Systems_taxon_ID", "CNPS_ID", "image" ]
+          },
+          "results" : {
+            "bindings" : [ {
+              "item" : {
+                "type" : "uri",
+                "value" : "http://www.wikidata.org/entity/Q5058393"
+              },
+              "Encyclopedia_of_Life_ID" : {
+                "type" : "literal",
+                "value" : "83176"
+              },
+              "Global_Biodiversity_Information_Facility_ID" : {
+                "type" : "literal",
+                "value" : "3223108"
+              },
+              "ITIS_TSN" : {
+                "type" : "literal",
+                "value" : "956926"
+              },
+              "NCBI_Taxonomy_ID" : {
+                "type" : "literal",
+                "value" : "10"
+              },
+              "WoRMS_ID" : {
+                "type" : "literal",
+                "value" : "571098"
+              }
+            } ]
+          }
+        }
     http_version: 
-  recorded_at: Sun, 06 May 2018 16:03:19 GMT
+  recorded_at: Sat, 26 May 2018 21:20:09 GMT
 - request:
     method: get
-    uri: http://eol.org/api/search/abc.json?exact=1
+    uri: http://eol.org/api/pages/1.0.json?id=83176&images_per_page=1&sounds_per_page=0&taxonomy=false&texts_per_page=0&videos_per_page=0
     body:
       encoding: US-ASCII
       string: ''
@@ -99,7 +121,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sun, 06 May 2018 16:03:20 GMT
+      - Sat, 26 May 2018 21:20:10 GMT
       Content-Type:
       - application/json; charset=utf-8
       Status:
@@ -107,13 +129,13 @@ http_interactions:
       X-Ua-Compatible:
       - IE=Edge,chrome=1
       Etag:
-      - '"680789d112bac3b8a0e94196c54f58b4"'
+      - '"b87326d9ebe65929b549219579d6fb06"'
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - 462f7340dae2b42d7cf287b2059844f2
+      - b7bec67141db80e3148340a79e9c2c5a
       X-Runtime:
-      - '0.010168'
+      - '0.116347'
       X-Rack-Cache:
       - miss
       Vary:
@@ -127,12 +149,151 @@ http_interactions:
       Accept-Ranges:
       - bytes
       Content-Length:
-      - '64'
+      - '88'
       Connection:
       - keep-alive
     body:
       encoding: UTF-8
-      string: '{"totalResults":0,"startIndex":1,"itemsPerPage":30,"results":[]}'
+      string: '{"identifier":83176,"scientificName":"Cellvibrio","richness_score":0.0,"dataObjects":[]}'
     http_version: 
-  recorded_at: Sun, 06 May 2018 16:03:20 GMT
+  recorded_at: Sat, 26 May 2018 21:20:10 GMT
+- request:
+    method: get
+    uri: https://www.wikidata.org/w/api.php/?action=wbgetentities&format=json&ids=Q5058393&props=sitelinks&sitefilter=enwiki
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Date:
+      - Sat, 26 May 2018 21:20:10 GMT
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '116'
+      Connection:
+      - keep-alive
+      Server:
+      - mw1339.eqiad.wmnet
+      X-Powered-By:
+      - HHVM/3.18.6-dev
+      Vary:
+      - Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      P3p:
+      - CP="This is not a P3P policy! See https://www.wikidata.org/wiki/Special:CentralAutoLogin/P3P
+        for more info."
+      Cache-Control:
+      - no-cache
+      Location:
+      - https://www.wikidata.org/w/api.php?action=wbgetentities&props=sitelinks&ids=Q5058393&sitefilter=enwiki&format=json
+      Backend-Timing:
+      - D=18600 t=1527369610527506
+      X-Varnish:
+      - 803759674, 87227232, 236705936, 497628757
+      Via:
+      - 1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1),
+        1.1 varnish (Varnish/5.1)
+      Age:
+      - '0'
+      X-Cache:
+      - cp1052 pass, cp2007 pass, cp4031 pass, cp4031 pass
+      X-Cache-Status:
+      - pass
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Set-Cookie:
+      - GeoIP=US:CA:Los_Angeles:34.00:-118.43:v4; Path=/; secure; Domain=.wikidata.org
+      - WMF-Last-Access-Global=26-May-2018;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Wed,
+        27 Jun 2018 12:00:00 GMT
+      - WMF-Last-Access=26-May-2018;Path=/;HttpOnly;secure;Expires=Wed, 27 Jun 2018
+        12:00:00 GMT
+      X-Analytics:
+      - https=1;nocookies=1
+      X-Client-Ip:
+      - 2606:6000:6222:7700:8121:42ac:4623:a757
+    body:
+      encoding: ASCII-8BIT
+      string: This endpoint does not support "path info", i.e. extra text between
+        "api.php"and the "?". Remove any such text and try again.
+    http_version: 
+  recorded_at: Sat, 26 May 2018 21:20:10 GMT
+- request:
+    method: get
+    uri: https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=Q5058393&props=sitelinks&sitefilter=enwiki
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Cookie:
+      - WMF-Last-Access=26-May-2018;Path=/;HttpOnly;secure;Expires=Wed, 27 Jun 2018
+        12:00:00 GMT; WMF-Last-Access-Global=26-May-2018;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Wed,
+        27 Jun 2018 12:00:00 GMT; GeoIP=US:CA:Los_Angeles:34.00:-118.43:v4
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 26 May 2018 21:20:10 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '143'
+      Connection:
+      - keep-alive
+      Server:
+      - mw1283.eqiad.wmnet
+      X-Powered-By:
+      - HHVM/3.18.6-dev
+      P3p:
+      - CP="This is not a P3P policy! See https://www.wikidata.org/wiki/Special:CentralAutoLogin/P3P
+        for more info."
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Content-Disposition:
+      - inline; filename=api-result.json
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Backend-Timing:
+      - D=45763 t=1527369610729853
+      X-Varnish:
+      - 802239756, 958190758, 848473929, 348945567
+      Via:
+      - 1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1),
+        1.1 varnish (Varnish/5.1)
+      Accept-Ranges:
+      - bytes
+      Age:
+      - '0'
+      X-Cache:
+      - cp1052 pass, cp2019 pass, cp4030 pass, cp4031 pass
+      X-Cache-Status:
+      - pass
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      X-Analytics:
+      - ns=-1;special=Badtitle;WMF-Last-Access=26-May-2018;WMF-Last-Access-Global=26-May-2018;https=1
+      X-Client-Ip:
+      - 2606:6000:6222:7700:8121:42ac:4623:a757
+    body:
+      encoding: UTF-8
+      string: '{"entities":{"Q5058393":{"type":"item","id":"Q5058393","sitelinks":{"enwiki":{"site":"enwiki","title":"Cellvibrio","badges":[]}}}},"success":1}'
+    http_version: 
+  recorded_at: Sat, 26 May 2018 21:20:10 GMT
 recorded_with: VCR 4.0.0
