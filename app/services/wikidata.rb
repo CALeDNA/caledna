@@ -4,12 +4,179 @@
 class Wikidata
   require 'sparql/client'
 
-  attr_reader :ncbi_taxon_id
+  attr_reader :taxon_id, :external_resource
 
   URL = 'https://query.wikidata.org/sparql'
 
-  def initialize(ncbi_taxon_id)
-    @ncbi_taxon_id = ncbi_taxon_id
+  def initialize(taxon_id, external_resource)
+    @taxon_id = taxon_id
+    @external_resource = external_resource
+  end
+
+  def wikidata_image
+    image = external_resource&.wikidata_image
+    return if image.blank?
+    OpenStruct.new(
+      url: image,
+      attribution: 'commons.wikimedia.org',
+      source: 'wikimedia',
+      taxa_url: image
+    )
+  end
+
+  def bold_link
+    id = external_resource&.bold_id
+    return if id.blank?
+    url = 'http://www.boldsystems.org/index.php/TaxBrowser_TaxonPage?taxid='
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'Barcode of Life Data System (BOLD)'
+    )
+  end
+
+  def calflora_link
+    id = external_resource&.calflora_id
+    return if id.blank?
+    url = 'http://www.calflora.org/cgi-bin/species_query.cgi?where-calrecnum='
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'Calflora'
+    )
+  end
+
+  def cites_link
+    id = external_resource&.cites_id
+    return if id.blank?
+    url = 'http://speciesplus.net/#/taxon_concepts/'
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}/legal",
+      text: 'CITES Species+'
+    )
+  end
+
+  def cnps_link
+    id = external_resource&.cnps_id
+    return if id.blank?
+    url = 'http://www.rareplants.cnps.org/detail/'
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}.html",
+      text: 'California Native Plant Society (CNPS)'
+    )
+  end
+
+  def eol_link
+    id = external_resource&.eol_id
+    return if id.blank?
+    url = 'http://eol.org/pages/'
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'Encyclopedia of Life (EOL)'
+    )
+  end
+
+  def gbif_link
+    id = external_resource&.gbif_id
+    return if id.blank?
+    url = 'https://www.gbif.org/species/'
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'Global Biodiversity Information Facility (GBIF)'
+    )
+  end
+
+  def inaturalist_link
+    id = external_resource&.inaturalist_id
+    return if id.blank?
+    url = 'https://www.inaturalist.org/taxa/'
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'iNaturalist'
+    )
+  end
+
+  def itis_link
+    id = external_resource&.itis_id
+    return if id.blank?
+    url = 'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'Integrated Taxonomic Information System (ITIS)'
+    )
+  end
+
+  def iucn_link
+    id = external_resource&.iucn_id
+    return if id.blank?
+    url = 'http://www.iucnredlist.org/details/'
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}/0",
+      text: 'International Union for Conservation of Nature (IUCN)'
+    )
+  end
+
+  def msw_link
+    id = external_resource&.msw_id
+    return if id.blank?
+    url = 'http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id='
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'Mammal Species of the World (MSW)'
+    )
+  end
+
+  def ncbi_link
+    id = external_resource&.taxon_id || taxon_id
+    return if id.blank?
+    url = 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id='
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'National Center for Biotechnology Information (NCBI)'
+    )
+  end
+
+  def wikidata_entity
+    external_resource&.wikidata_entity
+  end
+
+  def wikidata_link
+    id = external_resource&.wikidata_entity
+    return if id.blank?
+    url = 'https://www.wikidata.org/wiki/'
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'Wikidata'
+    )
+  end
+
+  def wikipedia_link; end
+
+  def worms_link
+    id = external_resource&.worms_id
+    return if id.blank?
+    url = 'http://www.marinespecies.org/aphia.php?p=taxdetails&id='
+    OpenStruct.new(
+      id: id,
+      url: "#{url}#{id}",
+      text: 'World Register of Marine Species (WoRMS)'
+    )
+  end
+
+  private
+
+  def client
+    @client ||= SPARQL::Client.new(URL, method: :get)
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -77,152 +244,6 @@ class Wikidata
     parts
   end
   # rubocop:enable Metrics/MethodLength
-
-  def wikidata_image
-    image = results['image']
-    return if image.blank?
-    OpenStruct.new(
-      url: image.to_s,
-      attribution: 'commons.wikimedia.org',
-      source: 'wikimedia',
-      taxa_url: image.to_s
-    )
-  end
-
-  def bold_link
-    id = results['BOLD_Systems_taxon_ID']
-    return if id.blank?
-    url = 'http://www.boldsystems.org/index.php/TaxBrowser_TaxonPage?taxid='
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'Barcode of Life Data System (BOLD)'
-    )
-  end
-
-  def calflora_link
-    id = results['Calflora_ID']
-    return if id.blank?
-    url = 'http://www.calflora.org/cgi-bin/species_query.cgi?where-calrecnum='
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'Calflora'
-    )
-  end
-
-  def cites_link
-    id = results['CITES_Species__ID']
-    return if id.blank?
-    url = 'http://speciesplus.net/#/taxon_concepts/'
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}/legal",
-      text: 'CITES Species+'
-    )
-  end
-
-  def cnps_link
-    id = results['CNPS_ID']
-    return if id.blank?
-    url = 'http://www.rareplants.cnps.org/detail/'
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}.html",
-      text: 'California Native Plant Society (CNPS)'
-    )
-  end
-
-  def eol_link
-    id = results['Encyclopedia_of_Life_ID']
-    return if id.blank?
-    url = 'http://eol.org/pages/'
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'Encyclopedia of Life (EOL)'
-    )
-  end
-
-  def gbif_link
-    id = results['Global_Biodiversity_Information_Facility_ID']
-    return if id.blank?
-    url = 'https://www.gbif.org/species/'
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'Global Biodiversity Information Facility (GBIF)'
-    )
-  end
-
-  def inaturalist_link
-    id = results['iNaturalist_taxon_ID']
-    return if id.blank?
-    url = 'https://www.inaturalist.org/taxa/'
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'iNaturalist'
-    )
-  end
-
-  def itis_link
-    id = results['ITIS_TSN']
-    return if id.blank?
-    url = 'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'Integrated Taxonomic Information System (ITIS)'
-    )
-  end
-
-  def iucn_link
-    id = results['IUCN_taxon_ID']
-    return if id.blank?
-    url = 'http://www.iucnredlist.org/details/'
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}/0",
-      text: 'International Union for Conservation of Nature (IUCN)'
-    )
-  end
-
-  def msw_link
-    id = results['MSW_ID']
-    return if id.blank?
-    url = 'http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id='
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'Mammal Species of the World (MSW)'
-    )
-  end
-
-  def wikidata_entity
-    item = results['item']
-    return if item.blank?
-    item.path.split('/').last
-  end
-
-  def wikipedia_link; end
-
-  def worms_link
-    id = results['WoRMS_ID']
-    return if id.blank?
-    url = 'http://www.marinespecies.org/aphia.php?p=taxdetails&id='
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}",
-      text: 'World Register of Marine Species (WoRMS)'
-    )
-  end
-
-  private
-
-  def client
-    @client ||= SPARQL::Client.new(URL, method: :get)
-  end
 
   def results
     @results ||= client.query(query)[0]
@@ -404,16 +425,5 @@ class Wikidata
       text: 'PlantList'
     )
   end
-
-  # def ncbi_link
-  #   id = results['NCBI_Taxonomy_ID']
-  #   return if id.blank?
-  #   url = 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id='
-  #   OpenStruct.new(
-  #     id: id,
-  #     url: "#{url}#{id}",
-  #     text: 'National Center for Biotechnology Information (NCBI)'
-  #   )
-  # end
 end
 # rubocop:enable Metrics/ClassLength

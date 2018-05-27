@@ -1,11 +1,8 @@
 <h3>Links</h3>
 <ul>
-  <% if taxon.ncbi_link %>
-    <li><%= link_to taxon.ncbi_link.text, taxon.ncbi_link.url %></li>
-  <% end %>
   <% TaxaHelper.links(taxon).each do |link| %>
     <% if link %>
-      <li><%= link_to link.text, link.url %></li>
+      <li><%= link_to "#{link.text}: #{link.id}", link.url %></li>
     <% end %>
   <% end %>
 </ul>

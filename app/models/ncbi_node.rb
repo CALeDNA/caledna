@@ -11,6 +11,8 @@ class NcbiNode < ApplicationRecord
     gbif_link
     inaturalist_link
     itis_link
+    ncbi_link
+    wikidata_link
     wikipedia_link
     worms_link
   ].freeze
@@ -20,6 +22,8 @@ class NcbiNode < ApplicationRecord
   has_many :ncbi_citations, through: :ncbi_citation_nodes
   belongs_to :ncbi_division, foreign_key: 'cal_division_id'
   has_many :asvs, foreign_key: 'taxonID'
+  has_one :external_resource, foreign_key: 'taxon_id'
+
   # rubocop:disable Lint/AmbiguousOperator
   delegate *LINKS, to: :wikidata_data
   # rubocop:enable Lint/AmbiguousOperator
@@ -136,18 +140,6 @@ class NcbiNode < ApplicationRecord
     wikidata_image || inaturalist_image || eol_image
   end
 
-  def ncbi_link
-    id = taxon_id
-    return if id.blank?
-    url = 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?' \
-          'mode=Info&id='
-    OpenStruct.new(
-      id: id,
-      url: "#{url}#{id}&lvl=3",
-      text: 'National Center for Biotechnology Information (NCBI)'
-    )
-  end
-
   # rubocop:disable Metrics/AbcSize
   def wikipedia_link
     return if wikidata_entity.blank?
@@ -235,7 +227,7 @@ class NcbiNode < ApplicationRecord
   end
 
   def wikidata_data
-    @wikidata_data ||= Wikidata.new(taxon_id)
+    @wikidata_data ||= Wikidata.new(taxon_id, external_resource)
   end
 
   def rank_info(rank)
