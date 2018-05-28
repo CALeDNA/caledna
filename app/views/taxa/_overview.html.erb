@@ -12,6 +12,13 @@
   </div>
 
   <div class="col-md-6">
+    <% if taxon.wikipedia_excerpt %>
+      <h3><%= taxon.canonical_name %></h3>
+      <p>
+        <%= taxon.wikipedia_excerpt %>
+        <%= link_to 'Source: Wikipedia', taxon.wikipedia_link.url %>
+      </p>
+    <% end %>
     <h3>Classification</h3>
     <table class="table table-condensed taxonomy-tree">
       <% taxon.taxonomy_tree.each do |taxon|%>

@@ -143,19 +143,30 @@ class NcbiNode < ApplicationRecord
   # rubocop:disable Metrics/AbcSize
   def wikipedia_link
     return if wikidata_entity.blank?
-    results = WikidataApi.new.wikipedia_page(wikidata_entity)
+    results = wikipedia_page
 
     return if results['entities'].blank?
     return if results['entities'][wikidata_entity]['sitelinks'].blank?
 
     id = results['entities'][wikidata_entity]['sitelinks']['enwiki']['title']
-    OpenStruct.new(
+    @wikipedia_link ||= OpenStruct.new(
       id: id,
       url: "https://en.wikipedia.org/wiki/#{id}",
       text: 'Wikipedia'
     )
   end
   # rubocop:enable Metrics/AbcSize
+
+  def wikipedia_excerpt
+    return if wikipedia_link.blank?
+
+    results = WikipediaApi.new.summary(wikipedia_link.id)
+    pages = results['query']['pages']
+    page_id = pages.keys.first
+    return if page_id == -1
+
+    pages[page_id]['extract']
+  end
 
   # rubocop:disable Naming/MethodName
   # no-op methods to match gbif taxonomy
@@ -166,6 +177,14 @@ class NcbiNode < ApplicationRecord
   # rubocop:enable Naming/MethodName
 
   private
+
+  def wikidata_api
+    @wikidata_api ||= WikidataApi.new
+  end
+
+  def wikipedia_page
+    @wikipedia_page ||= wikidata_api.wikipedia_page(wikidata_entity)
+  end
 
   def inaturalist_api
     @inaturalist_api ||= ::InaturalistApi.new

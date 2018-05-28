@@ -23,11 +23,6 @@
   <p>Accepted name: <%= link_to taxon.accepted_taxon.canonicalName, taxon_path(taxon.accepted_taxon) %></p>
 <% end %>
 
-<p class='data-source'>
-  Classification Source: <%= link_to taxon.taxa_dataset.name, taxon.taxa_dataset.url %><br>
-  <%= taxon.taxa_dataset.citation %>
-</p>
-
 <% if taxon.vernaculars.present? %>
   <h3>Common Names</h3>
   <table class="table table-condensed ">
@@ -43,10 +38,6 @@
       </tr>
     <% end %>
   </table>
-  <p class='data-source'>
-    Common Names Source: <%= link_to NcbiNode.taxa_dataset.name, NcbiNode.taxa_dataset.url %><br>
-    <%= NcbiNode.taxa_dataset.citation %>
-  </p>
 <% end%>
 
 <% if taxon.synonyms.present? %>
@@ -64,8 +55,9 @@
       </tr>
     <% end %>
   </table>
-  <p class='data-source'>
-    Scientific Names Source: <%= link_to NcbiNode.taxa_dataset.name, NcbiNode.taxa_dataset.url %><br>
-    <%= NcbiNode.taxa_dataset.citation %>
-  </p>
 <% end %>
+
+<p class='data-source'>
+  Names Source: <%= link_to NcbiNode.taxa_dataset.name, NcbiNode.taxa_dataset.url %><br>
+  <%= NcbiNode.taxa_dataset.citation %>
+</p>
