@@ -1,4 +1,3 @@
-
 CREATE TABLE public.ncbi_citations (
     id integer NOT NULL,
     citation_key text,
@@ -8,7 +7,6 @@ CREATE TABLE public.ncbi_citations (
     text text,
     taxon_id_list text
 );
-
 
 CREATE TABLE public.ncbi_names (
     taxon_id integer NOT NULL,
@@ -39,7 +37,6 @@ CREATE TABLE public.ncbi_divisions (
   name character varying(255),
   comments character varying(255)
 );
-
 
 ALTER TABLE ONLY ncbi_citations
     ADD CONSTRAINT ncbi_citations_pkey PRIMARY KEY ("id");
