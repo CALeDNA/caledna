@@ -115,6 +115,7 @@ class Wikidata
   def iucn_link
     id = external_resource&.iucn_id
     return if id.blank?
+
     url = 'http://www.iucnredlist.org/details/'
     OpenStruct.new(
       id: id,

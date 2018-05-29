@@ -3,8 +3,8 @@
 class UpdateIucnStatusJob < ApplicationJob
   queue_as :default
 
-  def perform(data)
+  def perform(data, taxon)
     iucn = ImportIucn.new
-    iucn.update_iucn_status(data)
+    iucn.update_iucn_status(data, taxon)
   end
 end

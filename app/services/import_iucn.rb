@@ -14,12 +14,12 @@ class ImportIucn
     self.class.get('/country/getspecies/US', @options)
   end
 
-  def update_iucn_status(hash)
+  def process_iucn_status(hash)
     data = hash.with_indifferent_access
     taxon = find_taxon(data)
     return if taxon.blank?
 
-    taxon.update(iucn_status: data[:category], iucn_taxonid: data[:taxonid])
+    UpdateIucnStatusJob.perform_later(data, taxon)
   end
 
   def form_canonical_name(data)
@@ -42,12 +42,24 @@ class ImportIucn
     end
   end
 
+  def update_iucn_status(data, taxon)
+    status = IucnStatus::CATEGORIES[data[:category].to_sym]
+    resource = ExternalResource.find_by(taxon_id: taxon.id)
+    iucn_data = { iucn_status: status, iucn_id: data[:taxonid] }
+
+    if resource.present?
+      return if resource.iucn_status.present?
+      resource.update(iucn_data)
+    else
+      ExternalResource.create(iucn_data.merge(taxon_id: taxon.id))
+    end
+  end
+
   private
 
   def find_taxon(data)
     rank = find_rank(data)
     canonical_name = form_canonical_name(data)
-    # TODO: decide whether to switch to NcbiNode
-    Taxon.where(canonicalName: canonical_name, taxonRank: rank).first
+    NcbiNode.where(canonical_name: canonical_name, rank: rank).first
   end
 end
