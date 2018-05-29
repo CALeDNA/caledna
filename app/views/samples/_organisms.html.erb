@@ -8,8 +8,12 @@
     <li>
       <%= taxon.ncbi_division.name %>
       <%= taxon.taxonRank %>:
-      <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-      <%= taxon.common_names %>
+      <% if taxon.threatened? %>
+        (Name not shown because this species is <%= taxon.conservation_status %>)
+      <% else %>
+        <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
+        <%= taxon.common_names %>
+      <% end %>
     </li>
   <% end %>
   </ul>

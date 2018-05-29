@@ -11,6 +11,7 @@ class NcbiNode < ApplicationRecord
     gbif_link
     inaturalist_link
     itis_link
+    iucn_link
     ncbi_link
     wikidata_link
     wikipedia_link
@@ -130,11 +131,20 @@ class NcbiNode < ApplicationRecord
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/LineLength
 
-  def conservation_status; end
+  def conservation_status
+    external_resource&.iucn_status
+  end
 
-  def conservation_status?; end
+  def conservation_status?
+    conservation_status.present?
+  end
 
-  def threatened?; end
+  def threatened?
+    return false if conservation_status.blank?
+    statuses = IucnStatus::THREATENED.values
+
+    statuses.include?(external_resource.iucn_status)
+  end
 
   def image
     wikidata_image || inaturalist_image || eol_image

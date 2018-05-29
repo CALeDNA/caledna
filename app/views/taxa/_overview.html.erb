@@ -55,17 +55,27 @@
   </div>
 </div>
 
-<% if taxon.threatened? %>
-  <div class="panel panel-default">
-    <p class="panel-body">
-      NOTE: In order to protect threatened species, we do not show sample or
-      location info for species listed as 'Extinct', 'Extinct in the Wild',
-      'Critically Endangered', 'Endangered', 'Vulnerable', or 'Near Threatened'
-      by IUCN.
-    </p>
-  </div>
-<% else %>
+<% if taxon.threatened? && samples.present? %>
   <h2 id="samples" class="title">Samples</h2>
+
+  <% if samples.present? %>
+    <div class="panel panel-default">
+      <p class="panel-body">
+        NOTE: In order to protect threatened species, we do not show sample or
+        location info for species listed as 'Extinct', 'Extinct in the Wild',
+        'Critically Endangered', 'Endangered', 'Vulnerable', or 'Near Threatened'
+        by IUCN.
+      </p>
+    </div>
+  <% else %>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        No CALeDNA samples match <%= taxon.canonicalName %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <h2 id="samples" class="title"><%= pluralize(samples.count, 'Sample') %></h2>
 
   <% if samples.present? %>
     <div class="samples-menu">
