@@ -79,7 +79,8 @@ Rails.application.routes.draw do
     end
 
     controller 'reset_database' do
-      get 'delete_data' => 'labwork/reset_database#delete_data'
+      get 'delete_fieldwork_data' => 'labwork/reset_database#delete_fieldwork_data'
+      get 'delete_labwork_data' => 'labwork/reset_database#delete_labwork_data'
     end
   end
 

@@ -106,8 +106,13 @@
 <section class="main-content__body">
   <ul>
     <li>
-      <%= link_to "Delete labwork data", admin_delete_data_path, data: {confirm: "You sure?"} %>:
+      <%= link_to "Delete labwork data", admin_delete_labwork_data_path, data: {confirm: "You sure?"} %>:
       delete all ASVs, extractions, custom taxons
+    </li>
+
+    <li>
+      <%= link_to "Delete fieldwork data", admin_delete_fieldwork_data_path, data: {confirm: "You sure?"} %>:
+      delete all samples, photos, fieldwork projects, research projects
     </li>
   </ul>
 </section>
