@@ -3,6 +3,7 @@
 module Admin
   module Labwork
     class ResetDatabaseController < Admin::ApplicationController
+      # rubocop:disable Metrics/AbcSize
       def delete_labwork_data
         raise ReseedNotAllowedError if Rails.env.production?
         raise ReseedNotAllowedError unless current_researcher.director?
@@ -10,17 +11,13 @@ module Admin
         truncate_tables(labwork_models)
         reset_primary_keys(labwork_models)
 
-        sql = 'ALTER SEQUENCE cal_taxa_taxonID_seq  RESTART WITH 2000000000;'
-        ActiveRecord::Base.connection.execute(sql)
-        sql = 'ALTER TABLE cal_taxa ALTER "taxonID" SET DEFAULT ' \
-          'NEXTVAL(\'cal_taxa_taxonID_seq\');'
-        ActiveRecord::Base.connection.execute(sql)
-
+        set_cal_taxa_sequence
         ExtractionType.create(name: 'default')
 
         flash[:success] = 'Labwork data deleted'
         redirect_to admin_root_path
       end
+      # rubocop:enable Metrics/AbcSize
 
       def delete_fieldwork_data
         raise ReseedNotAllowedError if Rails.env.production?
@@ -47,6 +44,14 @@ module Admin
           next if model == CalTaxon
           ActiveRecord::Base.connection.reset_pk_sequence!(model.table_name)
         end
+      end
+
+      def set_cal_taxa_sequence
+        sql = 'ALTER SEQUENCE cal_taxa_taxonID_seq  RESTART WITH 2000000000;'
+        ActiveRecord::Base.connection.execute(sql)
+        sql = 'ALTER TABLE cal_taxa ALTER "taxonID" SET DEFAULT ' \
+          'NEXTVAL(\'cal_taxa_taxonID_seq\');'
+        ActiveRecord::Base.connection.execute(sql)
       end
 
       def labwork_models

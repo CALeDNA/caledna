@@ -3,8 +3,13 @@
 require 'rails_helper'
 
 describe KoboApi::Process do
+  let(:dummy_class) { Class.new { extend KoboApi::Process } }
+
   describe '.save_project_data' do
-    let(:subject) { KoboApi::Process.new }
+    def subject(data)
+      dummy_class.save_project_data(data)
+    end
+
     let(:title) { 'title' }
     let(:id) { 123 }
     let(:data) do
@@ -12,7 +17,7 @@ describe KoboApi::Process do
     end
 
     it 'creates new Project with passed in data' do
-      expect { subject.save_project_data(data) }
+      expect { subject(data) }
         .to change { FieldDataProject.count }.by(1)
       expect(FieldDataProject.first.name).to eq(title)
       expect(FieldDataProject.first.kobo_id).to eq(id)
@@ -20,8 +25,11 @@ describe KoboApi::Process do
     end
   end
 
-  describe '.import_projects' do
-    let(:subject) { KoboApi::Process.new }
+  describe '.import_kobo_projects' do
+    def subject(data)
+      dummy_class.import_kobo_projects(data)
+    end
+
     let(:data) do
       [
         { 'id' => 1, 'title' => 'title', 'description' => 'description' },
@@ -30,20 +38,13 @@ describe KoboApi::Process do
     end
 
     context 'incoming data contains new projects' do
-      it 'calls save_project_data for each item' do
-        expect(subject).to receive(:save_project_data).with(data.first)
-        expect(subject).to receive(:save_project_data).with(data.second)
-
-        subject.import_projects(data)
-      end
-
       it 'all items are saved' do
-        expect { subject.import_projects(data) }
+        expect { subject(data) }
           .to change { FieldDataProject.count }.by(2)
       end
 
       it 'returns true when all items are saved' do
-        expect(subject.import_projects(data)).to eq(true)
+        expect(subject(data)).to eq(true)
       end
     end
 
@@ -52,26 +53,24 @@ describe KoboApi::Process do
         create(:field_data_project, kobo_id: 1)
       end
 
-      it 'calls save_project_data only for new items' do
-        expect(subject).not_to receive(:save_project_data).with(data.first)
-        expect(subject).to receive(:save_project_data).with(data.second)
-
-        subject.import_projects(data)
-      end
-
       it 'does not save previously imported items' do
-        expect { subject.import_projects(data) }
+        expect { subject(data) }
           .to change { FieldDataProject.count }.by(1)
       end
 
       it 'returns true when only new items are saved' do
-        expect(subject.import_projects(data)).to eq(true)
+        expect(subject(data)).to eq(true)
       end
     end
   end
 
-  describe '.import_samples' do
-    let(:subject) { KoboApi::Process.new }
+  describe '.import_kobo_samples' do
+    include ActiveJob::TestHelper
+
+    def subject(project_id, kobo_id, hash_payload)
+      dummy_class.import_kobo_samples(project_id, kobo_id, hash_payload)
+    end
+
     let(:field_data_project) { create(:field_data_project) }
     let(:project_id) { field_data_project.id }
     let(:kobo_id) { 1 }
@@ -79,44 +78,23 @@ describe KoboApi::Process do
       [
         {
           'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
-          '_id' => kobo_id,
-          '_attachments' => [
-            { filename: 'photo/a.jpg' },
-            { filename: 'photo/b.jpg' }
-          ]
+          '_id' => kobo_id
         },
         {
           'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
-          '_id' => 200,
-          '_attachments' => [
-            { filename: 'photo/c.jpg' }
-          ]
+          '_id' => 200
         }
       ]
     end
 
     context 'incoming data contains new samples' do
-      it 'calls save_sample_data for each item' do
-        expect(subject).to receive(:save_sample_data)
-          .with(project_id, kobo_id, data.first)
-        expect(subject).to receive(:save_sample_data)
-          .with(project_id, kobo_id, data.second)
-
-        subject.import_samples(project_id, kobo_id, data)
+      it 'enqueues ImportKoboSampleJob for each new samples' do
+        expect { subject(project_id, kobo_id, data) }
+          .to have_enqueued_job(ImportKoboSampleJob).at_least(2).times
       end
 
-      it 'creates new samples' do
-        expect { subject.import_samples(project_id, kobo_id, data) }
-          .to change { Sample.count }.by(2)
-      end
-
-      it 'creates new photos' do
-        expect { subject.import_samples(project_id, kobo_id, data) }
-          .to change { Photo.count }.by(3)
-      end
-
-      it 'returns true when all items are saved' do
-        expect(subject.import_samples(project_id, kobo_id, data)).to eq(true)
+      it 'returns number of new samples' do
+        expect(subject(project_id, kobo_id, data)).to eq(2)
       end
     end
 
@@ -126,33 +104,22 @@ describe KoboApi::Process do
                         field_data_project: field_data_project)
       end
 
-      it 'calls save_project_data only for new items' do
-        expect(subject).not_to receive(:save_sample_data)
-          .with(project_id, kobo_id, data.first)
-        expect(subject).to receive(:save_sample_data)
-          .with(project_id, kobo_id, data.second)
-
-        subject.import_samples(project_id, kobo_id, data)
+      it 'enqueues ImportKoboSampleJob only for new samples' do
+        expect { subject(project_id, kobo_id, data) }
+          .to have_enqueued_job(ImportKoboSampleJob).at_least(1).times
       end
 
-      it 'does not save previously imported samples' do
-        expect { subject.import_samples(project_id, kobo_id, data) }
-          .to change { Sample.count }.by(1)
-      end
-
-      it 'does not save previously imported photos' do
-        expect { subject.import_samples(project_id, kobo_id, data) }
-          .to change { Photo.count }.by(1)
-      end
-
-      it 'returns true when only new items are saved' do
-        expect(subject.import_samples(project_id, kobo_id, data)).to eq(true)
+      it 'returns number of new samples' do
+        expect(subject(project_id, kobo_id, data)).to eq(1)
       end
     end
   end
 
   describe '.save_sample_data' do
-    let(:subject) { KoboApi::Process.new }
+    def subject(project_id, kobo_id, hash_payload)
+      dummy_class.save_sample_data(project_id, kobo_id, hash_payload)
+    end
+
     let(:field_data_project) { create(:field_data_project) }
     let(:project_id) { field_data_project.id }
 
@@ -179,7 +146,7 @@ describe KoboApi::Process do
       end
 
       it 'creates a sample with incoming data' do
-        expect { subject.save_sample_data(project_id, kobo_id, data) }
+        expect { subject(project_id, kobo_id, data) }
           .to change { Sample.count }.by(1)
 
         sample = Sample.first
@@ -226,7 +193,7 @@ describe KoboApi::Process do
       end
 
       it 'creates a sample with incoming data' do
-        expect { subject.save_sample_data(project_id, kobo_id, data) }
+        expect { subject(project_id, kobo_id, data) }
           .to change { Sample.count }.by(1)
 
         sample = Sample.first
@@ -311,17 +278,17 @@ describe KoboApi::Process do
       end
 
       it 'creates multiple samples' do
-        expect { subject.save_sample_data(project_id, kobo_id, data) }
+        expect { subject(project_id, kobo_id, data) }
           .to change { Sample.count }.by(6)
       end
 
       it 'creates multiple photos' do
-        expect { subject.save_sample_data(project_id, kobo_id, data) }
+        expect { subject(project_id, kobo_id, data) }
           .to change { Photo.count }.by(9)
       end
 
       it 'creates samples with incoming data' do
-        subject.save_sample_data(project_id, kobo_id, data)
+        subject(project_id, kobo_id, data)
 
         sample_a1 = Sample.first
         expect(sample_a1.field_data_project_id).to eq(project_id)
@@ -385,7 +352,7 @@ describe KoboApi::Process do
       end
 
       it 'creates samples with identical values' do
-        subject.save_sample_data(project_id, kobo_id, data)
+        subject(project_id, kobo_id, data)
 
         project_ids = Sample.pluck(:field_data_project_id).uniq
         collection_dates = Sample.pluck(:collection_date).uniq
@@ -401,7 +368,7 @@ describe KoboApi::Process do
       end
 
       it 'associates photos with related samples' do
-        subject.save_sample_data(project_id, kobo_id, data)
+        subject(project_id, kobo_id, data)
 
         sample_ids = Sample.order(created_at: :asc).pluck(:id)
         photo_ids = Photo.order(created_at: :asc).pluck(:id)

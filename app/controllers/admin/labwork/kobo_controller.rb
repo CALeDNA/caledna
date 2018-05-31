@@ -3,6 +3,8 @@
 module Admin
   module Labwork
     class KoboController < Admin::ApplicationController
+      include KoboApi::Process
+
       def import_kobo
         authorize 'Labwork::Kobo'.to_sym, :import_kobo?
 
@@ -13,7 +15,7 @@ module Admin
         authorize 'Labwork::Kobo'.to_sym, :import_projects?
 
         hash_data = ::KoboApi::Connect.projects.parsed_response
-        results = kobo_process.import_projects(hash_data)
+        results = import_kobo_projects(hash_data)
 
         flash[:error] = 'Could not save data from Kobo API.' unless results
         redirect_to action: 'import_kobo'
@@ -27,10 +29,10 @@ module Admin
         authorize 'Labwork::Kobo'.to_sym, :import_samples?
 
         hash_data = ::KoboApi::Connect.project(project.kobo_id).parsed_response
-        results =
-          kobo_process.import_samples(project.id, project.kobo_id, hash_data)
+        results_count =
+          import_kobo_samples(project.id, project.kobo_id, hash_data)
 
-        flash[:error] = 'Could not save data from Kobo API.' unless results
+        flash[:success] = "Importing #{results_count} samples"
         redirect_to action: 'import_kobo'
       rescue SocketError
         flash[:error] = 'Could not get new data from Kobo API.'
@@ -39,10 +41,6 @@ module Admin
       # rubocop:enable Metrics/AbcSize
 
       private
-
-      def kobo_process
-        ::KoboApi::Process.new
-      end
 
       def project
         @project = FieldDataProject.find(params[:id])

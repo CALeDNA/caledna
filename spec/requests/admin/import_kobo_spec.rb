@@ -44,13 +44,15 @@ describe 'ImportKobo' do
     end
 
     describe '#POST import_samples' do
-      it 'creates a new sample' do
+      it 'creates a new ImportKoboSampleJob' do
         stub_connect_project
+        ActiveJob::Base.queue_adapter = :test
+        include ActiveJob::TestHelper
 
         project = create(:field_data_project, kobo_id: 1)
 
         expect { post admin_labwork_import_kobo_samples_path(id: project.id) }
-          .to change(Sample, :count).by(1)
+          .to have_enqueued_job(ImportKoboSampleJob)
       end
     end
   end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module KoboApi
-  # rubocop:disable Metrics/ClassLength
-  class Process
-    def import_projects(hash_payload)
+  # rubocop:disable Metrics/ModuleLength
+  module Process
+    def import_kobo_projects(hash_payload)
       results = hash_payload.map do |project_data|
         next if project_ids.include?(project_data['id'])
         save_project_data(project_data)
@@ -11,12 +11,14 @@ module KoboApi
       results.compact.all? { |r| r }
     end
 
-    def import_samples(project_id, kobo_id, hash_payload)
-      results = hash_payload.map do |sample_data|
+    def import_kobo_samples(project_id, kobo_id, hash_payload)
+      counter = 0
+      hash_payload.map do |sample_data|
         next if kobo_sample_ids.include?(sample_data['_id'])
-        save_sample_data(project_id, kobo_id, sample_data)
+        counter += 1
+        ImportKoboSampleJob.perform_later(project_id, kobo_id, sample_data)
       end
-      results.compact.all? { |r| r }
+      counter
     end
 
     def save_project_data(hash_payload)
@@ -211,7 +213,7 @@ module KoboApi
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
-  # rubocop:enable Metrics/ClassLength
+  # rubocop:enable Metrics/ModuleLength
 end
 
 # PROJECT = {
