@@ -146,30 +146,6 @@ describe ImportCsv::ProcessingExtractions do
     end
   end
 
-  describe '#form_barcode' do
-    def subject(string)
-      dummy_class.form_barcode(string)
-    end
-
-    it 'returns a barcode when given a valid kit number with spaces' do
-      string = 'K0001 B1'
-
-      expect(subject(string)).to eq('K0001-LB-S1')
-    end
-
-    it 'returns a barcode when given a valid kit number w/o spaces' do
-      string = 'K0001B1'
-
-      expect(subject(string)).to eq('K0001-LB-S1')
-    end
-
-    it 'otherwise returns the original string' do
-      string = 'abc'
-
-      expect(subject(string)).to eq(string)
-    end
-  end
-
   describe('#import_csv') do
     include ActiveJob::TestHelper
 

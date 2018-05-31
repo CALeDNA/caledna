@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IucnStatus
   CATEGORIES = {
     EX: 'extinct',
@@ -17,6 +19,6 @@ class IucnStatus
     CR: 'critically endangered',
     EN: 'endangered',
     VU: 'vulnerable',
-    NT: 'near threatened',
+    NT: 'near threatened'
   }.freeze
 end

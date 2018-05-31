@@ -70,24 +70,24 @@ describe ImportIucn do
     context 'when taxon exists' do
       let!(:taxon) do
         create(:ncbi_node, canonical_name: 'Genus species sub1',
-                          rank: 'variety')
+                           rank: 'variety')
       end
 
       context 'and external resource exists' do
         context 'and external resource has iucn info' do
           let!(:external_resource) do
             create(:external_resource, taxon_id: taxon.id,
-                                      iucn_status: 'status', iucn_id: 1)
+                                       iucn_status: 'status', iucn_id: 1)
           end
 
           it 'does not update iucn_status' do
             expect { subject.update_iucn_status(api_data.second, taxon) }
-              .to_not change { external_resource.reload.iucn_status }
+              .to_not(change { external_resource.reload.iucn_status })
           end
 
           it 'does not update iucn_id' do
             expect { subject.update_iucn_status(api_data.second, taxon) }
-              .to_not change { external_resource.reload.iucn_id }
+              .to_not(change { external_resource.reload.iucn_id })
           end
         end
 

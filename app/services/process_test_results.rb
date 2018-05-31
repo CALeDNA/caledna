@@ -163,6 +163,31 @@ module ProcessTestResults
     }
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def form_barcode(raw_string)
+    raw_barcode = raw_string.strip
+
+    # handles "K0030 B1"
+    if raw_barcode.include?(' ')
+      parts = raw_barcode.split(' ')
+      kit = parts.first
+      location_letter = parts.second.split('').first
+      sample_number = parts.second.split('').second
+      "#{kit}-L#{location_letter}-S#{sample_number}"
+
+    # handles "K0030B1"
+    elsif /^K\d{4}\w\d$/.match?(raw_barcode)
+      match = /(K\d{4})(\w)(\d)/.match(raw_barcode)
+      kit = match[1]
+      location_letter = match[2]
+      sample_number = match[3]
+      "#{kit}-L#{location_letter}-S#{sample_number}"
+    else
+      raw_barcode
+    end
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
   private
 
   # NOTE: lineage is ["id", "name", "rank"]
