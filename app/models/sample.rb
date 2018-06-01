@@ -3,6 +3,7 @@
 # rubocop:disable Metrics/ClassLength
 class Sample < ApplicationRecord
   include PgSearch
+  include InsidePolygon
   multisearchable against: %i[barcode status_cd latitude longitude
                               field_data_project_name]
 
@@ -39,6 +40,15 @@ class Sample < ApplicationRecord
 
   def research_projects
     extractions.map(&:research_projects).flatten
+  end
+
+  def inside_california?
+    return false if latitude.blank? || longitude.blank?
+
+    california = InsidePolygon::CALIFORNIA
+    point = [latitude, longitude]
+
+    inside_polygon(point, california)
   end
 
   def ph_display

@@ -36,7 +36,14 @@
       <td><%= check_box_tag :row, sample.id, false, class: "row" %> </td>
       <td><%= link_to sample.barcode, admin_sample_path(sample.id) %></td>
       <td><%= link_to sample.field_data_project.name, admin_field_data_project_path(sample.field_data_project) %></td>
-      <td><%= sample.latitude %> / <%= sample.longitude %></td>
+      <td>
+        <% unless sample.inside_california? %>
+          WARNING: coordinates are not in California.<br>
+        <%end%>
+        lat: <%= sample.latitude %><br>
+        long: <%= sample.longitude %><br>
+        precision: <%= sample.gps_precision %>
+      </td>
       <td>
         <% sample.photos.each do |photo| %>
           <%= link_to admin_photo_path(photo) do %>
