@@ -8,11 +8,11 @@ module Admin
       end
 
       def edit_multiple
-        @extractions = Extraction.find(params[:extraction_ids])
+        @extractions = Extraction.find(params[:batch_ids])
       end
 
       def update_multiple
-        @extractions = Extraction.find(params[:extraction_ids])
+        @extractions = Extraction.find(params[:batch_ids])
         @extractions.reject! do |extraction|
           extraction.update_attributes(update_params)
         end

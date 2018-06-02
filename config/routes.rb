@@ -40,6 +40,8 @@ Rails.application.routes.draw do
 
       controller 'approve_samples' do
         get 'approve_samples' => 'approve_samples#index'
+        post 'edit_multiple_approvals', as: :edit_multiple_approvals
+        put 'update_multiple_approvals'
       end
 
       controller 'process_extractions' do
@@ -68,10 +70,6 @@ Rails.application.routes.draw do
     controller 'batch_actions' do
       post 'labwork/batch_approve_samples' =>
         'labwork/batch_actions#approve_samples'
-      post 'labwork/batch_reject_samples' =>
-        'labwork/batch_actions#reject_samples'
-      post 'labwork/batch_duplicate_barcode_samples' =>
-        'labwork/batch_actions#duplicate_barcode_samples'
       post 'labwork/batch_assign_samples' =>
         'labwork/batch_actions#assign_samples'
       post 'labwork/batch_process_extractions' =>

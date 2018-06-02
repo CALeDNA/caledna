@@ -1,0 +1,11 @@
+<% content_for(:title) { "Processing eDNA: Edit Multiple" } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <%= render "form", samples: @samples %>
+</section>

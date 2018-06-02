@@ -1,7 +1,7 @@
 (function(){
   var batchActionHandler = function(event) {
     var action = event.target.dataset['action'];
-    var checkboxes = document.getElementsByName('row');
+    var checkboxes = document.getElementsByName('batch_ids[]');
     var associatedDataEl = document.getElementById('associated_data');
     var associatedData = associatedDataEl ? associatedDataEl.dataset['data'] : null;
     var ids = [];

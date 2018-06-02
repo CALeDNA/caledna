@@ -1,0 +1,25 @@
+<%= form_tag  admin_labwork_update_multiple_approvals_path, method: :put  do |f| %>
+
+  <ul class="multiple-records-list">
+    <% samples.each do |sample| %>
+      <li>
+        <%= hidden_field_tag "batch_ids[]", sample.id%>
+        <%= sample.barcode %>
+        <ul>
+          <% sample.errors.full_messages.each do |msg| %>
+            <li><%=msg %></li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+
+  <%= fields_for :sample do |f| %>
+    <%= render_admin_field(:select, :status_cd, form: f,
+      select_options: enum_field_values(:status_cd, Sample.statuses) )%>
+    <%= render_admin_field(:text, :director_notes, form: f )%>
+  <% end%>
+  <div class="form-actions">
+    <%= submit_tag "update"%>
+  </div>
+<% end %>
