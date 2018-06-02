@@ -11,9 +11,7 @@ class Sample < ApplicationRecord
   has_many :photos
   has_many :extractions
 
-  validates :barcode,
-            uniqueness: { message: 'barcode %<value>s is already taken' },
-            if: proc { |a| a.approved? }
+  validate :unique_approved_barcodes
 
   scope :analyzed, -> { where(status_cd: :analyzed) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
@@ -172,5 +170,18 @@ class Sample < ApplicationRecord
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+  private
+
+  def unique_approved_barcodes
+    return unless status_changed?
+    return unless status == :approved
+
+    samples = Sample.where(status_cd: :approved, barcode: barcode)
+    return unless samples.count == 1
+
+    errors.add(:unique_approved_barcodes,
+               "barcode #{barcode} is already taken")
+  end
 end
 # rubocop:enable Metrics/ClassLength
