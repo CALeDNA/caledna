@@ -7,12 +7,29 @@ module Admin
         authorize 'Labwork::ApproveSamples'.to_sym, :create?
 
         results = samples.update(status_cd: :approved)
+
         if results.all?(&:valid?)
           flash[:success] = 'Samples approved'
         else
           errors =
             results.map { |r| r.errors.messages.values }.flatten.join('; ')
           flash[:error] = errors
+        end
+      end
+
+      def change_longitude_sign
+        authorize 'Labwork::ApproveSamples'.to_sym, :create?
+
+        res = samples.map do |sample|
+          next if sample.longitude.blank?
+          sample.update(longitude: sample.longitude * -1)
+        end
+
+        if res.all? { |r| r }
+          flash[:success] = 'Longitude changed'
+          success_handler
+        else
+          error_handler(samples)
         end
       end
 
@@ -35,7 +52,7 @@ module Admin
           flash[:success] = 'Samples assigned'
           success_handler
         else
-          error_handler(object)
+          error_handler(samples)
         end
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -70,16 +87,12 @@ module Admin
                status: :unprocessable_entity
       end
 
-      def serialize(object)
-        object.errors.messages.map do |field, errors|
-          errors.map do |error_message|
-            {
-              status: 422,
-              source: { pointer: "/data/attributes/#{field}" },
-              detail: error_message
-            }
-          end
-        end.flatten
+      def serialize(results)
+        errors = results.map { |r| r.errors.messages.values }.flatten.join('; ')
+        {
+          status: 422,
+          detail: errors
+        }
       end
     end
   end

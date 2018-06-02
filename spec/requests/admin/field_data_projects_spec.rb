@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe 'Projects' do
+describe 'FieldDataProjects' do
   shared_examples 'allows write access' do
     describe '#POST' do
       it 'does not creates a new project' do

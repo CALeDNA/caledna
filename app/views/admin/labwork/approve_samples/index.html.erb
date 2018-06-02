@@ -14,11 +14,14 @@
       <a data-action="approve_samples"  class="batch-action btn btn-default">
         Approve
       </a>
-    <%= form_tag admin_labwork_edit_multiple_approvals_path, method: :post do |f| %>
-    <%= submit_tag 'Batch Edit', class: "batch-action btn btn-default" %>
-    <input type="hidden" name="doo" data-data="" id="associated-data" >
-    <input type="hidden" id="boo" value="1" >
-    <input type="hidden" name="foo" value="1" >
+      <a data-action="change_longitude_sign"  class="batch-action btn btn-default">
+        Change Longitude Sign
+      </a>
+      <%= form_tag admin_labwork_edit_multiple_approvals_path, method: :post do |f| %>
+      <%= submit_tag 'Batch Edit', class: "batch-action btn btn-default" %>
+      <input type="hidden" name="doo" data-data="" id="associated-data" >
+      <input type="hidden" id="boo" value="1" >
+      <input type="hidden" name="foo" value="1" >
 
     </div>
   </div>

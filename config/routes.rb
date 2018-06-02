@@ -72,8 +72,8 @@ Rails.application.routes.draw do
         'labwork/batch_actions#approve_samples'
       post 'labwork/batch_assign_samples' =>
         'labwork/batch_actions#assign_samples'
-      post 'labwork/batch_process_extractions' =>
-        'labwork/batch_actions#process_extractions'
+      post 'labwork/batch_change_longitude_sign' =>
+        'labwork/batch_actions#change_longitude_sign'
     end
 
     controller 'reset_database' do
