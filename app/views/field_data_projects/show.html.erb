@@ -15,8 +15,8 @@
     </p>
 
     <p>
-      <%= pluralize(@project.approved_samples_count, 'sample') %> approved.
-      <% if @project.approved_samples_count > 0 %>
+      <%= pluralize(@project.samples.approved.count, 'sample') %> approved.
+      <% if @project.samples.approved.count > 0 %>
         <%= render partial: 'samples_links', locals: {
           map_path: field_data_project_path(id: @project.id),
           list_path: field_data_project_path(id: @project.id, view: :list) } %>
@@ -24,8 +24,8 @@
     </p>
 
     <p>
-      <%= pluralize(@project.analyzed_samples_count, 'sample') %> being analyzed.
-      <% if @project.analyzed_samples_count > 0 %>
+      <%= pluralize(@project.samples.analyzed.count, 'sample') %> being analyzed.
+      <% if @project.samples.analyzed.count > 0 %>
         <%= render partial: 'samples_links', locals: {
           map_path: field_data_project_path(id: @project.id, status: :analyzed),
           list_path: field_data_project_path(id: @project.id, status: :analyzed, view: :list) } %>
@@ -33,8 +33,8 @@
     </p>
 
     <p>
-      <%= pluralize(@project.results_completed_samples_count, 'sample') %> with DNA results.
-      <% if @project.results_completed_samples_count > 0 %>
+      <%= pluralize(@project.samples.results_completed.count, 'sample') %> with DNA results.
+      <% if @project.samples.results_completed.count > 0 %>
         <%= render partial: 'samples_links', locals: {
           map_path: field_data_project_path(id: @project.id, status: :results_completed),
           list_path: field_data_project_path(id: @project.id, status: :results_completed, view: :list) } %>

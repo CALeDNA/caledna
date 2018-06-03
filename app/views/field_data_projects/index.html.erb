@@ -9,13 +9,13 @@
 <table class="table">
   <tr>
     <th>Name</th>
-    <th>Number of Samples</th>
+    <th>Number of Approved Samples</th>
   </tr>
 
   <% @projects.each do |project| %>
     <tr class="clickable_row" data-path='<%=  field_data_project_path project%>' >
       <td><%= project.name %></td>
-      <td><%= project.samples.count %> </td>
+      <td><%= project.samples.approved.count %> </td>
     </tr>
   <% end %>
 </table>
