@@ -15,8 +15,7 @@ module Admin
         authorize 'Labwork::NormalizeTaxon'.to_sym, :show?
 
         @cal_taxon = cal_taxon
-        @suggestions = suggestions
-        # @more_suggestions = suggestions.present? ? [] : more_suggestions
+        @suggestions = suggestions.present? ? suggestions : more_suggestions
       end
 
       # NOTE: used when matching test result to existing taxon
@@ -26,7 +25,7 @@ module Admin
         cal_taxon.taxonID = update_existing_params[:taxonID]
         cal_taxon.normalized = true
         if cal_taxon.save(validate: false)
-          redirect_to admin_labwork_normalize_taxa_path
+          redirect_to admin_labwork_normalize_ncbi_taxa_path
         else
           render 'show'
         end
@@ -84,7 +83,7 @@ module Admin
       # rubocop:enable Metrics/MethodLength
 
       def cal_taxon
-        id = params[:id] || params[:normalize_gbif_taxon_id]
+        id = params[:id] || params[:normalize_ncbi_taxon_id]
         @cal_taxon ||= CalTaxon.find(id)
       end
 
@@ -97,9 +96,9 @@ module Admin
       end
 
       def more_suggestions
-        species = cal_taxon.original_taxonomy.split(';').last
+        species = cal_taxon.original_taxonomy.split(';').last.downcase
         @more_suggestions ||= NcbiNode.where(
-          "REPLACE(canonical_name, '''', '') = '#{species}'"
+          "lower(REPLACE(canonical_name, '''', '')) = '#{species}'"
         )
       end
     end
