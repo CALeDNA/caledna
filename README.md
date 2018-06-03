@@ -45,3 +45,18 @@ $ ./bin/webpack-dev-server
 
 We are using [Global Biodiversity Information Facility (GBIF)](http://gbif.org) as
 the basis for our taxonomy data.
+
+## Misc
+
+tasks to run when importing data
+
+```bash
+# add height and width to photos for photo gallery
+rake photos:add_dimensions
+
+# reset counters
+rake counter_reset:ncbi_nodes_asvs_count
+
+# import csv that contains geo coordinates for samples
+rake sample_coordinates:import
+```
