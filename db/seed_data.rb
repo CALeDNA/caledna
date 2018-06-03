@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ModuleLength
 module SeedData
   def delete_records
     puts 'deleting some records...'
@@ -196,4 +195,3 @@ module SeedData
     end
   end
 end
-# rubocop:enable Metrics/ModuleLength

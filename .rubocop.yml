@@ -17,6 +17,9 @@ Style/Documentation:
 Lint/UriEscapeUnescape:
   Enabled: false
 
+Metrics/ModuleLength:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'

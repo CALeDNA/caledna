@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module KoboApi
-  # rubocop:disable Metrics/ModuleLength
   module Process
     def import_kobo_projects(hash_payload)
       results = hash_payload.map do |project_data|
@@ -213,7 +212,6 @@ module KoboApi
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
-  # rubocop:enable Metrics/ModuleLength
 end
 
 # PROJECT = {

@@ -22,8 +22,9 @@ describe 'BatchActionController' do
         sample1 = create(:sample, barcode: 'KOOO1', id: 1, longitude: 1)
         sample2 = create(:sample, barcode: 'KOOO2', id: 2, longitude: 1)
         params = { batch_action: { ids: [1, 2] } }
+        path = admin_labwork_batch_change_longitude_sign_path
 
-        expect { post admin_labwork_batch_change_longitude_sign_path, params: params }
+        expect { post path, params: params }
           .to change { sample1.reload.longitude }
           .to(-1)
           .and change { sample2.reload.longitude }.to(-1)
@@ -46,8 +47,9 @@ describe 'BatchActionController' do
       it 'does not change sample longitude' do
         sample1 = create(:sample, barcode: 'KOOO1', id: 1, longitude: 1)
         params = { batch_action: { ids: [1, 2] } }
+        path = admin_labwork_batch_change_longitude_sign_path
 
-        expect { post admin_labwork_batch_change_longitude_sign_path, params: params }
+        expect { post path, params: params }
           .to_not(change { sample1.reload.longitude })
       end
     end

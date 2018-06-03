@@ -17,6 +17,7 @@ module Admin
         end
       end
 
+      # rubocop:disable Metrics/MethodLength
       def change_longitude_sign
         authorize 'Labwork::ApproveSamples'.to_sym, :create?
 
@@ -32,6 +33,7 @@ module Admin
           error_handler(samples)
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def assign_samples

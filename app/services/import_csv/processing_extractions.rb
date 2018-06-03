@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module ImportCsv
-  # rubocop:disable Metrics/ModuleLength
   module ProcessingExtractions
     require 'csv'
     include ProcessTestResults
@@ -185,5 +184,4 @@ module ImportCsv
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
-  # rubocop:enable Metrics/ModuleLength
 end

@@ -1,5 +1,6 @@
-module InsidePolygon
+# frozen_string_literal: true
 
+module InsidePolygon
   CALIFORNIA = [
     [41.9983, -124.4009],
     [42.0024, -123.6237],
@@ -112,7 +113,7 @@ module InsidePolygon
     [41.2386, -124.3419],
     [41.717, -124.4545],
     [41.9983, -124.4009]
-  ]
+  ].freeze
 
   # https://stackoverflow.com/a/29915728
   def inside_polygon(point, polygon)

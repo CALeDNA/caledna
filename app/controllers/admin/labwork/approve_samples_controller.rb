@@ -41,7 +41,6 @@ module Admin
           :director_notes
         )
       end
-
     end
   end
 end

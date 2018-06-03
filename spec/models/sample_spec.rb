@@ -29,7 +29,6 @@ describe Sample do
       expect(sample.reload.status).to eq(:submitted)
     end
 
-
     it 'valid when 1st sample is other status and 2nd sample is approved' do
       create(:sample, status_cd: :submitted, barcode: barcode)
 

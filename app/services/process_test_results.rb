@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ModuleLength
 module ProcessTestResults
   # rubocop:disable Metrics/MethodLength
   def find_taxon_from_string(taxonomy_string)
@@ -277,7 +276,6 @@ module ProcessTestResults
     taxa.take
   end
 end
-# rubocop:enable Metrics/ModuleLength
 
 class TaxaError < StandardError
 end
