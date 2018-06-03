@@ -112,8 +112,6 @@ module ImportCsv
           find_researcher(row['local fastq storage url adder']).try(:id),
         local_fastq_storage_add_date:
           convert_date(row['local fastq storage add date']),
-        stat_bio_reps_pooled:
-          process_keyword_boolean(row['stat bio reps pooled'], 'pooled'),
         stat_bio_reps_pooled_date:
           convert_date(row['stat bio reps pooled date']),
         loc_bio_reps_pooled: row['loc bio reps pooled'],
@@ -121,28 +119,19 @@ module ImportCsv
         protocol_bio_reps_pooled: row['protocol bio reps pooled'],
         changes_protocol_bio_reps_pooled:
           row['changes protocol bio reps pooled'],
-        stat_dna_extraction:
-          process_keyword_boolean(row['stat dna extraction'], 'extracted'),
         stat_dna_extraction_date: convert_date(row['stat dna extraction date']),
         loc_dna_extracts: row['loc dna extracts'],
         dna_extraction_date: convert_date(row['dna extraction date']),
         protocol_dna_extraction: row['protocol dna extraction'],
         changes_protocol_dna_extraction: row['changes protocol dna extraction'],
         metabarcoding_primers: convert_to_array(row['metabarcoding primers']),
-        stat_barcoding_pcr_done:
-          process_keyword_boolean(row['stat barcoding pcr done'], 'complete'),
         stat_barcoding_pcr_done_date:
           convert_date(row['stat barcoding pcr done date']),
         barcoding_pcr_number_of_replicates:
           row['barcoding pcr number of replicates'],
         reamps_needed: row['reamps needed'],
-        stat_barcoding_pcr_pooled:
-          process_keyword_boolean(row['stat barcoding pcr pooled'], 'pooled'),
         stat_barcoding_pcr_pooled_date:
           convert_date(row['stat barcoding pcr pooled date']),
-        stat_barcoding_pcr_bead_cleaned:
-          process_keyword_boolean(row['stat barcoding pcr bead cleaned'],
-                                  'cleaned'),
         stat_barcoding_pcr_bead_cleaned_date:
           convert_date(row['stat barcoding pcr bead cleaned date']),
         brand_beads_cd: row['brand beads'],
@@ -151,24 +140,15 @@ module ImportCsv
         select_indices_cd: row['select indices'],
         index_1_name: row['index 1'],
         index_2_name: row['index 2'],
-        stat_index_pcr_done:
-          process_keyword_boolean(row['stat index pcr done'], 'complete'),
         stat_index_pcr_done_date: convert_date(row['stat index pcr done date']),
-        stat_index_pcr_bead_cleaned:
-          process_keyword_boolean(row['stat index pcr bead cleaned'],
-                                  'cleaned'),
         stat_index_pcr_bead_cleaned_date:
           convert_date(row['stat index pcr bead cleaned date']),
         index_brand_beads_cd: row['index brand beads'],
         index_cleaned_concentration: row['index cleaned concentration'],
         index_loc_stored: row['index loc stored'],
-        stat_libraries_pooled:
-          process_keyword_boolean(row['stat libraries pooled'], 'pooled'),
         stat_libraries_pooled_date:
           convert_date(row['stat libraries pooled date']),
         loc_libraries_pooled: row['loc libraries pooled'],
-        stat_sequenced:
-          process_keyword_boolean(row['stat sequenced'], 'sequenced'),
         stat_sequenced_date: convert_date(row['stat sequenced date']),
         intended_sequencing_depth_per_barcode:
           row['intended sequencing depth per barcode'],

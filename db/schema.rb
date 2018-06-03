@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180529012543) do
+ActiveRecord::Schema.define(version: 20180603015239) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.index ["taxonID"], name: "index_asvs_on_taxonID", using: :btree
   end
 
-  create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
+  create_table "cal_taxa", force: :cascade do |t|
     t.string   "datasetID"
     t.string   "parentNameUsageID"
     t.text     "scientificName"
@@ -42,16 +42,16 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.jsonb    "hierarchy"
     t.string   "original_taxonomy"
     t.jsonb    "original_hierarchy"
-    t.boolean  "normalized",         default: false
+    t.boolean  "normalized"
+    t.integer  "taxonID",            default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "genericName"
-    t.integer  "taxonID",            default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "complete_taxonomy"
     t.integer  "rank_order"
-    t.datetime "created_at",         default: '2018-05-29 02:49:13',                              null: false
-    t.datetime "updated_at",         default: '2018-05-29 02:49:13',                              null: false
-    t.boolean  "exact_gbif_match",   default: false
+    t.datetime "created_at",                                                                      null: false
+    t.datetime "updated_at",                                                                      null: false
+    t.boolean  "exact_gbif_match"
     t.text     "notes"
-    t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
+    t.index ["kingdom", "canonicalName"], name: "cal_taxa_kingdom_canonicalName_idx1", unique: true, using: :btree
     t.index ["original_taxonomy"], name: "index_cal_taxa_on_original_taxonomy", using: :btree
   end
 
@@ -69,9 +69,9 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.integer  "msw_id"
     t.string   "wikidata_entity"
     t.integer  "worms_id"
-    t.string   "iucn_status"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.string   "iucn_status"
   end
 
   create_table "extraction_types", force: :cascade do |t|
@@ -94,26 +94,21 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.string   "local_fastq_storage_url"
     t.integer  "local_fastq_storage_adder_id"
     t.datetime "local_fastq_storage_add_date"
-    t.boolean  "stat_bio_reps_pooled",                  default: false
     t.datetime "stat_bio_reps_pooled_date"
     t.string   "loc_bio_reps_pooled"
     t.datetime "bio_reps_pooled_date"
     t.string   "protocol_bio_reps_pooled"
     t.string   "changes_protocol_bio_reps_pooled"
-    t.boolean  "stat_dna_extraction",                   default: false
     t.datetime "stat_dna_extraction_date"
     t.string   "loc_dna_extracts"
     t.datetime "dna_extraction_date"
     t.string   "protocol_dna_extraction"
     t.string   "changes_protocol_dna_extraction"
     t.string   "metabarcoding_primers",                 default: [],                                 array: true
-    t.boolean  "stat_barcoding_pcr_done",               default: false
     t.datetime "stat_barcoding_pcr_done_date"
     t.integer  "barcoding_pcr_number_of_replicates"
     t.string   "reamps_needed"
-    t.boolean  "stat_barcoding_pcr_pooled",             default: false
     t.datetime "stat_barcoding_pcr_pooled_date"
-    t.boolean  "stat_barcoding_pcr_bead_cleaned",       default: false
     t.datetime "stat_barcoding_pcr_bead_cleaned_date"
     t.string   "brand_beads_cd"
     t.string   "cleaned_concentration"
@@ -121,17 +116,13 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.string   "select_indices_cd"
     t.string   "index_1_name"
     t.string   "index_2_name"
-    t.boolean  "stat_index_pcr_done",                   default: false
     t.datetime "stat_index_pcr_done_date"
-    t.boolean  "stat_index_pcr_bead_cleaned",           default: false
     t.datetime "stat_index_pcr_bead_cleaned_date"
     t.string   "index_brand_beads_cd"
     t.string   "index_cleaned_concentration"
     t.string   "index_loc_stored"
-    t.boolean  "stat_libraries_pooled",                 default: false
     t.datetime "stat_libraries_pooled_date"
     t.string   "loc_libraries_pooled"
-    t.boolean  "stat_sequenced",                        default: false
     t.datetime "stat_sequenced_date"
     t.string   "intended_sequencing_depth_per_barcode"
     t.string   "sequencing_platform"
@@ -144,8 +135,8 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.string   "status_cd"
     t.string   "sum_taxonomy_example"
     t.boolean  "priority_sequencing"
-    t.datetime "created_at",                            default: '2018-05-29 02:49:13', null: false
-    t.datetime "updated_at",                            default: '2018-05-29 02:49:13', null: false
+    t.datetime "created_at",                            default: '2018-04-23 16:12:39', null: false
+    t.datetime "updated_at",                            default: '2018-04-23 16:12:39', null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
@@ -218,6 +209,7 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id", using: :btree
     t.index ["rank"], name: "index_ncbi_nodes_on_rank", using: :btree
+    t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx", using: :btree
   end
 
   create_table "pg_search_documents", force: :cascade do |t|
@@ -340,22 +332,26 @@ ActiveRecord::Schema.define(version: 20180529012543) do
     t.string  "order",                    limit: 255
     t.string  "family",                   limit: 255
     t.string  "genus",                    limit: 255
-    t.jsonb   "hierarchy"
+    t.jsonb   "hierarchy",                            default: {}
     t.integer "asvs_count",                           default: 0
     t.integer "rank_order"
-    t.string  "iucn_status"
+    t.string  "iucn_status",              limit: 255
     t.integer "iucn_taxonid"
     t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix", using: :btree
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx", using: :btree
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx", using: :btree
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count", using: :btree
     t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank", using: :btree
+    t.index ["className"], name: "index_taxa_on_classname", using: :btree
+    t.index ["family"], name: "index_taxa_on_family", using: :btree
     t.index ["genus"], name: "index_taxa_on_genus", using: :btree
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
     t.index ["iucn_status"], name: "index_taxa_on_iucn_status", using: :btree
     t.index ["kingdom"], name: "index_taxa_on_kingdom", using: :btree
+    t.index ["order"], name: "index_taxa_on_order", using: :btree
     t.index ["phylum"], name: "index_taxa_on_phylum", using: :btree
     t.index ["scientificName"], name: "index_taxa_on_scientificName", using: :btree
+    t.index ["specificEpithet"], name: "index_taxa_on_specificepithet", using: :btree
     t.index ["taxonRank"], name: "index_taxa_on_taxonRank", using: :btree
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx", using: :btree
   end
