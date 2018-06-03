@@ -4,8 +4,8 @@
 class Sample < ApplicationRecord
   include PgSearch
   include InsidePolygon
-  multisearchable against: %i[barcode status_cd latitude longitude
-                              field_data_project_name]
+  multisearchable against: %i[barcode status_cd cvmshcp_display
+                              field_data_project_name location_display]
 
   belongs_to :field_data_project
   has_many :photos
@@ -106,7 +106,9 @@ class Sample < ApplicationRecord
     case location
     when 'UCNRS' then 'UC Natural Reserve'
     when 'CVMSHCP' then 'Coachella Valley MSHCP site'
-    else 'Somewhere else'
+    when 'AUTOMATIC_1' then nil
+    when 'AUTOMATIC' then nil
+    else location
     end
   end
 

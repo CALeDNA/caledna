@@ -31,6 +31,8 @@ class ResearchProjectsController < ApplicationController
     'LEFT JOIN samples ' \
     'ON extractions.sample_id = samples.id ' \
     'AND latitude is not null ' \
+    "WHERE samples.status_cd != 'missing_coordinates' " \
+    "AND samples.status_cd != 'processed_invalid_sample' " \
     'GROUP BY research_projects.id ' \
     'ORDER BY research_projects.name;'
     @projects ||= ActiveRecord::Base.connection.execute(sql)
@@ -38,7 +40,7 @@ class ResearchProjectsController < ApplicationController
   # rubocop:enable Metrics/MethodLength
 
   def samples
-    Sample.includes(:field_data_project).order(:barcode)
+    Sample.includes(:field_data_project).approved.order(:barcode)
           .where(id: sample_ids)
   end
 
