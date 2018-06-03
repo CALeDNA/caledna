@@ -5,6 +5,6 @@ class SampleAssignmentMailer < ApplicationMailer
     data = JSON.parse(mail_data)
     @name = data['name']
     @samples_count = data['samples_count']
-    mail(to: data['email'], subject: 'New samples need to be analyzed')
+    mail(to: data['email'], subject: 'New samples need to be processed')
   end
 end

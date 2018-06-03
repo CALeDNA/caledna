@@ -9,7 +9,7 @@ describe 'Samples' do
       create(:sample, barcode: 'sample 1', status_cd: :approved)
     end
     let!(:sample2) do
-      create(:sample, barcode: 'sample 2', status_cd: :analyzed)
+      create(:sample, barcode: 'sample 2', status_cd: :processing_sample)
     end
     let!(:sample3) do
       create(:sample, barcode: 'sample 3', status_cd: :results_completed)

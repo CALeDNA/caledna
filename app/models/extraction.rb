@@ -23,7 +23,7 @@ class Extraction < ApplicationRecord
   as_enum :brand_beads, %i[AmpureXP Serapure Other], map: :string
   as_enum :select_indices, %i[Nextera Illumina], map: :string
   as_enum :index_brand_beads, %i[AmpureXP Serapure Other], map: :string
-  as_enum :status, %i[assigned analyzed results_completed],
+  as_enum :status, %i[assigned processing_sample results_completed],
           map: :string
 
   # validates :metabarcoding_primers, inclusion: { in: METABARCODING_PRIMERS }

@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :extraction do
-    trait :being_analyzed do
+    trait :processing_sample do
       sample
       extraction_type
 

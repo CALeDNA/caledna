@@ -13,7 +13,7 @@ class Sample < ApplicationRecord
 
   validate :unique_approved_barcodes
 
-  scope :analyzed, -> { where(status_cd: :analyzed) }
+  scope :processing_sample, -> { where(status_cd: :processing_sample) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do
     where.not(status_cd: :submitted).where.not(status_cd: :rejected)
@@ -22,7 +22,8 @@ class Sample < ApplicationRecord
   end)
 
   as_enum :status,
-          %i[submitted approved rejected duplicate_barcode assigned analyzed
+          %i[submitted approved rejected duplicate_barcode assigned
+             processing_sample
              results_completed missing_coordinates processed_invalid_sample],
           map: :string
   as_enum :substrate, %i[soil sediment water other], map: :string

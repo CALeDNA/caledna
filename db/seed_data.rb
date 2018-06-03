@@ -45,7 +45,7 @@ module SeedData
     FactoryBot.create_list(
       :sample, 5,
       field_data_project: project,
-      status: :analyzed,
+      status: :processing_sample,
       submission_date: Time.zone.now - 2.months
     )
 
@@ -124,17 +124,17 @@ module SeedData
     type_a = FactoryBot.create(:extraction_type, name: 'extraction A')
     type_b = FactoryBot.create(:extraction_type, name: 'extraction B')
 
-    Sample.analyzed.each do |sample|
+    Sample.processing_sample.each do |sample|
       processor = [processor1, processor2].sample
       FactoryBot.create(
         :extraction,
-        :being_analyzed,
+        :processing_sample,
         sample: sample,
         processor_id: processor.id,
         extraction_type: type_a,
         sra_adder_id: director.id,
         local_fastq_storage_adder_id: director.id,
-        status_cd: :analyzed
+        status_cd: :processing_sample
       )
     end
 
