@@ -17,7 +17,7 @@ describe ImportCsvUpdateExtractionDetailsJob, type: :job do
     date1 = Time.parse('1-Feb-18')
     date2 = Time.parse('July 2018')
     date3 = Time.parse('1-Jan-18')
-    row = CSV.read(file.path, headers: true, col_sep: ',').first.to_h
+    row = CSV.read(file.path, headers: true, col_sep: ',').first.to_json
 
     subject.perform_now(extraction, extraction_type.id, row)
     user2 = Researcher.second
@@ -76,6 +76,6 @@ describe ImportCsvUpdateExtractionDetailsJob, type: :job do
       .to eq('sample processor notes')
     expect(extraction.lab_manager_notes).to eq('lab manager notes')
     expect(extraction.director_notes).to eq('director notes')
-    expect(extraction.status_cd).to eq('results_completed')
+    expect(extraction.status_cd).to eq('processing_sample')
   end
 end

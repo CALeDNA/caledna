@@ -62,6 +62,7 @@ module ImportCsv
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def get_extractions_from_headers(
       sample_cells, research_project_id, extraction_type_id
     )
@@ -69,7 +70,9 @@ module ImportCsv
 
       sample_cells.each do |cell|
         barcode = convert_header_to_barcode(cell)
-        extraction = find_extraction_from_barcode(barcode, extraction_type_id)
+        extraction = find_extraction_from_barcode(barcode,
+                                                  extraction_type_id,
+                                                  :results_completed)
         valid_extractions[cell] = extraction
 
         ImportCsvCreateResearchProjectExtractionJob
@@ -77,6 +80,7 @@ module ImportCsv
       end
       valid_extractions
     end
+    # rubocop:enable Metrics/MethodLength
 
     def create_asvs(row, sample_cells, extractions, cal_taxon)
       sample_cells.each do |cell|

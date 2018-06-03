@@ -797,9 +797,10 @@ describe ProcessTestResults do
   describe '#find_sample_from_barcode' do
     let(:barcode) { 'K0001-LA-S1' }
     let(:project) { create(:field_data_project, name: 'unknown') }
+    let(:status) { :processing_sample }
 
     def subject
-      dummy_class.find_sample_from_barcode(barcode)
+      dummy_class.find_sample_from_barcode(barcode, status)
     end
 
     context 'there are no samples for a given bar code' do
@@ -827,11 +828,11 @@ describe ProcessTestResults do
         expect(result).to eq(sample)
       end
 
-      it 'updates status to results_completed' do
+      it 'updates status' do
         create(:sample, status_cd: :approved, barcode: barcode)
         result = subject
 
-        expect(result.status_cd).to eq('results_completed')
+        expect(result.status).to eq(status)
       end
 
       it 'does not update status when status is missing_coordinates' do
@@ -851,12 +852,12 @@ describe ProcessTestResults do
         expect(result).to eq(sample)
       end
 
-      it 'updates status to results_completed' do
+      it 'updates status' do
         create(:sample, status_cd: :approved, barcode: barcode)
         create(:sample, status_cd: :rejected, barcode: barcode)
         result = subject
 
-        expect(result.status_cd).to eq('results_completed')
+        expect(result.status).to eq(status)
       end
 
       it 'does not update status when status is missing_coordinates' do

@@ -28,7 +28,8 @@ module ImportCsv
     end
 
     def update_extraction_details(extraction, extraction_type_id, row)
-      update_data = format_update_data(row, extraction_type_id)
+      hash = JSON.parse(row).to_h
+      update_data = format_update_data(hash, extraction_type_id)
       extraction.update(clean_up_hash(update_data))
       extraction
     end

@@ -88,8 +88,8 @@ module ProcessTestResults
     string
   end
 
-  def find_extraction_from_barcode(barcode, extraction_type_id)
-    sample = find_sample_from_barcode(barcode)
+  def find_extraction_from_barcode(barcode, extraction_type_id, status)
+    sample = find_sample_from_barcode(barcode, status)
 
     extraction =
       Extraction
@@ -104,7 +104,7 @@ module ProcessTestResults
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def find_sample_from_barcode(barcode)
+  def find_sample_from_barcode(barcode, status)
     samples = Sample.includes(:extractions).where(barcode: barcode)
 
     if samples.count.zero?
@@ -119,10 +119,7 @@ module ProcessTestResults
       raise TaxaError, "Sample #{barcode} was previously rejected"
     elsif samples.count == 1
       sample = samples.take
-
-      unless sample.missing_coordinates?
-        sample.update(status_cd: :results_completed)
-      end
+      sample.update(status_cd: status) unless sample.missing_coordinates?
     else
       temp_samples =
         samples.reject { |s| s.duplicate_barcode? || s.rejected? }
@@ -132,10 +129,7 @@ module ProcessTestResults
       end
 
       sample = temp_samples.first
-
-      unless sample.missing_coordinates?
-        sample.update(status_cd: :results_completed)
-      end
+      sample.update(status_cd: status) unless sample.missing_coordinates?
     end
     sample
   end

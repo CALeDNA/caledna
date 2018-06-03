@@ -15,7 +15,9 @@ module ImportCsv
         next unless processing_started?(row['processor'])
 
         barcode = form_barcode(row['Sample Name'])
-        extraction = find_extraction_from_barcode(barcode, extraction_type_id)
+        extraction = find_extraction_from_barcode(barcode,
+                                                  extraction_type_id,
+                                                  :processing_sample)
 
         ImportCsvCreateResearchProjectExtractionJob
           .perform_later(extraction, research_project_id)
@@ -159,7 +161,7 @@ module ImportCsv
         sample_processor_notes: row['sample processor notes'],
         lab_manager_notes: row['lab manager notes'],
         director_notes: row['director notes'],
-        status_cd: 'results_completed'
+        status_cd: 'processing_sample'
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
