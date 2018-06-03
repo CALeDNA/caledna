@@ -26,6 +26,8 @@ module Admin
         truncate_tables(fieldwork_models)
         reset_primary_keys(fieldwork_models)
 
+        FieldDataProject.create(name: 'unknown')
+
         flash[:success] = 'fieldwork data deleted'
         redirect_to admin_root_path
       end
