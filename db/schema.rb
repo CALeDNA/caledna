@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180603041643) do
+ActiveRecord::Schema.define(version: 20180604005529) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,8 +47,8 @@ ActiveRecord::Schema.define(version: 20180603041643) do
     t.integer  "taxonID",            default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string   "complete_taxonomy"
     t.integer  "rank_order"
-    t.datetime "created_at",         default: '2018-06-03 19:18:21',                              null: false
-    t.datetime "updated_at",         default: '2018-06-03 19:18:21',                              null: false
+    t.datetime "created_at",         default: '2018-06-04 01:47:01',                              null: false
+    t.datetime "updated_at",         default: '2018-06-04 01:47:01',                              null: false
     t.boolean  "exact_gbif_match",   default: false
     t.text     "notes"
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true, using: :btree
@@ -135,8 +135,8 @@ ActiveRecord::Schema.define(version: 20180603041643) do
     t.string   "status_cd"
     t.string   "sum_taxonomy_example"
     t.boolean  "priority_sequencing"
-    t.datetime "created_at",                            default: '2018-06-03 19:18:21', null: false
-    t.datetime "updated_at",                            default: '2018-06-03 19:18:21', null: false
+    t.datetime "created_at",                            default: '2018-06-04 01:47:01', null: false
+    t.datetime "updated_at",                            default: '2018-06-04 01:47:01', null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id", using: :btree
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id", using: :btree
     t.index ["processor_id"], name: "index_extractions_on_processor_id", using: :btree
@@ -305,6 +305,7 @@ ActiveRecord::Schema.define(version: 20180603041643) do
     t.string   "depth"
     t.string   "environmental_features"
     t.string   "environmental_settings"
+    t.boolean  "missing_coordinates",    default: false
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id", using: :btree
     t.index ["status_cd"], name: "index_samples_on_status_cd", using: :btree
   end

@@ -110,7 +110,8 @@ module ProcessTestResults
     if samples.count.zero?
       sample = Sample.create(
         barcode: barcode,
-        status_cd: :missing_coordinates,
+        status_cd: status,
+        missing_coordinates: true,
         field_data_project: FieldDataProject::DEFAULT_PROJECT
       )
       raise TaxaError, "Sample #{barcode} not created" unless sample.valid?
@@ -119,17 +120,17 @@ module ProcessTestResults
       raise TaxaError, "Sample #{barcode} was previously rejected"
     elsif samples.count == 1
       sample = samples.take
-      sample.update(status_cd: status) unless sample.missing_coordinates?
+      sample.update(status_cd: status)
     else
-      temp_samples =
+      valid_samples =
         samples.reject { |s| s.duplicate_barcode? || s.rejected? }
 
-      if temp_samples.count > 1
+      if valid_samples.count > 1
         raise TaxaError, "multiple samples with barcode #{barcode}"
       end
 
-      sample = temp_samples.first
-      sample.update(status_cd: status) unless sample.missing_coordinates?
+      sample = valid_samples.first
+      sample.update(status_cd: status)
     end
     sample
   end

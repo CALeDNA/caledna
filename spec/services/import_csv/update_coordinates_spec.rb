@@ -33,13 +33,15 @@ describe ImportCsv::UpdateCoordinates do
       it 'updates coordinates' do
         sample1 = create(:sample, barcode: barcode, latitude: nil,
                                   longitude: nil,
-                                  status_cd: 'missing_coordinates')
+                                  missing_coordinates: true)
 
         expect { subject(row) }
           .to change { sample1.reload.latitude }
           .from(nil).to(40)
           .and change { sample1.reload.longitude }
           .from(nil).to(-120)
+          .and change { sample1.reload.missing_coordinates }
+          .from(true).to(false)
       end
     end
 

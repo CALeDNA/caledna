@@ -20,10 +20,10 @@ module ImportCsv
       if duplicate_barcode?(samples)
         # K0024-LA-S2 K0024-LB-S2 K0024-LC-S1
         # K0166-LA-S1 K0166-LA-S2 K0166-LB-S2 K0166-LC-S2
-      elsif sample.status_cd == 'missing_coordinates'
+      elsif sample.missing_coordinates?
         data[:latitude] = lat
         data[:longitude] = lon
-        data[:status_cd] = 'results_completed'
+        data[:missing_coordinates] = false
       elsif change_longitude_sign?(sample)
         data[:latitude] = sample.latitude == 1 ? lat : sample.latitude
         data[:longitude] = sample.longitude == 1 ? lon : sample.longitude * -1

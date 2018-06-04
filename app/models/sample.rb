@@ -17,14 +17,14 @@ class Sample < ApplicationRecord
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do
     where.not(status_cd: :submitted).where.not(status_cd: :rejected)
-    .where.not(status_cd: :missing_coordinates)
+    .where(missing_coordinates: false)
     .where.not(status_cd: :duplicate_barcode)
   end)
 
   as_enum :status,
           %i[submitted approved rejected duplicate_barcode assigned
              processing_sample
-             results_completed missing_coordinates processed_invalid_sample],
+             results_completed processed_invalid_sample],
           map: :string
   as_enum :substrate, %i[soil sediment water other], map: :string
   as_enum :ecosystem_category, %i[terrestrial aquatic], map: :string

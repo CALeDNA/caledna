@@ -816,7 +816,8 @@ describe ProcessTestResults do
 
         expect(result.barcode).to eq(barcode)
         expect(result.field_data_project).to eq(project)
-        expect(result.status_cd).to eq('missing_coordinates')
+        expect(result.missing_coordinates).to eq(true)
+        expect(result.status).to eq(status)
       end
     end
 
@@ -833,13 +834,6 @@ describe ProcessTestResults do
         result = subject
 
         expect(result.status).to eq(status)
-      end
-
-      it 'does not update status when status is missing_coordinates' do
-        create(:sample, status_cd: :missing_coordinates, barcode: barcode)
-        result = subject
-
-        expect(result.status_cd).to eq('missing_coordinates')
       end
     end
 
@@ -858,14 +852,6 @@ describe ProcessTestResults do
         result = subject
 
         expect(result.status).to eq(status)
-      end
-
-      it 'does not update status when status is missing_coordinates' do
-        create(:sample, status_cd: :missing_coordinates, barcode: barcode)
-        create(:sample, status_cd: :rejected, barcode: barcode)
-        result = subject
-
-        expect(result.status_cd).to eq('missing_coordinates')
       end
     end
 
