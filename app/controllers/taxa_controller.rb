@@ -86,7 +86,7 @@ class TaxaController < ApplicationController
   def sql_select
     'SELECT samples.id, samples.barcode, ' \
     'asvs."taxonID" as "taxonID", ncbi_nodes."canonical_name", ' \
-    ' samples.latitude, samples.longitude, field_data_project_id, ' \
+    'samples.latitude, samples.longitude, field_data_project_id, ' \
     'field_data_projects.name as field_data_project_name ' \
     'FROM asvs ' \
     'INNER JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \
@@ -97,14 +97,9 @@ class TaxaController < ApplicationController
   end
 
   def sql_where
-    # https://stackoverflow.com/a/36251296
-    # Query postgres jsonb by value
-
-    'WHERE samples.latitude is NOT NULL AND samples.longitude IS NOT NULL ' \
-    'AND exists (select 1 from jsonb_each_text(ncbi_nodes.hierarchy) ' \
-    "pair where pair.value = '#{params[:id]}');"
-
-    # "where taxa.\"taxonID\" = #{params[:id]}"
+    # Match any of the ids in the first 100 arrays in lineage
+    'WHERE samples.missing_coordinates = false ' \
+    "AND '{#{params[:id]}}'::text[] <@ lineage[100][1:1]; "
   end
 
   def query_string
