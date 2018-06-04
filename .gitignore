@@ -25,3 +25,5 @@ yarn-debug.log*
 db/data/trees/
 db/data/tree/
 /public/assets
+
+*.dump
