@@ -187,6 +187,7 @@ class NcbiNode < ApplicationRecord
   # rubocop:enable Naming/MethodName
 
   def asvs_count
+    return 0
     sql = 'SELECT count(DISTINCT(samples.id)) ' \
     'FROM asvs ' \
     'JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" '\
