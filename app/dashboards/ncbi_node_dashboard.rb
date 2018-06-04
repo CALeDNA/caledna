@@ -26,7 +26,6 @@ class NcbiNodeDashboard < Administrate::BaseDashboard
     full_taxonomy_string: Field::Text,
     short_taxonomy_string: Field::Text,
     cal_division_id: Field::Number,
-    asvs_count: Field::Number,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -63,7 +62,6 @@ class NcbiNodeDashboard < Administrate::BaseDashboard
     :full_taxonomy_string,
     :short_taxonomy_string,
     :cal_division_id,
-    :asvs_count,
   ].freeze
 
   # FORM_ATTRIBUTES

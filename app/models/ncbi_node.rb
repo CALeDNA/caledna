@@ -186,6 +186,18 @@ class NcbiNode < ApplicationRecord
   def acceptedNameUsageID; end
   # rubocop:enable Naming/MethodName
 
+  def asvs_count
+    sql = 'SELECT count(DISTINCT(samples.id)) ' \
+    'FROM asvs ' \
+    'JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" '\
+    'JOIN extractions ON asvs.extraction_id = extractions.id ' \
+    'JOIN samples ON samples.id = extractions.sample_id ' \
+    'WHERE samples.missing_coordinates = false ' \
+    "AND '{#{taxon_id}}'::text[] <@ lineage[100][1:1];"
+
+    @asvs_count ||= ActiveRecord::Base.connection.execute(sql).first['count']
+  end
+
   private
 
   def wikidata_api

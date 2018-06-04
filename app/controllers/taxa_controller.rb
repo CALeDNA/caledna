@@ -52,7 +52,7 @@ class TaxaController < ApplicationController
 
   def ordered_taxa
     @ordered_taxa ||= NcbiNode.includes(:ncbi_names).order(asvs_count: :desc)
-                              .limit(10)
+                              .limit(5)
   end
 
   def sort_taxa_fields(taxon)

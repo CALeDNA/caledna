@@ -31,7 +31,6 @@ class TaxonDashboard < Administrate::BaseDashboard
     family: Field::String,
     genus: Field::String,
     hierarchy: Field::String.with_options(searchable: false),
-    asvs_count: Field::Number,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
