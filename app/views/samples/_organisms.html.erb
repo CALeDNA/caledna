@@ -8,7 +8,7 @@
     <li>
       <%= taxon.ncbi_division.name %>
       <%= taxon.taxonRank %>:
-      <% if false #taxon.threatened? %>
+      <% if taxon.threatened? %>
         (Name not shown because this species is <%= taxon.conservation_status %>)
       <% else %>
         <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>

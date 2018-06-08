@@ -12,16 +12,23 @@ class SamplesController < ApplicationController
 
   def show
     @asvs_count = asvs_count(params[:sample_id])
-    @sample = Sample.approved
-                    .includes(extractions:
-                      { asvs:
-                        { ncbi_node: %i[ncbi_names ncbi_division] } })
-                    .find(params[:id])
-
+    @sample = sample
     @batch_vernaculars = batch_vernaculars
   end
 
   private
+
+  def sample
+    @sample =
+      Sample.approved
+            .includes(extractions:
+              { asvs:
+                  {
+                    ncbi_node:
+                      %i[ncbi_names ncbi_division external_resource]
+                  } })
+            .find(params[:id])
+  end
 
   # TODO: add test
   def display_name
