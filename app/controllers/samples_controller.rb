@@ -2,6 +2,7 @@
 
 class SamplesController < ApplicationController
   include PaginatedSamples
+  include BatchData
 
   def index
     @samples = paginated_samples
@@ -12,8 +13,12 @@ class SamplesController < ApplicationController
   def show
     @asvs_count = asvs_count(params[:sample_id])
     @sample = Sample.approved
-                    .includes(extractions: { asvs: { ncbi_node: :ncbi_names } })
+                    .includes(extractions:
+                      { asvs:
+                        { ncbi_node: %i[ncbi_names ncbi_division] } })
                     .find(params[:id])
+
+    @batch_vernaculars = batch_vernaculars
   end
 
   private

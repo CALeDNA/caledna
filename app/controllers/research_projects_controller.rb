@@ -2,6 +2,7 @@
 
 class ResearchProjectsController < ApplicationController
   include PaginatedSamples
+  include BatchData
 
   def index
     @projects = Kaminari.paginate_array(projects.to_a).page(params[:page])

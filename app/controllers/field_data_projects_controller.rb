@@ -2,6 +2,7 @@
 
 class FieldDataProjectsController < ApplicationController
   include PaginatedSamples
+  include BatchData
 
   def index
     @projects =

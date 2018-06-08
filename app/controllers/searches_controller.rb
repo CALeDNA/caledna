@@ -2,6 +2,7 @@
 
 class SearchesController < ApplicationController
   include PaginatedSamples
+  include BatchData
 
   def show
     @samples = paginated_samples

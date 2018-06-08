@@ -12,7 +12,7 @@
         (Name not shown because this species is <%= taxon.conservation_status %>)
       <% else %>
         <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-        <%= taxon.common_names %>
+        <%= taxon.batch_common_names(batch_vernaculars) %>
       <% end %>
     </li>
   <% end %>

@@ -29,7 +29,7 @@
   <% end %>
   <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
     <div role="tabpanel" class="tab-pane" id="organisms">
-      <%= render partial: "organisms", locals: { sample: @sample, asvs_count: @asvs_count } %>
+      <%= render partial: "organisms", locals: { sample: @sample, asvs_count: @asvs_count, batch_vernaculars: @batch_vernaculars } %>
     </div>
   <% end %>
 </div>

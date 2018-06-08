@@ -107,6 +107,15 @@ class NcbiNode < ApplicationRecord
               .where.not(name_class: 'genbank common name')
   end
 
+  def batch_common_names(vernaculars, parenthesis = true)
+    names = vernaculars.to_a
+                       .select { |i| i['taxon_id'] == taxon_id }
+                       .pluck('name')
+    return if names.blank?
+
+    parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
+  end
+
   def common_names(parenthesis = true)
     names = vernaculars.pluck(:name).map(&:titleize).uniq
     return if names.blank?
