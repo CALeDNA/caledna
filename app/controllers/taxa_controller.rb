@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class TaxaController < ApplicationController
+
   def index
     # TODO: r-enable highlights
     # @highlights = Highlight.asv
@@ -8,6 +9,7 @@ class TaxaController < ApplicationController
     @top_taxa = top_taxa
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
+    @batch_vernaculars = batch_vernaculars
   end
 
   def show
@@ -17,6 +19,21 @@ class TaxaController < ApplicationController
   end
 
   private
+
+  def batch_vernaculars
+    sql = 'SELECT ncbi_names.taxon_id, ncbi_names.name ' \
+    'FROM ncbi_names ' \
+    "WHERE taxon_id IN (#{taxon_ids.to_s[1..-2]})" \
+    "AND (name_class = 'common name' OR name_class = 'genbank common name')"
+
+    @batch_vernaculars ||= ActiveRecord::Base.connection.execute(sql)
+  end
+
+  def taxon_ids
+    top_taxa.pluck('taxon_id') +
+      top_plant_taxa.pluck('taxon_id') +
+      top_animal_taxa.pluck('taxon_id')
+  end
 
   def asvs_count
     sql = 'SELECT sample_id, COUNT(*) ' \
@@ -47,12 +64,12 @@ class TaxaController < ApplicationController
   end
 
   def taxon
-    @taxon ||= NcbiNode.includes(:ncbi_names).find(params[:id])
+    @taxon ||= NcbiNode.includes(:ncbi_names, :ncbi_division).find(params[:id])
   end
 
   def ordered_taxa
     @ordered_taxa ||= NcbiNode.includes(:ncbi_names).order(asvs_count: :desc)
-                              .limit(5)
+                              .limit(10)
   end
 
   def sort_taxa_fields(taxon)
