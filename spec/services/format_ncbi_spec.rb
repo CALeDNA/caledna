@@ -136,6 +136,63 @@ describe FormatNcbi do
     end
   end
 
+  describe 'create_ids' do
+    def subject
+      dummy_class.create_ids
+    end
+    let!(:node1) do
+      create(:ncbi_node, rank: 'rank1', canonical_name: 'name1',
+                         parent_taxon_id: 1)
+    end
+    let!(:node2) do
+      create(:ncbi_node, rank: 'rank2', canonical_name: 'name2',
+                         parent_taxon_id: node1.taxon_id)
+    end
+    let!(:node3) do
+      create(:ncbi_node, rank: 'rank3', canonical_name: 'name3',
+                         parent_taxon_id: node2.taxon_id)
+    end
+
+    let!(:node4) do
+      create(:ncbi_node, rank: 'rank4', canonical_name: 'name4',
+                         parent_taxon_id: node1.taxon_id)
+    end
+    let!(:node5) do
+      create(:ncbi_node, rank: 'rank5', canonical_name: 'name5',
+                         parent_taxon_id: node4.taxon_id)
+    end
+
+    context 'when node is a non-root node' do
+      it 'adds ids' do
+        subject
+        id1 = node1.taxon_id.to_s
+        id2 = node2.taxon_id.to_s
+        id3 = node3.taxon_id.to_s
+        id4 = node4.taxon_id.to_s
+        id5 = node5.taxon_id.to_s
+
+        expect(node1.reload.ids).to eq([id1])
+        expect(node2.reload.ids).to eq([id1, id2])
+        expect(node3.reload.ids).to eq([id1, id2, id3])
+        expect(node4.reload.ids).to eq([id1, id4])
+        expect(node5.reload.ids).to eq([id1, id4, id5])
+      end
+    end
+
+    context 'when node is a root node' do
+      let(:node) do
+        create(:ncbi_node, rank: 'rank1', canonical_name: 'name1',
+                           parent_taxon_id: 1, taxon_id: 1)
+      end
+
+      it 'does not add ids' do
+        subject
+
+        expect(node.reload.ids).to eq([])
+      end
+    end
+  end
+
   describe '#create_taxonomy_strings' do
     def subject
       dummy_class.create_taxonomy_strings

@@ -31,10 +31,38 @@ module FormatNcbi
     end
   end
 
+  def create_ids
+    nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
+    nodes.each do |node|
+      node.ids = []
+      node.ids << node.taxon_id
+      node.save
+      create_ids_for(node)
+    end
+  end
+
   private
 
   def valid_rank?(node)
     node.rank != 'no rank'
+  end
+
+  def create_ids_for(parent_node)
+    child_nodes = NcbiNode.where(parent_taxon_id: parent_node.taxon_id)
+    return if child_nodes.blank?
+
+    child_nodes.each do |child|
+      ids = create_ids_array(parent_node, child)
+      child.ids = ids
+      child.save
+
+      create_ids_for(child)
+    end
+  end
+
+  def create_ids_array(parent_node, child)
+    ids = parent_node.ids.dup
+    ids << child.taxon_id
   end
 
   def create_taxonomy_string(parent_node)

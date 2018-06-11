@@ -32,6 +32,12 @@ namespace :ncbi do
     create_taxonomy_strings
   end
 
+  desc 'create ids'
+  task create_ids: :environment do
+    puts 'create ids...'
+    create_ids
+  end
+
   desc 'update cal_taxon'
   task update_cal_taxon: :environment do
     puts 'update cal_taxon...'
