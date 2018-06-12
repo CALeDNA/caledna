@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class TaxaController < ApplicationController
-
   def index
     # TODO: r-enable highlights
     # @highlights = Highlight.asv
@@ -21,9 +21,11 @@ class TaxaController < ApplicationController
   private
 
   def batch_vernaculars
+    return [] if taxon_ids.blank?
+
     sql = 'SELECT ncbi_names.taxon_id, ncbi_names.name ' \
     'FROM ncbi_names ' \
-    "WHERE taxon_id IN (#{taxon_ids.to_s[1..-2]})" \
+    "WHERE taxon_id IN (#{taxon_ids.to_s[1..-2]}) " \
     "AND (name_class = 'common name' OR name_class = 'genbank common name')"
 
     @batch_vernaculars ||= ActiveRecord::Base.connection.execute(sql)
@@ -126,3 +128,4 @@ class TaxaController < ApplicationController
     query
   end
 end
+# rubocop:enable Metrics/ClassLength

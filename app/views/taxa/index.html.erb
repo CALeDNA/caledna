@@ -30,7 +30,7 @@
  <li>
   <%= taxon.taxonRank %>:
   <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-  <%= taxon.batch_common_names(@batch_vernaculars) %>
+  <%= taxon.batch_common_names(@batch_vernaculars) %> (<%= pluralize taxon.asvs_count, 'sample' %>)
   </li>
 <% end %>
 </ul>
@@ -41,7 +41,7 @@
  <li>
   <%= taxon.taxonRank %>:
   <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-  <%= taxon.batch_common_names(@batch_vernaculars) %>
+  <%= taxon.batch_common_names(@batch_vernaculars) %> (<%= pluralize taxon.asvs_count, 'sample' %>)
   </li>
 <% end %>
 </ul>
@@ -52,7 +52,7 @@
  <li>
   <%= taxon.taxonRank %>:
   <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-  <%= taxon.batch_common_names(@batch_vernaculars) %>
+  <%= taxon.batch_common_names(@batch_vernaculars) %> (<%= pluralize taxon.asvs_count, 'sample' %>)
   </li>
 <% end %>
 </ul>

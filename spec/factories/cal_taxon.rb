@@ -2,10 +2,10 @@
 
 FactoryBot.define do
   factory :cal_taxon do
-    kingdom 'Animalia'
+    kingdom { Faker::Team.creature }
     phylum 'Tardigrada'
     parentNameUsageID { Faker::Number.number(5) }
-    canonicalName 'Animalia'
+    canonicalName { Faker::Team.creature }
     taxonRank 'kingdom'
     taxonomicStatus 'accepted'
     taxonID { Faker::Number.number(5) }
