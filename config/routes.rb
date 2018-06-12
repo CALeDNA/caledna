@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     resources :extractions
     resources :asvs
     resources :researchers
+    resources :pages
 
     namespace :labwork do
       get '/' => 'home#index'
