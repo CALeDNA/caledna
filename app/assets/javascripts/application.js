@@ -15,10 +15,9 @@
 //= require photoswipe
 //= require bootstrap-sprockets
 //= require jquery-ujs
-//= require turbolinks
 //= require_tree .
 
-$(document).on('turbolinks:load', function() {
+$(function() {
 
   function clickableTableRows () {
     function clickRow (el) {

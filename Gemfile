@@ -41,7 +41,6 @@ gem 'simple_enum', '~> 2.3'
 gem 'simple_form', '~> 3.5'
 gem 'sparql', '~> 3.0', '>= 3.0.1'
 gem 'title', '~> 0.0'
-gem 'turbolinks', '~> 5.0'
 gem 'uglifier', '~> 4.0'
 gem 'webpacker', '~> 3.3'
 
