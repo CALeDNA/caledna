@@ -3,12 +3,11 @@
 source 'https://rubygems.org'
 
 ruby '2.4.0'
-gem 'rails', '~> 5.0'
+gem 'rails', '~> 5.1'
 
 # using branch of administrate because it hasn't been merged into master yet
-gem 'administrate', git: 'https://github.com/jonatasrancan/administrate.git',
-                    branch: 'feature/search-through-association-fields'
-gem 'administrate-field-json', '~> 0.0.4'
+gem 'administrate', '~> 0.10.0'
+gem 'administrate-field-json', git: 'https://github.com/eddietejeda/administrate-field-json.git'
 gem 'airbrake', '~> 7.1', require: false
 gem 'autoprefixer-rails', '~> 7.2'
 gem 'bootstrap-sass', '~> 3.3.7'
@@ -29,9 +28,8 @@ gem 'newrelic_rpm', '~> 4.7'
 gem 'pg', '~> 0.21'
 gem 'pg_search', '~> 2.1.2'
 gem 'photoswipe-rails', '~> 4.1', '>= 4.1.2'
-gem 'pundit', '~> 1.1.0' # added pundit to deal with administrate bug
-# https://github.com/thoughtbot/administrate/issues/1048
 gem 'puma', '~> 3.11'
+gem 'pundit', '~> 1.1.0'
 gem 'rack-canonical-host', '~> 0.2'
 gem 'recipient_interceptor', '~> 0.1'
 gem 'sass-rails', '~> 5.0'
@@ -40,7 +38,7 @@ gem 'sidekiq', '~> 5.0'
 gem 'simple_enum', '~> 2.3'
 gem 'simple_form', '~> 3.5'
 gem 'sparql', '~> 3.0', '>= 3.0.1'
-gem 'title', '~> 0.0'
+gem 'title', '~> 0.0.7'
 gem 'uglifier', '~> 4.0'
 gem 'webpacker', '~> 3.3'
 
