@@ -11,7 +11,6 @@
 // about supported directives.
 //
 //= require jquery
-//= require tinymce
 //= require photoswipe
 //= require bootstrap-sprockets
 //= require jquery-ujs
