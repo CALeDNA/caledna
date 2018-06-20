@@ -10,13 +10,32 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    allowed_params = [
-      :username
+    profile_attrs = %i[username email password password_confirmation]
+
+    demographics_attrs = %i[
+      name
+      location
+      age
+      gender_cd
+      education_cd
+      ethnicity
+      conservation_experience
+      dna_experience
+      work_info
+      time_outdoors_cd
+      occupation
+      science_career_goals
+      environmental_career_goals
+      uc_affiliation
+      uc_campus
+      caledna_source
+      agree
     ]
 
-    devise_parameter_sanitizer.permit(:sign_up, keys: allowed_params)
-    devise_parameter_sanitizer.permit(:account_update, keys: allowed_params)
-    devise_parameter_sanitizer.permit(:invite, keys: allowed_params)
+    devise_parameter_sanitizer.permit(:sign_up,
+                                      keys: profile_attrs + demographics_attrs)
+    devise_parameter_sanitizer.permit(:account_update, keys: profile_attrs)
+    devise_parameter_sanitizer.permit(:invite, keys: profile_attrs)
   end
 
   private

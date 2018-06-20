@@ -52,6 +52,19 @@ footer {
 // common
 // =============
 
+fieldset.border {
+  border: solid 1px #DDD !important;
+  padding: 0 15px 15px 15px;
+  border-bottom: none;
+  margin: 20px 0;
+}
+
+legend.border {
+  width:inherit; /* Or auto */
+  padding:0 10px; /* To give a bit of padding on the left and right */
+  border-bottom:none;
+}
+
 .page-header {
   border: none;
 }

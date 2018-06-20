@@ -11,12 +11,26 @@ en:
     error_notification:
       default_message: "Please review the problems below:"
     # Examples
-    # labels:
-    #   defaults:
-    #     password: 'Password'
-    #   user:
-    #     new:
-    #       email: 'E-mail to sign in.'
+    labels:
+      defaults:
+        password: 'Password'
+      user:
+        new:
+          location: 'What is your location? (City, State)'
+          gender_cd: 'Gender'
+          education_cd: 'What is your level of education? '
+          conservation_experience: 'Do you have any work experience relevant to habitat monitoring or conservation?'
+          dna_experience: 'Do you have any work experience working with DNA sequences?'
+          work_info: 'If yes to either of the last two questions, what subject area was it in? Can you tell us a little about your work?'
+          time_outdoors_cd: 'How much of your week do you spend enjoying or working in the outdoors?'
+          occupation: 'What is your occupation?'
+          science_career_goals: 'Do you have career goals that include science research? If so, what are they?'
+          environmental_career_goals: 'Do you have career goals aimed at improving the environment? If so, what are they?'
+          uc_affiliation: 'Are you affiliated with the University of California?'
+          uc_campus: 'If so, which campus?'
+          caledna_source: 'How did you find out about CALeDNA?'
+          agree: 'I agree'
+
     #     edit:
     #       email: 'E-mail.'
     # hints:

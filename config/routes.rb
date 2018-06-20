@@ -2,6 +2,7 @@
 
 # rubocop:disable Metrics/BlockLength:
 Rails.application.routes.draw do
+  devise_for :users
   devise_for :researchers, controllers: {
     sessions: 'researchers/sessions',
     invitations: 'researchers/invitations'
