@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  # rubocop:disable Metrics/MethodLength
   def configure_permitted_parameters
     profile_attrs = %i[username email password password_confirmation]
 
@@ -37,6 +38,7 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: profile_attrs)
     devise_parameter_sanitizer.permit(:invite, keys: profile_attrs)
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 

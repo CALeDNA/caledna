@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DeviseInvitableAddToResearchers < ActiveRecord::Migration
+class DeviseInvitableAddToResearchers < ActiveRecord::Migration[5.0]
   def up
     change_table :researchers do |t|
       t.string     :invitation_token

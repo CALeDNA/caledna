@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
+  include MultipleLoginFields
+
+  # allow users to input custom value for "Other" form option
   attr_accessor :other
 
   ETHNICITY = [
@@ -23,9 +26,9 @@ class User < ApplicationRecord
   ].freeze
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  # :trackable, :lockable, :timeoutable and :omniauthable
+  devise :database_authenticatable, :registerable, :confirmable,
+         :recoverable, :rememberable, :validatable
 
   as_enum :gender, %i[female male other], map: :string
   as_enum :education, [
@@ -48,5 +51,21 @@ class User < ApplicationRecord
     '30+ hours'
   ], map: :string
 
-  validates :email, :username, :password, presence: true
+  validates :username,
+            :email,
+            presence: true,
+            uniqueness: { case_sensitive: false }
+  validates_format_of :username, with: /^[a-zA-Z0-9_\.]*$/, multiline: true
+
+  # NOTE: Devise doesn't recognize self.find_for_database_authentication
+  # when it is added to MultipleLoginFields as a ClassMethods
+  def self.find_for_database_authentication(warden_conditions)
+    custom_find_for_database_authentication(warden_conditions)
+  end
+
+  protected
+
+  # Override Devise logic for IP tracking
+  # https://github.com/plataformatec/devise/blob/master/lib/devise/models/trackable.rb#L45
+  def extract_ip_from(request); end
 end

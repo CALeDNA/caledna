@@ -15,27 +15,6 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "active_storage_attachments", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
-  end
-
-  create_table "active_storage_blobs", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
-  end
-
   create_table "asvs", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -46,7 +25,7 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
   end
 
-  create_table "cal_taxa", id: :serial, force: :cascade do |t|
+  create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
     t.string "datasetID"
     t.string "parentNameUsageID"
     t.text "scientificName"
@@ -63,26 +42,20 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.jsonb "hierarchy"
     t.string "original_taxonomy"
     t.jsonb "original_hierarchy"
-    t.boolean "normalized"
-    t.integer "taxonID", default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
+    t.boolean "normalized", default: false
     t.string "genericName"
+    t.integer "taxonID", default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string "complete_taxonomy"
     t.integer "rank_order"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "exact_gbif_match"
+    t.boolean "exact_gbif_match", default: false
     t.text "notes"
-    t.index ["kingdom", "canonicalName"], name: "cal_taxa_kingdom_canonicalName_idx1", unique: true
+    t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true
     t.index ["original_taxonomy"], name: "index_cal_taxa_on_original_taxonomy"
   end
 
-  create_table "content_photos", id: :serial, force: :cascade do |t|
-    t.text "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "external_resources", primary_key: "taxon_id", id: :integer, default: nil, force: :cascade do |t|
+  create_table "external_resources", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
     t.integer "eol_id"
     t.integer "gbif_id"
     t.string "wikidata_image"
@@ -96,9 +69,9 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
+    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "iucn_status"
   end
 
   create_table "extraction_types", id: :serial, force: :cascade do |t|
@@ -162,8 +135,8 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.string "status_cd"
     t.string "sum_taxonomy_example"
     t.boolean "priority_sequencing"
-    t.datetime "created_at", default: "2018-04-23 16:12:39", null: false
-    t.datetime "updated_at", default: "2018-04-23 16:12:39", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id"
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id"
     t.index ["processor_id"], name: "index_extractions_on_processor_id"
@@ -231,15 +204,13 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.integer "asvs_count", default: 0
     t.string "ids", default: [], array: true
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
-    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "boo"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
-    t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
-    t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx"
   end
 
   create_table "pages", id: :serial, force: :cascade do |t|
@@ -316,6 +287,7 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
   end
 
@@ -372,26 +344,22 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.string "order", limit: 255
     t.string "family", limit: 255
     t.string "genus", limit: 255
-    t.jsonb "hierarchy", default: {}
+    t.jsonb "hierarchy"
     t.integer "asvs_count", default: 0
     t.integer "rank_order"
-    t.string "iucn_status", limit: 255
+    t.string "iucn_status"
     t.integer "iucn_taxonid"
     t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix"
     t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx"
     t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx"
     t.index ["asvs_count"], name: "index_taxa_on_asvs_count"
     t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank"
-    t.index ["className"], name: "index_taxa_on_classname"
-    t.index ["family"], name: "index_taxa_on_family"
     t.index ["genus"], name: "index_taxa_on_genus"
     t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
     t.index ["iucn_status"], name: "index_taxa_on_iucn_status"
     t.index ["kingdom"], name: "index_taxa_on_kingdom"
-    t.index ["order"], name: "index_taxa_on_order"
     t.index ["phylum"], name: "index_taxa_on_phylum"
     t.index ["scientificName"], name: "index_taxa_on_scientificName"
-    t.index ["specificEpithet"], name: "index_taxa_on_specificepithet"
     t.index ["taxonRank"], name: "index_taxa_on_taxonRank"
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx"
   end
@@ -399,12 +367,6 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
   create_table "taxa_datasets", primary_key: "datasetID", id: :string, force: :cascade do |t|
     t.string "name"
     t.text "citation"
-  end
-
-  create_table "uploads", force: :cascade do |t|
-    t.string "image"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -416,8 +378,10 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.inet "current_sign_in_ip"
-    t.inet "last_sign_in_ip"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
@@ -438,6 +402,7 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.string "uc_campus"
     t.string "caledna_source"
     t.boolean "agree", null: false
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true

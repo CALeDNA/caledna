@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Researcher < ApplicationRecord
+  include MultipleLoginFields
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   # :registerable
@@ -26,5 +28,11 @@ class Researcher < ApplicationRecord
 
   def inactive_message
     'You are not allowed to log in.'
+  end
+
+  # NOTE: Devise doesn't recognize self.find_for_database_authentication
+  # when it is added to MultipleLoginFields as a ClassMethods
+  def self.find_for_database_authentication(warden_conditions)
+    custom_find_for_database_authentication(warden_conditions)
   end
 end
