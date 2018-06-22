@@ -1,16 +1,44 @@
 <h1><%= @event.name %></h1>
 
-<p>Location: <%= @event.location %></p>
-
-<p>Date: <%= long_datetime(@event.start_date) %> - <%= long_datetime(@event.end_date) %> </p>
-
-<% if current_user %>
-  <p>Contact Info: <%= @event.contact %></p>
+<% if @event.upcoming_event? %>
+  <% if current_user %>
+    <% if @event.registration_canceled?(current_user) %>
+      <%= simple_form_for :event_registration, url: event_event_registrations_update_status_path(@event, { status: :registered }), method: :put do |f| %>
+        <%= f.submit 'Register', class: 'btn btn-primary' %>
+      <% end %>
+    <% elsif @event.registered?(current_user) %>
+      <%= simple_form_for :event_registration, url: event_event_registrations_update_status_path(@event, { status: :canceled }), method: :put do |f| %>
+        <%= f.submit 'Cancel Registration', class: 'btn btn-primary' %>
+      <% end %>
+    <% else %>
+      <%= simple_form_for :event_registration, url: event_event_registrations_path(@event), method: :post do |f| %>
+        <%= f.submit 'Register', class: 'btn btn-primary' %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p>You must <%= link_to 'log in', new_user_session_path %> to register.</p>
+  <% end %>
 <% else %>
-  <p>Contact Info: <%= link_to 'Log In', new_user_session_path %> to see contact info.</p>
+  <p>This event has ended.</p>
 <% end %>
 
-<p><%= @event.description %></p>
+<h3>Location</h3>
+<p><%= @event.location %></p>
+
+<h3>Date</h3>
+<p><%= long_datetime(@event.start_date) %> - <%= long_datetime(@event.end_date) %> </p>
+
+<% if @event.upcoming_event? %>
+  <h3>Contact Info</h3>
+  <% if current_user %>
+    <p><%= @event.contact %></p>
+  <% else %>
+    <p><%= link_to 'Log In', new_user_session_path %> to see contact info.</p>
+  <% end %>
+<% end %>
+
+<h3>Details</h3>
+<div><%= @event.description %></div>
 
 <% if @event.flyer? %>
   <div><%= image_tag @event.flyer %></div>

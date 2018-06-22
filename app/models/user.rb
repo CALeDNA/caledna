@@ -30,6 +30,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :validatable
 
+  has_many :event_registrations
+  has_many :events, through: :event_registrations
+
   as_enum :gender, %i[female male other], map: :string
   as_enum :education, [
     'Some high school',

@@ -97,7 +97,11 @@ Rails.application.routes.draw do
   resources :field_data_projects, only: %i[index show]
   resources :taxa, only: %i[index show create]
   resources :research_projects, only: %i[index show]
-  resources :events, only: %i[index show]
+  resources :events, only: %i[index show] do
+    resources :event_registrations, only: %i[create]
+    put 'event_registrations_update_status' =>
+      'event_registrations#update_status'
+  end
 
   root 'samples#index'
 end

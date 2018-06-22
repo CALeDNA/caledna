@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_22_061538) do
+ActiveRecord::Schema.define(version: 2018_06_22_063551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 2018_06_22_061538) do
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
   end
 
-  create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
+  create_table "cal_taxa", id: :serial, force: :cascade do |t|
     t.string "datasetID"
     t.string "parentNameUsageID"
     t.text "scientificName"
@@ -63,17 +63,28 @@ ActiveRecord::Schema.define(version: 2018_06_22_061538) do
     t.jsonb "hierarchy"
     t.string "original_taxonomy"
     t.jsonb "original_hierarchy"
-    t.boolean "normalized", default: false
+    t.boolean "normalized"
+    t.integer "taxonID", default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
     t.string "genericName"
-    t.integer "taxonID", default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string "complete_taxonomy"
     t.integer "rank_order"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "exact_gbif_match", default: false
     t.text "notes"
-    t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true
+    t.index ["kingdom", "canonicalName"], name: "cal_taxa_kingdom_canonicalName_idx1", unique: true
     t.index ["original_taxonomy"], name: "index_cal_taxa_on_original_taxonomy"
+  end
+
+  create_table "event_registrations", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "event_id"
+    t.string "status_cd"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_event_registrations_on_event_id"
+    t.index ["user_id", "event_id"], name: "index_event_registrations_on_user_id_and_event_id", unique: true
+    t.index ["user_id"], name: "index_event_registrations_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -89,7 +100,7 @@ ActiveRecord::Schema.define(version: 2018_06_22_061538) do
     t.index ["field_data_project_id"], name: "index_events_on_field_data_project_id"
   end
 
-  create_table "external_resources", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
+  create_table "external_resources", primary_key: "taxon_id", id: :integer, default: nil, force: :cascade do |t|
     t.integer "eol_id"
     t.integer "gbif_id"
     t.string "wikidata_image"
@@ -103,9 +114,9 @@ ActiveRecord::Schema.define(version: 2018_06_22_061538) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "iucn_status"
   end
 
   create_table "extraction_types", id: :serial, force: :cascade do |t|
@@ -243,8 +254,10 @@ ActiveRecord::Schema.define(version: 2018_06_22_061538) do
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
+    t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
+    t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx"
   end
 
   create_table "pages", id: :serial, force: :cascade do |t|
