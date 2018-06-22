@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_19_092128) do
+ActiveRecord::Schema.define(version: 2018_06_20_201423) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,19 @@ ActiveRecord::Schema.define(version: 2018_06_19_092128) do
     t.text "notes"
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true
     t.index ["original_taxonomy"], name: "index_cal_taxa_on_original_taxonomy"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "start_date", null: false
+    t.datetime "end_date", null: false
+    t.text "description", null: false
+    t.text "location"
+    t.text "contact"
+    t.bigint "field_data_project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["field_data_project_id"], name: "index_events_on_field_data_project_id"
   end
 
   create_table "external_resources", primary_key: "taxon_id", id: :serial, force: :cascade do |t|

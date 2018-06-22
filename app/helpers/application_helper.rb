@@ -10,6 +10,10 @@ module ApplicationHelper
     format_date(date, I18n.t('time.formats.short'))
   end
 
+  def long_datetime(date)
+    format_date(date, I18n.t('time.formats.long_datetime'))
+  end
+
   def format_date(date, format)
     return unless date.present?
     date.strftime(format)

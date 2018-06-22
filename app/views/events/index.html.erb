@@ -1,0 +1,28 @@
+<h1><%= params[:type] == 'past' ? 'Past' : 'Upcoming' %> Events</h1>
+
+<div class="samples-menu">
+  <div class="btn-group" role="group" >
+    <%= link_to 'Upcoming', events_path, class: "btn btn-default" %>
+    <%= link_to 'Past', events_path(type: 'past'), class: "btn btn-default" %>
+  </div>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Location</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @events.each do |event| %>
+      <tr>
+        <td><%= link_to event.name, event_path(event) %></td>
+        <td><%= long_datetime(event.start_date) %></td>
+        <td><%= event.location %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

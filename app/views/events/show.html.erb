@@ -1,0 +1,13 @@
+<h1><%= @event.name %></h1>
+
+<p>Location: <%= @event.location %></p>
+
+<p>Date: <%= long_datetime(@event.start_date) %> - <%= long_datetime(@event.end_date) %> </p>
+
+<% if current_user %>
+  <p>Contact Info: <%= @event.contact %></p>
+<% else %>
+  <p>Contact Info: <%= link_to 'Log In', new_user_session_path %> to see contact info.</p>
+<% end %>
+
+<p><%= @event.description %></p>

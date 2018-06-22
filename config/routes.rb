@@ -30,6 +30,7 @@ Rails.application.routes.draw do
     resources :asvs
     resources :researchers
     resources :pages
+    resources :events
 
     namespace :labwork do
       get '/' => 'home#index'
@@ -96,6 +97,7 @@ Rails.application.routes.draw do
   resources :field_data_projects, only: %i[index show]
   resources :taxa, only: %i[index show create]
   resources :research_projects, only: %i[index show]
+  resources :events, only: %i[index show]
 
   root 'samples#index'
 end

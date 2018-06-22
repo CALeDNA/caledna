@@ -24,6 +24,7 @@ en:
     formats:
       long: "%b %d, %Y"
       short: "%b %d"
+      long_datetime: '%a %b %d, %Y %l:%M %P'
   pundit:
     default: 'You cannot perform this action.'
   administrate:

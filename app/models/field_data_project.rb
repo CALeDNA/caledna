@@ -8,6 +8,7 @@ class FieldDataProject < ApplicationRecord
   validates :kobo_id, uniqueness: true
 
   has_many :samples, dependent: :destroy
+  has_many :events
 
   def multi_sample_form?
     MULTI_SAMPLE_PROJECTS.include?(kobo_id)
