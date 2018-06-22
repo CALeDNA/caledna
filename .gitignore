@@ -27,3 +27,5 @@ db/data/tree/
 /public/assets
 
 *.dump
+
+/storage/*

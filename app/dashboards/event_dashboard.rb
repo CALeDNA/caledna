@@ -3,6 +3,7 @@ require "administrate/base_dashboard"
 class EventDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     field_data_project: Field::BelongsTo,
+    flyer: Field::ActiveStorageAttachmentField,
     id: Field::Number,
     name: Field::String,
     start_date: Field::DateTime,
@@ -28,6 +29,7 @@ class EventDashboard < Administrate::BaseDashboard
     :location,
     :contact,
     :field_data_project,
+    :flyer,
     :created_at,
     :updated_at,
   ].freeze
@@ -41,9 +43,14 @@ class EventDashboard < Administrate::BaseDashboard
     :location,
     :contact,
     :field_data_project,
+    :flyer
   ].freeze
 
   def display_resource(event)
     event.name
+  end
+
+  def permitted_attributes
+    super + [:flyer]
   end
 end

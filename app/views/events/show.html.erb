@@ -11,3 +11,7 @@
 <% end %>
 
 <p><%= @event.description %></p>
+
+<% if @event.flyer? %>
+  <div><%= image_tag @event.flyer %></div>
+<% end %>
