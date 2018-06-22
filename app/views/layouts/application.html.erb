@@ -31,7 +31,7 @@
 
       <div class="container main-container">
         <% flash.each do |name, msg| -%>
-          <%= content_tag :div, msg, class: name %>
+          <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
         <% end -%>
         <%= yield %>
       </div>

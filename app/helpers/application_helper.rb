@@ -37,4 +37,14 @@ module ApplicationHelper
       [k.titleize, v]
     end
   end
+
+  def flash_class(type)
+    case type
+    when 'alert' then 'alert alert-danger'
+    when 'failure' then 'alert alert-danger'
+    when 'success' then 'alert alert-success'
+    when 'notice' then 'alert alert-success'
+    else 'alert alert-light'
+    end
+  end
 end
