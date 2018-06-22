@@ -12,6 +12,7 @@
 
 $(function() {
 
+  // setup clickable rows
   function clickableTableRows () {
     function clickRow (el) {
       el.addEventListener("click", function(e) {

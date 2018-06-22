@@ -103,6 +103,8 @@ Rails.application.routes.draw do
       'event_registrations#update_status'
   end
 
+  resources :uploads, only: %i[create destroy]
+
   root 'samples#index'
 end
 # rubocop:enable Metrics/BlockLength:
