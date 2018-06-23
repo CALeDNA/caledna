@@ -1,0 +1,30 @@
+@import "summernote-bs4";
+
+// NOTE: this is based on summernote-custom-theme.min;
+// this changes the buttons color
+
+.note-editor {
+  background-color: white;
+
+  .note-btn {
+    background-color: white;
+    color: black;
+    border-color: #ccc;
+  }
+
+  .modal-footer {
+    .note-btn {
+      background-color: #337ab7;
+      color: white;
+      border-color: #2e6da4;
+    }
+  }
+}
+
+.note-image-popover {
+  .note-btn {
+    background-color: white;
+    color: black;
+    border-color: #ccc;
+  }
+}
