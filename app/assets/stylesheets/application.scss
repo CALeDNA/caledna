@@ -1,13 +1,12 @@
-/*
- *= require photoswipe
- */
-
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "font-awesome";
 
-// bottom of page or end of content footer
-// https://stackoverflow.com/a/12253099
+@import "devise";
+@import "samples";
+@import "searches";
+@import "taxa";
+
 
 // =============
 // layout
@@ -40,6 +39,9 @@ html, body {
   padding-bottom: 170px;
 }
 
+// bottom of page or end of content footer
+// https://stackoverflow.com/a/12253099
+
 footer {
   bottom: 0;
   left: 0;
@@ -51,6 +53,10 @@ footer {
 // =============
 // common
 // =============
+
+.form {
+  display: inline;
+}
 
 fieldset.border {
   border: solid 1px #DDD !important;
@@ -190,17 +196,6 @@ footer {
   }
 }
 
-
-// =============
-// page specific
-// =============
-
-
-.json {
-  overflow-wrap: break-word;
-  width: 80vw;
-}
-
 .clickable_row:hover {
   background:#eee;
   cursor: pointer;
@@ -208,40 +203,6 @@ footer {
 
 #mapid {
   height: 80vh;
-}
-
-.search-form {
-  display: inline;
-
-  .search_query {
-    input {
-      width: 25em;
-    }
-  }
-}
-
-.taxa-search-menu {
-  margin-top: 2em;
-  margin-bottom: 2em;
-
-  .taxa-search-form {
-    display: inline;
-
-    input {
-      width: 25em;
-    }
-  }
-}
-
-.taxa-search {
-  img {
-    float: left;
-    margin-right: 1em;
-  }
-}
-
-.reset-search {
-  margin-left: 1em;
 }
 
 .samples-menu {
@@ -254,34 +215,4 @@ footer {
 
 .samples-links a {
   margin-left: .5em;
-}
-
-.form {
-  display: inline;
-}
-
-.taxonomy-tree  {
-  width: auto !important;
-
-  td {
-    border: none !important;
-  }
-
-  caption {
-    font-weight: bold;
-    font-size: 2rem;
-  }
-}
-
-.data-source {
-  color: #777;
-  font-size: 90%;
-}
-
-.gallery-initial-photo {
-  cursor: pointer;
-}
-
-.devise-links {
-  margin-top: 10px;
 }

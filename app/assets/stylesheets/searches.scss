@@ -1,0 +1,33 @@
+.reset-search {
+  margin-left: 1em;
+}
+
+.taxa-search-menu {
+  margin-top: 2em;
+  margin-bottom: 2em;
+
+  .taxa-search-form {
+    display: inline;
+
+    input {
+      width: 25em;
+    }
+  }
+}
+
+.taxa-search {
+  img {
+    float: left;
+    margin-right: 1em;
+  }
+}
+
+.search-form {
+  display: inline;
+
+  .search_query {
+    input {
+      width: 25em;
+    }
+  }
+}
