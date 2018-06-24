@@ -1,4 +1,3 @@
-@import "bootstrap";
 @import "./summernote";
 
 // "administrate/components/field-unit" causes style bug with summernote menu;
@@ -19,4 +18,22 @@
   float: none;
   margin-left: 0;
   width: 60%;
+}
+
+// add styles to make text-editor layout look like adminstrate
+body {
+  background-color: #f6f7f7;
+}
+
+.app-container {
+  max-width: inherit;
+}
+
+.navigation {
+  width: 17rem;
+  font-size: 1.6rem;
+
+  a {
+    text-decoration: underline;
+  }
 }
