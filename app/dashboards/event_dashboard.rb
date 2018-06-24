@@ -7,7 +7,7 @@ class EventDashboard < Administrate::BaseDashboard
     name: Field::String,
     start_date: Field::DateTime,
     end_date: Field::DateTime,
-    description: Field::TextEditorField,
+    description: TextEditorField,
     location: Field::Text,
     contact: Field::Text,
     created_at: Field::DateTime,

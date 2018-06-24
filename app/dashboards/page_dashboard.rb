@@ -4,7 +4,7 @@ class PageDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     title: Field::String,
-    body: Field::Text,
+    body: TextEditorField,
     draft: Field::Boolean,
     menu_cd: EnumField,
     created_at: Field::DateTime,
