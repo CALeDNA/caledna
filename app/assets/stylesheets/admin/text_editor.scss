@@ -1,0 +1,21 @@
+@import "bootstrap";
+@import "../summernote";
+
+// "administrate/components/field-unit" causes style bug with summernote menu;
+// change "display: fix" to "display: block" to fix bug.
+.field-unit {
+  display: block;
+}
+
+.field-unit__label {
+  float: none;
+  margin-left: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.field-unit__field {
+  float: none;
+  margin-left: 0;
+  width: 60%;
+}
