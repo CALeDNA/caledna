@@ -38,7 +38,7 @@
 <% end %>
 
 <h3>Details</h3>
-<div><%= @event.description %></div>
+<%= sanitize @event.description %>
 
 <% if @event.flyer? %>
   <div><%= image_tag @event.flyer %></div>

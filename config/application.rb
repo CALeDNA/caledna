@@ -32,5 +32,16 @@ module Caledna
     Raven.configure do |config|
       config.dsn = ENV.fetch('SENTRY_DSN')
     end
+
+    # customize "sanitize" helper
+    # https://github.com/flavorjones/loofah/blob/master/lib/loofah/html5/whitelist.rb
+
+    # https://github.com/rails/rails/blob/master/actionview/lib/action_view/helpers/sanitize_helper.rb
+    # To set the default allowed tags or attributes across your application:
+    #   config.action_view.sanitized_allowed_tags = ['strong', 'em', 'a']
+    #   config.action_view.sanitized_allowed_attributes = ['href', 'title']
+
+    tags = Loofah::HTML5::WhiteList::ACCEPTABLE_ELEMENTS
+    config.action_view.sanitized_allowed_tags = tags
   end
 end
