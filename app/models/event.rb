@@ -2,15 +2,10 @@
 
 class Event < ApplicationRecord
   belongs_to :field_data_project, optional: true
-  has_one_attached :flyer
   has_many :event_registrations
   has_many :users, through: :event_registrations
 
   validates :name, :start_date, :end_date, :description, presence: true
-
-  def flyer?
-    flyer.attachment.present?
-  end
 
   def registered?(user)
     event_registrations.where(user: user).present?
