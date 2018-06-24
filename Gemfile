@@ -13,7 +13,6 @@ gem 'autoprefixer-rails', '~> 7.2'
 gem 'bootsnap', '~> 1.3.0'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bundler'
-gem 'coffee-rails', '~> 4.2'
 gem 'devise', '~> 4.3'
 gem 'devise_invitable', '~> 1.7.4'
 gem 'fast_jsonapi', '~> 1.1.1'
@@ -22,7 +21,7 @@ gem 'flutie', '~> 2.0'
 gem 'font-awesome-rails', '~> 4.7.0'
 gem 'httparty', '~> 0.15.6'
 gem 'i18n-tasks', '~> 0.9'
-gem 'jquery-rails', '~> 4.3.3'
+gem 'jquery-rails', '~> 4.3.3' # required by bootstrap-sass
 gem 'kaminari', '~> 1.1.1'
 gem 'lograge', '~> 0.10.0'
 gem 'newrelic_rpm', '~> 4.7'
@@ -33,7 +32,7 @@ gem 'puma', '~> 3.11'
 gem 'pundit', '~> 1.1.0'
 gem 'rack-canonical-host', '~> 0.2'
 gem 'recipient_interceptor', '~> 0.1'
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails', '~> 5.0' # required by bootstrap-sass
 gem 'sentry-raven', '~> 2.7.4'
 gem 'sidekiq', '~> 5.0'
 gem 'simple_enum', '~> 2.3'
@@ -42,11 +41,6 @@ gem 'sparql', '~> 3.0', '>= 3.0.1'
 gem 'title', '~> 0.0.7'
 gem 'uglifier', '~> 4.0'
 gem 'webpacker', '~> 3.5.3'
-
-source 'https://rails-assets.org' do
-  gem 'rails-assets-jquery', '~> 3.2'
-  gem 'rails-assets-jquery-ujs', '~> 1.2'
-end
 
 group :development do
   gem 'better_errors', '~> 2.4'
