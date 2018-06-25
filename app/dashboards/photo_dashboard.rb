@@ -6,7 +6,7 @@ class PhotoDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     sample: Field::BelongsTo,
     id: Field::Number,
-    source_url: ImageField,
+    source_url: Field::Image,
     file_name: Field::String,
     kobo_payload: Field::JSON.with_options(searchable: false),
     created_at: Field::DateTime,
@@ -15,7 +15,7 @@ class PhotoDashboard < Administrate::BaseDashboard
 
   COLLECTION_ATTRIBUTES = [
     :sample,
-    :file_name,
+    :source_url,
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES

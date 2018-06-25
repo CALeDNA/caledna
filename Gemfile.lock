@@ -63,6 +63,8 @@ GEM
       momentjs-rails (~> 2.8)
       sass-rails (~> 5.0)
       selectize-rails (~> 0.6)
+    administrate-field-image (1.1.0)
+      administrate (>= 0.2.0.rc1)
     airbrake (7.2.1)
       airbrake-ruby (~> 2.5)
     airbrake-ruby (2.8.3)
@@ -433,6 +435,7 @@ PLATFORMS
 
 DEPENDENCIES
   administrate (~> 0.10.0)
+  administrate-field-image
   administrate-field-json!
   airbrake (~> 7.1)
   autoprefixer-rails (~> 7.2)

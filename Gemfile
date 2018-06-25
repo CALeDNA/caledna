@@ -7,6 +7,7 @@ gem 'rails', '~> 5.2'
 
 # using branch of administrate because it hasn't been merged into master yet
 gem 'administrate', '~> 0.10.0'
+gem 'administrate-field-image'
 gem 'administrate-field-json', git: 'https://github.com/eddietejeda/administrate-field-json.git'
 gem 'airbrake', '~> 7.1', require: false
 gem 'autoprefixer-rails', '~> 7.2'
