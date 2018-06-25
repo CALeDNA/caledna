@@ -1,0 +1,41 @@
+<div class="swiper-container">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide"><%= image_tag 'home-carousel/beach2.jpg' %></div>
+    <div class="swiper-slide"><%= image_tag 'home-carousel/forest2.jpg' %></div>
+    <div class="swiper-slide"><%= image_tag 'home-carousel/hill2.jpg' %></div>
+    <div class="swiper-slide"><%= image_tag 'home-carousel/shrub2.jpg' %></div>
+  </div>
+
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+
+  <div class="swiper-pagination"></div>
+</div>
+
+<div class="hero-summary">
+  <h1>CALeDNA</h1>
+  <h2>California Environomental DNA</h2>
+  <p>Together, we can help protect California's biodiversity.</p>
+  <div class="text-center">
+    <%= link_to 'Join Us', new_user_registration_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    var mySwiper = new Swiper ('.swiper-container', {
+      direction: 'horizontal',
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      autoplay: {
+        delay: 4000,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+      },
+    })
+  });
+</script>

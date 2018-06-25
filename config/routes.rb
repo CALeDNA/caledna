@@ -118,6 +118,8 @@ Rails.application.routes.draw do
     end
   end
 
-  root 'samples#index'
+  get '/home_2', to: 'pages#home_2'
+
+  root 'pages#home'
 end
 # rubocop:enable Metrics/BlockLength:

@@ -1,0 +1,19 @@
+<div class="site-stats">
+  <div class="stats-box">
+    <%= image_tag 'home/test_tube.png' %>
+    <%= number_with_delimiter(stats[:samples_approved]) %>
+    Samples collected
+  </div>
+
+  <div class="stats-box">
+    <%= image_tag 'home/dna.png' %>
+    <%= number_with_delimiter(stats[:organisms]) %>
+    Organisms identified
+  </div>
+
+  <div class="stats-box">
+    <%= image_tag 'home/users.png' %>
+    <%= number_with_delimiter(stats[:users]) %>
+    Registered users
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<div class="site-stats site-stats-horz row">
+  <div class="col-md-4 col-sm-6">
+    <div class="row stats-box">
+      <div class="class col-xs-2">
+        <%= image_tag 'home/test_tube.png' %>
+      </div>
+      <div class="class col-xs-10">
+        <%= number_with_delimiter(stats[:samples_approved]) %><br>
+        Samples collected
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 col-sm-6">
+    <div class="row stats-box">
+      <div class="class col-xs-2">
+        <%= image_tag 'home/dna.png' %>
+      </div>
+      <div class="class col-xs-10">
+        <%= number_with_delimiter(stats[:organisms]) %><br>
+        Organisms identified
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 col-sm-6">
+    <div class="row stats-box">
+      <div class="class col-xs-2">
+        <%= image_tag 'home/users.png' %>
+      </div>
+      <div class="class col-xs-10">
+        <%= number_with_delimiter(stats[:users]) %><br>
+        Registered users
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+.page-header {
+  border: none;
+}
+
+footer {
+  background-color: #cfe1d4;
+  text-align: left;
+  font-family: "proxima-nova";
+  font-size: 15px;
+  line-height: 1.6em;
+  font-weight: 400;
+  font-style: normal;
+  padding: 1.5em 0 .7em;
+
+  .social-accounts {
+    float: right;
+    text-align: right;
+  }
+}
+
+@media (max-width: 1200px) {
+  footer {
+    .social-accounts {
+      padding: 0 20px !important;
+      margin: 0 !important;
+      text-align: center;
+      float: none;
+      width: auto;
+    }
+
+    .footer-block {
+      width: auto !important;
+      padding: 0 20px !important;
+      text-align: center;
+    }
+  }
+}
+
+
+#home {
+  .main-container {
+    padding-top: 20px;
+  }
+}
+
+.main-container {
+  padding-top: 140px;
+  padding-bottom: 170px;
+}

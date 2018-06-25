@@ -18,7 +18,7 @@ gem 'devise_invitable', '~> 1.7.4'
 gem 'fast_jsonapi', '~> 1.1.1'
 gem 'fastimage', '~> 2.1.1'
 gem 'flutie', '~> 2.0'
-gem 'font-awesome-rails', '~> 4.7.0'
+gem 'font_awesome5_rails', '~> 0.3.3'
 gem 'httparty', '~> 0.15.6'
 gem 'jquery-rails', '~> 4.3.3' # required by bootstrap-sass
 gem 'kaminari', '~> 1.1.1'

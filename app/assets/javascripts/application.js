@@ -8,6 +8,8 @@
 // photoswipe is an image gallery
 //= require photoswipe
 
+//= require font_awesome5
+
 //= require_tree .
 
 $(function() {

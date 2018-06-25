@@ -30,11 +30,12 @@
   <body id="<%= yield :page_id %>">
     <div id="main-wrapper">
       <%= render partial: "layouts/nav" %>
+      <% flash.each do |name, msg| -%>
+        <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
+      <% end -%>
+      <%= render partial: "layouts/hero_carousel" %>
 
-      <div class="container main-container">
-        <% flash.each do |name, msg| -%>
-          <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
-        <% end -%>
+      <div>
         <%= yield %>
       </div>
 

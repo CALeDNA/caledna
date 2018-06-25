@@ -1,0 +1,10 @@
+<% if page.menu_cd == 'get_involved_community_scientist' ||
+  page.slug == 'become_community_scientist' %>
+
+  <ul class="submenu">
+    <li><%= link_to 'Intro', become_community_scientist_path  %></li>
+    <% PagesHelper.get_involved_citizen_scientist.each do |page| %>
+      <li><%= link_to page[:title], page[:slug] %></li>
+    <% end %>
+  </ul>
+<% end %>

@@ -1,0 +1,33 @@
+<% content_for :page_id do %>home<% end %>
+<% content_for :logo do %>logo.png<% end %>
+
+<section class="intro">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <%= sanitize @page_one.body %>
+      </div>
+
+      <div class="col-md-4">
+        <%= image_tag 'home/tidal_pool.jpg', class: 'img-responsive' %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="open-data section-grey">
+  <div class="container">
+    <div class="row">
+      <div class="col col-md-5">
+        <%= render partial: "home_stats_vertical", locals: { stats: @stats } %>
+      </div>
+
+      <div class="col col-md-7">
+        <%= sanitize @page_two.body %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%= render partial: "activities" %>
+<%= render partial: "cta" %>
