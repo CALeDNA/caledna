@@ -1,0 +1,121 @@
+<% content_for :page_id do %>home<% end %>
+
+<h2>Our Mission</h2>
+<p>Esse sint labore duis quis do aliqua. Fugiat pariatur sint proident fugiat ea magna anim amet. </p>
+
+<div class="stats row">
+  <div class="col-md-4 col-sm-6">
+    <div class="row">
+      <div class="class col-xs-2">
+        <%= fa_icon(:vial, size: '2x') %>
+      </div>
+      <div class="class col-xs-10">
+        <%= @stats[:samples_approved] %><br>
+        Samples collected
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 col-sm-6">
+    <div class="row">
+      <div class="class col-xs-2">
+        <%= fa_icon(:dna, size: '2x') %>
+      </div>
+      <div class="class col-xs-10">
+        <%= @stats[:organisms] %><br>
+        Organisms identified
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 col-sm-6">
+    <div class="row">
+      <div class="class col-xs-2">
+        <%= fa_icon(:users, size: '2x') %>
+      </div>
+      <div class="class col-xs-10">
+        <%= @stats[:users] %><br>
+         Registered users
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<h2>How to Participate</h2>
+
+<h3>Volunteer as a Community Scientists</h3>
+
+<div class="row">
+  <div class="col-md-4 col-sm-6">
+     <div class="panel panel-default">
+      <div class="panel-body">
+        Step 1<br>
+        <%= fa_icon(:image, size: '3x') %>
+        <p>
+          <%= link_to 'Register.', new_user_session_path %>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div cla
+  <div class="col-md-4 col-sm-6">
+     <div class="panel panel-default">
+      <div class="panel-body">
+        Step 2<br>
+        <%= fa_icon(:image, size: '3x') %>
+        <p>
+          <%= link_to 'Complete Training.', become_community_scientist_path  %>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        Step 3<br>
+        <%= fa_icon(:image, size: '3x') %>
+        <p>Attend a <%= link_to 'Bioblitz.', events_path %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3>Analyze Our Data</h3>
+
+<div class="row">
+  <div class="col-md-4 col-sm-6">
+     <div class="panel panel-default">
+      <div class="panel-body">
+        Step 1<br>
+        <%= fa_icon(:image, size: '3x') %>
+        <p>
+          <%= link_to 'Register.', new_user_session_path %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 col-sm-6">
+     <div class="panel panel-default">
+      <div class="panel-body">
+        Step 2<br>
+        <%= fa_icon(:image, size: '3x') %>
+        <p>
+          Save and download data.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4 col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        Step 3<br>
+        <%= fa_icon(:image, size: '3x') %>
+        <p>Add Research Project.</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,10 +2,11 @@
 
 class Page < ApplicationRecord
   as_enum :menu, %i[
-    about_the_project
+    about
     explore_data
-    before_you_begin
-    join_us
-    contact
+    get_involved
+    get_involved_community_scientist
+    get_involved_analyze_data
+    get_involved_caledna_network
   ], map: :string
 end

@@ -102,8 +102,17 @@ Rails.application.routes.draw do
     put 'event_registrations_update_status' =>
       'event_registrations#update_status'
   end
-
   resources :uploads, only: %i[create destroy]
+
+  files = Dir[Rails.root + 'app/models/*.rb']
+  models = files.map { |m| File.basename(m, '.rb').camelize }
+  tables = ActiveRecord::Base.connection.tables
+  valid_model = models.include?('Page')
+  if valid_model && tables.include?('pages')
+    Page.where(published: true).each do |pg|
+      get pg.slug, to: 'pages#show', defaults: { id: pg.slug }
+    end
+  end
 
   root 'samples#index'
 end

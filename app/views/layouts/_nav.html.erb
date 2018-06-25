@@ -17,18 +17,12 @@
 
         <li role="presentation" class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            About the Project
+            About
           </a>
           <ul class="dropdown-menu">
-            <li><a href="http://www.ucedna.com/implications-for-conservation">Our Mission</a></li>
-            <li><a href="http://www.ucedna.com/why-protect-biodiversity">Why Protect Biodiversity?</a></li>
-            <li><a href="http://www.ucedna.com/what-is-environmental-dna">What Is Environmental DNA?</a></li>
-            <li><a href="http://www.ucedna.com/applications-of-the-results">Applications Of Our Results</a></li>
-            <li><a href="http://www.ucedna.com/labwork">Labwork Details</a></li>
-            <li><a href="http://www.ucedna.com/whos-on-the-team">Meet Us</a></li>
-            <li><a href="http://www.ucedna.com/frequently-asked-questions">FAQS/Glossary</a></li>
-            <li><a href="http://www.ucedna.com/blog">News</a></li>
-            <li><a href="http://www.ucedna.com/contact">Contact Us</a></li>
+            <% PagesHelper.about_links.each do |page| %>
+              <li><%= link_to page[:title], page[:slug] %></li>
+            <% end %>
           </ul>
         </li>
 
@@ -41,26 +35,40 @@
             <li><%= link_to 'Field Data Projects', field_data_projects_path %></li>
             <li><%= link_to 'Organisms', taxa_path %></li>
             <li><%= link_to 'Research Projects', research_projects_path %></li>
-            <li><a href="http://www.ucedna.com/disclaimer/">Disclaimer</a></li>
+
+            <li role="separator" class="divider"></li>
+            <% PagesHelper.explore_data.each do |page| %>
+              <li><%= link_to page[:title], page[:slug] %></li>
+            <% end %>
           </ul>
         </li>
 
         <li role="presentation" class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            Participate
+            Get Involved
           </a>
           <ul class="dropdown-menu">
-            <li><a href="http://www.ucedna.com/new-page">Participate</a></li>
-            <li><a href="http://www.ucedna.com/safety-training-quiz">Training Quizzes</a></li>
-            <li><a href="http://www.ucedna.com/kit-contents/">Kit Contents</a></li>
-            <li><a href="http://www.ucedna.com/kit-training/">Kit Training - Quick Version</a></li>
-            <li><a href="http://www.ucedna.com/kit-training-full-version/">Kit Training - Full Version</a></li>
-            <li><a href="http://www.ucedna.com/safety-training/">Safety Training</a></li>
-
+            <% PagesHelper.get_involved_links.each do |page| %>
+              <li><%= link_to page[:title], page[:slug] %></li>
+            <% end %>
           </ul>
         </li>
-        <li><a href="http://www.ucedna.com/registration-form">Registration</a></li>
-        <li><a href="http://www.ucedna.com/software">Software</a></li>
+
+        <li role="presentation" class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            Join Us
+          </a>
+          <ul class="dropdown-menu">
+            <li><%= link_to "Upcoming Events", events_path %></li>
+            <li><%= link_to "Registration", new_user_registration_path %></li>
+          </ul>
+        </li>
+
+        <% if current_user %>
+          <li><%= link_to 'Sign Out', destroy_user_session_path, method: :delete %></li>
+        <% else %>
+          <li><%= link_to 'Log In', new_user_session_path %></li>
+        <% end %>
       </ul>
     </div>
   </div>
