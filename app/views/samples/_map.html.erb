@@ -5,6 +5,7 @@
 
   var addressPoints = [
   <% samples.each do |sample|  %>
+    <% next if sample.latitude.blank? || sample.longitude.blank? %>
     [
       <%= sample.latitude %>,
       <%= sample.longitude %>,
