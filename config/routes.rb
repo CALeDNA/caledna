@@ -7,6 +7,11 @@ Rails.application.routes.draw do
     invitations: 'researchers/invitations'
   }
 
+  require 'sidekiq/web'
+  authenticate :researcher, ->(u) { u.director? } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
+
   namespace :api do
     namespace :v1 do
       resources :taxa, only: [:index]
