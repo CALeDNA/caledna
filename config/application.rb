@@ -24,5 +24,9 @@ module Caledna
     config.to_prepare do
       Administrate::ApplicationController.helper Caledna::Application.helpers
     end
+
+    Raven.configure do |config|
+      config.dsn = ENV.fetch('SENTRY_DSN')
+    end
   end
 end
