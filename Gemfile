@@ -71,6 +71,7 @@ group :development, :test do
 end
 
 group :production, :staging do
+  gem 'scout_apm', '~> 2.4.13'
   gem 'sendgrid-ruby', '~> 5.2.0'
 end
 
