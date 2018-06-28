@@ -45,6 +45,5 @@ module Caledna
     attributes = Loofah::HTML5::WhiteList::ALLOWED_ATTRIBUTES.merge(['style'])
     config.action_view.sanitized_allowed_tags = tags
     config.action_view.sanitized_allowed_attributes = attributes
-
   end
 end
