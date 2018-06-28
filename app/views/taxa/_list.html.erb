@@ -4,7 +4,6 @@
     <th>Field Data Project</th>
     <th>Latitude</th>
     <th>Longitude</th>
-    <th>Organisms from ASV</th>
   </tr>
 
   <% samples.each do |sample| %>
@@ -13,9 +12,6 @@
       <td><%= link_to sample.field_data_project_name, field_data_project_path(id: sample.field_data_project_id) %></td>
       <td><%= sample.latitude %> </td>
       <td><%= sample.longitude %></td>
-      <td>
-        <%= sample.class == Sample ? sample.asvs_count : sample.taxons.count %>
-      </td>
     </tr>
   <% end %>
 </table>

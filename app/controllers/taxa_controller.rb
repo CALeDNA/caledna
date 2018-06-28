@@ -92,33 +92,33 @@ class TaxaController < ApplicationController
 
   def raw_samples
     sql = sql_select + sql_where
-    @raw_samples ||= ActiveRecord::Base.connection.execute(sql)
+    @raw_samples ||= conn.exec_query(sql)
   end
 
   def samples
-    groups = raw_samples.group_by { |t| t['id'] }.values
-    @samples ||= groups.map do |g|
-      OpenStruct.new(g.first.merge(taxons: g.pluck('canonicalName', 'taxonID')))
-    end
+    @samples ||= raw_samples.map { |r| OpenStruct.new(r) }
+  end
+
+  def conn
+    @conn ||= ActiveRecord::Base.connection
   end
 
   def sql_select
-    'SELECT samples.id, samples.barcode, ' \
-    'asvs."taxonID" as "taxonID", ncbi_nodes."canonical_name", ' \
+    'SELECT DISTINCT samples.id, samples.barcode, ' \
     'samples.latitude, samples.longitude, field_data_project_id, ' \
     'field_data_projects.name as field_data_project_name ' \
     'FROM asvs ' \
-    'INNER JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \
-    'INNER JOIN extractions ON asvs.extraction_id = extractions.id ' \
-    'INNER JOIN samples ON samples.id = extractions.sample_id ' \
-    'INNER JOIN field_data_projects ON samples.field_data_project_id ' \
+    'JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \
+    'JOIN extractions ON asvs.extraction_id = extractions.id ' \
+    'JOIN samples ON samples.id = extractions.sample_id ' \
+    'JOIN field_data_projects ON samples.field_data_project_id ' \
     ' = field_data_projects.id '
   end
 
   def sql_where
-    # Match any of the ids in the first 100 arrays in lineage
+    id = params[:id].to_i
     'WHERE samples.missing_coordinates = false ' \
-    "AND '{#{params[:id]}}'::text[] <@ lineage[100][1:1]; "
+    "AND ids @> '{#{conn.quote(id)}}' " \
   end
 
   def query_string
