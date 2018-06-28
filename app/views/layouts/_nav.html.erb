@@ -61,12 +61,6 @@
         </li>
         <li><a href="http://www.ucedna.com/registration-form">Registration</a></li>
         <li><a href="http://www.ucedna.com/software">Software</a></li>
-
-        <% if current_user %>
-          <li><%= link_to 'Sign Out', destroy_user_session_path, method: :delete %></li>
-        <% else %>
-          <li><%= link_to 'Log In', new_user_session_path %></li>
-        <% end %>
       </ul>
     </div>
   </div>
