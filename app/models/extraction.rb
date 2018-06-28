@@ -15,8 +15,11 @@ class Extraction < ApplicationRecord
              foreign_key: 'local_fastq_storage_adder_id',
              optional: true
   has_many :asvs
-  has_many :research_projects, through: :research_project_extractions
+
+  # https://github.com/rails/rails/issues/29123
+  # NOTE: starting in rails 5.1, has_many must be before has_many through
   has_many :research_project_extractions
+  has_many :research_projects, through: :research_project_extractions
 
   # TODO: decide what to do with priority_sequencing
   # as_enum :priority_sequencing, %i[none low high], map: :string
