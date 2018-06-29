@@ -7,7 +7,7 @@ port        ENV.fetch('PORT') { 3000 }
 environment ENV.fetch('RAILS_ENV') { 'development' }
 
 if ENV.fetch('RAILS_ENV') == 'staging' || ENV.fetch('RAILS_ENV') == 'production'
-  workers ENV.fetch('WEB_CONCURRENCY') { 2 }.to_i
+  workers ENV.fetch('WEB_CONCURRENCY') { 1 }.to_i
 
   preload_app!
 
