@@ -237,7 +237,7 @@ class NcbiNode < ApplicationRecord
     @eol_api ||= ::EolApi.new
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def eol_image
     return if eol_image_id.blank?
 
@@ -245,6 +245,8 @@ class NcbiNode < ApplicationRecord
     return if media_results.response.class == 'Net::HTTPNotFound'
 
     media = media_results['dataObjects'].first
+    return if media['eolMediaURL'].blank?
+
     OpenStruct.new(
       url: media['eolMediaURL'],
       attribution: media['agents'].first['full_name'],
@@ -252,7 +254,7 @@ class NcbiNode < ApplicationRecord
       taxa_url: eol_link.url
     )
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def eol_image_id
     return if eol_link.blank?
