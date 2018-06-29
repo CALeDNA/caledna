@@ -4,8 +4,10 @@ module ImportCsv
   module CreateRecords
     include ProcessingExtractions
 
+    # rubocop:disable Metrics/AbcSize
     def create_asv(cell, extraction, cal_taxon)
-      asv = Asv.where(extraction_id: extraction.id, taxonID: cal_taxon.taxonID)
+      asv = Asv.where(extraction_id: extraction.id, sample: extraction.sample,
+                      taxonID: cal_taxon.taxonID)
                .first_or_create
       raise ImportError, "ASV #{cell}: #{asv.errors}" unless asv.valid?
 
@@ -15,6 +17,7 @@ module ImportCsv
       asv.primers << primer
       asv.save
     end
+    # rubocop:enable Metrics/AbcSize
 
     def create_research_project_extraction(extraction, research_project_id)
       project =

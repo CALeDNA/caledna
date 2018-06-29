@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_22_064707) do
+ActiveRecord::Schema.define(version: 2018_06_29_022032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,7 +42,9 @@ ActiveRecord::Schema.define(version: 2018_06_22_064707) do
     t.integer "extraction_id"
     t.integer "taxonID"
     t.text "primers", default: [], array: true
+    t.integer "sample_id"
     t.index ["extraction_id"], name: "index_asvs_on_extraction_id"
+    t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
   end
 

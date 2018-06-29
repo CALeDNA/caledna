@@ -17,8 +17,7 @@ module CustomCounter
     sql = 'SELECT COUNT(DISTINCT(samples.id)) ' \
     'FROM asvs ' \
     'JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \
-    'JOIN extractions ON asvs.extraction_id = extractions.id ' \
-    'JOIN samples ON samples.id = extractions.sample_id ' \
+    'JOIN samples ON samples.id = asvs.sample_id ' \
     'WHERE samples.missing_coordinates = false ' \
     "AND ids @> '{#{conn.quote(taxon_id)}}'"
 

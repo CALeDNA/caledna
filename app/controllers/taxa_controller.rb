@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class TaxaController < ApplicationController
   def index
     # TODO: r-enable highlights
@@ -40,8 +39,6 @@ class TaxaController < ApplicationController
   def asvs_count
     sql = 'SELECT sample_id, COUNT(*) ' \
           'FROM asvs ' \
-          'JOIN extractions ' \
-          'ON asvs.extraction_id = extractions.id ' \
           "WHERE \"taxonID\" = #{params[:id]} " \
           'GROUP BY sample_id '
     @asvs_count ||= ActiveRecord::Base.connection.execute(sql)
@@ -104,13 +101,12 @@ class TaxaController < ApplicationController
   end
 
   def sql_select
-    'SELECT DISTINCT samples.id, samples.barcode, ' \
+    'SELECT DISTINCT samples.id, samples.barcode, status_cd as status, ' \
     'samples.latitude, samples.longitude, field_data_project_id, ' \
     'field_data_projects.name as field_data_project_name ' \
     'FROM asvs ' \
     'JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \
-    'JOIN extractions ON asvs.extraction_id = extractions.id ' \
-    'JOIN samples ON samples.id = extractions.sample_id ' \
+    'JOIN samples ON samples.id = asvs.sample_id ' \
     'JOIN field_data_projects ON samples.field_data_project_id ' \
     ' = field_data_projects.id '
   end
@@ -128,4 +124,3 @@ class TaxaController < ApplicationController
     query
   end
 end
-# rubocop:enable Metrics/ClassLength

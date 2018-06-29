@@ -9,9 +9,10 @@ describe ImportCsv::CreateRecords do
     def subject(cell, extraction, cal_taxon)
       dummy_class.create_asv(cell, extraction, cal_taxon)
     end
-    let(:extraction) { create(:extraction, sample: create(:sample)) }
-    let(:taxon) { create(:ncbi_node) }
-    let(:cal_taxon) { create(:cal_taxon, taxonID: taxon.id) }
+    let(:sample) { create(:sample) }
+    let(:extraction) { create(:extraction, sample: sample) }
+    let(:taxon) { create(:ncbi_node, asvs_count: 0, taxon_id: 1, ids: [1]) }
+    let(:cal_taxon) { create(:cal_taxon, taxonID: taxon.taxon_id) }
 
     context 'asv does not already exists' do
       it 'creates asv' do
@@ -41,7 +42,8 @@ describe ImportCsv::CreateRecords do
     context 'asv already exists' do
       it 'does not create asv' do
         cell = 'K0001.A1'
-        create(:asv, extraction: extraction, taxonID: cal_taxon.taxonID)
+        create(:asv, extraction: extraction, sample: sample,
+                     taxonID: cal_taxon.taxonID)
 
         expect { subject(cell, extraction, cal_taxon) }
           .to change(Asv, :count).by(0)
@@ -50,7 +52,7 @@ describe ImportCsv::CreateRecords do
       it 'adds new primer if cell has primer info' do
         cell = 'X12_K0001.A1'
         create(:asv, extraction: extraction, taxonID: cal_taxon.taxonID,
-                     primers: ['X16'])
+                     sample: sample, primers: ['X16'])
         subject(cell, extraction, cal_taxon)
         asv = Asv.last
 
@@ -60,7 +62,7 @@ describe ImportCsv::CreateRecords do
       it 'does not add duplicate primer if cell has primer info' do
         cell = 'X12_K0001.A1'
         create(:asv, extraction: extraction, taxonID: cal_taxon.taxonID,
-                     primers: ['X12'])
+                     sample: sample, primers: ['X12'])
         subject(cell, extraction, cal_taxon)
         asv = Asv.last
 
