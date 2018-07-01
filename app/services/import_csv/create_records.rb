@@ -23,6 +23,7 @@ module ImportCsv
       project =
         ResearchProjectExtraction
         .where(extraction: extraction,
+               sample: extraction.sample,
                research_project_id: research_project_id)
         .first_or_create
 

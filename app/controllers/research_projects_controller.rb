@@ -27,10 +27,8 @@ class ResearchProjectsController < ApplicationController
     'LEFT JOIN research_project_extractions ' \
     'ON research_projects.id = ' \
     'research_project_extractions.research_project_id ' \
-    'LEFT JOIN extractions ' \
-    'ON research_project_extractions.extraction_id = extractions.id ' \
     'LEFT JOIN samples ' \
-    'ON extractions.sample_id = samples.id ' \
+    'ON research_project_extractions.sample_id = samples.id ' \
     'AND latitude is not null ' \
     'WHERE samples.missing_coordinates = false ' \
     "AND samples.status_cd != 'processed_invalid_sample' " \
@@ -47,11 +45,9 @@ class ResearchProjectsController < ApplicationController
 
   def sample_ids
     sql = 'SELECT sample_id ' \
-      'FROM extractions ' \
-      'JOIN research_project_extractions ' \
-      'ON extractions.id = research_project_extractions.extraction_id ' \
+      'FROM research_project_extractions ' \
       'JOIN samples ' \
-      'ON samples.id = extractions.sample_id ' \
+      'ON samples.id = research_project_extractions.sample_id ' \
       'WHERE samples.latitude is NOT NULL AND samples.longitude IS NOT NULL ' \
       "AND research_project_extractions.research_project_id = #{params[:id]};"
 

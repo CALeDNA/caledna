@@ -5,6 +5,41 @@ require 'rails_helper'
 describe ImportCsv::CreateRecords do
   let(:dummy_class) { Class.new { extend ImportCsv::CreateRecords } }
 
+  describe '#create_research_project_extraction' do
+    def subject(extraction, research_project_id)
+      dummy_class.create_research_project_extraction(extraction, research_project_id)
+    end
+
+    let(:research_project) { create(:research_project) }
+    let(:sample) { create(:sample) }
+    let(:extraction) { create(:extraction, sample: sample) }
+
+    context 'when ResearchProjectExtraction does not exist' do
+      it 'creates a new ResearchProjectExtraction' do
+        expect { subject(extraction, research_project.id) }
+          .to change(ResearchProjectExtraction, :count).by(1)
+      end
+
+      it 'adds related sample_id to ResearchProjectExtraction' do
+        subject(extraction, research_project.id)
+
+        expect(ResearchProjectExtraction.first.sample_id).to eq(sample.id)
+      end
+    end
+
+    context 'when ResearchProjectExtraction does exist' do
+      it 'does not create a ResearchProjectExtraction' do
+        create(:research_project_extraction,
+               extraction: extraction,
+               sample: sample,
+               research_project: research_project)
+
+        expect { subject(extraction, research_project.id) }
+          .to change(ResearchProjectExtraction, :count).by(0)
+      end
+    end
+  end
+
   describe '#create_asv' do
     def subject(cell, extraction, cal_taxon)
       dummy_class.create_asv(cell, extraction, cal_taxon)
