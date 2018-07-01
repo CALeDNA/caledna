@@ -67,7 +67,9 @@ class TaxaController < ApplicationController
   end
 
   def ordered_taxa
-    @ordered_taxa ||= NcbiNode.includes(:ncbi_names).order(asvs_count: :desc)
+    @ordered_taxa ||= NcbiNode.includes(:ncbi_names)
+                              .where('asvs_count > 0')
+                              .order(asvs_count: :desc)
                               .limit(10)
   end
 
