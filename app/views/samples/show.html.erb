@@ -17,7 +17,12 @@
 
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="overview">
-    <%= render partial: "overview", locals: { sample: @sample } %>
+    <%= render partial: "overview",
+      locals: {
+        sample: @sample, division_counts: @division_counts,
+        asvs_count: @asvs_count
+      }
+    %>
   </div>
   <div role="tabpanel" class="tab-pane" id="fieldwork_details">
     <%= render partial: "fieldwork_details", locals: { sample: @sample } %>
@@ -29,7 +34,13 @@
   <% end %>
   <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
     <div role="tabpanel" class="tab-pane" id="organisms">
-      <%= render partial: "organisms", locals: { sample: @sample, asvs_count: @asvs_count, batch_vernaculars: @batch_vernaculars } %>
+      <%= render partial: "organisms",
+        locals: {
+          sample: @sample, asvs_count: @asvs_count,
+          batch_vernaculars: @batch_vernaculars,
+          organisms_groups: @organisms_groups
+        }
+      %>
     </div>
   <% end %>
 </div>

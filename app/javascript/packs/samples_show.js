@@ -1,17 +1,26 @@
 import Chart from 'chart.js';
 
 $(function() {
+  const kingdoms = [
+    'Animals', 'Archaea', 'Bacteria', 'Fungi', 'Plants', 'Viruses'
+  ];
+
   window.caledna.kingdom_counts.forEach((kingdom_count) => {
     var chartEl = document.getElementById(`kingdom-chart-${kingdom_count.id}`);
     if (!chartEl) { return }
 
+    const filteredCounts = {}
+    kingdoms.forEach((kingdom) => {
+      filteredCounts[kingdom] = kingdom_count.counts[kingdom]
+    })
+
     new Chart(chartEl, {
       type: 'bar',
       data: {
-        labels: Object.keys(kingdom_count.counts),
+        labels: Object.keys(filteredCounts),
         datasets: [{
           label: 'Organisms count',
-          data: Object.values(kingdom_count.counts),
+          data: Object.values(filteredCounts),
           backgroundColor: [
             '#77c9d4',
             '#57bc90',

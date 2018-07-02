@@ -10,6 +10,7 @@ class Sample < ApplicationRecord
   belongs_to :field_data_project
   has_many :photos
   has_many :extractions
+  has_many :asvs
 
   validate :unique_approved_barcodes
 

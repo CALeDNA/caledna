@@ -7,7 +7,8 @@ describe ImportCsv::CreateRecords do
 
   describe '#create_research_project_extraction' do
     def subject(extraction, research_project_id)
-      dummy_class.create_research_project_extraction(extraction, research_project_id)
+      dummy_class.create_research_project_extraction(extraction,
+                                                     research_project_id)
     end
 
     let(:research_project) { create(:research_project) }

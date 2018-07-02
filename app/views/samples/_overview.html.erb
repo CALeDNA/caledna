@@ -60,10 +60,10 @@
 
 <div class="row">
   <div class="col col-md-6">
-    <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
-      <h3><%= SamplesHelper.asvs_count(@asvs_count, @sample) %> Organisms from ASVs</h3>
+    <% if division_counts.present? %>
+      <h3><%= SamplesHelper.asvs_count(asvs_count, sample) %> Organisms from ASVs</h3>
 
-      <% @sample.extractions.each do |extraction| %>
+      <% sample.extractions.each do |extraction| %>
         <canvas id="kingdom-chart-<%= extraction.id %>" width="400" height="400"></canvas>
       <% end %>
     <% end %>
@@ -77,7 +77,7 @@
   <div class="col col-md-6">
     <h3>Map</h3>
     <%= render partial: "samples/map", locals: { samples: [sample],
-      asvs_count: @asvs_count,
+      asvs_count: asvs_count,
       initial_lat: sample.latitude, initial_lng: sample.longitude } %>
   </div>
   <div class="col col-md-6">
@@ -93,16 +93,8 @@
 <script>
 (function(){
 
-  var counts = []
-  <% @sample.extractions.each do |extraction| %>
-    counts.push({
-      id: <%= extraction.id %>,
-      counts: <%=  SamplesHelper.kingdom_count(@sample.extractions.first.asvs).to_json.html_safe %>
-    })
-  <% end %>
-
   window.caledna = {
-    kingdom_counts: counts
+    kingdom_counts: <%= division_counts.to_json.html_safe %>
   }
 
 })(window)

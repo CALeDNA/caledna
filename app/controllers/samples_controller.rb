@@ -11,23 +11,55 @@ class SamplesController < ApplicationController
   end
 
   def show
+    @division_counts = division_counts
     @asvs_count = asvs_count(params[:sample_id])
     @sample = sample
     @batch_vernaculars = batch_vernaculars
+    @organisms_groups = organisms_groups
   end
 
   private
 
+  def organisms_groups
+    @organisms_groups ||= begin
+      sample.extractions.map do |e|
+        {
+          extraction_name: e.extraction_type.name,
+          organisms: organisms_by_extraction(e.id)
+        }
+      end
+    end
+  end
+
+  def organisms_by_extraction(extraction_id)
+    Asv.joins(ncbi_node: :ncbi_division)
+       .joins('LEFT JOIN external_resources ON ' \
+         'external_resources.taxon_id = ncbi_nodes.taxon_id')
+       .select('lineage, ncbi_nodes.taxon_id, iucn_status, name, rank')
+       .where(extraction_id: extraction_id)
+  end
+
+  def division_counts
+    @division_counts ||= begin
+      sample.extractions.map do |e|
+        {
+          id: e.id,
+          counts: division_counts_by_extraction(e.id)
+        }
+      end
+    end
+  end
+
+  def division_counts_by_extraction(extraction_id)
+    Asv.joins(ncbi_node: :ncbi_division)
+       .select(:name)
+       .where(extraction_id: extraction_id)
+       .group(:name)
+       .count
+  end
+
   def sample
-    @sample =
-      Sample.approved
-            .includes(extractions:
-              { asvs:
-                  {
-                    ncbi_node:
-                      %i[ncbi_names ncbi_division external_resource]
-                  } })
-            .find(params[:id])
+    @sample ||= Sample.approved.find(params[:id])
   end
 
   # TODO: add test
