@@ -118,6 +118,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :profile, only: [:show]
+
   get '/home_2', to: 'pages#home_2'
 
   root 'pages#home'

@@ -7,6 +7,13 @@ class Event < ApplicationRecord
 
   validates :name, :start_date, :end_date, :description, presence: true
 
+  scope :upcoming, (lambda do
+    where("end_date > '#{Time.zone.now}'").order(end_date: :desc)
+  end)
+  scope :past, (lambda do
+    where("end_date < '#{Time.zone.now}'").order(end_date: :desc)
+  end)
+
   def registered?(user)
     event_registrations.where(user: user).present?
   end
