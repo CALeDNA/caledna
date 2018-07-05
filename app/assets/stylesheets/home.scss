@@ -50,12 +50,12 @@
     margin-bottom: 1em;
   }
 
-  p {
-    font-size: 2rem;
-  }
-
   .btn {
     font-size: 1.75rem;
+  }
+
+  p {
+    font-size: 2rem;
   }
 
 }
@@ -71,19 +71,28 @@
 }
 
 #home {
+  h1 {
+    font-size: 30px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+
   #main-wrapper {
-    padding-bottom: 28rem;
+    padding-bottom: 31rem;
   }
 
   @media (min-width: 480px) {
     #main-wrapper {
-      padding-bottom: 25rem;
+      padding-bottom: 27rem;
     }
   }
 
   @media (min-width: 768px) {
     #main-wrapper {
-      padding-bottom: 12rem;
+      padding-bottom: 13rem;
     }
   }
 
@@ -97,17 +106,10 @@
 #home {
   section {
     padding: 4rem 0;
-
-    h1 {
-      margin-top: 0;
-      margin-bottom: .5em;
-      font-size: 30px;
-    }
   }
 
   .section-grey {
     background: #f2f2f2;
-    // padding: 2rem 0;
   }
 
 }

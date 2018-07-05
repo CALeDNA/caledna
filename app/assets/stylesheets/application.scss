@@ -44,10 +44,10 @@ $brand-primary: darken(#cfe1d4, 35%) !default; // #337ab7
 // layout
 // =============
 
-@media (min-width: 1200px) {
-  .container {
-    width: 85%;
-  }
+
+
+.main-container {
+  padding-top: 4rem;
 }
 
 // =============
@@ -66,7 +66,7 @@ body {
   min-height: 100%;
   position: relative;
   padding: 0;
-  padding-bottom: 32rem;
+  padding-bottom: 35rem;
 }
 
 footer {
@@ -78,7 +78,7 @@ footer {
 
 @media (min-width: 480px) {
   #main-wrapper {
-    padding-bottom: 29rem;
+    padding-bottom: 32rem;
   }
 
   footer {
@@ -88,7 +88,7 @@ footer {
 
 @media (min-width: 768px) {
   #main-wrapper {
-    padding-bottom: 16rem;
+    padding-bottom: 19rem;
   }
 
   footer {
@@ -96,11 +96,59 @@ footer {
   }
 }
 
+// =============
+// typography
+// =============
+
+body {
+  font-size: 16px;
+  // font-size: calc(16px + .25vw);
+}
+
+blockquote, dl, dt, figcaption, li, p, textarea {
+  line-height: 1.5em;
+}
+
+h1, h2, h3 {
+  line-height: 1.2em;
+}
+
+h1 {
+  margin-top: 0;
+  margin-bottom: .75em;
+}
+
+h2, h3, h4 {
+  margin: 1em 0 .75em;
+}
+
+h1 {
+  font-size: 38px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+h3 {
+  font-size: 24px;
+}
+
+h4 {
+  font-size: 18px;
+}
 
 // =============
 // common
 // =============
 
+.submenu {
+  margin-bottom: 2rem;
+}
+
+.page-description {
+  margin-bottom: 2em;
+}
 
 .form {
   display: inline;
@@ -148,10 +196,20 @@ legend.border {
 .navbar {
   margin-bottom: 0;
   background-color: #cbe2d3;
+
+  li {
+    line-height: 0;
+  }
 }
 
-.dropdown-menu .divider {
-  background-color: #aaa;
+.dropdown-menu {
+  .divider {
+    background-color: #aaa;
+  }
+
+  li {
+    text-transform: none;
+  }
 }
 
 .navbar-header {
@@ -197,7 +255,7 @@ legend.border {
 @media (min-width: 768px) {
   .navbar-default {
     .navbar-nav {
-      padding: 2rem 0;
+      padding: 2rem 0 0;
     }
   }
 }

@@ -7,4 +7,9 @@
       <li><%= link_to page[:title], page[:slug] %></li>
     <% end %>
   </ul>
+<% elsif page.menu_cd == 'get_involved_researcher' ||  page.slug == 'data_analysis_for_researchers' %>
+  <ul class="submenu">
+    <li><%= link_to 'Intro', data_analysis_for_researchers_path  %></li>
+    <li><a href="http://www.ucedna.com/software/">Our Software</a>
+  </ul>
 <% end %>

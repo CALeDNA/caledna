@@ -35,7 +35,11 @@
         <% flash.each do |name, msg| -%>
           <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
         <% end -%>
-        <%= yield %>
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <%= yield %>
+          </div>
+        </div>
       </div>
 
       <%= render partial: "layouts/footer" %>
