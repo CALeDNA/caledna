@@ -10,6 +10,7 @@ gem 'administrate', '~> 0.10.0'
 gem 'administrate-field-image'
 gem 'administrate-field-json', git: 'https://github.com/eddietejeda/administrate-field-json.git'
 gem 'autoprefixer-rails', '~> 7.2'
+gem 'aws-sdk-s3', '~> 1.14.0', require: false
 gem 'bootsnap', '~> 1.3.0'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bundler'
