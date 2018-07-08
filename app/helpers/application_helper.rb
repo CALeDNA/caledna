@@ -38,6 +38,39 @@ module ApplicationHelper
     end
   end
 
+  def nav_link(text, path)
+    normalized_path = path.start_with?('/') ? path : "/#{path}"
+    options = current_page?(normalized_path) ? { class: 'active' } : {}
+
+    content_tag(:li, options) do
+      link_to text, path
+    end
+  end
+
+  def about_active?
+    paths = PagesHelper.about_links.map { |l| "/#{l[:slug]}" } +
+            [events_path]
+    dropdown_active?(paths)
+  end
+
+  def explore_data_active?
+    paths = PagesHelper.explore_data_links.map { |l| "/#{l[:slug]}" } +
+            [samples_path, field_data_projects_path,
+             research_projects_path, taxa_path]
+    dropdown_active?(paths)
+  end
+
+  # rubocop:disable Naming/AccessorMethodName
+  def get_involved_active?
+    paths = PagesHelper.get_involved_links.map { |l| "/#{l[:slug]}" }
+    dropdown_active?(paths)
+  end
+  # rubocop:enable Naming/AccessorMethodName
+
+  def dropdown_active?(paths)
+    paths.include? request.fullpath
+  end
+
   def flash_class(type)
     case type
     when 'alert' then 'alert alert-danger'

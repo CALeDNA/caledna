@@ -5,7 +5,7 @@ module PagesHelper
     menu_link(:about)
   end
 
-  def self.explore_data
+  def self.explore_data_links
     menu_link(:explore_data)
   end
 

@@ -1,4 +1,4 @@
-$brand-primary: darken(#cfe1d4, 35%) !default; // #337ab7
+$brand-primary: darken(#cbe2d3, 35%) !default;
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
@@ -217,6 +217,10 @@ legend.border {
 }
 
 
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+  background: lighten(#cbe2d3, 10%);
+}
+
 .navbar-default {
   border-width: 0px;
   border-radius: 0px;
@@ -264,11 +268,15 @@ ul.nav li.dropdown > ul.dropdown-menu  {
   background-color: #cbe2d3;
 }
 
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  background-color: lighten(#cbe2d3, 10%);
+}
+
 .navbar-default .navbar-nav > .open > a {
-  background-color: #cbe2d3;
+  background-color: lighten(#cbe2d3, 10%);
 
   &:focus {
-    background-color: #cbe2d3;
+    background-color: lighten(#cbe2d3, 10%);
   }
 }
 
@@ -278,7 +286,7 @@ ul.nav li.dropdown > ul.dropdown-menu  {
 
 
 footer {
-  background-color: #cfe1d4;
+  background-color: #cbe2d3;
   padding: 1.5rem 0;
 
   ul {
