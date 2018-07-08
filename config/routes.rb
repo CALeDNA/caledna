@@ -122,6 +122,6 @@ Rails.application.routes.draw do
   # home_2 is made of two Page records because there are 2 editable text fields
   get '/home_2', to: 'pages#home_2'
 
-  root 'pages#home_2'
+  root 'samples#index'
 end
 # rubocop:enable Metrics/BlockLength:
