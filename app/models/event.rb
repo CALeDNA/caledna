@@ -2,6 +2,7 @@
 
 class Event < ApplicationRecord
   belongs_to :field_data_project, optional: true
+  has_one_attached :flyer
   has_many :event_registrations
   has_many :users, through: :event_registrations
 
@@ -13,6 +14,10 @@ class Event < ApplicationRecord
   scope :past, (lambda do
     where("end_date < '#{Time.zone.now}'").order(end_date: :desc)
   end)
+
+  def flyer?
+    flyer.attachment.present?
+  end
 
   def registered?(user)
     event_registrations.where(user: user).present?
