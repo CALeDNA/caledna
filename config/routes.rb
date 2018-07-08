@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :taxa, only: [:index]
+      resource :stats do
+        get '/home_page', to: 'stats#home_page'
+      end
     end
   end
 
