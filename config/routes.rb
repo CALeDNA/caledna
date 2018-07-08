@@ -103,6 +103,7 @@ Rails.application.routes.draw do
       'event_registrations#update_status'
   end
   resources :uploads, only: %i[create destroy]
+  resource :profile, only: [:show]
 
   # dynamic routes for Page model
   unless Rails.env.production?
@@ -118,10 +119,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :profile, only: [:show]
-
+  # home_2 is made of two Page records because there are 2 editable text fields
   get '/home_2', to: 'pages#home_2'
 
-  root 'pages#home'
+  root 'pages#home_2'
 end
 # rubocop:enable Metrics/BlockLength:

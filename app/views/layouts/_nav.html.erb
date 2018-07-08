@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
       </button>
       <div class="navbar-brand">
-        <a href="/">
+        <a href="http://www.ucedna.com/">
           <%
             custom_logo = yield :logo
             logo = custom_logo.present? ? custom_logo : 'logo_uc.png'
@@ -26,10 +26,11 @@
             About <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-            <% PagesHelper.about_links.each do |page| %>
-              <li><%= link_to page[:title], page[:slug] %></li>
-            <% end %>
+            <li><a href="http://www.ucedna.com/our-mission/">Our Mission</a>
+            <li><a href="http://www.ucedna.com/why-protect-biodiversity/">Why Protect Biodiversity?</a>
+            <li><a href="http://www.ucedna.com/frequently-asked-questions">FAQ</a>
             <li><a href="http://www.ucedna.com/whos-on-the-team/">Meet the Team</a>
+            <li><a href="http://www.ucedna.com/contact/">Contact Us</a>
             <li role="separator" class="divider"></li>
             <li><a href="http://www.ucedna.com/blog">News</a>
             <li><%= nav_link "Upcoming Events", events_path %></li>
@@ -46,9 +47,8 @@
             <li><%= nav_link 'Field Data Projects', field_data_projects_path %></li>
             <li><%= nav_link 'Research Projects', research_projects_path %></li>
             <li role="separator" class="divider"></li>
-            <% PagesHelper.explore_data.each do |page| %>
-              <li><%= link_to page[:title], page[:slug] %></li>
-            <% end %>
+            <li><a href="http://www.ucedna.com/how-are-samples-analyzed/">How are Samples Analyzed?</a></li>
+            <li><a href="http://www.ucedna.com/disclaimer/">Disclaimer</a></li>
           </ul>
         </li>
 
@@ -57,9 +57,8 @@
             Get Involved <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-            <% PagesHelper.get_involved_links.each do |page| %>
-              <li><%= link_to page[:title], page[:slug] %></li>
-            <% end %>
+            <li><a href="http://www.ucedna.com/become-a-community-scientist/">Become a Community Scientist</a></li>
+            <li><a href="http://www.ucedna.com/data-analysis-for-researchers/">Data Analysis for Researchers</a></li>
           </ul>
         </li>
       </ul>
