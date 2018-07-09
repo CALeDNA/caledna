@@ -21,7 +21,6 @@ class EventDashboard < Administrate::BaseDashboard
   ].freeze
 
    SHOW_PAGE_ATTRIBUTES = [
-    :id,
     :name,
     :start_date,
     :end_date,

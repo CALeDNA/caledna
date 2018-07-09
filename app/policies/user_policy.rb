@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EventPolicy < ApplicationPolicy
+class UserPolicy < ApplicationPolicy
   def index?
     all_roles
   end

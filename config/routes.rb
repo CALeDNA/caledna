@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     resources :researchers
     resources :pages
     resources :events
+    resources :event_registrations
+    resources :users
 
     namespace :labwork do
       get '/' => 'home#index'
