@@ -6,7 +6,7 @@ class PagesController < ApplicationController
   def home
     @stats = {
       samples_approved: Sample.approved.count,
-      users:  300 + User.count,
+      users: User::EXISTING_USERS + User.count,
       organisms: organism_count.first['count']
     }
 
@@ -16,7 +16,7 @@ class PagesController < ApplicationController
   def home_2
     @stats = {
       samples_approved: Sample.approved.count,
-      users:  300 + User.count,
+      users: User::EXISTING_USERS + User.count,
       organisms: organism_count.first['count']
     }
 

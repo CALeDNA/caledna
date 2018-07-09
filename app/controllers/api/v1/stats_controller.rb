@@ -8,7 +8,7 @@ module Api
       def home_page
         stats = {
           samples_approved: Sample.approved.count,
-          users:  300 + User.count,
+          users: User::EXISTING_USERS + User.count,
           organisms: organism_count.first['count']
         }
 

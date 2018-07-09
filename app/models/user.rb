@@ -25,6 +25,8 @@ class User < ApplicationRecord
     'Other'
   ].freeze
 
+  EXISTING_USERS = 231
+
   # Include default devise modules. Others available are:
   # :trackable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
