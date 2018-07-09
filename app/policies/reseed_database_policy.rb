@@ -2,6 +2,6 @@
 
 class ReseedDatabasePolicy < ApplicationPolicy
   def delete?
-    user.director?
+    user.director? && !Rails.env.production?
   end
 end
