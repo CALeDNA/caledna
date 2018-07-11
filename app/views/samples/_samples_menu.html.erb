@@ -1,12 +1,14 @@
 <% path_params = { field_data_project_id: params[:field_data_project_id], status: params[:status],
   lat: params[:lat], lng: params[:lng], zoom: params[:zoom], sample_id: params[:sample_id] } %>
+<% list_view = params[:view] == 'list' %>
 
 <div class="samples-menu">
   <div class="btn-group" role="group" >
-    <a href="<%= samples_path(path_params) %>" class="btn btn-default">
+
+    <a href="<%= samples_path(path_params) %>" class="<%= pill_menu_classes(!list_view) %>">
       <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
     </a>
-    <a href="<%= samples_path(path_params.merge(view: :list)) %>" class="btn btn-default">
+    <a href="<%= samples_path(path_params.merge(view: :list)) %>" class="<%= pill_menu_classes(list_view) %>">
       <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
     </a>
   </div>

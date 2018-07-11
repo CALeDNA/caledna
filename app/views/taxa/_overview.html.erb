@@ -1,3 +1,5 @@
+<% list_view = params[:view] == 'list' %>
+
 <div class="row">
   <div class="col-md-6">
     <% if taxon.image.present? %>
@@ -80,10 +82,10 @@
   <% if samples.present? %>
     <div class="samples-menu">
       <div class="btn-group" role="group" >
-        <a href="<%= taxon_path %>#samples" class="btn btn-default">
+        <a href="<%= taxon_path %>#samples" class="<%= pill_menu_classes(!list_view) %>">
           <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
         </a>
-        <a href="<%= taxon_path(view: :list) %>#samples" class="btn btn-default">
+        <a href="<%= taxon_path(view: :list) %>#samples" class="<%= pill_menu_classes(list_view) %>">
           <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
         </a>
       </div>
