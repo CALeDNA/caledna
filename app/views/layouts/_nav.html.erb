@@ -7,13 +7,10 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <div class="navbar-brand">
+      <div class="navbar-brand sm-12">
         <a href="http://www.ucedna.com/">
-          <%
-            custom_logo = yield :logo
-            logo = custom_logo.present? ? custom_logo : 'logo_uc.png'
-          %>
-          <%= image_tag logo, id: 'logo'%>
+          <%= image_tag 'logo_uc2.png', id: 'logo', class:"visible-md visible-lg" %>
+          <%= image_tag 'logo.png', id: 'logo', class:"visible-sm visible-xs" %>
         </a>
       </div>
     </div>

@@ -202,6 +202,10 @@ legend.border {
   }
 }
 
+.nav > li > a {
+  padding: 10px 10px;
+}
+
 .dropdown-menu {
   .divider {
     background-color: #aaa;
@@ -225,6 +229,7 @@ legend.border {
   border-width: 0px;
   border-radius: 0px;
   min-height: 100px;
+  font-size: 15px;
 
   .navbar-toggle {
     border-color: #888;
@@ -259,7 +264,7 @@ legend.border {
 @media (min-width: 768px) {
   .navbar-default {
     .navbar-nav {
-      padding: 2rem 0 0;
+      padding: 2rem 0 0 1rem;
     }
   }
 }
