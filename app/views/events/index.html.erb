@@ -1,9 +1,11 @@
-<h1><%= params[:type] == 'past' ? 'Past' : 'Upcoming' %> Events</h1>
+<% past = params[:type] == 'past' %>
 
-<div class="samples-menu">
+<h1> Events</h1>
+
+<div class="events-menu">
   <div class="btn-group" role="group" >
-    <%= link_to 'Upcoming', events_path, class: "btn btn-default" %>
-    <%= link_to 'Past', events_path(type: 'past'), class: "btn btn-default" %>
+    <%= link_to 'Upcoming', events_path, class: pill_menu_classes(!past) %>
+    <%= link_to 'Past', events_path(type: 'past'), class: pill_menu_classes(past) %>
   </div>
 </div>
 

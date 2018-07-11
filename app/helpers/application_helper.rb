@@ -68,7 +68,7 @@ module ApplicationHelper
   # rubocop:enable Naming/AccessorMethodName
 
   def dropdown_active?(paths)
-    paths.include? request.fullpath
+    paths.any? { |p| request.fullpath.start_with? p }
   end
 
   def flash_class(type)
@@ -79,5 +79,9 @@ module ApplicationHelper
     when 'notice' then 'alert alert-success'
     else 'alert alert-light'
     end
+  end
+
+  def pill_menu_classes(active)
+    active ? 'btn btn-default active' : 'btn btn-default'
   end
 end
