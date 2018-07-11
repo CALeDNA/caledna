@@ -108,6 +108,10 @@ Rails.application.configure do
   # for devise
   config.action_mailer.default_url_options = { host: ENV.fetch('HOST') }
 
+  # To make subdomain routing with devise on heroku
+  # https://stackoverflow.com/a/19367086
+  config.action_dispatch.tld_length = 2
+
   #  smtp
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
