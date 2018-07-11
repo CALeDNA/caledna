@@ -56,6 +56,7 @@ class User < ApplicationRecord
     '30+ hours'
   ], map: :string
 
+  validates :agree, presence: true
   validates :username,
             :email,
             presence: true,
