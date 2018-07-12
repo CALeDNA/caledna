@@ -7,7 +7,8 @@ Rails.application.routes.draw do
   }
   devise_for :researchers, controllers: {
     sessions: 'researchers/sessions',
-    invitations: 'researchers/invitations'
+    invitations: 'researchers/invitations',
+    passwords: 'researchers/passwords'
   }
 
   require 'sidekiq/web'
