@@ -1,23 +1,32 @@
-<h1>Sign up</h2>
+<div class="col-md-8 col-md-offset-2 ">
+  <h1>Sign up</h2>
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= f.error_notification %>
+  <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+    <%= f.error_notification %>
 
-  <div class="form-inputs">
-    <fieldset class="border">
-      <legend class="border">Required Profile Info</legend>
-      <%= f.input :email, required: true, autofocus: true %>
-      <%= f.input :username, required: true %>
-      <%= f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) %>
-      <%= f.input :password_confirmation, required: true %>
-    </fieldset>
-    <%= render partial: 'demographics_fields', locals: { f: f} %>
-  </div>
+    <div class="form-inputs">
+      <fieldset class="border">
+        <legend class="border">Required Profile Info</legend>
+        <%= f.input :email, required: true, autofocus: true %>
+        <%= f.input :username, required: true %>
+        <%= f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) %>
+        <%= f.input :password_confirmation, required: true %>
+      </fieldset>
+      <%= render partial: 'demographics_fields', locals: { f: f} %>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Sign up", class: "btn btn-primary" %>
-  </div>
-<% end %>
+      <p>
+        By clicking this box you give your consent to share this information with the
+        UC Conservation Genomics Consortium community science project managers.
+      </p>
+      <%= f.input :agree %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit, "Sign up", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+</div>
 
 <script>
   (function() {

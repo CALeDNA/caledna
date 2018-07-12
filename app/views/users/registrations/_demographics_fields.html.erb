@@ -15,19 +15,13 @@
   <%= f.input :other, label: false, input_html: { id: :user_ethnicity_other_input } %>
   <%= f.input :conservation_experience, as: :radio_buttons %>
   <%= f.input :dna_experience, as: :radio_buttons %>
-  <%= f.input :work_info %>
+  <%= f.input :work_info, :input_html => {rows: 5} %>
   <%= f.input :time_outdoors_cd, as: :radio_buttons, collection: User.time_outdoors.values %>
   <%= f.input :occupation %>
-  <%= f.input :science_career_goals %>
-  <%= f.input :environmental_career_goals %>
+  <%= f.input :science_career_goals, :input_html => {rows: 5} %>
+  <%= f.input :environmental_career_goals, :input_html => {rows: 5} %>
   <%= f.input :uc_affiliation, as: :radio_buttons %>
   <%= f.input :uc_campus %>
   <%= f.input :caledna_source, as: :radio_buttons, collection: User::CALEDNA_SOURCE %>
   <%= f.input :other, label: false, input_html: { id: :user_caledna_source_other_input } %>
 </fieldset>
-
-<p>
-  By clicking this box you give your consent to share this information with the
-  UC Conservation Genomics Consortium community science project managers.
-</p>
-<%= f.input :agree %>
