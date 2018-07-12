@@ -213,6 +213,66 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.index ["highlightable_type"], name: "index_highlights_on_highlightable_type"
   end
 
+  create_table "inat_observations", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "occurrenceID", limit: 255
+    t.string "basisOfRecord", limit: 255
+    t.string "modified", limit: 255
+    t.string "institutionCode", limit: 255
+    t.string "collectionCode", limit: 255
+    t.string "datasetName", limit: 255
+    t.string "informationWithheld", limit: 255
+    t.string "catalogNumber", limit: 255
+    t.string "references", limit: 255
+    t.text "occurrenceRemarks"
+    t.text "occurrenceDetails"
+    t.string "recordedBy", limit: 255
+    t.string "establishmentMeans", limit: 255
+    t.string "eventDate", limit: 255
+    t.string "eventTime", limit: 255
+    t.string "verbatimEventDate", limit: 255
+    t.string "verbatimLocality", limit: 255
+    t.decimal "decimalLatitude"
+    t.decimal "decimalLongitude"
+    t.string "coordinateUncertaintyInMeters", limit: 255
+    t.string "countryCode", limit: 255
+    t.string "identificationID", limit: 255
+    t.string "dateIdentified", limit: 255
+    t.text "identificationRemarks"
+    t.integer "taxonID"
+    t.string "scientificName", limit: 255
+    t.string "taxonRank", limit: 255
+    t.string "kingdom", limit: 255
+    t.string "phylum", limit: 255
+    t.string "class", limit: 255
+    t.string "order", limit: 255
+    t.string "family", limit: 255
+    t.string "genus", limit: 255
+    t.string "license", limit: 255
+    t.string "rights", limit: 255
+    t.string "rightsHolder", limit: 255
+    t.index "lower((\"scientificName\")::text)", name: "observations_scientificname_idx"
+    t.index ["kingdom", "phylum", "class", "order", "family", "genus"], name: "observations_taxa_idx"
+    t.index ["taxonID"], name: "observations_taxonid_idx"
+    t.index ["taxonRank"], name: "observations_taxonrank_idx"
+  end
+
+  create_table "inat_taxa", id: false, force: :cascade do |t|
+    t.integer "taxonID"
+    t.string "scientificName", limit: 255
+    t.string "taxonRank", limit: 255
+    t.string "kingdom", limit: 255
+    t.string "phylum", limit: 255
+    t.string "class", limit: 255
+    t.string "order", limit: 255
+    t.string "family", limit: 255
+    t.string "genus", limit: 255
+    t.index "lower((\"scientificName\")::text)", name: "taxa_scientificname_idx"
+    t.index ["kingdom", "phylum", "class", "order", "family", "genus"], name: "taxa_taxa_idx"
+    t.index ["taxonID"], name: "taxa_taxonid_idx"
+    t.index ["taxonRank"], name: "taxa_taxonrank_idx"
+  end
+
   create_table "ncbi_divisions", id: :serial, force: :cascade do |t|
     t.string "cde", limit: 255
     t.string "name", limit: 255
@@ -378,7 +438,8 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.index ["status_cd"], name: "index_samples_on_status_cd"
   end
 
-  create_table "taxa", primary_key: "taxonID", id: :integer, default: nil, force: :cascade do |t|
+  create_table "taxa", id: false, force: :cascade do |t|
+    t.integer "taxonID", null: false
     t.string "datasetID", limit: 255
     t.integer "parentNameUsageID"
     t.integer "acceptedNameUsageID"
@@ -406,27 +467,11 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.integer "rank_order"
     t.string "iucn_status"
     t.integer "iucn_taxonid"
-    t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix"
-    t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx"
-    t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx"
-    t.index ["asvs_count"], name: "index_taxa_on_asvs_count"
-    t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank"
-    t.index ["className"], name: "index_taxa_on_classname"
-    t.index ["family"], name: "index_taxa_on_family"
-    t.index ["genus"], name: "index_taxa_on_genus"
-    t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
-    t.index ["iucn_status"], name: "index_taxa_on_iucn_status"
-    t.index ["kingdom"], name: "index_taxa_on_kingdom"
-    t.index ["order"], name: "index_taxa_on_order"
-    t.index ["phylum"], name: "index_taxa_on_phylum"
-    t.index ["scientificName"], name: "index_taxa_on_scientificName"
-    t.index ["specificEpithet"], name: "index_taxa_on_specificepithet"
-    t.index ["taxonRank"], name: "index_taxa_on_taxonRank"
-    t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx"
   end
 
-  create_table "taxa_datasets", primary_key: "datasetID", id: :string, force: :cascade do |t|
+  create_table "taxa_datasets", id: false, force: :cascade do |t|
     t.string "name"
+    t.string "datasetID", null: false
     t.text "citation"
   end
 

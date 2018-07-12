@@ -1,0 +1,18 @@
+<div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+
+  <h2>Researcher: Resend unlock instructions</h2>
+
+  <%= simple_form_for(resource, as: resource_name, url: researcher_unlock_path(resource), html: { method: :post }) do |f| %>
+    <%= f.error_notification %>
+    <%= f.full_error :unlock_token %>
+
+    <div class="form-inputs">
+      <%= f.input :email, required: true, autofocus: true %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.button :submit, "Resend unlock instructions", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+</div>
