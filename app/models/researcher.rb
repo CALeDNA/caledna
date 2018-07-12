@@ -6,7 +6,7 @@ class Researcher < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   # :registerable
-  devise :database_authenticatable,
+  devise :database_authenticatable, :lockable,
          :recoverable, :rememberable, :trackable, :validatable,
          :invitable, invite_for: 2.weeks
 
