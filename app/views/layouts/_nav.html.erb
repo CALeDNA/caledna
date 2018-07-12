@@ -28,9 +28,6 @@
             <li><a href="http://www.ucedna.com/frequently-asked-questions">FAQ</a>
             <li><a href="http://www.ucedna.com/whos-on-the-team/">Meet the Team</a>
             <li><a href="http://www.ucedna.com/contact/">Contact Us</a>
-            <li role="separator" class="divider"></li>
-            <li><a href="http://www.ucedna.com/blog">News</a>
-            <li><%= nav_link "Events", events_path %></li>
           </ul>
         </li>
 
@@ -56,6 +53,17 @@
           <ul class="dropdown-menu">
             <li><a href="http://www.ucedna.com/become-a-community-scientist/">Become a Community Scientist</a></li>
             <li><a href="http://www.ucedna.com/data-analysis-for-researchers/">Data Analysis for Researchers</a></li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="dropdown <%= 'active' if news_active? %>">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            News <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="http://www.ucedna.com/blog">News</a>
+            <li><%= nav_link "Events", events_path %></li>
+            <li><a href="http://www.ucedna.com/newsletter">Newsletter</a>
           </ul>
         </li>
       </ul>
