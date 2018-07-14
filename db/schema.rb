@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_11_154511) do
+ActiveRecord::Schema.define(version: 2018_07_14_190415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
   end
 
-  create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
+  create_table "cal_taxa", id: :serial, force: :cascade do |t|
     t.string "datasetID"
     t.string "parentNameUsageID"
     t.text "scientificName"
@@ -65,16 +65,16 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.jsonb "hierarchy"
     t.string "original_taxonomy"
     t.jsonb "original_hierarchy"
-    t.boolean "normalized", default: false
+    t.boolean "normalized"
+    t.integer "taxonID", default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }
     t.string "genericName"
-    t.integer "taxonID", default: -> { "currval('cal_taxa_taxonid_seq'::regclass)" }
     t.string "complete_taxonomy"
     t.integer "rank_order"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "exact_gbif_match", default: false
+    t.boolean "exact_gbif_match"
     t.text "notes"
-    t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true
+    t.index ["kingdom", "canonicalName"], name: "cal_taxa_kingdom_canonicalName_idx1", unique: true
     t.index ["original_taxonomy"], name: "index_cal_taxa_on_original_taxonomy"
   end
 
@@ -102,7 +102,7 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.index ["field_data_project_id"], name: "index_events_on_field_data_project_id"
   end
 
-  create_table "external_resources", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
+  create_table "external_resources", primary_key: "taxon_id", id: :integer, default: nil, force: :cascade do |t|
     t.integer "eol_id"
     t.integer "gbif_id"
     t.string "wikidata_image"
@@ -116,9 +116,9 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "iucn_status"
   end
 
   create_table "extraction_types", id: :serial, force: :cascade do |t|
@@ -182,8 +182,8 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.string "status_cd"
     t.string "sum_taxonomy_example"
     t.boolean "priority_sequencing"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", default: "2018-04-23 16:12:39", null: false
+    t.datetime "updated_at", default: "2018-04-23 16:12:39", null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id"
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id"
     t.index ["processor_id"], name: "index_extractions_on_processor_id"
@@ -311,13 +311,16 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.integer "asvs_count", default: 0
     t.string "ids", default: [], array: true
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
-    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "boo"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
+    t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
+    t.index ["lineage"], name: "idx_ncbi_nodes_lineage", using: :gin
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
+    t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx"
   end
 
   create_table "pages", id: :serial, force: :cascade do |t|
@@ -403,7 +406,6 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
@@ -435,7 +437,51 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.string "environmental_settings"
     t.boolean "missing_coordinates", default: false
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id"
+    t.index ["id", "barcode", "latitude", "longitude", "field_data_project_id"], name: "map_samples_index"
     t.index ["status_cd"], name: "index_samples_on_status_cd"
+  end
+
+  create_table "survey_answers", force: :cascade do |t|
+    t.bigint "survey_question_id", null: false
+    t.bigint "survey_response_id", null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_question_id"], name: "index_survey_answers_on_survey_question_id"
+    t.index ["survey_response_id"], name: "index_survey_answers_on_survey_response_id"
+  end
+
+  create_table "survey_options", force: :cascade do |t|
+    t.text "content", null: false
+    t.bigint "survey_question_id", null: false
+    t.boolean "accepted_answer"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_question_id"], name: "index_survey_options_on_survey_question_id"
+  end
+
+  create_table "survey_questions", force: :cascade do |t|
+    t.text "content", null: false
+    t.bigint "survey_id", null: false
+    t.string "type_cd", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_id"], name: "index_survey_questions_on_survey_id"
+  end
+
+  create_table "survey_responses", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "survey_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_id"], name: "index_survey_responses_on_survey_id"
+    t.index ["user_id"], name: "index_survey_responses_on_user_id"
+  end
+
+  create_table "surveys", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "taxa", id: false, force: :cascade do |t|
@@ -462,10 +508,10 @@ ActiveRecord::Schema.define(version: 2018_07_11_154511) do
     t.string "order", limit: 255
     t.string "family", limit: 255
     t.string "genus", limit: 255
-    t.jsonb "hierarchy"
+    t.jsonb "hierarchy", default: {}
     t.integer "asvs_count", default: 0
     t.integer "rank_order"
-    t.string "iucn_status"
+    t.string "iucn_status", limit: 255
     t.integer "iucn_taxonid"
   end
 
