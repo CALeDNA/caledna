@@ -1,0 +1,57 @@
+.field-unit--nested {
+  border: 0;
+  padding: 0.75em;
+  margin-left: 0;
+  width: 100%;
+
+  .nested-fields {
+    border-bottom: 3px solid #333;
+    margin-bottom: 3em;
+
+    textarea {
+      font-size: 1.75em;
+    }
+  }
+
+  .nested-fields .nested-fields {
+    border-bottom: 0;
+    background: #f0f0f0;
+    padding: 1em;
+    margin: 5px 0;
+    margin-left: 6%;
+    width: 94%;
+
+    textarea {
+      font-size: 1em;
+    }
+  }
+
+  .field-unit__label {
+    width: 100%;
+  }
+
+  .field-unit__field {
+    width: 100%;
+  }
+
+  .add_fields {
+    float: none;
+  }
+}
+
+.field-unit {
+  display: block;
+}
+
+.field-unit__label {
+  float: none;
+  margin-left: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.field-unit__field {
+  float: none;
+  margin-left: 0;
+  width: 100%;
+}

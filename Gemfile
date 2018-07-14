@@ -9,6 +9,7 @@ gem 'rails', '~> 5.2'
 gem 'administrate', '~> 0.10.0'
 gem 'administrate-field-image'
 gem 'administrate-field-json', git: 'https://github.com/eddietejeda/administrate-field-json.git'
+gem 'administrate-field-nested_has_many', '~> 1.0.0'
 gem 'autoprefixer-rails', '~> 7.2'
 gem 'aws-sdk-s3', '~> 1.14.0', require: false
 gem 'bootsnap', '~> 1.3.0'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_14_190415) do
+ActiveRecord::Schema.define(version: 2018_07_15_000737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -444,7 +444,7 @@ ActiveRecord::Schema.define(version: 2018_07_14_190415) do
   create_table "survey_answers", force: :cascade do |t|
     t.bigint "survey_question_id", null: false
     t.bigint "survey_response_id", null: false
-    t.text "content", null: false
+    t.jsonb "content", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["survey_question_id"], name: "index_survey_answers_on_survey_question_id"
@@ -454,7 +454,7 @@ ActiveRecord::Schema.define(version: 2018_07_14_190415) do
   create_table "survey_options", force: :cascade do |t|
     t.text "content", null: false
     t.bigint "survey_question_id", null: false
-    t.boolean "accepted_answer"
+    t.boolean "accepted_answer", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["survey_question_id"], name: "index_survey_options_on_survey_question_id"
@@ -466,6 +466,7 @@ ActiveRecord::Schema.define(version: 2018_07_14_190415) do
     t.string "type_cd", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "order_number"
     t.index ["survey_id"], name: "index_survey_questions_on_survey_id"
   end
 
@@ -482,6 +483,9 @@ ActiveRecord::Schema.define(version: 2018_07_14_190415) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "slug"
+    t.text "description"
+    t.index ["slug"], name: "index_surveys_on_slug"
   end
 
   create_table "taxa", id: false, force: :cascade do |t|
