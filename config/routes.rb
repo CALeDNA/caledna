@@ -132,6 +132,18 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :surveys, only: [:show] do
+    resources :survey_responses
+  end
+
+  # get '/safety-training-quiz',
+  #     to: 'surveys#show',
+  #     defaults: { slug: 'safety-training-quiz' }
+
+  # get '/kit-training-quiz',
+  #   to: 'surveys#show',
+  #   defaults: { slug: 'kit-training-quiz' }
+
   # home_2 is made of two Page records because there are 2 editable text fields
   get '/home_2', to: 'pages#home_2'
 
