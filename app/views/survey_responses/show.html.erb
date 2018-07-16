@@ -1,0 +1,19 @@
+<% content_for :page_id do %>survey<% end %>
+
+<h1><%= @response.survey.name %> results</h1>
+
+<%= render partial: 'shared/community_scientist_menu' %>
+
+<p>
+You correctly answered <%= @response.total_score %> out of
+<%= @response.survey.survey_questions.count %> questions.
+</p>
+
+<% if @response.passing_score? %>
+  <p>Congratulations! You have passed the quiz.</p>
+<% else %>
+  <p>
+    You need to get <%= @response.survey.passing_score %> questions right to pass.
+    Please try again.
+  </p>
+<% end %>

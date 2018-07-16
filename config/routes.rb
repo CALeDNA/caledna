@@ -41,9 +41,7 @@ Rails.application.routes.draw do
     resources :event_registrations
     resources :users
     resources :surveys
-
     resources :survey_responses
-    resources :survey_answers
 
     namespace :labwork do
       get '/' => 'home#index'
@@ -132,8 +130,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :surveys, only: [:show] do
-    resources :survey_responses
+  resources :surveys, only: %i[show] do
+    resources :survey_responses, only: %i[create show]
   end
 
   # get '/safety-training-quiz',

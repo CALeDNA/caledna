@@ -9,24 +9,40 @@
   <li><%= link_to 'Kit Training Quiz', survey_path('kit-training-quiz') %></li>
 </ul>
 
-<p><%= @survey.description %></p>
-<%= simple_form_for @survey, url: survey_survey_responses_path(survey_id: @survey.id), method: :post do |form| %>
-  <ol class="survey-questions">
-    <% @survey.survey_questions.order(:order_number).each do |question| %>
-      <li><%= question.content %></li>
-      <%= form.simple_fields_for 'survey_question[]', question do |form_q| %>
-        <% if question.check_boxes? %>
-          <%= form_q.collection_check_boxes :survey_options,
-            question.survey_options.order(:id), :id, :content,
-            item_label_class: 'checkbox' %>
-        <% elsif question.multiple_choice? %>
-          <%= form_q.collection_radio_buttons :survey_options,
-            question.survey_options.order(:id), :id, :content,
-            item_label_class: 'radio' %>
+<% unless current_user %>
+  <p>
+    <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
+    You must sign in to view the quiz.
+  </p>
+<% else %>
+
+
+  <% if @survey.passed_this_survey?(current_user) %>
+    <p class="alert alert-success" role="alert">
+      You have already passed this quiz.
+    </p>
+  <% end %>
+
+  <p><%= @survey.description %></p>
+  <%= simple_form_for @survey, url: survey_survey_responses_path(survey_id: @survey.id), method: :post do |form| %>
+    <ol class="survey-questions">
+      <% @survey.survey_questions.order(:order_number).each do |question| %>
+        <li><%= question.content %></li>
+        <%= form.simple_fields_for 'survey_questions[]', question do |form_q| %>
+          <% if question.check_boxes? %>
+            <%= form_q.collection_check_boxes :survey_options,
+              question.survey_options.order(:id), :id, :content,
+              item_label_class: 'checkbox' %>
+          <% elsif question.multiple_choice? %>
+            <%= form_q.collection_radio_buttons :survey_options,
+              question.survey_options.order(:id), :id, :content,
+              item_label_class: 'radio' %>
+          <% end %>
         <% end %>
       <% end %>
-    <% end %>
-  </ol>
+    </ol>
 
-  <%= form.submit 'Submit Quiz', class: 'btn btn-primary btn-lg' %>
+    <%= form.submit 'Submit Quiz', class: 'btn btn-primary btn-lg' %>
+  <% end %>
+
 <% end %>

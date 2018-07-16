@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_15_000737) do
+ActiveRecord::Schema.define(version: 2018_07_15_155032) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -447,6 +447,7 @@ ActiveRecord::Schema.define(version: 2018_07_15_000737) do
     t.jsonb "content", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "score", default: 0
     t.index ["survey_question_id"], name: "index_survey_answers_on_survey_question_id"
     t.index ["survey_response_id"], name: "index_survey_answers_on_survey_response_id"
   end
@@ -475,6 +476,8 @@ ActiveRecord::Schema.define(version: 2018_07_15_000737) do
     t.bigint "survey_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total_score", default: 0
+    t.boolean "passed", default: false
     t.index ["survey_id"], name: "index_survey_responses_on_survey_id"
     t.index ["user_id"], name: "index_survey_responses_on_user_id"
   end
@@ -485,6 +488,7 @@ ActiveRecord::Schema.define(version: 2018_07_15_000737) do
     t.datetime "updated_at", null: false
     t.string "slug"
     t.text "description"
+    t.integer "passing_score", default: 0
     t.index ["slug"], name: "index_surveys_on_slug"
   end
 

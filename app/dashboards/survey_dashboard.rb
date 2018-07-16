@@ -11,6 +11,7 @@ class SurveyDashboard < Administrate::BaseDashboard
     updated_at: Field::DateTime,
     slug: Field::String,
     description: Field::Text,
+    passing_score: Field::Number,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -22,6 +23,7 @@ class SurveyDashboard < Administrate::BaseDashboard
     :name,
     :slug,
     :description,
+    :passing_score,
     :created_at,
     :updated_at,
   ].freeze
@@ -30,6 +32,7 @@ class SurveyDashboard < Administrate::BaseDashboard
     :name,
     :slug,
     :description,
+    :passing_score,
     :survey_questions,
   ].freeze
 

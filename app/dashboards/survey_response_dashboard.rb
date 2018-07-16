@@ -6,35 +6,38 @@ class SurveyResponseDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     survey: Field::BelongsTo,
     survey_answers: Field::HasMany,
+    user: Field::BelongsTo,
     id: Field::Number,
-    user_id: Field::Number,
+    total_score: Field::Number,
+    passed: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
     :survey,
-    :survey_answers,
-    :id,
-    :user_id,
+    :user,
+    :total_score,
+    :passed,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :survey,
-    :survey_answers,
-    :id,
-    :user_id,
+    :user,
+    :total_score,
+    :passed,
     :created_at,
     :updated_at,
   ].freeze
 
   FORM_ATTRIBUTES = [
     :survey,
-    :survey_answers,
-    :user_id,
+    :user,
+    :total_score,
+    :passed,
   ].freeze
 
-  # def display_resource(survey_response)
-  #   "SurveyResponse ##{survey_response.id}"
-  # end
+  def display_resource(survey_response)
+    "Result ##{survey_response.id}"
+  end
 end
