@@ -16,7 +16,10 @@
       <% end %>
     <% end %>
   <% else %>
-    <p>You must <%= link_to 'log in', new_user_session_path %> to register.</p>
+    <p>
+      <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
+      You must sign in to register for the event.
+    </p>
   <% end %>
 <% else %>
   <p>This event has ended.</p>
@@ -33,7 +36,7 @@
   <% if current_user %>
     <p><%= @event.contact %></p>
   <% else %>
-    <p><%= link_to 'Log In', new_user_session_path %> to see contact info.</p>
+    <p>You must sign in to see the contact info.</p>
   <% end %>
 <% end %>
 
