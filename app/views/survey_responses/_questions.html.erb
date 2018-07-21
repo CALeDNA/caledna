@@ -1,0 +1,13 @@
+<% if question.check_boxes? %>
+  <%= form_q.input :survey_options, as: :check_boxes,
+    collection: question.survey_options.order(:id).map { |o| [o.content, o.id] },
+    checked: -> (i) { @checked_options.include?(i.last) },
+    label: false
+  %>
+<% elsif question.multiple_choice? %>
+  <%= form_q.input :survey_options, as: :radio_buttons,
+    collection: question.survey_options.order(:id).map { |o| [o.content, o.id] },
+    checked: -> (i) { @checked_options.include?(i.last) },
+    label: false
+  %>
+<% end %>

@@ -1,0 +1,43 @@
+<% content_for :page_id do %>survey<% end %>
+
+<h1><%= @survey.name %></h1>
+<ul class="submenu">
+  <li><a href="http://www.ucedna.com/become-a-community-scientist/">Intro</a></li>
+  <li><a href="http://www.ucedna.com/safety-training/">Safety Training</a></li>
+  <li><a href="http://www.ucedna.com/kit-training/">Kit Training</a></li>
+  <li><%= link_to 'Safety Training Quiz', survey_path('safety-training-quiz') %></li>
+  <li><%= link_to 'Kit Training Quiz', survey_path('kit-training-quiz') %></li>
+</ul>
+
+<% unless current_user %>
+  <p>
+    <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
+    You must sign in to view the quiz.
+  </p>
+<% else %>
+
+  <% if @survey.passed_this_survey?(current_user) %>
+    <p class="alert alert-success" role="alert">
+      You have already passed this quiz.
+    </p>
+  <% end %>
+
+  <p><%= @survey.description %></p>
+
+  <%= simple_form_for @survey, url: survey_survey_responses_path(survey_id: @survey.id), method: :post do |form| %>
+    <ol class="survey-questions">
+      <% @survey.survey_questions.order(:order_number).each do |question| %>
+        <li><%= question.content %></li>
+
+        <%= form.simple_fields_for 'survey_questions[]', question do |form_q| %>
+          <%= render partial: questions_partial_path,
+            locals: { question: question, form_q: form_q } %>
+        <% end %>
+
+      <% end %>
+    </ol>
+
+    <%= form.submit 'Submit Quiz', class: 'btn btn-primary btn-lg' %>
+  <% end %>
+
+<% end %>

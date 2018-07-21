@@ -2,6 +2,7 @@
 
 class Survey < ApplicationRecord
   has_many :survey_questions, dependent: :destroy
+  has_many :survey_responses
   accepts_nested_attributes_for :survey_questions
 
   def passed_this_survey?(user)

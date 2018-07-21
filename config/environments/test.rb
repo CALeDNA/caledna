@@ -43,4 +43,11 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  # NOTE: add this so tests that create a user will pass
+  config.action_mailer.default_options = { from: 'me@example.com' }
+
 end
+
+# NOTE: add this so tests that create a user will pass
+Rails.application.default_url_options = { host: 'localhost' }

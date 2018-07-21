@@ -1,50 +1,53 @@
 # frozen_string_literal: true
 
 class SurveyResponsesController < ApplicationController
+  include SurveysCalculateScore
+
   def show
+    flash.delete(:failure)
     @response = SurveyResponse.find(params[:id])
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def create
-    if new_response.save
-      if user_answers_valid?
-        # TODO: add transactions
-        total_score = calculate_total_score
-
+    if user_answers_valid?
+      if new_response.save
         ActiveRecord::Base.transaction do
           build_answers.each(&:save)
-
-          new_response.update(total_score: total_score, passed: passed?)
+          total_score = calculate_total_score(new_response)
+          new_response.update(
+            total_score: total_score,
+            passed: passed?(survey, total_score)
+          )
         end
 
-        # TODO: don't nest response under a surveys/id/survey_responses
         redirect_to survey_survey_response_path(
           survey_id: survey.slug, id: new_response.id
         )
       else
-        flash[:notice] = 'Every question must be answered'
-        error_handler
+        flash[:failure] = event.errors.messages.values.join('<br>')
+        @survey = Survey.find(params[:survey_id])
+
+        render 'new'
       end
     else
-      flash[:notice] = 'Problem saving response. Please resubmit.'
-      error_handler
+      flash[:failure] = 'Every question must be answered'
+      @checked_options = checked_options.compact
+      @survey = Survey.find(params[:survey_id])
+
+      render 'new'
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   private
 
-  def passed?(total_score)
-    total_score >= survey.passing_score
-  end
-
-  def error_handler
-    # TODO: rerender invalid form will filled out answers
-    redirect_to survey_path(id: survey.slug)
-  end
-
-  def calculate_total_score
-    SurveyAnswer.where(survey_response_id: new_response.id)
-                .sum(:score)
+  def checked_options
+    answers = []
+    create_params[:survey_questions].each do |_, v|
+      answers << clean_answer(v[:survey_options])
+    end
+    answers.flatten
   end
 
   def user_answers_valid?
@@ -53,6 +56,7 @@ class SurveyResponsesController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def build_answers
     answers = []
     create_params[:survey_questions].each do |question_id, v|
@@ -67,26 +71,7 @@ class SurveyResponsesController < ApplicationController
     end
     answers
   end
-
-  def clean_answer(raw_answer)
-    if raw_answer.is_a? Array
-      raw_answer.select(&:present?).map(&:to_i).sort
-    else
-      [raw_answer.to_i]
-    end
-  end
-
-  def calculate_score(question_id, user_answer)
-    correct_answers(question_id) == user_answer ? 1 : 0
-  end
-
-  # TODO: grab all correct answers for a survey, and store in memory
-  def correct_answers(question_id)
-    @correct_answers =
-      SurveyOption.where(survey_question_id: question_id, accepted_answer: true)
-                  .pluck(:id)
-                  .sort
-  end
+  # rubocop:enable Metrics/MethodLength
 
   def survey_id
     params[:survey_id]
@@ -97,13 +82,9 @@ class SurveyResponsesController < ApplicationController
       SurveyResponse.new(user_id: current_user.id, survey_id: survey_id)
   end
 
-  # TODO: don't nest response under a surveys/id/survey_responses
   def survey
     @survey ||= Survey.find(survey_id)
   end
-
-  private
-
 
   def create_params
     params.require(:survey).permit(

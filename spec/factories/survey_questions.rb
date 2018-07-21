@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :survey_question do
+    survey
     content 'question'
     type 'multiple_choice'
   end

@@ -2,6 +2,6 @@
 
 FactoryBot.define do
   factory :survey do
-    title 'my survey'
+    name 'my survey'
   end
 end
