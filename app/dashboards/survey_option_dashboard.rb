@@ -7,6 +7,7 @@ class SurveyOptionDashboard < Administrate::BaseDashboard
     survey_question: Field::BelongsTo,
     id: Field::Number,
     content: Field::Text,
+    photo: Field::ActiveStorageAttachmentField,
     accepted_answer: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -14,12 +15,13 @@ class SurveyOptionDashboard < Administrate::BaseDashboard
 
   COLLECTION_ATTRIBUTES = [
     :survey_question,
-    :content,
+    :content
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :survey_question,
     :content,
+    :photo,
     :accepted_answer,
     :created_at,
     :updated_at,
@@ -28,6 +30,7 @@ class SurveyOptionDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
     :survey_question,
     :content,
+    :photo,
     :accepted_answer,
   ].freeze
 

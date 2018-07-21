@@ -51,6 +51,9 @@
         <% question.survey_options.order(:created_at).each do |option| %>
         <li class="<%= 'correct-answer' if option.accepted_answer %>">
           <%= option.content %>
+          <% if option.photo.attachment.present? %>
+            <br><%= image_tag option.photo %>
+          <% end %>
         </li>
         <% end %>
       </ul>

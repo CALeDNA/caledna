@@ -88,4 +88,20 @@ module ApplicationHelper
   def pill_menu_classes(active)
     active ? 'btn btn-default active' : 'btn btn-default'
   end
+
+  def display_option_collection(question)
+    # NOTE: can't access image_tag from custom module helpers
+
+    question.survey_options.order(:id).map do |option|
+      if option.photo.attachment.present?
+        [
+          "#{option.content}<br> " \
+          "#{image_tag(option.photo, class:'question-photo')}".html_safe,
+          option.id
+        ]
+      else
+        [option.content, option.id]
+      end
+    end
+  end
 end
