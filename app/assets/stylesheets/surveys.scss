@@ -1,21 +1,48 @@
-#survey {
+#survey, #survey-response {
   h1 {
     margin-bottom: 0;
-  }
-
-  .survey-questions {
-    margin-bottom: 3rem;
-
-    li {
-      margin-top: 2rem;
-      font-size: 2rem;
-      font-weight: bold;
-    }
   }
 
   .question-photo {
     max-width: 400px;
     margin-top: .5rem;
     margin-bottom: 3rem;
+  }
+}
+
+#survey {
+  .survey-questions {
+    margin-bottom: 3rem;
+
+    > li {
+      margin-top: 2rem;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+  }
+}
+
+#survey-response {
+  .survey-questions {
+    margin-top: 5rem;
+
+    > li {
+      margin-top: 2rem;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    > li li {
+      font-size: 1.5rem;
+      font-weight: normal;
+      margin-top: .5rem;
+    }
+  }
+
+  .user-answer {
+    border: 1px solid #ccc;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: #eee;
   }
 }

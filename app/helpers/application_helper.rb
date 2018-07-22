@@ -89,14 +89,14 @@ module ApplicationHelper
     active ? 'btn btn-default active' : 'btn btn-default'
   end
 
+  # NOTE: can't access image_tag from custom module helpers
+  # rubocop:disable Metrics/MethodLength
   def display_option_collection(question)
-    # NOTE: can't access image_tag from custom module helpers
-
     question.survey_options.order(:id).map do |option|
       if option.photo.attachment.present?
         [
           "#{option.content}<br> " \
-          "#{image_tag(option.photo, class:'question-photo')}".html_safe,
+          "#{image_tag(option.photo, class: 'question-photo')}".html_safe,
           option.id
         ]
       else
@@ -104,4 +104,5 @@ module ApplicationHelper
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

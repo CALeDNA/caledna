@@ -34,6 +34,7 @@ class User < ApplicationRecord
 
   has_many :event_registrations
   has_many :events, through: :event_registrations
+  has_many :survey_responses
 
   as_enum :gender, %i[female male other], map: :string
   as_enum :education, [

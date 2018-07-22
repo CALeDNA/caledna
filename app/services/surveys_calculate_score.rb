@@ -27,4 +27,19 @@ module SurveysCalculateScore
   def passed?(survey, total_score)
     total_score >= survey.passing_score
   end
+
+  def correct_answers(response)
+    answers = {}
+    response.survey.survey_questions.each do |q|
+      answers[q.id] = q.survey_options.where(accepted_answer: true).pluck(:id)
+    end
+    answers
+  end
+
+  def user_answers(response)
+    answers = {}
+    response.survey_answers.pluck(:survey_question_id, :content)
+            .each { |a| answers[a.first] = a.last }
+    answers
+  end
 end

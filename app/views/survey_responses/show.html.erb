@@ -1,19 +1,45 @@
-<% content_for :page_id do %>survey<% end %>
+<% content_for :page_id do %>survey-response<% end %>
 
-<h1><%= @response.survey.name %> results</h1>
+<% if @response.present? %>
 
-<%= render partial: 'shared/community_scientist_menu' %>
+  <h1><%= @response.survey.name %> results</h1>
 
-<p>
-You correctly answered <%= @response.total_score %> out of
-<%= @response.survey.survey_questions.count %> questions.
-</p>
+  <%= render partial: 'shared/community_scientist_menu' %>
 
-<% if @response.passing_score? %>
-  <p>Congratulations! You have passed the quiz.</p>
-<% else %>
   <p>
-    You need to get <%= @response.survey.passing_score %> questions right to pass.
-    Please try again.
+    You correctly answered <%= @response.total_score %> out of
+    <%= @response.survey.survey_questions.count %> questions.
   </p>
+
+  <% if @response.passing_score? %>
+    <p>Congratulations! You have passed the quiz.</p>
+  <% else %>
+    <p>
+      You need to get <%= @response.survey.passing_score %> questions right to pass.
+      Please try again.
+    </p>
+  <% end %>
+
+  <ol class="survey-questions">
+    <% @survey.survey_questions.order(:order_number).each do |question| %>
+      <li>
+        <% if @user_answers[question.id] == @correct_answers[question.id] %>
+          <%= fa_icon('check-circle', style: 'color: green') %>
+        <% else %>
+          <%= fa_icon('times-circle', style: 'color: red') %>
+        <% end %>
+        <%= question.content %>
+        <ul>
+          <% question.survey_options.order(:created_at).each do |option| %>
+            <li class="<%= 'user-answer' if @user_answers[question.id] && @user_answers[question.id].include?(option.id) %>">
+              <%= option.content %>
+              <% if option.photo.attachment.present? %>
+                <br><%= image_tag option.photo, class: 'question-photo' %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ol>
 <% end %>

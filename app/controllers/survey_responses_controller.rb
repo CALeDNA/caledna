@@ -5,7 +5,11 @@ class SurveyResponsesController < ApplicationController
 
   def show
     flash.delete(:failure)
-    @response = SurveyResponse.find(params[:id])
+    response = SurveyResponse.find_by(id: params[:id], user: current_user)
+    @response = response
+    @user_answers = user_answers(response)
+    @correct_answers = correct_answers(response)
+    @survey = response.survey
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
