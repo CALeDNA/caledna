@@ -23,4 +23,9 @@
     </div>
   <% end %>
 
+  <h1 class="border">Delete your account</h1>
+  <%= link_to "Delete Account", registration_path(@user),
+    class: 'btn btn-primary',
+    data: { confirm: "Are you sure you want to delete your account?" }, method: :delete %>
+  <p>If you delete your account, we can not restore your info.</p>
 </div>

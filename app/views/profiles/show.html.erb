@@ -2,28 +2,30 @@
 
 <h1><%= @user.username %></h1>
 
-<h2>Upcoming Events</h2>
-<ol>
-  <% @user.events.upcoming.each do |event| %>
-    <li>
-      <%= link_to event.name, event_path(event) %>,
-      (<%= long_datetime(event.start_date) %>) <%= event.location %>
-    </li>
-  <% end %>
-</ol>
+<h2>My Upcoming Events</h2>
+<% if @user.events.count > 0 %>
+  <ol>
+    <% @user.events.upcoming.each do |event| %>
+      <li>
+        <%= link_to event.name, event_path(event) %>,
+        (<%= long_datetime(event.start_date) %>) <%= event.location %>
+      </li>
+    <% end %>
+  </ol>
+<% else %>
+  <%= link_to 'Sign up for your first bioblitz.', events_path %>
+<% end %>
 
-<h2>Past Events</h2>
+
+<% if @user.events.past.count > 0 %>
+<h2>My Past Events</h2>
 <ol>
   <% @user.events.past.each do |event| %>
     <li>
       <%= link_to event.name, event_path(event) %>,
-      (<%= long_datetime(event.start_date) %>) <%= event.location %>
+      <span class="meta">(<%= long_datetime(event.start_date) %>)</span> <%= event.location %>
     </li>
   <% end %>
 </ol>
+<% end %>
 
-<h2>Account Settings</h2>
-<ul>
-  <li><%= link_to 'Edit Account', edit_user_registration_path %></li>
-  <li><%= link_to "Delete Account", registration_path(@user), data: { confirm: "Are you sure you want to delete your account?" }, method: :delete %></li>
-</ul>
