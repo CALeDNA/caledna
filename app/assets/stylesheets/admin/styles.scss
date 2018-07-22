@@ -120,3 +120,40 @@ h6 { font-size: .75em; margin: 1.67em 0 }
   margin-bottom: 0;
   padding: 0;
 }
+
+.survey {
+  clear: both;
+
+  ul {
+    padding: 0 0 1em 1em;
+
+    li {
+      list-style: circle;
+    }
+  }
+
+  li {
+    list-style: decimal;
+  }
+
+
+
+  li {
+    padding-left: 1em;
+  }
+
+
+  .correct-answer {
+    border: 1px solid #ccc;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: #eee;
+  }
+
+  .user-answer {
+    border: 1px solid #ccc;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: #eee;
+  }
+}

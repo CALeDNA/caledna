@@ -1,3 +1,5 @@
+<% content_for(:javascript) { javascript_include_tag 'admin/font_awesome5.js' } %>
+
 <% content_for(:title) { t("administrate.actions.show_resource", name: page.page_title) } %>
 
 <header class="main-content__header" role="banner">
@@ -30,20 +32,25 @@
   </dl>
 
   <ol class="survey">
-    <% page.resource.survey_questions.order(:order_number).each do |question| %>
-    <li>
-      <%= question.content %>
-      <ul>
-        <% question.survey_options.order(:created_at).each do |option| %>
-        <li class="<%= 'correct-answer' if option.accepted_answer %>">
-          <%= option.content %>
-          <% if option.photo.attachment.present? %>
-            <br><%= image_tag option.photo %>
-          <% end %>
-        </li>
+    <% @survey.survey_questions.order(:order_number).each do |question| %>
+      <li>
+        <% if @user_answers[question.id] == @correct_answers[question.id] %>
+          <%= fa_icon('check-circle', style: 'color: green') %>
+        <% else %>
+          <%= fa_icon('times-circle', style: 'color: red') %>
         <% end %>
-      </ul>
-    </li>
+        <%= question.content %>
+        <ul>
+          <% question.survey_options.order(:created_at).each do |option| %>
+            <li class="<%= 'user-answer' if @user_answers[question.id] && @user_answers[question.id].include?(option.id) %>">
+              <%= option.content %>
+              <% if option.photo.attachment.present? %>
+                <br><%= image_tag option.photo, class: 'question-photo' %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </li>
     <% end %>
   </ol>
 </section>
