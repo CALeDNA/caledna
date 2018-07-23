@@ -7,7 +7,7 @@ class SurveyOptionDashboard < Administrate::BaseDashboard
     survey_question: Field::BelongsTo,
     id: Field::Number,
     content: Field::Text,
-    photo: Field::ActiveStorageAttachmentField,
+    photo: ActiveStorageAttachmentField,
     accepted_answer: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -33,6 +33,10 @@ class SurveyOptionDashboard < Administrate::BaseDashboard
     :photo,
     :accepted_answer,
   ].freeze
+
+  def permitted_attributes
+    super + [:photo]
+  end
 
   # def display_resource(survey_option)
   #   "SurveyOption ##{survey_option.id}"

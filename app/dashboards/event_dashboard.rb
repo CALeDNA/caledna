@@ -3,7 +3,7 @@ require "administrate/base_dashboard"
 class EventDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     field_data_project: Field::BelongsTo,
-    flyer: Field::ActiveStorageAttachmentField,
+    flyer: ActiveStorageAttachmentField,
     id: Field::Number,
     name: Field::String,
     start_date: Field::DateTime,
