@@ -10,7 +10,6 @@ $brand-primary: darken(#cbe2d3, 35%) !default;
 @import "searches";
 @import "taxa";
 @import "home";
-@import "pages";
 @import "profile";
 @import "auth";
 @import "surveys";
@@ -117,7 +116,7 @@ h1, h2, h3 {
 
 h1:first-of-type {
   margin-top: 0;
-  margin-bottom: .75em;
+  margin-bottom: .75rem;
 }
 
 h1, h2, h3, h4 {
@@ -154,9 +153,16 @@ h1.border {
 }
 
 .submenu {
+  margin: 0;
+  padding: 0;
   margin-bottom: 3rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #ccc;
+
+  li {
+    display: inline-block;
+    margin-right: 1.5rem;
+  }
 }
 
 .page-description {
