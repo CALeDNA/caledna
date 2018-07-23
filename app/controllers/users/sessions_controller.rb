@@ -14,11 +14,19 @@ module Users
 
     def after_sign_in_path_for(resource)
       name = resource.username
-      "#{ENV.fetch('CAL_BASE_URL')}/auth-page?name=#{name}"
+      if Rails.env.staging?
+        root_path
+      else
+        "#{ENV.fetch('CAL_BASE_URL')}/auth-page?name=#{name}"
+      end
     end
 
     def after_sign_out_path_for(_)
-      "#{ENV.fetch('CAL_BASE_URL')}/auth-page?name="
+      if Rails.env.staging?
+        root_path
+      else
+        "#{ENV.fetch('CAL_BASE_URL')}/auth-page?name="
+      end
     end
   end
 end
