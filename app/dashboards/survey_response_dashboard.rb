@@ -4,11 +4,11 @@ require 'administrate/base_dashboard'
 
 class SurveyResponseDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
-    survey: Field::BelongsTo,
+    survey: Field::BelongsTo.with_options(searchable: true, searchable_field: 'name'),
     survey_answers: Field::HasMany,
-    user: Field::BelongsTo,
+    user: Field::BelongsTo.with_options(searchable: true, searchable_field: 'username'),
     id: Field::Number,
-    total_score: Field::Number,
+    total_score: Field::Number.with_options(searchable: true),
     passed: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
