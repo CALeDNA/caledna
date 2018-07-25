@@ -7,6 +7,7 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     id: Field::Number,
     name: Field::String,
     description: Field::Text,
+    published: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
@@ -14,18 +15,21 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :name,
     :description,
+    :published,
     :created_at
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :name,
     :description,
+    :published,
     :created_at,
     :updated_at,
   ].freeze
 
   FORM_ATTRIBUTES = [
     :name,
+    :published,
     :description,
   ].freeze
 

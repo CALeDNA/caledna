@@ -29,11 +29,15 @@ class ResearchProjectsController < ApplicationController
     'research_project_extractions.research_project_id ' \
     'LEFT JOIN samples ' \
     'ON research_project_extractions.sample_id = samples.id ' \
-    'AND latitude is not null ' \
-    'WHERE samples.missing_coordinates = false ' \
-    "AND samples.status_cd != 'processed_invalid_sample' " \
-    'GROUP BY research_projects.id ' \
+    "WHERE samples.status_cd != 'processed_invalid_sample' "
+
+    unless current_researcher.present?
+      sql += 'AND research_projects.published = true ' \
+    end
+
+    sql += 'GROUP BY research_projects.id ' \
     'ORDER BY research_projects.name;'
+
     @projects ||= ActiveRecord::Base.connection.execute(sql)
   end
   # rubocop:enable Metrics/MethodLength
@@ -48,8 +52,7 @@ class ResearchProjectsController < ApplicationController
       'FROM research_project_extractions ' \
       'JOIN samples ' \
       'ON samples.id = research_project_extractions.sample_id ' \
-      'WHERE samples.latitude is NOT NULL AND samples.longitude IS NOT NULL ' \
-      "AND research_project_extractions.research_project_id = #{params[:id]};"
+      "WHERE research_project_extractions.research_project_id = #{params[:id]};"
 
     @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
                                       .pluck('sample_id')
