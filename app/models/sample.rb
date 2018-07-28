@@ -18,7 +18,6 @@ class Sample < ApplicationRecord
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do
     where.not(status_cd: :submitted).where.not(status_cd: :rejected)
-    .where(missing_coordinates: false)
     .where.not(status_cd: :duplicate_barcode)
   end)
 
