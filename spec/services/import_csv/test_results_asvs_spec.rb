@@ -33,6 +33,18 @@ describe ImportCsv::TestResultsAsvs do
 
       expect(subject(header)).to eq('ShrubBlank1')
     end
+
+    it 'converts 2-digit header into valid barcode' do
+      header = 'X16S_12A1.S18.L001'
+
+      expect(subject(header)).to eq('K0012-LA-S1')
+    end
+
+    it 'converts 3-digit header into valid barcode' do
+      header = 'X16S_123A1.S18.L001'
+
+      expect(subject(header)).to eq('K0123-LA-S1')
+    end
   end
 
   describe('#import_csv') do

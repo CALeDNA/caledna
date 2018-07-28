@@ -22,8 +22,9 @@ module Admin
       def update_existing
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
 
-        cal_taxon.taxonID = update_existing_params[:taxonID]
+        cal_taxon.taxonID = update_existing_params[:taxon_id]
         cal_taxon.normalized = true
+
         if cal_taxon.save(validate: false)
           redirect_to admin_labwork_normalize_ncbi_taxa_path
         else
@@ -31,56 +32,11 @@ module Admin
         end
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      # NOTE: used when creating new taxon for test results
-      def update_create
-        authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
-
-        ActiveRecord::Base.transaction do
-          cal_taxon.update!(create_params.merge(normalized: true))
-          Taxon.create!(create_params)
-        end
-        render json: { status: :ok }
-      rescue ActiveRecord::RecordInvalid => exception
-        render json: {
-          status: :unprocessable_entity,
-          errors: exception.message.split('Validation failed: ').last
-                           .split(', ')
-        }
-      end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-
       private
 
       def update_existing_params
-        params.require(:cal_taxon).permit(:taxonID)
+        params.require(:cal_taxon).permit(:taxon_id)
       end
-
-      # rubocop:disable Metrics/MethodLength
-      def create_params
-        params.require(:normalize_taxon).permit(
-          :taxonID,
-          :kingdom,
-          :phylum,
-          :className,
-          :order,
-          :family,
-          :genus,
-          :specificEpithet,
-          :datasetID,
-          :parentNameUsageID,
-          :taxonomicStatus,
-          :taxonRank,
-          :parentNameUsageID,
-          :scientificName,
-          :canonicalName,
-          :genericName,
-          hierarchy: %i[
-            kingdom phylum class order family genus species
-          ]
-        )
-      end
-      # rubocop:enable Metrics/MethodLength
 
       def cal_taxon
         id = params[:id] || params[:normalize_ncbi_taxon_id]
