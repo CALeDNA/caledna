@@ -83,6 +83,7 @@ module ImportCsv
       valid_extractions = {}
 
       sample_cells.each do |cell|
+        next if cell.nil?
         barcode = convert_header_to_barcode(cell)
         extraction = find_extraction_from_barcode(barcode,
                                                   extraction_type_id,
