@@ -19,6 +19,7 @@ module ImportCsv
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_asv_csv(path, research_project_id, extraction_type_id, delimiter)
       data = CSV.read(path, headers: true, col_sep: delimiter)
+
       first_row = data.first
       sample_cells = first_row.headers[1..first_row.headers.size]
       extractions = get_extractions_from_headers(
@@ -40,13 +41,16 @@ module ImportCsv
       if /K\d{4}/.match?(sample)
         parts = sample.split('.')
 
+        # NOTE: X16S_K0078.C2.S59.L001
         if parts.length == 4
           kit = parts.first
           location_letter = parts.second.split('').first
           sample_number = parts.second.split('').second
           "#{kit}-L#{location_letter}-S#{sample_number}"
+
+        # NOTE: PITS_K0001A1.S1.L001
         elsif parts.length == 3
-          match = /(K\d{4})(\w)(\d)/.match(cell)
+          match = /^(K\d{4})(\w)(\d)/.match(parts.first)
           kit = match[1]
           location_letter = match[2]
           sample_number = match[3]
@@ -54,6 +58,16 @@ module ImportCsv
         else
           raise ImportError, 'invalid sample format'
         end
+
+      # NOTE: X16S_11A1.S18.L001
+      elsif /^\d{1,4}\w\d/.match?(sample)
+        parts = sample.split('.')
+
+        match = /(\d{1,4})(\w)(\d)/.match(parts.first)
+        kit = "K#{match[1].rjust(4, '0')}"
+        location_letter = match[2]
+        sample_number = match[3]
+        "#{kit}-L#{location_letter}-S#{sample_number}"
       else
         sample.split('.').first
       end
