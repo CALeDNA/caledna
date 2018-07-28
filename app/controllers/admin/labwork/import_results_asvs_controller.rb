@@ -17,12 +17,12 @@ module Admin
 
         results = import_csv(file, research_project_id, extraction_type_id)
         if results.valid?
-          flash[:success] = 'DNA results imported'
+          flash[:success] = 'Importing ASVs...'
+          redirect_to admin_labwork_import_csv_status_index_path
         else
           flash[:error] = results.errors
+          redirect_to admin_labwork_import_results_asvs_path
         end
-
-        redirect_to admin_root_path
       end
 
       private

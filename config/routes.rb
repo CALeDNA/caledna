@@ -73,6 +73,7 @@ Rails.application.routes.draw do
       resources :import_results_asvs, only: %i[index create]
       resources :import_results_taxa, only: %i[index create]
       resources :import_processing_extractions, only: %i[index create]
+      resources :import_csv_status, only: %i[index]
 
       # resources :normalize_gbif_taxa, only: %i[index show] do
       #   put 'update_existing' => 'normalize_gbif_taxa#update_existing'
