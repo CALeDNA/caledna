@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_23_041953) do
+ActiveRecord::Schema.define(version: 2018_07_28_152152) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 2018_07_23_041953) do
     t.integer "taxonID"
     t.text "primers", default: [], array: true
     t.integer "sample_id"
+    t.integer "count", default: 0
     t.index ["extraction_id"], name: "index_asvs_on_extraction_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
@@ -357,15 +358,16 @@ ActiveRecord::Schema.define(version: 2018_07_23_041953) do
     t.index ["sample_id"], name: "index_photos_on_sample_id"
   end
 
-  create_table "research_project_extractions", id: :serial, force: :cascade do |t|
+  create_table "research_project_sources", id: :serial, force: :cascade do |t|
     t.integer "research_project_id"
-    t.integer "extraction_id"
+    t.integer "sourceable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "sample_id"
-    t.index ["extraction_id"], name: "index_research_project_extractions_on_extraction_id"
-    t.index ["research_project_id"], name: "index_research_project_extractions_on_research_project_id"
-    t.index ["sample_id"], name: "index_research_project_extractions_on_sample_id"
+    t.string "sourceable_type"
+    t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
+    t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
+    t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
   end
 
   create_table "research_projects", id: :serial, force: :cascade do |t|
@@ -597,7 +599,7 @@ ActiveRecord::Schema.define(version: 2018_07_23_041953) do
   add_foreign_key "extractions", "samples"
   add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
   add_foreign_key "photos", "samples"
-  add_foreign_key "research_project_extractions", "extractions"
-  add_foreign_key "research_project_extractions", "research_projects"
+  add_foreign_key "research_project_sources", "extractions", column: "sourceable_id"
+  add_foreign_key "research_project_sources", "research_projects"
   add_foreign_key "samples", "field_data_projects"
 end
