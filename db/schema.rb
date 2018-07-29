@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_28_152152) do
+ActiveRecord::Schema.define(version: 2018_07_29_141601) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -245,7 +245,7 @@ ActiveRecord::Schema.define(version: 2018_07_28_152152) do
     t.string "taxonRank", limit: 255
     t.string "kingdom", limit: 255
     t.string "phylum", limit: 255
-    t.string "class", limit: 255
+    t.string "className", limit: 255
     t.string "order", limit: 255
     t.string "family", limit: 255
     t.string "genus", limit: 255
@@ -253,7 +253,7 @@ ActiveRecord::Schema.define(version: 2018_07_28_152152) do
     t.string "rights", limit: 255
     t.string "rightsHolder", limit: 255
     t.index "lower((\"scientificName\")::text)", name: "observations_scientificname_idx"
-    t.index ["kingdom", "phylum", "class", "order", "family", "genus"], name: "observations_taxa_idx"
+    t.index ["kingdom", "phylum", "className", "order", "family", "genus"], name: "observations_taxa_idx"
     t.index ["taxonID"], name: "observations_taxonid_idx"
     t.index ["taxonRank"], name: "observations_taxonrank_idx"
   end
@@ -264,12 +264,12 @@ ActiveRecord::Schema.define(version: 2018_07_28_152152) do
     t.string "taxonRank", limit: 255
     t.string "kingdom", limit: 255
     t.string "phylum", limit: 255
-    t.string "class", limit: 255
+    t.string "className", limit: 255
     t.string "order", limit: 255
     t.string "family", limit: 255
     t.string "genus", limit: 255
     t.index "lower((\"scientificName\")::text)", name: "taxa_scientificname_idx"
-    t.index ["kingdom", "phylum", "class", "order", "family", "genus"], name: "taxa_taxa_idx"
+    t.index ["kingdom", "phylum", "className", "order", "family", "genus"], name: "taxa_taxa_idx"
     t.index ["taxonID"], name: "taxa_taxonid_idx"
     t.index ["taxonRank"], name: "taxa_taxonrank_idx"
   end
@@ -599,7 +599,6 @@ ActiveRecord::Schema.define(version: 2018_07_28_152152) do
   add_foreign_key "extractions", "samples"
   add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
   add_foreign_key "photos", "samples"
-  add_foreign_key "research_project_sources", "extractions", column: "sourceable_id"
   add_foreign_key "research_project_sources", "research_projects"
   add_foreign_key "samples", "field_data_projects"
 end
