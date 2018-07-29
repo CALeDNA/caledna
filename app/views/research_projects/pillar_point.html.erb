@@ -20,5 +20,14 @@
     </div>
   </div>
 
+  <% if params[:view] == 'list' %>
+    <%= render partial: "samples/list",
+      locals: { samples: @samples, asvs_count: @asvs_count }  %>
+  <% else %>
+    <%= render partial: "pillar_point_map", locals: { samples: @samples,
+    asvs_count: @asvs_count,
+    inat_observations: @inat_observations,
+    initial_lat: nil, initial_lng: nil } %>
+  <% end %>
 
 <% end %>
