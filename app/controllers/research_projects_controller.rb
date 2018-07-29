@@ -19,12 +19,52 @@ class ResearchProjectsController < ApplicationController
     @samples = project.present? ? paginated_samples : []
     @project = project
     @asvs_count = project.present? ? asvs_count : []
-
+    @stats = stats
 
     render_file
   end
 
   private
+
+  def stats
+    { inat_stats: inat_stats, cal_stats: cal_stats}
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def inat_stats
+    observations = inat_observations.count
+    unique_organisms =
+      InatObservation
+      .select('DISTINCT("taxonID")')
+      .joins(:research_project_sources)
+      .where("research_project_sources.sourceable_type = 'InatObservation'")
+      .where('research_project_sources.research_project_id = ?', project.id)
+      .count
+
+    {
+      occurences: observations,
+      organisms: unique_organisms
+    }
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  # rubocop:disable Metrics/MethodLength
+  def cal_stats
+    samples = ResearchProjectSource.cal.where(research_project: project).count
+    unique_organisms =
+      Asv
+      .select('DISTINCT("taxonID")')
+      .joins('JOIN research_project_sources ON sourceable_id = extraction_id')
+      .where("research_project_sources.sourceable_type = 'Extraction'")
+      .where('research_project_sources.research_project_id = ?', project.id)
+      .count
+
+    {
+      occurences: samples,
+      organisms: unique_organisms
+    }
+  end
+  # rubocop:enable Metrics/MethodLength
 
   def render_file
     if project.name == 'Pillar Point'
