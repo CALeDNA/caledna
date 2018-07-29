@@ -18,8 +18,8 @@ class Extraction < ApplicationRecord
 
   # https://github.com/rails/rails/issues/29123
   # NOTE: starting in rails 5.1, has_many must be before has_many through
-  has_many :research_project_extractions
-  has_many :research_projects, through: :research_project_extractions
+  has_many :research_project_sources, as: :sourceable
+  has_many :research_projects, through: :research_project_sources
 
   # TODO: decide what to do with priority_sequencing
   # as_enum :priority_sequencing, %i[none low high], map: :string

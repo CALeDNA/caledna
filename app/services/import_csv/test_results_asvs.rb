@@ -90,7 +90,7 @@ module ImportCsv
                                                   :results_completed)
         valid_extractions[cell] = extraction
 
-        ImportCsvCreateResearchProjectExtractionJob
+        ImportCsvCreateResearchProjectSourceJob
           .perform_later(extraction, research_project_id)
       end
       valid_extractions

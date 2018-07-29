@@ -25,12 +25,12 @@ module ImportCsv
         }
         extraction = Extraction.where(extraction_data).first_or_create
 
-        research_extraction_data = {
-          extraction: extraction,
+        sourceable_data = {
+          sourceable: extraction,
           research_project_id: research_project_id
         }
-        ResearchProjectExtraction.where(research_extraction_data)
-                                 .first_or_create
+        ResearchProjectSource.where(sourceable_data)
+                             .first_or_create
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

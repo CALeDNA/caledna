@@ -19,7 +19,7 @@ module ImportCsv
                                                   extraction_type_id,
                                                   :processing_sample)
 
-        ImportCsvCreateResearchProjectExtractionJob
+        ImportCsvCreateResearchProjectSourceJob
           .perform_later(extraction, research_project_id)
 
         ImportCsvUpdateExtractionDetailsJob

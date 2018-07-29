@@ -163,11 +163,11 @@ describe ImportCsv::ProcessingExtractions do
     let(:extraction_type) { create(:extraction_type) }
     let(:research_project) { create(:research_project) }
 
-    it 'adds ImportCsvCreateResearchProjectExtractionJob to queue' do
+    it 'adds ImportCsvCreateResearchProjectSourceJob to queue' do
       create(:researcher, username: 'user1')
 
       expect { subject(file, research_project.id, extraction_type.id) }
-        .to have_enqueued_job(ImportCsvCreateResearchProjectExtractionJob)
+        .to have_enqueued_job(ImportCsvCreateResearchProjectSourceJob)
     end
 
     it 'adds ImportCsvUpdateExtractionDetailsJob to queue' do

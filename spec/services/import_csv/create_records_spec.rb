@@ -5,45 +5,45 @@ require 'rails_helper'
 describe ImportCsv::CreateRecords do
   let(:dummy_class) { Class.new { extend ImportCsv::CreateRecords } }
 
-  describe '#create_research_project_extraction' do
+  describe '#create_research_project_source' do
     def subject(extraction, research_project_id)
-      dummy_class.create_research_project_extraction(extraction,
-                                                     research_project_id)
+      dummy_class.create_research_project_source(extraction,
+                                                 research_project_id)
     end
 
     let(:research_project) { create(:research_project) }
     let(:sample) { create(:sample) }
     let(:extraction) { create(:extraction, sample: sample) }
 
-    context 'when ResearchProjectExtraction does not exist' do
-      it 'creates a new ResearchProjectExtraction' do
+    context 'when ResearchProjectSource does not exist' do
+      it 'creates a new ResearchProjectSource' do
         expect { subject(extraction, research_project.id) }
-          .to change(ResearchProjectExtraction, :count).by(1)
+          .to change(ResearchProjectSource, :count).by(1)
       end
 
-      it 'adds related sample_id to ResearchProjectExtraction' do
+      it 'adds related sample_id to ResearchProjectSource' do
         subject(extraction, research_project.id)
 
-        expect(ResearchProjectExtraction.first.sample_id).to eq(sample.id)
+        expect(ResearchProjectSource.first.sample_id).to eq(sample.id)
       end
     end
 
-    context 'when ResearchProjectExtraction does exist' do
-      it 'does not create a ResearchProjectExtraction' do
-        create(:research_project_extraction,
-               extraction: extraction,
+    context 'when ResearchProjectSource does exist' do
+      it 'does not create a ResearchProjectSource' do
+        create(:research_project_source,
+               sourceable: extraction,
                sample: sample,
                research_project: research_project)
 
         expect { subject(extraction, research_project.id) }
-          .to change(ResearchProjectExtraction, :count).by(0)
+          .to change(ResearchProjectSource, :count).by(0)
       end
     end
   end
 
   describe '#create_asv' do
     def subject(cell, extraction, cal_taxon)
-      dummy_class.create_asv(cell, extraction, cal_taxon)
+      dummy_class.create_asv(cell, extraction, cal_taxon, 1)
     end
     let(:sample) { create(:sample) }
     let(:extraction) { create(:extraction, sample: sample) }
@@ -79,7 +79,7 @@ describe ImportCsv::CreateRecords do
       it 'does not create asv' do
         cell = 'K0001.A1'
         create(:asv, extraction: extraction, sample: sample,
-                     taxonID: cal_taxon.taxonID)
+                     taxonID: cal_taxon.taxonID, count: 1)
 
         expect { subject(cell, extraction, cal_taxon) }
           .to change(Asv, :count).by(0)
@@ -88,7 +88,7 @@ describe ImportCsv::CreateRecords do
       it 'adds new primer if cell has primer info' do
         cell = 'X12_K0001.A1'
         create(:asv, extraction: extraction, taxonID: cal_taxon.taxonID,
-                     sample: sample, primers: ['X16'])
+                     sample: sample, primers: ['X16'], count: 1)
         subject(cell, extraction, cal_taxon)
         asv = Asv.last
 

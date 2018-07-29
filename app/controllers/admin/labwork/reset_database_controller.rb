@@ -58,7 +58,7 @@ module Admin
 
       def labwork_models
         [
-          Asv, ResearchProjectExtraction, Extraction,
+          Asv, ResearchProjectSource, Extraction,
           ExtractionType, CalTaxon
         ]
       end

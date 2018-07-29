@@ -12,7 +12,7 @@ class ResearchProjectsController < ApplicationController
     # @taxa = Taxon.where(taxonID: taxon_ids).order(:taxonRank, :canonicalName)
     @taxa = []
     @samples = paginated_samples
-    @project = ResearchProject.includes(extractions: :sample).find(params[:id])
+    @project = ResearchProject.find(params[:id])
     @asvs_count = asvs_count
   end
 
@@ -24,11 +24,11 @@ class ResearchProjectsController < ApplicationController
     sql = 'SELECT research_projects.id, research_projects.name, ' \
     'COUNT(DISTINCT(samples.id)) ' \
     'FROM research_projects ' \
-    'LEFT JOIN research_project_extractions ' \
+    'LEFT JOIN research_project_sources ' \
     'ON research_projects.id = ' \
-    'research_project_extractions.research_project_id ' \
+    'research_project_sources.research_project_id ' \
     'LEFT JOIN samples ' \
-    'ON research_project_extractions.sample_id = samples.id ' \
+    'ON research_project_sources.sample_id = samples.id ' \
     "WHERE samples.status_cd != 'processed_invalid_sample' "
 
     unless current_researcher.present?
@@ -49,19 +49,22 @@ class ResearchProjectsController < ApplicationController
 
   def sample_ids
     sql = 'SELECT sample_id ' \
-      'FROM research_project_extractions ' \
+      'FROM research_project_sources ' \
       'JOIN samples ' \
-      'ON samples.id = research_project_extractions.sample_id ' \
-      "WHERE research_project_extractions.research_project_id = #{params[:id]};"
+      'ON samples.id = research_project_sources.sample_id ' \
+      "WHERE research_project_sources.research_project_id = #{params[:id]};"
 
     @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
                                       .pluck('sample_id')
   end
 
   def extraction_ids
-    @extraction_ids ||= ResearchProjectExtraction
-                        .where(research_project_id: params[:id])
-                        .pluck(:extraction_id)
+    @extraction_ids ||= ResearchProjectSource
+                        .where(
+                          research_project_id: params[:id],
+                          sourceable: Extraction
+                        )
+                        .pluck(:sourceable_id)
   end
 
   def taxon_ids

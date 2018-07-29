@@ -25,18 +25,19 @@ module ImportCsv
       asv.primers << primer
       asv.save
     end
-    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-    def create_research_project_extraction(extraction, research_project_id)
-      project =
-        ResearchProjectExtraction
-        .where(extraction: extraction,
-               sample: extraction.sample,
-               research_project_id: research_project_id)
-        .first_or_create
+    def create_research_project_source(sourceable, research_project_id)
+      attributes = {
+        sourceable: sourceable,
+        research_project_id: research_project_id
+      }
+      attributes[:sample] = sourceable.sample if sourceable.is_a?(Extraction)
+
+      project = ResearchProjectSource.where(attributes).first_or_create
 
       return if project.valid?
-      raise ImportError, 'ResearchProjectExtraction not created'
+      raise ImportError, 'ResearchProjectSource not created'
     end
 
     def update_extraction_details(extraction, extraction_type_id, row)
