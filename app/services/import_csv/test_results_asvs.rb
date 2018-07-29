@@ -99,10 +99,11 @@ module ImportCsv
 
     def create_asvs(row, sample_cells, extractions, cal_taxon)
       sample_cells.each do |cell|
-        next if row[cell].to_i < 1
+        count = row[cell].to_i
+        next if count < 1
 
         extraction = extractions[cell]
-        ImportCsvCreateAsvJob.perform_later(cell, extraction, cal_taxon)
+        ImportCsvCreateAsvJob.perform_later(cell, extraction, cal_taxon, count)
       end
     end
   end

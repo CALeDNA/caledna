@@ -9,8 +9,6 @@ module CustomCounter
     end
   end
 
-  private
-
   def get_count(taxon_id)
     conn = ActiveRecord::Base.connection
 
