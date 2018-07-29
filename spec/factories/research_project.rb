@@ -2,5 +2,6 @@
 
 FactoryBot.define do
   factory :research_project do
+    name 'name'
   end
 end

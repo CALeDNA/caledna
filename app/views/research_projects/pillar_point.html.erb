@@ -5,6 +5,8 @@
 
   <p><%= @project.description %></p>
 
+  <%= @inat_observations.count %>
+
   <h2>Samples</h2>
 
   <div class="samples-menu">
@@ -18,13 +20,5 @@
     </div>
   </div>
 
-  <% if params[:view] == 'list' %>
-    <%= render partial: "samples/list",
-      locals: { samples: @samples, asvs_count: @asvs_count }  %>
-  <% else %>
-    <%= render partial: "samples/map", locals: { samples: @samples,
-    asvs_count: @asvs_count,
-    initial_lat: nil, initial_lng: nil } %>
-  <% end %>
 
 <% end %>

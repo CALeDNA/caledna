@@ -108,7 +108,6 @@ Rails.application.routes.draw do
   resource :taxa_search, only: %i[show]
   resources :field_data_projects, only: %i[index show]
   resources :taxa, only: %i[index show create]
-  resources :research_projects, only: %i[index show]
   resources :events, only: %i[index show] do
     resources :event_registrations, only: %i[create]
     put 'event_registrations_update_status' =>
@@ -117,11 +116,23 @@ Rails.application.routes.draw do
   resources :uploads, only: %i[create destroy]
   resource :profile, only: [:show]
 
-  end
-
   resources :surveys, only: %i[show] do
     resources :survey_responses, only: %i[create show]
   end
+
+  tables = ActiveRecord::Base.connection.tables
+  valid_model = tables.include?('research_projects') &&
+                ResearchProject.method_defined?(:slug)
+
+  if valid_model
+    ResearchProject.all.each do |project|
+      get "research_projects/#{project.slug}",
+        to: "research_projects##{project.slug.underscore}",
+        defaults: { id: project.slug }
+    end
+  end
+
+  resources :research_projects, only: %i[index show]
 
   # get '/safety-training-quiz',
   #     to: 'surveys#show',

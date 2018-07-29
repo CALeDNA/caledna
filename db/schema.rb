@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_29_141601) do
+ActiveRecord::Schema.define(version: 2018_07_29_153314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -214,8 +214,7 @@ ActiveRecord::Schema.define(version: 2018_07_29_141601) do
     t.index ["highlightable_type"], name: "index_highlights_on_highlightable_type"
   end
 
-  create_table "inat_observations", id: false, force: :cascade do |t|
-    t.integer "id"
+  create_table "inat_observations", id: :integer, default: nil, force: :cascade do |t|
     t.string "occurrenceID", limit: 255
     t.string "basisOfRecord", limit: 255
     t.string "modified", limit: 255
@@ -376,6 +375,7 @@ ActiveRecord::Schema.define(version: 2018_07_29_141601) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "published", default: false
+    t.string "slug"
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|

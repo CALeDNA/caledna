@@ -9,14 +9,48 @@ class ResearchProjectsController < ApplicationController
   end
 
   def show
-    # @taxa = Taxon.where(taxonID: taxon_ids).order(:taxonRank, :canonicalName)
-    @taxa = []
-    @samples = paginated_samples
-    @project = ResearchProject.find(params[:id])
-    @asvs_count = asvs_count
+    @samples = project.present? ? paginated_samples : []
+    @project = project
+    @asvs_count = project.present? ? asvs_count : []
+  end
+
+  def pillar_point
+    @inat_observations = inat_observations
+    @samples = project.present? ? paginated_samples : []
+    @project = project
+    @asvs_count = project.present? ? asvs_count : []
+
+
+    render_file
   end
 
   private
+
+  def render_file
+    if project.name == 'Pillar Point'
+    end
+  end
+
+  def inat_observations
+    ids = ResearchProjectSource.inat.where(research_project: project)
+                               .pluck(:sourceable_id)
+
+    @inat_observations ||= InatObservation.where(id: ids)
+  end
+
+  def project
+    @project ||= begin
+      where_sql = params[:id].to_i.zero? ? 'slug = ?' : 'id = ?'
+
+      if current_researcher
+        ResearchProject.where(where_sql, params[:id]).first
+      else
+        ResearchProject.where(where_sql, params[:id])
+                       .where(published: true)
+                       .first
+      end
+    end
+  end
 
   # rubocop:disable Metrics/MethodLength
   def projects
@@ -52,7 +86,7 @@ class ResearchProjectsController < ApplicationController
       'FROM research_project_sources ' \
       'JOIN samples ' \
       'ON samples.id = research_project_sources.sample_id ' \
-      "WHERE research_project_sources.research_project_id = #{params[:id]};"
+      "WHERE research_project_sources.research_project_id = #{project.id};"
 
     @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
                                       .pluck('sample_id')
@@ -65,12 +99,6 @@ class ResearchProjectsController < ApplicationController
                           sourceable: Extraction
                         )
                         .pluck(:sourceable_id)
-  end
-
-  def taxon_ids
-    @taxon_ids ||= Asv.where(extraction_id: extraction_ids)
-                      .select(:taxonID)
-                      .uniq.map(&:taxonID)
   end
 
   def query_string
