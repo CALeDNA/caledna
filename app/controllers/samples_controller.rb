@@ -34,7 +34,7 @@ class SamplesController < ApplicationController
   def organisms_by_extraction(extraction_id)
     Asv.joins(ncbi_node: :ncbi_division)
        .joins('LEFT JOIN external_resources ON ' \
-         'external_resources.taxon_id = ncbi_nodes.taxon_id')
+         'external_resources.ncbi_id = ncbi_nodes.taxon_id')
        .select('lineage, ncbi_nodes.taxon_id, iucn_status, name, rank')
        .where(extraction_id: extraction_id)
   end

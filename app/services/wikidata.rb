@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class Wikidata
   require 'sparql/client'
 
@@ -136,7 +135,7 @@ class Wikidata
   end
 
   def ncbi_link
-    id = external_resource&.taxon_id || taxon_id
+    id = external_resource&.ncbi_id || taxon_id
     return if id.blank?
     url = 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id='
     OpenStruct.new(
@@ -427,4 +426,3 @@ class Wikidata
     )
   end
 end
-# rubocop:enable Metrics/ClassLength

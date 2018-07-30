@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :external_resource do
-    taxon_id { Faker::Number.number(5) }
+    id { Faker::Number.number(5) }
+    ncbi_id { Faker::Number.number(5) }
   end
 end

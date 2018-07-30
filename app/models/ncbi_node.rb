@@ -23,7 +23,7 @@ class NcbiNode < ApplicationRecord
   has_many :ncbi_citations, through: :ncbi_citation_nodes
   belongs_to :ncbi_division, foreign_key: 'cal_division_id'
   has_many :asvs, foreign_key: 'taxonID'
-  has_one :external_resource, foreign_key: 'taxon_id'
+  has_one :external_resource, foreign_key: 'ncbi_id'
 
   # rubocop:disable Lint/AmbiguousOperator
   delegate *LINKS, to: :wikidata_data

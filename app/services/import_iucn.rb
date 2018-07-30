@@ -44,14 +44,14 @@ class ImportIucn
 
   def update_iucn_status(data, taxon)
     status = IucnStatus::CATEGORIES[data[:category].to_sym]
-    resource = ExternalResource.find_by(taxon_id: taxon.id)
+    resource = ExternalResource.find_by(ncbi_id: taxon.id)
     iucn_data = { iucn_status: status, iucn_id: data[:taxonid] }
 
     if resource.present?
       return if resource.iucn_status.present?
       resource.update(iucn_data)
     else
-      ExternalResource.create(iucn_data.merge(taxon_id: taxon.id))
+      ExternalResource.create(iucn_data.merge(ncbi_id: taxon.id))
     end
   end
 

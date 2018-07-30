@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_29_153314) do
+ActiveRecord::Schema.define(version: 2018_07_29_224914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,7 +103,8 @@ ActiveRecord::Schema.define(version: 2018_07_29_153314) do
     t.index ["field_data_project_id"], name: "index_events_on_field_data_project_id"
   end
 
-  create_table "external_resources", primary_key: "taxon_id", id: :integer, default: nil, force: :cascade do |t|
+  create_table "external_resources", force: :cascade do |t|
+    t.integer "ncbi_id", default: -> { "nextval('external_resources_taxon_id_seq'::regclass)" }
     t.integer "eol_id"
     t.integer "gbif_id"
     t.string "wikidata_image"
@@ -117,9 +118,10 @@ ActiveRecord::Schema.define(version: 2018_07_29_153314) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
+    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "iucn_status"
+    t.string "source"
   end
 
   create_table "extraction_types", id: :serial, force: :cascade do |t|

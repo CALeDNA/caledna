@@ -76,7 +76,7 @@ describe ImportIucn do
       context 'and external resource exists' do
         context 'and external resource has iucn info' do
           let!(:external_resource) do
-            create(:external_resource, taxon_id: taxon.id,
+            create(:external_resource, ncbi_id: taxon.id,
                                        iucn_status: 'status', iucn_id: 1)
           end
 
@@ -93,7 +93,7 @@ describe ImportIucn do
 
         context 'and external resource does not have iucn info' do
           let!(:external_resource) do
-            create(:external_resource, taxon_id: taxon.id)
+            create(:external_resource, ncbi_id: taxon.id)
           end
 
           it 'updates iucn data' do
