@@ -17,7 +17,7 @@ namespace :taxonomy_trees do
   end
 end
 
-# rubocop:disable Metrics/MethodLength, Metrics/LineLength, Metrics/ClassLength
+# rubocop:disable Metrics/MethodLength, Metrics/LineLength
 # rubocop:disable Metrics/AbcSize
 class TaxaTrees
   def accepted_taxa(rank, field)
@@ -196,5 +196,5 @@ class TaxaTrees
     file
   end
 end
-# rubocop:enable Metrics/MethodLength, Metrics/LineLength, Metrics/ClassLength
+# rubocop:enable Metrics/MethodLength, Metrics/LineLength
 # rubocop:enable Metrics/AbcSize

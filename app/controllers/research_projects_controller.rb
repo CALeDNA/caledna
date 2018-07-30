@@ -27,7 +27,7 @@ class ResearchProjectsController < ApplicationController
   private
 
   def stats
-    { inat_stats: inat_stats, cal_stats: cal_stats}
+    { inat_stats: inat_stats, cal_stats: cal_stats }
   end
 
   # rubocop:disable Metrics/MethodLength

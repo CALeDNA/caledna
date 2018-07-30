@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class Sample < ApplicationRecord
   include PgSearch
   include InsidePolygon
@@ -187,4 +186,3 @@ class Sample < ApplicationRecord
                "barcode #{barcode} is already taken")
   end
 end
-# rubocop:enable Metrics/ClassLength

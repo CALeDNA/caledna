@@ -63,10 +63,12 @@ module ApplicationHelper
     dropdown_active?(paths)
   end
 
+  # rubocop:disable Naming/AccessorMethodName
   def get_involved_active?
     paths = []
     dropdown_active?(paths)
   end
+  # rubocop:enable Naming/AccessorMethodName
 
   def dropdown_active?(paths)
     paths.any? { |p| request.fullpath.start_with? p }

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class Taxon < ApplicationRecord
   # taxonomicStatus: [accepted, doubtful, heterotypic synonym,
   # homotypic synonym, misapplied, proparte synonym, synonym]
@@ -207,4 +206,3 @@ class Taxon < ApplicationRecord
     @gbif_record ||= response['results'].last
   end
 end
-# rubocop:enable Metrics/ClassLength

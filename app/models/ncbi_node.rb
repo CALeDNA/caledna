@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class NcbiNode < ApplicationRecord
   LINKS = %i[
     bold_link
@@ -283,4 +282,3 @@ class NcbiNode < ApplicationRecord
     names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
   end
 end
-# rubocop:enable Metrics/ClassLength

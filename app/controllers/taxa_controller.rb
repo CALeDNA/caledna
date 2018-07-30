@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class TaxaController < ApplicationController
   def index
     # TODO: r-enable highlights
@@ -127,4 +126,3 @@ class TaxaController < ApplicationController
     query
   end
 end
-# rubocop:enable Metrics/ClassLength
