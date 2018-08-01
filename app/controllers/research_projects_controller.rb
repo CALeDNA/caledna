@@ -21,12 +21,14 @@ class ResearchProjectsController < ApplicationController
       @project = project
       @asvs_count = asvs_count
       @stats = stats
+      @occurences = occurences
     else
       @inat_observations = []
       @samples = []
       @project = nil
       @asvs_count = []
       @stats = []
+      @occurences = []
     end
   end
 
@@ -74,10 +76,17 @@ class ResearchProjectsController < ApplicationController
 
   def inat_observations
     ids = ResearchProjectSource.inat.where(research_project: project)
-                               .limit(20)
                                .pluck(:sourceable_id)
 
-    @inat_observations ||= InatObservation.where(id: ids)
+    InatObservation.where(id: ids)
+  end
+
+  def occurences
+    if params[:source] == 'inat'
+      paginated_inat_observations
+    else
+      paginated_samples
+    end
   end
 
   def project
@@ -119,9 +128,26 @@ class ResearchProjectsController < ApplicationController
   # rubocop:enable Metrics/MethodLength
 
   def samples
-    Sample.includes(:field_data_project).approved.order(:barcode)
+    Sample.approved.order(:barcode)
           .where(id: sample_ids)
   end
+
+  def paginated_samples
+    if params[:view]
+      samples.page(params[:page])
+    else
+      samples
+    end
+  end
+
+  def paginated_inat_observations
+    if params[:view]
+      Kaminari.paginate_array(inat_observations).page(params[:page])
+    else
+      inat_observations
+    end
+  end
+
 
   def sample_ids
     sql = 'SELECT sample_id ' \

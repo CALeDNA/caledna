@@ -1,4 +1,5 @@
 <% list_view = params[:view] == 'list' %>
+<% inat_source = params[:source] == 'inat' %>
 
 <% if @project.present? %>
   <h1><%= @project.name %></h1>
@@ -27,16 +28,29 @@
 
 
   <h2>Samples</h2>
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" class="js-source" data-source="cal" checked> CALeDNA
-    </label>
-  </div>
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" class="js-source" data-source="inat" checked> iNaturalist
-    </label>
-  </div>
+   <% if params[:view] == 'list' %>
+    <div class="radio">
+      <label>
+        <input type="radio" name="source" class="js-source-list" data-source="cal" <%= 'checked' unless inat_source %>> CALeDNA
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" name="source" class="js-source-list" data-source="inat" <%= 'checked' if inat_source %>> iNaturalist
+      </label>
+    </div>
+  <% else %>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" class="js-source" data-source="cal" checked=> CALeDNA
+      </label>
+    </div>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" class="js-source" data-source="inat" checked> iNaturalist
+      </label>
+    </div>
+  <% end %>
 
   <div class="samples-menu">
     <div class="btn-group" role="group" >
@@ -50,8 +64,8 @@
   </div>
 
   <% if params[:view] == 'list' %>
-    <%= render partial: "samples/list",
-      locals: { samples: @samples, asvs_count: @asvs_count }  %>
+    <%= render partial: "pillar_point_list",
+      locals: { occurences: @occurences, asvs_count: @asvs_count }  %>
   <% else %>
     <%= render partial: "pillar_point_map", locals: { samples: @samples,
     asvs_count: @asvs_count,
