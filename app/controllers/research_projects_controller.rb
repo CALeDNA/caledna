@@ -15,13 +15,19 @@ class ResearchProjectsController < ApplicationController
   end
 
   def pillar_point
-    @inat_observations = inat_observations
-    @samples = project.present? ? paginated_samples : []
-    @project = project
-    @asvs_count = project.present? ? asvs_count : []
-    @stats = stats
-
-    render_file
+    if project.present?
+      @inat_observations = inat_observations
+      @samples = paginated_samples
+      @project = project
+      @asvs_count = asvs_count
+      @stats = stats
+    else
+      @inat_observations = []
+      @samples = []
+      @project = nil
+      @asvs_count = []
+      @stats = []
+    end
   end
 
   private
@@ -66,13 +72,9 @@ class ResearchProjectsController < ApplicationController
   end
   # rubocop:enable Metrics/MethodLength
 
-  def render_file
-    if project.name == 'Pillar Point'
-    end
-  end
-
   def inat_observations
     ids = ResearchProjectSource.inat.where(research_project: project)
+                               .limit(20)
                                .pluck(:sourceable_id)
 
     @inat_observations ||= InatObservation.where(id: ids)
@@ -98,10 +100,10 @@ class ResearchProjectsController < ApplicationController
     sql = 'SELECT research_projects.id, research_projects.name, ' \
     'COUNT(DISTINCT(samples.id)) ' \
     'FROM research_projects ' \
-    'LEFT JOIN research_project_sources ' \
+    'JOIN research_project_sources ' \
     'ON research_projects.id = ' \
     'research_project_sources.research_project_id ' \
-    'LEFT JOIN samples ' \
+    'JOIN samples ' \
     'ON research_project_sources.sample_id = samples.id ' \
     "WHERE samples.status_cd != 'processed_invalid_sample' "
 

@@ -3,102 +3,155 @@
 <script>
 (function(){
 
-  var addressPoints = [
-  <% samples.each do |sample|  %>
-    <% next if sample.latitude.blank? || sample.longitude.blank? %>
-    [
-      <%= sample.latitude %>,
-      <%= sample.longitude %>,
-      <%= sample.id %>,
-      "<%= sample.barcode %>",
-      '<%= link_to sample.field_data_project_name,  field_data_project_path(id: sample.field_data_project_id) %>',
-      '<%= link_to sample.barcode, sample_path(id: sample.id) %>',
-      '<%= sample.status %>',
-      '<%= SamplesHelper.asvs_count(asvs_count, sample) %>'
-    ],
-  <% end %>
-  ]
+  // ======================
+  // setup map
+  // ======================
 
-  var iNatPoints = [
-    <% inat_observations.each do |obs| %>
-      <% next if obs.decimalLatitude.blank? || obs.decimalLongitude.blank? %>
-      [
-        <%= obs.decimalLatitude %>,
-        <%= obs.decimalLongitude %>,
-        <%= obs.id %>,
-        '<%= obs.scientificName %>',
-        '<%= obs.occurrenceID %>',
-      ],
-    <% end %>
-  ]
-
-
-
+  var initialLat = <%= initial_lat || 37.49547 %>
+  var initialLng =  <%= initial_lng || -122.496478 %>
   var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 30,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
   });
 
-
-  var redIcon = L.icon({
-    iconUrl: '<%= image_path "pin.png" %>',
-    iconSize: [20, 35],
-  })
-
-
-  var initialLat = <%= initial_lat || 37.49 %>
-  var initialLng =  <%= initial_lng || -122.48 %>
   var latlng = L.latLng(initialLat, initialLng);
+
   var map = L.map('mapid', {
-    center: latlng, zoom: <%= params[:zoom] || 13 %>,
+    center: latlng, zoom: <%= params[:zoom] || 15 %>,
     layers: [tiles],
     preferCanvas: true
   });
 
-  var markers = L.markerClusterGroup({ disableClusteringAtZoom: 13 });
+  var markers = { calMarkers: [], iNatMarkers: [] }
 
+  function drawINatMarkers() {
+    var iNatPoints = [
+      <% inat_observations.each do |obs| %>
+        <% next if obs.decimalLatitude.blank? || obs.decimalLongitude.blank? %>
+        [
+          <%= obs.decimalLatitude %>,
+          <%= obs.decimalLongitude %>,
+          <%= obs.id %>,
+          '<%= obs.scientificName %>',
+          '<%= obs.occurrenceID %>',
+        ],
+      <% end %>
+    ]
 
-    for (var i = 0; i < iNatPoints.length; i++) {
-    var a = iNatPoints[i];
-    var lat = a[0];
-    var lng = a[1];
-    var id = a[2];
-    var taxon = a[3];
-    var url = a[4];
+    iNatPoints.forEach(function(point) {
+      var lat = point[0];
+      var lng = point[1];
+      var id = point[2];
+      var taxon = point[3];
+      var url = point[4];
 
-    var body = '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
-      '<b>Source</b>: <a href="' + url + '">iNaturalist ' + id + '</a><br>' +
-      '<b>Species</b>: ' + taxon;
+      var body = '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
+        '<b>Source</b>: <a href="' + url + '">iNaturalist ' + id + '</a><br>' +
+        '<b>Species</b>: ' + taxon;
 
-
-   var circleMarker = L.circleMarker(L.latLng(lat, lng), {color: '#3388ff' }).addTo(map);
-   circleMarker.bindPopup(body);
-
+      var circleMarker = L.circleMarker(L.latLng(lat, lng), {color: '#3388ff' }).addTo(map);
+      circleMarker.bindPopup(body);
+      markers.iNatMarkers.push(circleMarker)
+    })
   }
 
+  function drawCalMarkers() {
+    var calPoints = [
+      <% samples.each do |sample|  %>
+        <% next if sample.latitude.blank? || sample.longitude.blank? %>
+        [
+          <%= sample.latitude %>,
+          <%= sample.longitude %>,
+          <%= sample.id %>,
+          "<%= sample.barcode %>",
+          '<%= link_to sample.field_data_project_name,  field_data_project_path(id: sample.field_data_project_id) %>',
+          '<%= link_to sample.barcode, sample_path(id: sample.id) %>',
+          '<%= sample.status %>',
+          '<%= SamplesHelper.asvs_count(asvs_count, sample) %>'
+        ],
+      <% end %>
+    ]
 
-  for (var i = 0; i < addressPoints.length; i++) {
-    var a = addressPoints[i];
-    var lat = a[0];
-    var lng = a[1];
-    var id = a[2];
-    var barcode = a[3];
-    var projectName = a[4];
-    var sampleLink = a[5];
-    var status = a[6];
-    var asvsCount = a[7];
-    var body =
-      '<b>Sample:</b> ' + sampleLink + '<br>' +
-      '<b>Project:</b> ' + projectName + '<br>' +
-      '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
-      '<b>Status</b>: ' + status + '<br>' +
-      '<b>Organism count</b>: ' + asvsCount + '<br>';
-    var marker = L.marker(L.latLng(lat, lng), { title: 'Sample ' + barcode });
-    marker.bindPopup(body);
-    markers.addLayer(marker);
+    calPoints.forEach(function(point) {
+      var lat = point[0];
+      var lng = point[1];
+      var id = point[2];
+      var barcode = point[3];
+      var projectName = point[4];
+      var sampleLink = point[5];
+      var status = point[6];
+      var asvsCount = point[7];
+      var body =
+        '<b>Sample:</b> ' + sampleLink + '<br>' +
+        '<b>Project:</b> ' + projectName + '<br>' +
+        '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
+        '<b>Status</b>: ' + status + '<br>' +
+        '<b>Organism count</b>: ' + asvsCount + '<br>';
+
+      var marker = L.marker(L.latLng(lat, lng), { title: 'Sample ' + barcode });
+      marker.bindPopup(body).addTo(map);
+      markers.calMarkers.push(marker)
+    })
   }
 
-  map.addLayer(markers);
+  // ======================
+  // app state
+  // ======================
+  var sources = { cal: true, inat: true }
+
+  // ======================
+  // select elements
+  // ======================
+
+  var sourceEls = document.querySelectorAll('.js-source')
+  sourceEls.forEach(function(el){
+    el.addEventListener('click', chooseSourceHandler)
+  })
+  // ======================
+  // click handlers
+  // ======================
+
+  function chooseSourceHandler(e) {
+    source = e.target.dataset.source
+    var isChecked = e.target.checked
+
+    if (source == 'cal') {
+      if(isChecked) {
+        if (!sources.cal) {
+          drawCalMarkers()
+          sources.cal = true
+        }
+      } else {
+        removeMarkers('cal')
+        sources.cal = false
+      }
+    } else if (source == 'inat') {
+      if(isChecked) {
+        if (!sources.inat) {
+          drawINatMarkers()
+          sources.inat = true
+        }
+      } else {
+        removeMarkers('inat')
+        sources.inat = false
+      }
+    }
+  }
+
+  function removeMarkers(source) {
+    if(source == 'cal') {
+      markers.calMarkers.forEach(function(marker){
+        map.removeLayer(marker);
+      })
+    } else {
+      markers.iNatMarkers.forEach(function(marker){
+        map.removeLayer(marker);
+      })
+    }
+  }
+
+  drawCalMarkers()
+  drawINatMarkers()
 
 })()
 </script>
