@@ -16,26 +16,151 @@ class ResearchProjectsController < ApplicationController
 
   def pillar_point
     if project.present?
-      @inat_observations = inat_observations
-      @samples = paginated_samples
       @project = project
-      @asvs_count = asvs_count
-      @stats = stats
-      @occurences = occurences
+
+      if params[:section] == 'organisms'
+        @division_counts = division_counts
+        @division_counts_unique = division_counts_unique
+      elsif params[:view] == 'list'
+        @occurrences = occurrences
+        @stats = stats
+        @asvs_count = asvs_count
+      else
+        @samples = samples
+        @stats = stats
+        @inat_observations = inat_observations
+        @asvs_count = asvs_count
+      end
     else
-      @inat_observations = []
-      @samples = []
-      @project = nil
-      @asvs_count = []
-      @stats = []
-      @occurences = []
+      blank_page
     end
   end
 
   private
 
+  def conn
+    @conn ||= ActiveRecord::Base.connection
+  end
+
+  def blank_page
+    @inat_observations = []
+    @samples = []
+    @project = nil
+    @asvs_count = []
+    @stats = []
+    @occurrences = []
+  end
+
+  def division_counts
+    {
+      cal: convert_counts(cal_division_stats),
+      inat: convert_counts(inat_division_stats)
+    }
+  end
+
+  def division_counts_unique
+    {
+      cal: convert_counts(cal_division_unique_stats),
+      inat: convert_counts(inat_division_unique_stats)
+    }
+  end
+
   def stats
     { inat_stats: inat_stats, cal_stats: cal_stats }
+  end
+
+  def convert_counts(results)
+    counts = {}
+    results.to_a.map do |result|
+      counts[result['category']] = result['count']
+    end
+    counts
+  end
+
+
+  def inat_division_stats
+    sql = <<-SQL
+      SELECT  kingdom as category, count("taxonID")
+      FROM "inat_observations"
+      JOIN "research_project_sources"
+      ON "research_project_sources"."sourceable_id" = "inat_observations"."id"
+      AND "research_project_sources"."sourceable_type" = 'InatObservation'
+      WHERE (research_project_sources.sourceable_type = 'InatObservation')
+    SQL
+
+    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
+
+    sql += <<-SQL
+      GROUP BY kingdom;
+    SQL
+
+    conn.execute(sql)
+  end
+
+  def inat_division_unique_stats
+    sql = <<-SQL
+      SELECT kingdom as category, count("taxonID") FROM (
+        SELECT  distinct("taxonID"), kingdom
+        FROM "inat_observations"
+        JOIN "research_project_sources"
+        ON "research_project_sources"."sourceable_id" = "inat_observations"."id"
+        AND "research_project_sources"."sourceable_type" = 'InatObservation'
+        WHERE (research_project_sources.sourceable_type = 'InatObservation')
+      SQL
+
+    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
+
+    sql += <<-SQL
+        ORDER BY kingdom
+      ) AS foo
+      GROUP BY kingdom;
+    SQL
+
+    conn.execute(sql)
+  end
+
+  def cal_division_stats
+    sql = <<-SQL
+      SELECT "name" AS category, COUNT(name) AS count
+      FROM "asvs"
+      INNER JOIN "ncbi_nodes"
+      ON "ncbi_nodes"."taxon_id" = "asvs"."taxonID"
+      INNER JOIN "ncbi_divisions"
+      ON "ncbi_divisions"."id" = "ncbi_nodes"."cal_division_id"
+      JOIN research_project_sources
+      ON sourceable_id = extraction_id
+      WHERE (research_project_sources.sourceable_type = 'Extraction')
+    SQL
+
+    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
+
+    sql += <<-SQL
+      GROUP BY name
+      ORDER BY name;
+    SQL
+
+    conn.execute(sql)
+  end
+
+  def cal_division_unique_stats
+    sql = <<-SQL
+      SELECT name as category, count("taxonID") FROM (
+      SELECT distinct("taxonID"), name
+      FROM "asvs"
+      JOIN "ncbi_nodes" ON "ncbi_nodes"."taxon_id" = "asvs"."taxonID"
+      JOIN "ncbi_divisions" ON "ncbi_divisions"."id" = "ncbi_nodes"."cal_division_id"
+      JOIN research_project_sources ON sourceable_id = extraction_id
+      WHERE (research_project_sources.sourceable_type = 'Extraction')
+    SQL
+    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
+
+    sql += <<-SQL
+      ORDER BY name
+      ) AS foo
+      GROUP BY name;
+    SQL
+
+    conn.execute(sql)
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -81,7 +206,7 @@ class ResearchProjectsController < ApplicationController
     InatObservation.where(id: ids)
   end
 
-  def occurences
+  def occurrences
     if params[:source] == 'inat'
       paginated_inat_observations
     else
@@ -133,11 +258,7 @@ class ResearchProjectsController < ApplicationController
   end
 
   def paginated_samples
-    if params[:view]
-      samples.page(params[:page])
-    else
-      samples
-    end
+    samples.page(params[:page])
   end
 
   def paginated_inat_observations

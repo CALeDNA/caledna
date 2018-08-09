@@ -1,0 +1,99 @@
+<%
+  cal_total = PillarPointHelper.total(@division_counts[:cal].values)
+  cal_unique_total = PillarPointHelper.total(@division_counts_unique[:cal].values)
+
+  inat_total = PillarPointHelper.total(@division_counts[:inat].values)
+  inat_unique_total = PillarPointHelper.total(@division_counts_unique[:inat].values)
+%>
+
+<div class="row">
+  <div class="col-sm-6">
+    <h2>CALeDNA</h2>
+    <h3>Total Organisms</h3>
+    <table class="table">
+      <tr>
+        <th>divisions</th>
+        <th>count</th>
+        <th>percent</th>
+      </tr>
+      <% PillarPointHelper.cal_counts(@division_counts[:cal]).each do |name, count| %>
+      <tr>
+        <td><%= name %></td>
+        <td><%= count %></td>
+        <td><%= percentage(count, cal_total)%></td>
+      </tr>
+      <% end %>
+      <tr>
+        <td>Total</td>
+        <td><%= cal_total %></td>
+        <td></td>
+      </tr>
+    </table>
+
+    <h3>Unique Organism</h3>
+    <table class="table">
+      <tr>
+        <th>divisions</th>
+        <th>count</th>
+        <th>percent</th>
+      </tr>
+      <% PillarPointHelper.cal_counts(@division_counts_unique[:cal]).each do |name, count| %>
+      <tr>
+        <td><%= name %></td>
+        <td><%= count %></td>
+        <td><%= percentage(count, cal_unique_total)%></td>
+      </tr>
+      <% end %>
+      <tr>
+        <td>Total</td>
+        <td><%= cal_unique_total %></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-sm-6">
+
+    <h2>iNaturalist</h2>
+    <h3>Total Species</h3>
+    <table class="table">
+      <tr>
+        <th>kingdom</th>
+        <th>count</th>
+        <th>percent</th>
+      </tr>
+      <% PillarPointHelper.inat_counts(@division_counts[:inat]).each do |name, count| %>
+      <tr>
+        <td><%= name %></td>
+        <td><%= count %></td>
+        <td><%= percentage(count, inat_total)%></td>
+      </tr>
+      <% end %>
+      <tr>
+        <td>Total</td>
+        <td><%= inat_total %></td>
+        <td></td>
+      </tr>
+    </table>
+
+    <h3>Unique Species</h3>
+    <table class="table">
+      <tr>
+        <th>kingdom</th>
+        <th>count</th>
+        <th>percent</th>
+      </tr>
+      <% PillarPointHelper.inat_counts(@division_counts_unique[:inat]).each do |name, count| %>
+      <tr>
+        <td><%= name %></td>
+        <td><%= count %></td>
+        <td><%= percentage(count, inat_unique_total)%></td>
+      </tr>
+      <% end %>
+      <tr>
+        <td>Total</td>
+        <td><%= inat_unique_total %></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+</div>

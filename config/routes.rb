@@ -122,7 +122,7 @@ Rails.application.routes.draw do
 
   tables = ActiveRecord::Base.connection.tables
   valid_model = tables.include?('research_projects') &&
-                ResearchProject.method_defined?(:slug)
+                ResearchProject.first.try(:slug)
 
   if valid_model
     ResearchProject.all.each do |project|

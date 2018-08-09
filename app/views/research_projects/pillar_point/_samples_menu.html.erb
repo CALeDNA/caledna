@@ -1,0 +1,39 @@
+
+<% inat_source = params[:source] == 'inat' %>
+<% list_view = params[:view] == 'list' %>
+
+<h2>Samples</h2>
+<% if params[:view] == 'list' %>
+  <div class="radio">
+    <label>
+      <input type="radio" name="source" class="js-source-list" data-source="cal" <%= 'checked' unless inat_source %>> CALeDNA
+    </label>
+  </div>
+  <div class="radio">
+    <label>
+      <input type="radio" name="source" class="js-source-list" data-source="inat" <%= 'checked' if inat_source %>> iNaturalist
+    </label>
+  </div>
+<% else %>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" class="js-source" data-source="cal" checked=> CALeDNA
+    </label>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" class="js-source" data-source="inat" checked> iNaturalist
+    </label>
+  </div>
+<% end %>
+
+<div class="samples-menu">
+  <div class="btn-group" role="group" >
+    <a href="<%= research_projects_pillar_point_path %>" class="<%= pill_menu_classes(!list_view) %>">
+      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+    </a>
+    <a href="<%= research_projects_pillar_point_path(view: :list) %>" class="<%= pill_menu_classes(list_view) %>">
+      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+    </a>
+  </div>
+</div>

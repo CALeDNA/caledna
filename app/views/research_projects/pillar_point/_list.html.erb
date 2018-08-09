@@ -1,0 +1,71 @@
+<table class="table">
+  <tr>
+    <th>Occurrence</th>
+    <th>Latitude/Longitude; GPS Precision</th>
+    <th>Organisms</th>
+  </tr>
+
+  <% @occurrences.each do |occurrence| %>
+    <% if occurrence.is_a?(Sample)%>
+    <tr class="clickable_row" data-path="<%= sample_path(occurrence) %>">
+      <td><%= link_to occurrence.barcode, sample_path(occurrence) %></td>
+      <td>
+        <%= occurrence.latitude %>, <%= occurrence.longitude %>; <%= occurrence.gps_precision %>
+      </td>
+      <td><%= SamplesHelper.asvs_count(asvs_count, occurrence) %></td>
+    </tr>
+    <% else %>
+      <tr>
+        <td><%= link_to occurrence.id, occurrence.occurrenceID %></td>
+        <td>
+          <%= occurrence.decimalLatitude %>, <%= occurrence.decimalLongitude %>
+        </td>
+        <td>
+          <%= occurrence.kingdom %>,
+          <%= occurrence.phylum %>,
+          <%= occurrence.className %>,
+          <%= occurrence.order %>,
+          <%= occurrence.family %>,
+          <%= occurrence.genus %>,
+          <%= occurrence.scientificName %>,
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+</table>
+
+<%= paginate @occurrences %>
+
+<script>
+(function(){
+
+  // ======================
+  // app state
+  // ======================
+  var sources = { cal: true, inat: true }
+
+  // ======================
+  // select elements
+  // ======================
+
+  var sourceEls = document.querySelectorAll('.js-source-list')
+  sourceEls.forEach(function(el){
+    el.addEventListener('click', chooseSourceHandler)
+  })
+  // ======================
+  // click handlers
+  // ======================
+
+  function chooseSourceHandler(e) {
+    source = e.target.dataset.source
+
+    var location = window.location
+    if (source == 'cal') {
+      location.href = location.origin + location.pathname + '?view=list'
+    } else if (source == 'inat') {
+      location.href = location.origin + location.pathname + '?view=list&source=inat'
+    }
+  }
+
+})()
+</script>

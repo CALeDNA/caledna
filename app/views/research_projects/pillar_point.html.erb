@@ -3,74 +3,21 @@
 
 <% if @project.present? %>
   <h1><%= @project.name %></h1>
+  <%= render partial: "research_projects/pillar_point/submenu" %>
 
-  <p><%= @project.description %></p>
-
-  <h2>Stats</h2>
-  <table class="table">
-    <tr>
-      <th>Source</th>
-      <th>Occurences</th>
-      <th>Unique Organisms Identified</th>
-    </tr>
-    <tr>
-      <td>CALeDNA</td>
-      <td><%= @stats[:cal_stats][:occurences] %> samples</td>
-      <td><%= @stats[:cal_stats][:organisms] %></td>
-    </tr>
-    <tr>
-      <td>iNaturalist</td>
-      <td><%= @stats[:inat_stats][:occurences] %> observations</td>
-      <td><%= @stats[:inat_stats][:organisms] %></td>
-    </tr>
-  </table>
-
-
-
-  <h2>Samples</h2>
-   <% if params[:view] == 'list' %>
-    <div class="radio">
-      <label>
-        <input type="radio" name="source" class="js-source-list" data-source="cal" <%= 'checked' unless inat_source %>> CALeDNA
-      </label>
-    </div>
-    <div class="radio">
-      <label>
-        <input type="radio" name="source" class="js-source-list" data-source="inat" <%= 'checked' if inat_source %>> iNaturalist
-      </label>
-    </div>
-  <% else %>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" class="js-source" data-source="cal" checked=> CALeDNA
-      </label>
-    </div>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" class="js-source" data-source="inat" checked> iNaturalist
-      </label>
-    </div>
-  <% end %>
-
-  <div class="samples-menu">
-    <div class="btn-group" role="group" >
-      <a href="<%= research_project_path(id: params[:id]) %>" class="<%= pill_menu_classes(!list_view) %>">
-        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
-      </a>
-      <a href="<%= research_project_path(id: params[:id], view: :list) %>" class="<%= pill_menu_classes(list_view) %>">
-        <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-      </a>
-    </div>
-  </div>
-
-  <% if params[:view] == 'list' %>
-    <%= render partial: "pillar_point_list",
+  <% if params[:section] == 'organisms' %>
+    <%= render partial: "research_projects/pillar_point/organisms" %>
+  <% elsif params[:view] == 'list' %>
+    <%= render partial: "research_projects/pillar_point/intro" %>
+    <%= render partial: "research_projects/pillar_point/samples_menu" %>
+    <%= render partial: "research_projects/pillar_point/list",
       locals: { occurences: @occurences, asvs_count: @asvs_count }  %>
   <% else %>
-    <%= render partial: "pillar_point_map", locals: { samples: @samples,
-    asvs_count: @asvs_count,
-    inat_observations: @inat_observations,
-    initial_lat: nil, initial_lng: nil } %>
+    <%= render partial: "research_projects/pillar_point/intro" %>
+    <%= render partial: "research_projects/pillar_point/samples_menu" %>
+    <%= render partial: "research_projects/pillar_point/map", locals: { samples: @samples,
+      asvs_count: @asvs_count,
+      inat_observations: @inat_observations,
+      initial_lat: nil, initial_lng: nil } %>
   <% end %>
-
 <% end %>

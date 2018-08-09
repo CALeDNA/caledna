@@ -19,6 +19,12 @@ module ApplicationHelper
     date.strftime(format)
   end
 
+  def percentage(value, totals)
+    return if value.nil?
+    percent = (value.to_f / totals) * 100
+    sprintf('%.2f', percent)
+  end
+
   def render_admin_field(type, field, locals = {})
     locals[:field] = field
     render locals: locals, partial: "admin/form/admin_#{type}_field"
