@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :taxa, only: [:index]
+      resources :samples, only: [:index]
       resource :stats do
         get '/home_page', to: 'stats#home_page'
       end
@@ -127,8 +128,8 @@ Rails.application.routes.draw do
   if valid_model
     ResearchProject.all.each do |project|
       get "research_projects/#{project.slug}",
-        to: "research_projects##{project.slug.underscore}",
-        defaults: { id: project.slug }
+          to: "research_projects##{project.slug.underscore}",
+          defaults: { id: project.slug }
     end
   end
 
@@ -136,6 +137,7 @@ Rails.application.routes.draw do
 
   namespace :beta do
     get 'geojson_demo', to: 'geojson_demo'
+    get 'map_v2', to: 'map_v2'
   end
 
   # get '/safety-training-quiz',
