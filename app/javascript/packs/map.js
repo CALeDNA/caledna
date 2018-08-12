@@ -36,17 +36,81 @@
   var markerLayer;
   var disableClustering = 15;
 
-  var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  var openstreetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: maxZoom,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
   });
+
+  var accessToken = 'pk.eyJ1Ijoid3lraHVoIiwiYSI6ImNqY2gzMHJ3OTIyeW4zM210Zmgwd2ZoMXEifQ.p-v5zVFnVgvvdxKiVRpCRA';
+  var mapboxSatellite = L.tileLayer('https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=' + accessToken, {
+      attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  });
+
+  var basic = L.mapboxGL({
+    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+    accessToken: 'not-needed',
+    style: 'https://maps.tilehosting.com/styles/basic/style.json?key=fRcjqhIdUrAMP66BWcEr'
+  });
+
+  var bright = L.mapboxGL({
+    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+    accessToken: 'not-needed',
+    style: 'https://maps.tilehosting.com/styles/bright/style.json?key=fRcjqhIdUrAMP66BWcEr'
+  });
+
+  var positron = L.mapboxGL({
+    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+    accessToken: 'not-needed',
+    style: 'https://maps.tilehosting.com/styles/positron/style.json?key=fRcjqhIdUrAMP66BWcEr'
+  });
+
+  var satellite = L.mapboxGL({
+    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+    accessToken: 'not-needed',
+    style: 'https://maps.tilehosting.com/styles/hybrid/style.json?key=fRcjqhIdUrAMP66BWcEr'
+  });
+
+  var streets = L.mapboxGL({
+    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+    accessToken: 'not-needed',
+    style: 'https://maps.tilehosting.com/styles/streets/style.json?key=fRcjqhIdUrAMP66BWcEr'
+  });
+
+  var topo = L.mapboxGL({
+    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+    accessToken: 'not-needed',
+    style: 'https://maps.tilehosting.com/styles/topo/style.json?key=fRcjqhIdUrAMP66BWcEr'
+  });
+
+  var voyager = L.mapboxGL({
+    attribution: '<a href="https://carto.com/" target="_blank">© CARTO</a> <a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
+    accessToken: 'not-needed',
+    style: 'https://maps.tilehosting.com/styles/voyager/style.json?key=fRcjqhIdUrAMP66BWcEr'
+  });
+
+
+
+
 
   var latlng = L.latLng(initialLat, initialLng);
   var map = L.map('mapid-advance', {
     center: latlng,
     zoom: initialZoom,
-    layers: [tiles]
+    maxZoom: maxZoom,
+    layers: [basic]
   });
+
+  var baseMaps = {
+    "Basic": basic,
+    "Bright": bright,
+    "Positron": positron,
+    "Satellite": satellite,
+    "Streets": streets,
+    "Topo": topo,
+    "Voyager": voyager,
+    "Mapbox Satellite": mapboxSatellite,
+    Normal: openstreetmap
+  };
 
   var markerCluster = L.markerClusterGroup({
     disableClusteringAtZoom: disableClustering,
@@ -120,9 +184,16 @@
 // =============
 
   $.get("/data/uc_reserves.geojson", function(data) {
-    L.geoJSON(JSON.parse(data), {
+    var uc_reserves = L.geoJSON(JSON.parse(data), {
       onEachFeature: onEachFeatureHandler
-    }).addTo(map);
+    });
+
+    var overlayMaps = {
+      "UC Reserves": uc_reserves
+    };
+
+    L.control.layers(baseMaps, overlayMaps ).addTo(map);
+
   })
 
   $.get( "/api/v1/samples", function(data) {
