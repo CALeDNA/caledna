@@ -11,8 +11,8 @@
   var maxZoom = 25;
   var samplesData = []
   var filteredSamplesData = []
-  var markerLayer;
   var disableClustering = 15;
+  var currentMarkerFormat = 'cluster';
 
   var openstreetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
@@ -48,7 +48,9 @@
     Minimal: cartoPositron,
   };
 
-  var markerCluster = L.markerClusterGroup({
+  var individualMarkerLayer = L.layerGroup();
+
+  var markerClusterLayer = L.markerClusterGroup({
     disableClusteringAtZoom: disableClustering,
     spiderfyOnMaxZoom: false
   });
@@ -79,6 +81,7 @@
       lng: lng,
       barcode: barcode,
       body: body,
+      status: status,
     }
   }
 
@@ -92,7 +95,7 @@
   function createMarkerCluster(samples, createMarkerFn) {
     samples.forEach(function(sample) {
       var marker = createMarkerFn(sample)
-      markerCluster.addLayer(marker);
+      markerClusterLayer.addLayer(marker);
     });
   }
 
@@ -100,7 +103,7 @@
     var markers = samples.map(function(sample) {
       return createMarkerFn(sample)
     });
-    markerLayer = L.layerGroup(markers)
+    individualMarkerLayer = L.layerGroup(markers)
   }
 
 // =============
@@ -147,35 +150,49 @@
     filteredSamplesData = samplesData
 
     createMarkerCluster(filteredSamplesData, createCircleMarker)
-    map.addLayer(markerCluster);
+    map.addLayer(markerClusterLayer);
   });
 
   // =============
   // config event listeners
   // =============
 
-  var clusterMarkersEls = document.querySelectorAll('.js-marker-type');
+  var markerFormatEls = document.querySelectorAll('.js-marker-format');
+  var sampleStatusEl = document.querySelector('.js-sample-status');
 
   // =============
   // event listeners
   // =============
 
-  clusterMarkersEls.forEach(function(el){
+  markerFormatEls.forEach(function(el){
     el.addEventListener('click', function(event) {
-      var type = event.target.value
-      if(type == 'cluster') {
-        // turn on clustering
-        map.removeLayer(markerLayer);
-        map.addLayer(markerCluster);
-      } else {
-        // turn off clustering
-        map.removeLayer(markerCluster);
-        createMarkerLayer(filteredSamplesData, createCircleMarker)
-        markerLayer.addTo(map)
+      var format = event.target.value
+
+      if(format == 'cluster' && currentMarkerFormat == 'individual') {
+        currentMarkerFormat = 'cluster'
+
+        map.removeLayer(individualMarkerLayer);
+        renderMarkerCluster(filteredSamplesData)
+      } else if (format == 'individual' && currentMarkerFormat == 'cluster') {
+        currentMarkerFormat = 'individual'
+
+        map.removeLayer(markerClusterLayer);
+        renderIndividualMarkers(filteredSamplesData)
       }
     });
   });
 
+
+  sampleStatusEl.addEventListener('change', function(event) {
+    var status = event.target.value;
+    filteredSamplesData = retrieveSamplesByStatus(status, samplesData)
+
+    if(currentMarkerFormat == 'cluster') {
+      renderMarkerCluster(filteredSamplesData)
+    } else {
+      renderIndividualMarkers(filteredSamplesData)
+    }
+  })
 
   // =============
   // misc
@@ -186,6 +203,38 @@
       return counts.sample_id == sample.id
     })[0]
     return asvs_data ? asvs_data.count : null;
+  }
+
+  function renderMarkerCluster(samples) {
+    markerClusterLayer.clearLayers()
+    createMarkerCluster(samples, createCircleMarker)
+    map.addLayer(markerClusterLayer);
+  }
+
+  function renderIndividualMarkers (samples) {
+    map.removeLayer(individualMarkerLayer);
+    createMarkerLayer(samples, createCircleMarker)
+    individualMarkerLayer.addTo(map)
+  }
+
+  function retrieveSamplesByStatus(status, samples) {
+    if(status == 'approved') {
+      return filterSamplesByStatus(samples, 'approved')
+    } else if(status == 'processing_sample') {
+      var processed = filterSamplesByStatus(samples, 'processing_sample')
+      var assigned = filterSamplesByStatus(samples, 'assigned')
+      return processed.concat(assigned)
+    } else if(event.target.value == 'results_completed') {
+      return filterSamplesByStatus(samples, 'results_completed')
+    } else {
+      return samples
+    }
+  }
+
+  function filterSamplesByStatus(samples, status) {
+    return samples.filter(function(sample) {
+      return sample.status == status
+    })
   }
 
 })()
