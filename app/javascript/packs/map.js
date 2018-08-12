@@ -46,70 +46,17 @@
       attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   });
 
-  var basic = L.mapboxGL({
-    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    accessToken: 'not-needed',
-    style: 'https://maps.tilehosting.com/styles/basic/style.json?key=fRcjqhIdUrAMP66BWcEr'
-  });
-
-  var bright = L.mapboxGL({
-    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    accessToken: 'not-needed',
-    style: 'https://maps.tilehosting.com/styles/bright/style.json?key=fRcjqhIdUrAMP66BWcEr'
-  });
-
-  var positron = L.mapboxGL({
-    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    accessToken: 'not-needed',
-    style: 'https://maps.tilehosting.com/styles/positron/style.json?key=fRcjqhIdUrAMP66BWcEr'
-  });
-
-  var satellite = L.mapboxGL({
-    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    accessToken: 'not-needed',
-    style: 'https://maps.tilehosting.com/styles/hybrid/style.json?key=fRcjqhIdUrAMP66BWcEr'
-  });
-
-  var streets = L.mapboxGL({
-    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    accessToken: 'not-needed',
-    style: 'https://maps.tilehosting.com/styles/streets/style.json?key=fRcjqhIdUrAMP66BWcEr'
-  });
-
-  var topo = L.mapboxGL({
-    attribution: '<a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    accessToken: 'not-needed',
-    style: 'https://maps.tilehosting.com/styles/topo/style.json?key=fRcjqhIdUrAMP66BWcEr'
-  });
-
-  var voyager = L.mapboxGL({
-    attribution: '<a href="https://carto.com/" target="_blank">© CARTO</a> <a href="https://www.maptiler.com/license/maps/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-    accessToken: 'not-needed',
-    style: 'https://maps.tilehosting.com/styles/voyager/style.json?key=fRcjqhIdUrAMP66BWcEr'
-  });
-
-
-
-
-
   var latlng = L.latLng(initialLat, initialLng);
   var map = L.map('mapid-advance', {
     center: latlng,
     zoom: initialZoom,
     maxZoom: maxZoom,
-    layers: [basic]
+    layers: [openstreetmap]
   });
 
   var baseMaps = {
-    "Basic": basic,
-    "Bright": bright,
-    "Positron": positron,
-    "Satellite": satellite,
-    "Streets": streets,
-    "Topo": topo,
-    "Voyager": voyager,
-    "Mapbox Satellite": mapboxSatellite,
-    Normal: openstreetmap
+    Normal: openstreetmap,
+    Satellite: mapboxSatellite,
   };
 
   var markerCluster = L.markerClusterGroup({
