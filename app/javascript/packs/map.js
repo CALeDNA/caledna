@@ -79,7 +79,7 @@
   // create markers
   // =============
 
-  function formatSamplesData(rawSample) {
+  function formatSamplesData(rawSample, asvsCount) {
     var sample = rawSample.attributes;
     var lat = sample.latitude;
     var lng = sample.longitude;
@@ -88,7 +88,7 @@
     var projectName = sample.field_data_project_name;
     var sampleLink = "<a href='/samples/" + sample.id + "'>" + barcode + "</a>";
     var status = sample.status;
-    var asvsCount = 0;
+    var asvsCount = asvsCount || '--';
     var body =
       '<b>Sample:</b> ' + sampleLink + '<br>' +
       '<b>Project:</b> ' + projectName + '<br>' +
@@ -156,11 +156,19 @@
 
   $.get( "/api/v1/samples", function(data) {
     var samples = data.samples.data;
+    var asvsCounts = data.asvs_count;
 
     samplesData = samples.filter(function(rawSample) {
       var sample = rawSample.attributes;
       return sample.latitude && sample.longitude;
-    }).map(formatSamplesData)
+    }).map(function(sample) {
+      var asvs_data = asvsCounts.filter(function(counts) {
+        return counts.sample_id == sample.id
+      })[0]
+      var asvs_count = asvs_data ? asvs_data.count : null;
+
+      return formatSamplesData(sample, asvs_count)
+    })
 
     createMarkerCluster(samplesData, createCircleMarker)
     map.addLayer(markerCluster);
