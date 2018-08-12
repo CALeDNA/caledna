@@ -1,48 +1,70 @@
 (function(){
+  // =============
+  // config event listeners
+  // =============
+  var clusterMarkersEl = document.querySelector('.js-cluster-markers');
+
+  // =============
+  // event listeners
+  // =============
+
+  clusterMarkersEl.addEventListener('click', function(event) {
+    if(event.target.checked) {
+      // turn on clustering
+      map.removeLayer(markerLayer);
+      map.addLayer(markerCluster);
+    } else {
+      // turn off clustering
+      map.removeLayer(markerCluster);
+      createMarkerLayer(samplesData, createCircleMarker)
+      markerLayer.addTo(map)
+    }
+  })
+
+
+  // =============
+  // config map
+  // =============
+
   var initialLat = 38.0;
   var initialLng = -118.3;
+  var darkColor = '#5aa172';
+  var lightColor = '#444';
   var initialZoom = 6;
-  var maxZoom = 18;
-  window.markerType = 'circle';
+  var maxZoom = 30;
+  var samplesData = []
+  var markerLayer;
+  var disableClustering = 15;
 
   var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: maxZoom,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
   });
+
   var latlng = L.latLng(initialLat, initialLng);
-  var map = L.map('mapid-advance', {center: latlng, zoom: initialZoom, layers: [tiles]});
+  var map = L.map('mapid-advance', {
+    center: latlng,
+    zoom: initialZoom,
+    layers: [tiles]
+  });
 
-  map.on('zoomend', zoomHandler);
+  var markerCluster = L.markerClusterGroup({
+    disableClusteringAtZoom: disableClustering,
+    spiderfyOnMaxZoom: false
+  });
 
-  function zoomHandler () {
-    var currentZoom = map.getZoom();
-    var currentMarkerType = getMarkerType();
-    console.log('boo', currentZoom, currentMarkerType)
-
-    if(currentZoom > 9 && currentMarkerType == 'circle') {
-      addMarkers(samplesData, addIconMarker, 'icon')
-
-    } else if(currentZoom <= 9 && currentMarkerType == 'icon') {
-      addMarkers(samplesData, addCircleMarker, 'circle')
-    }
-  }
-
-
-
-  function getMarkerType() {
-    console.log('getMarkerType', markerType)
-    return markerType
-  }
+  // =============
+  // create markers
+  // =============
 
   function formatSamplesData(rawSample) {
     var sample = rawSample.attributes;
     var lat = sample.latitude;
     var lng = sample.longitude;
-
     var id = sample.id;
     var barcode = sample.barcode;
     var projectName = sample.field_data_project_name;
-    var sampleLink = "<a href='samples/" + sample.id + "'>" + barcode + "</a>";
+    var sampleLink = "<a href='/samples/" + sample.id + "'>" + barcode + "</a>";
     var status = sample.status;
     var asvsCount = 0;
     var body =
@@ -56,43 +78,34 @@
       lat: lat,
       lng: lng,
       barcode: barcode,
-      body: body
-
+      body: body,
     }
   }
 
-  var samplesData = []
-  var markers = []
-
-  function addIconMarker (sample) {
-    var marker = L.marker(L.latLng(sample.lat, sample.lng), { title: 'Sample ' + sample.barcode });
-    marker.bindPopup(sample.body);
-    map.addLayer(marker);
-    return marker;
-  }
-
-  function addCircleMarker (sample) {
-    var options = {fillColor: '#333', radius: 7, fillOpacity: .3, color: '#ccc', weight: 1};
-    var circleMarker = L.circleMarker(L.latLng(sample.lat, sample.lng), options)
-      .addTo(map);
+  function createCircleMarker (sample) {
+    var options = {fillColor: darkColor, radius: 7, fillOpacity: .5, color: lightColor, weight: 2};
+    var circleMarker = L.circleMarker(L.latLng(sample.lat, sample.lng), options);
     circleMarker.bindPopup(sample.body);
     return circleMarker;
   }
 
-  function addMarkers(samplesData, markerFn, markerType) {
-    resetMarkers()
-    window.markerType = markerType;
-    console.log('addMarkers', window.markerType)
-    markers = samplesData.map(markerFn);
-  }
-
-  function resetMarkers() {
-    markers.forEach(function(marker){
-      map.removeLayer(marker);
+  function createMarkerCluster(samplesData, createMarkerFn) {
+    samplesData.forEach(function(sample) {
+      var marker = createMarkerFn(sample)
+      markerCluster.addLayer(marker);
     });
-    markers = [];
   }
 
+  function createMarkerLayer(samplesData, createMarkerFn) {
+    var markers = samplesData.map(function(sample) {
+      return createMarkerFn(sample)
+    });
+    markerLayer = L.layerGroup(markers)
+  }
+
+// =============
+// geojson layers
+// =============
 
   function onEachFeatureHandler(feature, layer) {
     if (feature.properties && feature.properties.AgencyName) {
@@ -101,6 +114,10 @@
       layer.bindPopup(body);
     }
   }
+
+// =============
+// fetch data
+// =============
 
   $.get("/data/uc_reserves.geojson", function(data) {
     L.geoJSON(JSON.parse(data), {
@@ -116,7 +133,8 @@
       return sample.latitude && sample.longitude;
     }).map(formatSamplesData)
 
-    addMarkers(samplesData, addCircleMarker, 'circle')
+    createMarkerCluster(samplesData, createCircleMarker)
+    map.addLayer(markerCluster);
   });
 
 })()
