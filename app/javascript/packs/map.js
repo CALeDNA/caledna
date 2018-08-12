@@ -28,16 +28,15 @@
 
   var initialLat = 38.0;
   var initialLng = -118.3;
-  var darkColor = '#5aa172';
-  var lightColor = '#444';
+  var fillColor = '#5aa172';
+  var strokeColor = '#222';
   var initialZoom = 6;
-  var maxZoom = 30;
+  var maxZoom = 25;
   var samplesData = []
   var markerLayer;
   var disableClustering = 15;
 
   var openstreetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: maxZoom,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
   });
 
@@ -45,6 +44,16 @@
   var mapboxSatellite = L.tileLayer('https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=' + accessToken, {
       attribution: '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   });
+
+  var cartoPositron= L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+    attribution: 'Map tiles by <a href="https://carto.com/">Carto</a>, under CC BY 3.0. Data by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, under ODbL'
+  });
+
+
+  var thuderforestLandscape = L.tileLayer('https://tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=5354ed1fe58c49efb6b5e34ec3caf15e', {
+    attribution: 'Maps © <a href="http://www.thunderforest.com/">Thunderforest</a>, Data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+  });
+
 
   var latlng = L.latLng(initialLat, initialLng);
   var map = L.map('mapid-advance', {
@@ -55,8 +64,10 @@
   });
 
   var baseMaps = {
-    Normal: openstreetmap,
+    Streets: openstreetmap,
     Satellite: mapboxSatellite,
+    Terrain: thuderforestLandscape,
+    Minimal: cartoPositron,
   };
 
   var markerCluster = L.markerClusterGroup({
@@ -94,7 +105,7 @@
   }
 
   function createCircleMarker (sample) {
-    var options = {fillColor: darkColor, radius: 7, fillOpacity: .5, color: lightColor, weight: 2};
+    var options = {fillColor: fillColor, radius: 7, fillOpacity: .7, color: strokeColor, weight: 2};
     var circleMarker = L.circleMarker(L.latLng(sample.lat, sample.lng), options);
     circleMarker.bindPopup(sample.body);
     return circleMarker;
