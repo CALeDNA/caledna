@@ -1,28 +1,5 @@
 (function(){
   // =============
-  // config event listeners
-  // =============
-  var clusterMarkersEl = document.querySelector('.js-cluster-markers');
-
-  // =============
-  // event listeners
-  // =============
-
-  clusterMarkersEl.addEventListener('click', function(event) {
-    if(event.target.checked) {
-      // turn on clustering
-      map.removeLayer(markerLayer);
-      map.addLayer(markerCluster);
-    } else {
-      // turn off clustering
-      map.removeLayer(markerCluster);
-      createMarkerLayer(samplesData, createCircleMarker)
-      markerLayer.addTo(map)
-    }
-  })
-
-
-  // =============
   // config map
   // =============
 
@@ -33,6 +10,7 @@
   var initialZoom = 6;
   var maxZoom = 25;
   var samplesData = []
+  var filteredSamplesData = []
   var markerLayer;
   var disableClustering = 15;
 
@@ -111,15 +89,15 @@
     return circleMarker;
   }
 
-  function createMarkerCluster(samplesData, createMarkerFn) {
-    samplesData.forEach(function(sample) {
+  function createMarkerCluster(samples, createMarkerFn) {
+    samples.forEach(function(sample) {
       var marker = createMarkerFn(sample)
       markerCluster.addLayer(marker);
     });
   }
 
-  function createMarkerLayer(samplesData, createMarkerFn) {
-    var markers = samplesData.map(function(sample) {
+  function createMarkerLayer(samples, createMarkerFn) {
+    var markers = samples.map(function(sample) {
       return createMarkerFn(sample)
     });
     markerLayer = L.layerGroup(markers)
@@ -162,16 +140,52 @@
       var sample = rawSample.attributes;
       return sample.latitude && sample.longitude;
     }).map(function(sample) {
-      var asvs_data = asvsCounts.filter(function(counts) {
-        return counts.sample_id == sample.id
-      })[0]
-      var asvs_count = asvs_data ? asvs_data.count : null;
-
+      var asvs_count = findAsvCount(sample, asvsCounts);
       return formatSamplesData(sample, asvs_count)
     })
 
-    createMarkerCluster(samplesData, createCircleMarker)
+    filteredSamplesData = samplesData
+
+    createMarkerCluster(filteredSamplesData, createCircleMarker)
     map.addLayer(markerCluster);
   });
+
+  // =============
+  // config event listeners
+  // =============
+
+  var clusterMarkersEls = document.querySelectorAll('.js-marker-type');
+
+  // =============
+  // event listeners
+  // =============
+
+  clusterMarkersEls.forEach(function(el){
+    el.addEventListener('click', function(event) {
+      var type = event.target.value
+      if(type == 'cluster') {
+        // turn on clustering
+        map.removeLayer(markerLayer);
+        map.addLayer(markerCluster);
+      } else {
+        // turn off clustering
+        map.removeLayer(markerCluster);
+        createMarkerLayer(filteredSamplesData, createCircleMarker)
+        markerLayer.addTo(map)
+      }
+    });
+  });
+
+
+  // =============
+  // misc
+  // =============
+
+  function findAsvCount(sample, asvsCounts) {
+    var asvs_data = asvsCounts.filter(function(counts) {
+      return counts.sample_id == sample.id
+    })[0]
+    return asvs_data ? asvs_data.count : null;
+  }
 
 })()
