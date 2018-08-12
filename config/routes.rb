@@ -134,6 +134,10 @@ Rails.application.routes.draw do
 
   resources :research_projects, only: %i[index show]
 
+  namespace :beta do
+    get 'geojson_demo', to: 'geojson_demo'
+  end
+
   # get '/safety-training-quiz',
   #     to: 'surveys#show',
   #     defaults: { slug: 'safety-training-quiz' }

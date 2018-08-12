@@ -1,0 +1,6680 @@
+{
+  "type" : "FeatureCollection",
+  "crs" : {
+    "type" : "name",
+    "properties" : {
+      "name" : "EPSG:4326"
+    }
+  },
+  "features" : [
+    {
+      "type" : "Feature",
+      "id" : 1,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.80300000004991,
+          39.637000000349815
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 1,
+        "LATITUDE" : 39.637,
+        "LONGITUDE" : -121.803,
+        "BRIGHTNESS" : 321.89999999999998,
+        "SCAN" : 3.2000000000000002,
+        "TRACK" : 1.7,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "1820",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 52,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.89999999999998,
+        "FRP" : 58,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 2,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.80800000039966,
+          39.640000000199905
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 2,
+        "LATITUDE" : 39.640000000000001,
+        "LONGITUDE" : -121.80800000000001,
+        "BRIGHTNESS" : 322,
+        "SCAN" : 3.2000000000000002,
+        "TRACK" : 1.7,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "1820",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 57,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 303.19999999999999,
+        "FRP" : 60.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 3,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -118.25199999970022,
+          36.663999999600378
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 3,
+        "LATITUDE" : 36.664000000000001,
+        "LONGITUDE" : -118.252,
+        "BRIGHTNESS" : 345,
+        "SCAN" : 1.8,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "1820",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 85,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.10000000000002,
+        "FRP" : 92.299999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 4,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -118.24199999990003,
+          36.656000000299798
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 4,
+        "LATITUDE" : 36.655999999999999,
+        "LONGITUDE" : -118.242,
+        "BRIGHTNESS" : 333.60000000000002,
+        "SCAN" : 1.8,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "1820",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 54,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305,
+        "FRP" : 46.399999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 5,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -118.3040000000999,
+          34.117000000050041
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 5,
+        "LATITUDE" : 34.116999999999997,
+        "LONGITUDE" : -118.304,
+        "BRIGHTNESS" : 349.89999999999998,
+        "SCAN" : 2.1000000000000001,
+        "TRACK" : 1.3999999999999999,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 93,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.30000000000001,
+        "FRP" : 147.09999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 6,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -118.31100000004994,
+          34.118000000299844
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 6,
+        "LATITUDE" : 34.118000000000002,
+        "LONGITUDE" : -118.31100000000001,
+        "BRIGHTNESS" : 355,
+        "SCAN" : 2.1000000000000001,
+        "TRACK" : 1.3999999999999999,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 97,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.80000000000001,
+        "FRP" : 182.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 7,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.73500000034971,
+          36.807999999600327
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 7,
+        "LATITUDE" : 36.808,
+        "LONGITUDE" : -120.735,
+        "BRIGHTNESS" : 331.60000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 49,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 314.5,
+        "FRP" : 27.800000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 8,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.74200000029975,
+          36.807999999600327
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 8,
+        "LATITUDE" : 36.808,
+        "LONGITUDE" : -120.742,
+        "BRIGHTNESS" : 337.39999999999998,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 315.60000000000002,
+        "FRP" : 43.799999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 9,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.70600000009989,
+          37.154999999950064
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 9,
+        "LATITUDE" : 37.155000000000001,
+        "LONGITUDE" : -121.706,
+        "BRIGHTNESS" : 334.10000000000002,
+        "SCAN" : 1.3999999999999999,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 79,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 314.39999999999998,
+        "FRP" : 29.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 10,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.6950000000499,
+          37.160000000299817
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 10,
+        "LATITUDE" : 37.159999999999997,
+        "LONGITUDE" : -121.69499999999999,
+        "BRIGHTNESS" : 326.80000000000001,
+        "SCAN" : 1.3999999999999999,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 30,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 313.60000000000002,
+        "FRP" : 10.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 11,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.71100000044964,
+          37.157999999800211
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 11,
+        "LATITUDE" : 37.158000000000001,
+        "LONGITUDE" : -121.711,
+        "BRIGHTNESS" : 328.39999999999998,
+        "SCAN" : 1.3999999999999999,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 56,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 314.5,
+        "FRP" : 14.9,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 12,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.80899999975014,
+          39.638999999950101
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 12,
+        "LATITUDE" : 39.639000000000003,
+        "LONGITUDE" : -121.809,
+        "BRIGHTNESS" : 328.19999999999999,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531180800000,
+        "ACQ_TIME" : "2135",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 313.10000000000002,
+        "FRP" : 23.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 13,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.81299999985009,
+          39.636000000099955
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 13,
+        "LATITUDE" : 39.636000000000003,
+        "LONGITUDE" : -121.813,
+        "BRIGHTNESS" : 324.19999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531267200000,
+        "ACQ_TIME" : "1900",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 61,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 308.80000000000001,
+        "FRP" : 10.1,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 14,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.8009999995503,
+          39.633999999600348
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 14,
+        "LATITUDE" : 39.634,
+        "LONGITUDE" : -121.801,
+        "BRIGHTNESS" : 327,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531267200000,
+        "ACQ_TIME" : "1900",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 69,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 310.30000000000001,
+        "FRP" : 12.199999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 15,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.49899999985007,
+          34.925999999800183
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 15,
+        "LATITUDE" : 34.926000000000002,
+        "LONGITUDE" : -120.499,
+        "BRIGHTNESS" : 331.39999999999998,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531267200000,
+        "ACQ_TIME" : "2040",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 62,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.39999999999998,
+        "FRP" : 70.700000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 16,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -122.05399999980011,
+          39.662000000299827
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 16,
+        "LATITUDE" : 39.661999999999999,
+        "LONGITUDE" : -122.054,
+        "BRIGHTNESS" : 321.10000000000002,
+        "SCAN" : 2.2000000000000002,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531267200000,
+        "ACQ_TIME" : "2040",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 37,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 307.60000000000002,
+        "FRP" : 26,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 17,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -122.01600000019982,
+          39.270000000399762
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 17,
+        "LATITUDE" : 39.270000000000003,
+        "LONGITUDE" : -122.01600000000001,
+        "BRIGHTNESS" : 318.89999999999998,
+        "SCAN" : 3,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531353600000,
+        "ACQ_TIME" : "1945",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 59,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.5,
+        "FRP" : 41.200000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 18,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -117.40299999985007,
+          33.469000000050016
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 18,
+        "LATITUDE" : 33.469000000000001,
+        "LONGITUDE" : -117.40300000000001,
+        "BRIGHTNESS" : 328.89999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531353600000,
+        "ACQ_TIME" : "2120",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.89999999999998,
+        "FRP" : 19.300000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 19,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.86100000034969,
+          36.677000000149917
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 19,
+        "LATITUDE" : 36.677,
+        "LONGITUDE" : -120.861,
+        "BRIGHTNESS" : 344.10000000000002,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531353600000,
+        "ACQ_TIME" : "2125",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 314.10000000000002,
+        "FRP" : 26.100000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 20,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -122.15399999960027,
+          38.69400000039974
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 20,
+        "LATITUDE" : 38.694000000000003,
+        "LONGITUDE" : -122.154,
+        "BRIGHTNESS" : 337,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531353600000,
+        "ACQ_TIME" : "2125",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 84,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 316.30000000000001,
+        "FRP" : 16.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 21,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.72800000019981,
+          39.781999999700304
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 21,
+        "LATITUDE" : 39.781999999999996,
+        "LONGITUDE" : -121.72799999999999,
+        "BRIGHTNESS" : 301.39999999999998,
+        "SCAN" : 3.1000000000000001,
+        "TRACK" : 1.7,
+        "ACQ_DATE" : 1531440000000,
+        "ACQ_TIME" : "0650",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 30,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 287.5,
+        "FRP" : 18.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 22,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.04799999980014,
+          36.404999999650329
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 22,
+        "LATITUDE" : 36.405000000000001,
+        "LONGITUDE" : -119.048,
+        "BRIGHTNESS" : 338.30000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531440000000,
+        "ACQ_TIME" : "1850",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 79,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 309.60000000000002,
+        "FRP" : 19.399999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 23,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.03699999975015,
+          36.403000000050042
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 23,
+        "LATITUDE" : 36.402999999999999,
+        "LONGITUDE" : -119.03700000000001,
+        "BRIGHTNESS" : 331.10000000000002,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531440000000,
+        "ACQ_TIME" : "1850",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 62,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 308.89999999999998,
+        "FRP" : 9.5999999999999996,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 24,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87999999990006,
+          37.656000000099993
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 24,
+        "LATITUDE" : 37.655999999999999,
+        "LONGITUDE" : -119.88,
+        "BRIGHTNESS" : 318.30000000000001,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 97,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.39999999999998,
+        "FRP" : 15.800000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 25,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.08700000034969,
+          41.267000000149949
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 25,
+        "LATITUDE" : 41.267000000000003,
+        "LONGITUDE" : -120.087,
+        "BRIGHTNESS" : 349.60000000000002,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.5,
+        "FRP" : 62.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 26,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.09899999975016,
+          41.264999999650342
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 26,
+        "LATITUDE" : 41.265000000000001,
+        "LONGITUDE" : -120.099,
+        "BRIGHTNESS" : 387.30000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 303.19999999999999,
+        "FRP" : 190.80000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 27,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.1099999998001,
+          41.263000000049999
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 27,
+        "LATITUDE" : 41.262999999999998,
+        "LONGITUDE" : -120.11,
+        "BRIGHTNESS" : 332,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.80000000000001,
+        "FRP" : 31.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 28,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.09000000019984,
+          41.275999999700275
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 28,
+        "LATITUDE" : 41.276000000000003,
+        "LONGITUDE" : -120.09,
+        "BRIGHTNESS" : 316.69999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 94,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.5,
+        "FRP" : 14.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 29,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.10199999960025,
+          41.274000000099988
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 29,
+        "LATITUDE" : 41.274000000000001,
+        "LONGITUDE" : -120.102,
+        "BRIGHTNESS" : 367.69999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.60000000000002,
+        "FRP" : 111.8,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 30,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.11299999965024,
+          41.271999999600382
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 30,
+        "LATITUDE" : 41.271999999999998,
+        "LONGITUDE" : -120.113,
+        "BRIGHTNESS" : 376.80000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 303.80000000000001,
+        "FRP" : 144.59999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 31,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.12499999994998,
+          41.270000000000039
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 31,
+        "LATITUDE" : 41.270000000000003,
+        "LONGITUDE" : -120.125,
+        "BRIGHTNESS" : 311.10000000000002,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 82,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.30000000000001,
+        "FRP" : 10.1,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 32,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.10400000009992,
+          41.282999999650315
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 32,
+        "LATITUDE" : 41.283000000000001,
+        "LONGITUDE" : -120.104,
+        "BRIGHTNESS" : 317,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 94,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.30000000000001,
+        "FRP" : 15.300000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 33,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.11600000039965,
+          41.281000000050028
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 33,
+        "LATITUDE" : 41.280999999999999,
+        "LONGITUDE" : -120.116,
+        "BRIGHTNESS" : 336.60000000000002,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.10000000000002,
+        "FRP" : 38.899999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 34,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.12799999980012,
+          41.278999999550365
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 34,
+        "LATITUDE" : 41.279000000000003,
+        "LONGITUDE" : -120.128,
+        "BRIGHTNESS" : 314.5,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "0555",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 89,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.39999999999998,
+        "FRP" : 13,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 35,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -114.60400000029972,
+          33.481000000349809
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 35,
+        "LATITUDE" : 33.481000000000002,
+        "LONGITUDE" : -114.604,
+        "BRIGHTNESS" : 336.19999999999999,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "1755",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 41,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 306.30000000000001,
+        "FRP" : 61.200000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 36,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.11600000039965,
+          41.268000000399752
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 36,
+        "LATITUDE" : 41.268000000000001,
+        "LONGITUDE" : -120.116,
+        "BRIGHTNESS" : 353.39999999999998,
+        "SCAN" : 2.2000000000000002,
+        "TRACK" : 1.3999999999999999,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "1930",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 84,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.5,
+        "FRP" : 209.69999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 37,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -120.12099999985008,
+          41.270000000000039
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 37,
+        "LATITUDE" : 41.270000000000003,
+        "LONGITUDE" : -120.121,
+        "BRIGHTNESS" : 348.5,
+        "SCAN" : 2.2000000000000002,
+        "TRACK" : 1.3999999999999999,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "1930",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 81,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.10000000000002,
+        "FRP" : 169.90000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 38,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90000000039964,
+          37.652000000000044
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 38,
+        "LATITUDE" : 37.652000000000001,
+        "LONGITUDE" : -119.90000000000001,
+        "BRIGHTNESS" : 323.19999999999999,
+        "SCAN" : 2.8999999999999999,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "1935",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 73,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.30000000000001,
+        "FRP" : 56.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 39,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86899999985008,
+          37.643999999800201
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 39,
+        "LATITUDE" : 37.643999999999998,
+        "LONGITUDE" : -119.869,
+        "BRIGHTNESS" : 332.69999999999999,
+        "SCAN" : 2.8999999999999999,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "1935",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 83,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.80000000000001,
+        "FRP" : 111.40000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 40,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -114.60300000004992,
+          33.481999999700292
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 40,
+        "LATITUDE" : 33.481999999999999,
+        "LONGITUDE" : -114.60299999999999,
+        "BRIGHTNESS" : 402.60000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "2110",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 314.5,
+        "FRP" : 448.39999999999998,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 41,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86799999960027,
+          37.646999999650291
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 41,
+        "LATITUDE" : 37.646999999999998,
+        "LONGITUDE" : -119.86799999999999,
+        "BRIGHTNESS" : 365.69999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "2110",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 309.80000000000001,
+        "FRP" : 86.900000000000006,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 42,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8789999996502,
+          37.645000000050004
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 42,
+        "LATITUDE" : 37.645000000000003,
+        "LONGITUDE" : -119.879,
+        "BRIGHTNESS" : 439.80000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "2110",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 326.5,
+        "FRP" : 580,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 43,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89099999995,
+          37.643999999800201
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 43,
+        "LATITUDE" : 37.643999999999998,
+        "LONGITUDE" : -119.89100000000001,
+        "BRIGHTNESS" : 362.69999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "2110",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 313.10000000000002,
+        "FRP" : 77.599999999999994,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 44,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88100000014987,
+          37.65399999960033
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 44,
+        "LATITUDE" : 37.654000000000003,
+        "LONGITUDE" : -119.881,
+        "BRIGHTNESS" : 338.30000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531526400000,
+        "ACQ_TIME" : "2110",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 81,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 313.89999999999998,
+        "FRP" : 22.399999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 45,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83400000009988,
+          37.618999999850189
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 45,
+        "LATITUDE" : 37.619,
+        "LONGITUDE" : -119.834,
+        "BRIGHTNESS" : 314.60000000000002,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 89,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.60000000000002,
+        "FRP" : 41.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 46,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86599999999999,
+          37.617000000249845
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 46,
+        "LATITUDE" : 37.616999999999997,
+        "LONGITUDE" : -119.866,
+        "BRIGHTNESS" : 336.10000000000002,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.19999999999999,
+        "FRP" : 128.90000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 47,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89399999980014,
+          37.614999999750239
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 47,
+        "LATITUDE" : 37.615000000000002,
+        "LONGITUDE" : -119.89400000000001,
+        "BRIGHTNESS" : 318,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 96,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.60000000000002,
+        "FRP" : 50.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 48,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8160000000999,
+          37.634000000000071
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 48,
+        "LATITUDE" : 37.634,
+        "LONGITUDE" : -119.816,
+        "BRIGHTNESS" : 356.69999999999999,
+        "SCAN" : 2.5,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.10000000000002,
+        "FRP" : 281.80000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 49,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83699999995002,
+          37.632999999750268
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 49,
+        "LATITUDE" : 37.633000000000003,
+        "LONGITUDE" : -119.837,
+        "BRIGHTNESS" : 376.10000000000002,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.69999999999999,
+        "FRP" : 499.60000000000002,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 50,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86499999975018,
+          37.631000000149925
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 50,
+        "LATITUDE" : 37.631,
+        "LONGITUDE" : -119.86499999999999,
+        "BRIGHTNESS" : 342.80000000000001,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.19999999999999,
+        "FRP" : 166.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 51,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89399999980014,
+          37.628000000299835
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 51,
+        "LATITUDE" : 37.628,
+        "LONGITUDE" : -119.89400000000001,
+        "BRIGHTNESS" : 358.10000000000002,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295,
+        "FRP" : 287.80000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 52,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.91999999999996,
+          37.627000000050032
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 52,
+        "LATITUDE" : 37.627000000000002,
+        "LONGITUDE" : -119.92,
+        "BRIGHTNESS" : 307.30000000000001,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 48,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.39999999999998,
+        "FRP" : 20.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 53,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8149999998501,
+          37.647999999900151
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 53,
+        "LATITUDE" : 37.648000000000003,
+        "LONGITUDE" : -119.815,
+        "BRIGHTNESS" : 364.10000000000002,
+        "SCAN" : 2.5,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297,
+        "FRP" : 354.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 54,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83999999980011,
+          37.646000000299807
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 54,
+        "LATITUDE" : 37.646000000000001,
+        "LONGITUDE" : -119.84,
+        "BRIGHTNESS" : 364.39999999999998,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300,
+        "FRP" : 351.69999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 55,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86400000039964,
+          37.643999999800201
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 55,
+        "LATITUDE" : 37.643999999999998,
+        "LONGITUDE" : -119.864,
+        "BRIGHTNESS" : 325.10000000000002,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.5,
+        "FRP" : 71.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 56,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81899999994999,
+          37.628999999650318
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 56,
+        "LATITUDE" : 37.628999999999998,
+        "LONGITUDE" : -119.819,
+        "BRIGHTNESS" : 313.39999999999998,
+        "SCAN" : 2.5,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 16,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293,
+        "FRP" : 34.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 57,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8429999996502,
+          37.627000000050032
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 57,
+        "LATITUDE" : 37.627000000000002,
+        "LONGITUDE" : -119.843,
+        "BRIGHTNESS" : 341.89999999999998,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.5,
+        "FRP" : 157.59999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 58,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87500000044963,
+          37.624999999550369
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 58,
+        "LATITUDE" : 37.625,
+        "LONGITUDE" : -119.875,
+        "BRIGHTNESS" : 341.30000000000001,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.80000000000001,
+        "FRP" : 152.59999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 59,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90099999975013,
+          37.622999999950082
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 59,
+        "LATITUDE" : 37.622999999999998,
+        "LONGITUDE" : -119.901,
+        "BRIGHTNESS" : 322.60000000000002,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.69999999999999,
+        "FRP" : 62.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 60,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79500000024979,
+          37.643999999800201
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 60,
+        "LATITUDE" : 37.643999999999998,
+        "LONGITUDE" : -119.795,
+        "BRIGHTNESS" : 306.39999999999998,
+        "SCAN" : 2.5,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 30,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 290.80000000000001,
+        "FRP" : 19.800000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 61,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82300000004994,
+          37.642000000199914
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 61,
+        "LATITUDE" : 37.642000000000003,
+        "LONGITUDE" : -119.82299999999999,
+        "BRIGHTNESS" : 390.39999999999998,
+        "SCAN" : 2.5,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.5,
+        "FRP" : 735.20000000000005,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 62,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8429999996502,
+          37.640999999950111
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 62,
+        "LATITUDE" : 37.640999999999998,
+        "LONGITUDE" : -119.843,
+        "BRIGHTNESS" : 375,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 303.30000000000001,
+        "FRP" : 481.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 63,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87000000009988,
+          37.639000000349768
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 63,
+        "LATITUDE" : 37.639000000000003,
+        "LONGITUDE" : -119.87,
+        "BRIGHTNESS" : 336.19999999999999,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.60000000000002,
+        "FRP" : 124.7,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 64,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90099999975013,
+          37.636999999850161
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 64,
+        "LATITUDE" : 37.637,
+        "LONGITUDE" : -119.901,
+        "BRIGHTNESS" : 336.39999999999998,
+        "SCAN" : 2.3999999999999999,
+        "TRACK" : 1.5,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0635",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.69999999999999,
+        "FRP" : 127.59999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 65,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86499999975018,
+          37.635000000249875
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 65,
+        "LATITUDE" : 37.634999999999998,
+        "LONGITUDE" : -119.86499999999999,
+        "BRIGHTNESS" : 301.39999999999998,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0910",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 21,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 285.80000000000001,
+        "FRP" : 31.199999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 66,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81199999999995,
+          37.632000000399728
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 66,
+        "LATITUDE" : 37.631999999999998,
+        "LONGITUDE" : -119.812,
+        "BRIGHTNESS" : 304.10000000000002,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0910",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 27,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 287.69999999999999,
+        "FRP" : 41,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 67,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87000000009988,
+          37.629999999900122
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 67,
+        "LATITUDE" : 37.630000000000003,
+        "LONGITUDE" : -119.87,
+        "BRIGHTNESS" : 303.69999999999999,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0910",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 34,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 283.69999999999999,
+        "FRP" : 38.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 68,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82700000014984,
+          37.627000000050032
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 68,
+        "LATITUDE" : 37.627000000000002,
+        "LONGITUDE" : -119.827,
+        "BRIGHTNESS" : 306.10000000000002,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "0910",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 44,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 286.60000000000002,
+        "FRP" : 48.299999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 69,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89600000029975,
+          37.642000000199914
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 69,
+        "LATITUDE" : 37.642000000000003,
+        "LONGITUDE" : -119.896,
+        "BRIGHTNESS" : 316.60000000000002,
+        "SCAN" : 4.2999999999999998,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1050",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 93,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 291,
+        "FRP" : 112.09999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 70,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84799999999996,
+          37.628999999650318
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 70,
+        "LATITUDE" : 37.628999999999998,
+        "LONGITUDE" : -119.848,
+        "BRIGHTNESS" : 325.10000000000002,
+        "SCAN" : 4.2999999999999998,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1050",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 290.60000000000002,
+        "FRP" : 184.59999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 71,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86300000014984,
+          37.614999999750239
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 71,
+        "LATITUDE" : 37.615000000000002,
+        "LONGITUDE" : -119.863,
+        "BRIGHTNESS" : 306.80000000000001,
+        "SCAN" : 4.2999999999999998,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1050",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 64,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 290.19999999999999,
+        "FRP" : 57.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 72,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90600000009988,
+          37.640999999950111
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 72,
+        "LATITUDE" : 37.640999999999998,
+        "LONGITUDE" : -119.90600000000001,
+        "BRIGHTNESS" : 312.19999999999999,
+        "SCAN" : 4.2999999999999998,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1050",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 69,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 291,
+        "FRP" : 83.099999999999994,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 73,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86000000029975,
+          37.628999999650318
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 73,
+        "LATITUDE" : 37.628999999999998,
+        "LONGITUDE" : -119.86,
+        "BRIGHTNESS" : 324.69999999999999,
+        "SCAN" : 4.2999999999999998,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1050",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 291.10000000000002,
+        "FRP" : 182.69999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 74,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81199999999995,
+          37.617000000249845
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 74,
+        "LATITUDE" : 37.616999999999997,
+        "LONGITUDE" : -119.812,
+        "BRIGHTNESS" : 304.30000000000001,
+        "SCAN" : 4.2999999999999998,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1050",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 26,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 287.89999999999998,
+        "FRP" : 46.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 75,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.42799999990007,
+          39.926999999950112
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 75,
+        "LATITUDE" : 39.927,
+        "LONGITUDE" : -121.428,
+        "BRIGHTNESS" : 325.5,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1835",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304,
+        "FRP" : 31.100000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 76,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.40899999965023,
+          39.925000000349769
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 76,
+        "LATITUDE" : 39.924999999999997,
+        "LONGITUDE" : -121.40900000000001,
+        "BRIGHTNESS" : 328,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1835",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 72,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.5,
+        "FRP" : 35.299999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 77,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88900000034971,
+          37.639000000349768
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 77,
+        "LATITUDE" : 37.639000000000003,
+        "LONGITUDE" : -119.889,
+        "BRIGHTNESS" : 332.39999999999998,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 43,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 307.5,
+        "FRP" : 24.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 78,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83199999960027,
+          37.632999999750268
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 78,
+        "LATITUDE" : 37.633000000000003,
+        "LONGITUDE" : -119.83199999999999,
+        "BRIGHTNESS" : 353.39999999999998,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 96,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.89999999999998,
+        "FRP" : 80.599999999999994,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 79,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84900000024976,
+          37.624999999550369
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 79,
+        "LATITUDE" : 37.625,
+        "LONGITUDE" : -119.849,
+        "BRIGHTNESS" : 348.19999999999999,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 92,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 307,
+        "FRP" : 59.799999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 80,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83500000034968,
+          37.622999999950082
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 80,
+        "LATITUDE" : 37.622999999999998,
+        "LONGITUDE" : -119.83499999999999,
+        "BRIGHTNESS" : 353.69999999999999,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 96,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 303.19999999999999,
+        "FRP" : 79.599999999999994,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 81,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87700000004992,
+          37.617999999600329
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 81,
+        "LATITUDE" : 37.618000000000002,
+        "LONGITUDE" : -119.877,
+        "BRIGHTNESS" : 335.19999999999999,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 53,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.30000000000001,
+        "FRP" : 31.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 82,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86300000014984,
+          37.616000000000042
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 82,
+        "LATITUDE" : 37.616,
+        "LONGITUDE" : -119.863,
+        "BRIGHTNESS" : 332.89999999999998,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 13,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.89999999999998,
+        "FRP" : 26.699999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 83,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84999999960024,
+          37.614999999750239
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 83,
+        "LATITUDE" : 37.615000000000002,
+        "LONGITUDE" : -119.84999999999999,
+        "BRIGHTNESS" : 362,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.19999999999999,
+        "FRP" : 110.3,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 84,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83599999970022,
+          37.613000000149952
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 84,
+        "LATITUDE" : 37.613,
+        "LONGITUDE" : -119.836,
+        "BRIGHTNESS" : 334,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 78,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.30000000000001,
+        "FRP" : 32.200000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 85,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88299999975015,
+          37.617999999600329
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 85,
+        "LATITUDE" : 37.618000000000002,
+        "LONGITUDE" : -119.883,
+        "BRIGHTNESS" : 331.19999999999999,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 59,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.89999999999998,
+        "FRP" : 27,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 86,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86899999985008,
+          37.617000000249845
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 86,
+        "LATITUDE" : 37.616999999999997,
+        "LONGITUDE" : -119.869,
+        "BRIGHTNESS" : 336.30000000000001,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 82,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 306,
+        "FRP" : 37.299999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 87,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8560000001998,
+          37.614999999750239
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 87,
+        "LATITUDE" : 37.615000000000002,
+        "LONGITUDE" : -119.85599999999999,
+        "BRIGHTNESS" : 345.60000000000002,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 91,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.30000000000001,
+        "FRP" : 60.200000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 88,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84200000029972,
+          37.613000000149952
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 88,
+        "LATITUDE" : 37.613,
+        "LONGITUDE" : -119.842,
+        "BRIGHTNESS" : 350.60000000000002,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 94,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.89999999999998,
+        "FRP" : 75.299999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 89,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.54199999960025,
+          37.722999999750243
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 89,
+        "LATITUDE" : 37.722999999999999,
+        "LONGITUDE" : -121.542,
+        "BRIGHTNESS" : 335.80000000000001,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 72,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 314.89999999999998,
+        "FRP" : 32.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 90,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -118.78799999960029,
+          36.032000000000039
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 90,
+        "LATITUDE" : 36.031999999999996,
+        "LONGITUDE" : -118.788,
+        "BRIGHTNESS" : 333.19999999999999,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "1840",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 64,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 315.30000000000001,
+        "FRP" : 14.199999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 91,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85399999970019,
+          37.60099999985016
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 91,
+        "LATITUDE" : 37.600999999999999,
+        "LONGITUDE" : -119.854,
+        "BRIGHTNESS" : 348.39999999999998,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 93,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.60000000000002,
+        "FRP" : 447,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 92,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81199999999995,
+          37.631000000149925
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 92,
+        "LATITUDE" : 37.631,
+        "LONGITUDE" : -119.812,
+        "BRIGHTNESS" : 326.60000000000002,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 64,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.30000000000001,
+        "FRP" : 157.40000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 93,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86400000039964,
+          37.617000000249845
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 93,
+        "LATITUDE" : 37.616999999999997,
+        "LONGITUDE" : -119.864,
+        "BRIGHTNESS" : 348.80000000000001,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 93,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298.10000000000002,
+        "FRP" : 447.69999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 94,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87299999995003,
+          37.632999999750268
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 94,
+        "LATITUDE" : 37.633000000000003,
+        "LONGITUDE" : -119.873,
+        "BRIGHTNESS" : 326.60000000000002,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 61,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.10000000000002,
+        "FRP" : 140.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 95,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.91999999999996,
+          37.621000000349795
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 95,
+        "LATITUDE" : 37.621000000000002,
+        "LONGITUDE" : -119.92,
+        "BRIGHTNESS" : 326.80000000000001,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 71,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.30000000000001,
+        "FRP" : 133,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 96,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81700000034971,
+          37.614000000399756
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 96,
+        "LATITUDE" : 37.613999999999997,
+        "LONGITUDE" : -119.81699999999999,
+        "BRIGHTNESS" : 333.69999999999999,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 80,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.39999999999998,
+        "FRP" : 235.19999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 97,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85799999980014,
+          37.603000000349766
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 97,
+        "LATITUDE" : 37.603000000000002,
+        "LONGITUDE" : -119.858,
+        "BRIGHTNESS" : 358.39999999999998,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 99,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.60000000000002,
+        "FRP" : 638.60000000000002,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 98,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86700000024979,
+          37.618999999850189
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 98,
+        "LATITUDE" : 37.619,
+        "LONGITUDE" : -119.867,
+        "BRIGHTNESS" : 333.39999999999998,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 80,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298.30000000000001,
+        "FRP" : 222.80000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 99,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87800000029972,
+          37.634000000000071
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 99,
+        "LATITUDE" : 37.634,
+        "LONGITUDE" : -119.878,
+        "BRIGHTNESS" : 332.69999999999999,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 79,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299,
+        "FRP" : 207.40000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 100,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.9259999997002,
+          37.621000000349795
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 100,
+        "LATITUDE" : 37.621000000000002,
+        "LONGITUDE" : -119.926,
+        "BRIGHTNESS" : 328.89999999999998,
+        "SCAN" : 4.4000000000000004,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2015",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 74,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.39999999999998,
+        "FRP" : 158,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 101,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.28799999999995,
+          35.939000000149917
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 101,
+        "LATITUDE" : 35.939,
+        "LONGITUDE" : -121.288,
+        "BRIGHTNESS" : 335,
+        "SCAN" : 2.8999999999999999,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 62,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 310.89999999999998,
+        "FRP" : 87.400000000000006,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 102,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79299999975018,
+          37.611999999900149
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 102,
+        "LATITUDE" : 37.612000000000002,
+        "LONGITUDE" : -119.79300000000001,
+        "BRIGHTNESS" : 317.60000000000002,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 8,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.69999999999999,
+        "FRP" : 57.799999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 103,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83800000019983,
+          37.610000000299806
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 103,
+        "LATITUDE" : 37.609999999999999,
+        "LONGITUDE" : -119.83799999999999,
+        "BRIGHTNESS" : 374.60000000000002,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.80000000000001,
+        "FRP" : 840.79999999999995,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 104,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88399999999996,
+          37.606999999550396
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 104,
+        "LATITUDE" : 37.606999999999999,
+        "LONGITUDE" : -119.884,
+        "BRIGHTNESS" : 338.80000000000001,
+        "SCAN" : 3.7000000000000002,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 87,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.19999999999999,
+        "FRP" : 211.69999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 105,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84500000014987,
+          37.599000000249873
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 105,
+        "LATITUDE" : 37.598999999999997,
+        "LONGITUDE" : -119.845,
+        "BRIGHTNESS" : 334.69999999999999,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 84,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298.5,
+        "FRP" : 183,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 106,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8429999996502,
+          37.616000000000042
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 106,
+        "LATITUDE" : 37.616,
+        "LONGITUDE" : -119.843,
+        "BRIGHTNESS" : 375.30000000000001,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.60000000000002,
+        "FRP" : 854.60000000000002,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 107,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81000000039967,
+          37.632999999750268
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 107,
+        "LATITUDE" : 37.633000000000003,
+        "LONGITUDE" : -119.81,
+        "BRIGHTNESS" : 335.10000000000002,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 74,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.5,
+        "FRP" : 186.59999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 108,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8429999996502,
+          37.632000000399728
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 108,
+        "LATITUDE" : 37.631999999999998,
+        "LONGITUDE" : -119.843,
+        "BRIGHTNESS" : 334.39999999999998,
+        "SCAN" : 3.7999999999999998,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.39999999999998,
+        "FRP" : 166.59999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 109,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88800000009991,
+          37.629999999900122
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 109,
+        "LATITUDE" : 37.630000000000003,
+        "LONGITUDE" : -119.88800000000001,
+        "BRIGHTNESS" : 333,
+        "SCAN" : 3.7000000000000002,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 79,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.10000000000002,
+        "FRP" : 149,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 110,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.92500000034971,
+          37.628000000299835
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 110,
+        "LATITUDE" : 37.628,
+        "LONGITUDE" : -119.925,
+        "BRIGHTNESS" : 322.10000000000002,
+        "SCAN" : 3.7000000000000002,
+        "TRACK" : 1.8,
+        "ACQ_DATE" : 1531612800000,
+        "ACQ_TIME" : "2155",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 58,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.19999999999999,
+        "FRP" : 62.100000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 111,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82199999980014,
+          37.578000000399754
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 111,
+        "LATITUDE" : 37.578000000000003,
+        "LONGITUDE" : -119.822,
+        "BRIGHTNESS" : 342.69999999999999,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.89999999999998,
+        "FRP" : 82.400000000000006,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 112,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83699999995002,
+          37.574999999650288
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 112,
+        "LATITUDE" : 37.575000000000003,
+        "LONGITUDE" : -119.837,
+        "BRIGHTNESS" : 334.80000000000001,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.5,
+        "FRP" : 60.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 113,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81000000039967,
+          37.59100000005003
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 113,
+        "LATITUDE" : 37.591000000000001,
+        "LONGITUDE" : -119.81,
+        "BRIGHTNESS" : 328.39999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.69999999999999,
+        "FRP" : 44.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 114,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82499999965023,
+          37.588999999550367
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 114,
+        "LATITUDE" : 37.588999999999999,
+        "LONGITUDE" : -119.825,
+        "BRIGHTNESS" : 358.10000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.89999999999998,
+        "FRP" : 139.59999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 115,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83999999980011,
+          37.585999999700277
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 115,
+        "LATITUDE" : 37.585999999999999,
+        "LONGITUDE" : -119.84,
+        "BRIGHTNESS" : 326.30000000000001,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.19999999999999,
+        "FRP" : 40.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 116,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79699999985007,
+          37.60499999995011
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 116,
+        "LATITUDE" : 37.604999999999997,
+        "LONGITUDE" : -119.797,
+        "BRIGHTNESS" : 335.89999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.5,
+        "FRP" : 61.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 117,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81399999960024,
+          37.602000000099963
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 117,
+        "LATITUDE" : 37.601999999999997,
+        "LONGITUDE" : -119.81399999999999,
+        "BRIGHTNESS" : 358.80000000000001,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.5,
+        "FRP" : 141.40000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 118,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82899999975018,
+          37.599000000249873
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 118,
+        "LATITUDE" : 37.598999999999997,
+        "LONGITUDE" : -119.82899999999999,
+        "BRIGHTNESS" : 339.10000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.19999999999999,
+        "FRP" : 69.299999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 119,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84399999990006,
+          37.596000000399727
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 119,
+        "LATITUDE" : 37.595999999999997,
+        "LONGITUDE" : -119.84399999999999,
+        "BRIGHTNESS" : 336.80000000000001,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.60000000000002,
+        "FRP" : 64.599999999999994,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 120,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80099999995002,
+          37.614999999750239
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 120,
+        "LATITUDE" : 37.615000000000002,
+        "LONGITUDE" : -119.801,
+        "BRIGHTNESS" : 335.69999999999999,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298.19999999999999,
+        "FRP" : 60,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 121,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81799999970019,
+          37.611999999900149
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 121,
+        "LATITUDE" : 37.612000000000002,
+        "LONGITUDE" : -119.818,
+        "BRIGHTNESS" : 348.5,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.30000000000001,
+        "FRP" : 98.299999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 122,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83199999960027,
+          37.609000000050003
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 122,
+        "LATITUDE" : 37.609000000000002,
+        "LONGITUDE" : -119.83199999999999,
+        "BRIGHTNESS" : 336.10000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.10000000000002,
+        "FRP" : 59.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 123,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84699999975015,
+          37.606999999550396
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 123,
+        "LATITUDE" : 37.606999999999999,
+        "LONGITUDE" : -119.84699999999999,
+        "BRIGHTNESS" : 347.39999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.69999999999999,
+        "FRP" : 96,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 124,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80399999980011,
+          37.607999999800199
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 124,
+        "LATITUDE" : 37.607999999999997,
+        "LONGITUDE" : -119.804,
+        "BRIGHTNESS" : 355.89999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.19999999999999,
+        "FRP" : 128.40000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 125,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8210000004496,
+          37.60499999995011
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 125,
+        "LATITUDE" : 37.604999999999997,
+        "LONGITUDE" : -119.821,
+        "BRIGHTNESS" : 348.39999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.60000000000002,
+        "FRP" : 97.700000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 126,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83500000034968,
+          37.602000000099963
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 126,
+        "LATITUDE" : 37.601999999999997,
+        "LONGITUDE" : -119.83499999999999,
+        "BRIGHTNESS" : 350.69999999999999,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.30000000000001,
+        "FRP" : 106.3,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 127,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84999999960024,
+          37.599000000249873
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 127,
+        "LATITUDE" : 37.598999999999997,
+        "LONGITUDE" : -119.84999999999999,
+        "BRIGHTNESS" : 329.10000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296,
+        "FRP" : 44,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 128,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8069999996502,
+          37.618999999850189
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 128,
+        "LATITUDE" : 37.619,
+        "LONGITUDE" : -119.807,
+        "BRIGHTNESS" : 331.10000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298.60000000000002,
+        "FRP" : 48.299999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 129,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82400000029975,
+          37.614999999750239
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 129,
+        "LATITUDE" : 37.615000000000002,
+        "LONGITUDE" : -119.824,
+        "BRIGHTNESS" : 328.30000000000001,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.30000000000001,
+        "FRP" : 40.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 130,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83900000044963,
+          37.613000000149952
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 130,
+        "LATITUDE" : 37.613,
+        "LONGITUDE" : -119.839,
+        "BRIGHTNESS" : 325.39999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 93,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298,
+        "FRP" : 34.700000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 131,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85399999970019,
+          37.610000000299806
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 131,
+        "LATITUDE" : 37.609999999999999,
+        "LONGITUDE" : -119.854,
+        "BRIGHTNESS" : 317.80000000000001,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 61,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.69999999999999,
+        "FRP" : 21.899999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 132,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80600000029972,
+          37.629999999900122
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 132,
+        "LATITUDE" : 37.630000000000003,
+        "LONGITUDE" : -119.806,
+        "BRIGHTNESS" : 326.5,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.60000000000002,
+        "FRP" : 38,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 133,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87299999995003,
+          37.617000000249845
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 133,
+        "LATITUDE" : 37.616999999999997,
+        "LONGITUDE" : -119.873,
+        "BRIGHTNESS" : 307.69999999999999,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 57,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.5,
+        "FRP" : 10.300000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 134,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88999999970019,
+          37.614000000399756
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 134,
+        "LATITUDE" : 37.613999999999997,
+        "LONGITUDE" : -119.89,
+        "BRIGHTNESS" : 317.10000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 94,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.19999999999999,
+        "FRP" : 23.800000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 135,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80900000014987,
+          37.640999999950111
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 135,
+        "LATITUDE" : 37.640999999999998,
+        "LONGITUDE" : -119.809,
+        "BRIGHTNESS" : 307.10000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 8,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.19999999999999,
+        "FRP" : 8.5999999999999996,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 136,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8930000004496,
+          37.624999999550369
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 136,
+        "LATITUDE" : 37.625,
+        "LONGITUDE" : -119.893,
+        "BRIGHTNESS" : 306.5,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 12,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.69999999999999,
+        "FRP" : 8.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 137,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89699999965023,
+          37.635000000249875
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 137,
+        "LATITUDE" : 37.634999999999998,
+        "LONGITUDE" : -119.89700000000001,
+        "BRIGHTNESS" : 353.60000000000002,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.69999999999999,
+        "FRP" : 120.59999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 138,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.91400000029972,
+          37.632000000399728
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 138,
+        "LATITUDE" : 37.631999999999998,
+        "LONGITUDE" : -119.914,
+        "BRIGHTNESS" : 320.39999999999998,
+        "SCAN" : 1.5,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0540",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.60000000000002,
+        "FRP" : 28,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 139,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84399999990006,
+          37.660000000199886
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 139,
+        "LATITUDE" : 37.659999999999997,
+        "LONGITUDE" : -119.84399999999999,
+        "BRIGHTNESS" : 304.19999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 59,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293,
+        "FRP" : 4.9000000000000004,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 140,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8930000004496,
+          37.647999999900151
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 140,
+        "LATITUDE" : 37.648000000000003,
+        "LONGITUDE" : -119.893,
+        "BRIGHTNESS" : 311.60000000000002,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 68,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.60000000000002,
+        "FRP" : 8.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 141,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81199999999995,
+          37.636999999850161
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 141,
+        "LATITUDE" : 37.637,
+        "LONGITUDE" : -119.812,
+        "BRIGHTNESS" : 306.80000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 14,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 290.30000000000001,
+        "FRP" : 5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 142,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80099999995002,
+          37.635000000249875
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 142,
+        "LATITUDE" : 37.634999999999998,
+        "LONGITUDE" : -119.801,
+        "BRIGHTNESS" : 309.39999999999998,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 59,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 290.39999999999998,
+        "FRP" : 7.2999999999999998,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 143,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90600000009988,
+          37.640999999950111
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 143,
+        "LATITUDE" : 37.640999999999998,
+        "LONGITUDE" : -119.90600000000001,
+        "BRIGHTNESS" : 350.80000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.5,
+        "FRP" : 62.700000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 144,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89399999980014,
+          37.639000000349768
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 144,
+        "LATITUDE" : 37.639000000000003,
+        "LONGITUDE" : -119.89400000000001,
+        "BRIGHTNESS" : 385.69999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.80000000000001,
+        "FRP" : 179.19999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 145,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89600000029975,
+          37.629999999900122
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 145,
+        "LATITUDE" : 37.630000000000003,
+        "LONGITUDE" : -119.896,
+        "BRIGHTNESS" : 309.60000000000002,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294,
+        "FRP" : 7.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 146,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87500000044963,
+          37.617999999600329
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 146,
+        "LATITUDE" : 37.618000000000002,
+        "LONGITUDE" : -119.875,
+        "BRIGHTNESS" : 323.19999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.10000000000002,
+        "FRP" : 19.800000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 147,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84200000029972,
+          37.613000000149952
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 147,
+        "LATITUDE" : 37.613,
+        "LONGITUDE" : -119.842,
+        "BRIGHTNESS" : 319.5,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 99,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 290,
+        "FRP" : 15.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 148,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82999999999998,
+          37.611999999900149
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 148,
+        "LATITUDE" : 37.612000000000002,
+        "LONGITUDE" : -119.83,
+        "BRIGHTNESS" : 317.5,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 79,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.19999999999999,
+        "FRP" : 13.1,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 149,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81899999994999,
+          37.610000000299806
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 149,
+        "LATITUDE" : 37.609999999999999,
+        "LONGITUDE" : -119.819,
+        "BRIGHTNESS" : 319,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 52,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.5,
+        "FRP" : 13.300000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 150,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80799999990006,
+          37.607999999800199
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 150,
+        "LATITUDE" : 37.607999999999997,
+        "LONGITUDE" : -119.80800000000001,
+        "BRIGHTNESS" : 348.19999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298.80000000000001,
+        "FRP" : 56.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 151,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79599999960027,
+          37.606999999550396
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 151,
+        "LATITUDE" : 37.606999999999999,
+        "LONGITUDE" : -119.79600000000001,
+        "BRIGHTNESS" : 338.30000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296,
+        "FRP" : 39.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 152,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83900000044963,
+          37.603999999700306
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 152,
+        "LATITUDE" : 37.603999999999999,
+        "LONGITUDE" : -119.839,
+        "BRIGHTNESS" : 337.60000000000002,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.39999999999998,
+        "FRP" : 39.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 153,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82800000039964,
+          37.603000000349766
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 153,
+        "LATITUDE" : 37.603000000000002,
+        "LONGITUDE" : -119.828,
+        "BRIGHTNESS" : 321.80000000000001,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 46,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.19999999999999,
+        "FRP" : 17.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 154,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82899999975018,
+          37.59399999990012
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 154,
+        "LATITUDE" : 37.594000000000001,
+        "LONGITUDE" : -119.82899999999999,
+        "BRIGHTNESS" : 321.19999999999999,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 87,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.80000000000001,
+        "FRP" : 17.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 155,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81799999970019,
+          37.592000000299834
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 155,
+        "LATITUDE" : 37.591999999999999,
+        "LONGITUDE" : -119.818,
+        "BRIGHTNESS" : 335.5,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297,
+        "FRP" : 35.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 156,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8200000001998,
+          37.582999999850188
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 156,
+        "LATITUDE" : 37.582999999999998,
+        "LONGITUDE" : -119.81999999999999,
+        "BRIGHTNESS" : 323.39999999999998,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 291,
+        "FRP" : 20.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 157,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80900000014987,
+          37.581999999600328
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 157,
+        "LATITUDE" : 37.582000000000001,
+        "LONGITUDE" : -119.809,
+        "BRIGHTNESS" : 307.5,
+        "SCAN" : 1,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "0955",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 27,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 290.5,
+        "FRP" : 6.7999999999999998,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 158,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.82900000024978,
+          41.930000000299799
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 158,
+        "LATITUDE" : 41.93,
+        "LONGITUDE" : -121.82899999999999,
+        "BRIGHTNESS" : 324.10000000000002,
+        "SCAN" : 1.2,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 50,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 311,
+        "FRP" : 9.9000000000000004,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 159,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.89700000014983,
+          39.399000000249885
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 159,
+        "LATITUDE" : 39.399000000000001,
+        "LONGITUDE" : -121.89700000000001,
+        "BRIGHTNESS" : 323.60000000000002,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 60,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 306.60000000000002,
+        "FRP" : 18.399999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 160,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.5950000002498,
+          39.277999999700285
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 160,
+        "LATITUDE" : 39.277999999999999,
+        "LONGITUDE" : -121.595,
+        "BRIGHTNESS" : 323.5,
+        "SCAN" : 1.3999999999999999,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 62,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 306.39999999999998,
+        "FRP" : 18.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 161,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.57899999985005,
+          39.276000000099998
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 161,
+        "LATITUDE" : 39.276000000000003,
+        "LONGITUDE" : -121.57899999999999,
+        "BRIGHTNESS" : 325.30000000000001,
+        "SCAN" : 1.3999999999999999,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 63,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.30000000000001,
+        "FRP" : 22.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 162,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84500000014987,
+          37.653000000249847
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 162,
+        "LATITUDE" : 37.652999999999999,
+        "LONGITUDE" : -119.845,
+        "BRIGHTNESS" : 331.60000000000002,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 75,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.69999999999999,
+        "FRP" : 50.700000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 163,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79399999999998,
+          37.629999999900122
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 163,
+        "LATITUDE" : 37.630000000000003,
+        "LONGITUDE" : -119.794,
+        "BRIGHTNESS" : 326.10000000000002,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 53,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.10000000000002,
+        "FRP" : 41.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 164,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89600000029975,
+          37.639000000349768
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 164,
+        "LATITUDE" : 37.639000000000003,
+        "LONGITUDE" : -119.896,
+        "BRIGHTNESS" : 344.69999999999999,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 90,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.89999999999998,
+        "FRP" : 100,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 165,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90000000039964,
+          37.627000000050032
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 165,
+        "LATITUDE" : 37.627000000000002,
+        "LONGITUDE" : -119.90000000000001,
+        "BRIGHTNESS" : 323,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 27,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 303.19999999999999,
+        "FRP" : 26.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 166,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8149999998501,
+          37.609000000050003
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 166,
+        "LATITUDE" : 37.609000000000002,
+        "LONGITUDE" : -119.815,
+        "BRIGHTNESS" : 334.10000000000002,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 72,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 303.5,
+        "FRP" : 61.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 167,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79500000024979,
+          37.60499999995011
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 167,
+        "LATITUDE" : 37.604999999999997,
+        "LONGITUDE" : -119.795,
+        "BRIGHTNESS" : 345.80000000000001,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 91,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.39999999999998,
+        "FRP" : 116.09999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 168,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8429999996502,
+          37.603000000349766
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 168,
+        "LATITUDE" : 37.603000000000002,
+        "LONGITUDE" : -119.843,
+        "BRIGHTNESS" : 338,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 73,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.69999999999999,
+        "FRP" : 74.200000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 169,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8200000001998,
+          37.59800000000007
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 169,
+        "LATITUDE" : 37.597999999999999,
+        "LONGITUDE" : -119.81999999999999,
+        "BRIGHTNESS" : 332.30000000000001,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 69,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.10000000000002,
+        "FRP" : 57.799999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 170,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80200000019983,
+          37.59399999990012
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 170,
+        "LATITUDE" : 37.594000000000001,
+        "LONGITUDE" : -119.80200000000001,
+        "BRIGHTNESS" : 333.60000000000002,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 75,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.39999999999998,
+        "FRP" : 66.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 171,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82599999990003,
+          37.586999999950081
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 171,
+        "LATITUDE" : 37.587000000000003,
+        "LONGITUDE" : -119.82599999999999,
+        "BRIGHTNESS" : 325.89999999999998,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 43,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.30000000000001,
+        "FRP" : 40.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 172,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82800000039964,
+          37.592999999650317
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 172,
+        "LATITUDE" : 37.593000000000004,
+        "LONGITUDE" : -119.828,
+        "BRIGHTNESS" : 326.30000000000001,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 69,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 300.80000000000001,
+        "FRP" : 45.200000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 173,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8069999996502,
+          37.588999999550367
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 173,
+        "LATITUDE" : 37.588999999999999,
+        "LONGITUDE" : -119.807,
+        "BRIGHTNESS" : 328.19999999999999,
+        "SCAN" : 1.8999999999999999,
+        "TRACK" : 1.3,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 73,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.89999999999998,
+        "FRP" : 52.700000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 174,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -115.80099999985009,
+          34.194999999750223
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 174,
+        "LATITUDE" : 34.195,
+        "LONGITUDE" : -115.801,
+        "BRIGHTNESS" : 331.89999999999998,
+        "SCAN" : 4.0999999999999996,
+        "TRACK" : 1.8999999999999999,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "1920",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 68,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 306.60000000000002,
+        "FRP" : 99,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 175,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81300000024976,
+          37.578000000399754
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 175,
+        "LATITUDE" : 37.578000000000003,
+        "LONGITUDE" : -119.813,
+        "BRIGHTNESS" : 338.39999999999998,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 83,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.10000000000002,
+        "FRP" : 38.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 176,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82400000029975,
+          37.575999999900148
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 176,
+        "LATITUDE" : 37.576000000000001,
+        "LONGITUDE" : -119.824,
+        "BRIGHTNESS" : 369.89999999999998,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 307.10000000000002,
+        "FRP" : 122.59999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 177,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83599999970022,
+          37.574000000299804
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 177,
+        "LATITUDE" : 37.573999999999998,
+        "LONGITUDE" : -119.836,
+        "BRIGHTNESS" : 362.39999999999998,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.5,
+        "FRP" : 96.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 178,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80200000019983,
+          37.588999999550367
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 178,
+        "LATITUDE" : 37.588999999999999,
+        "LONGITUDE" : -119.80200000000001,
+        "BRIGHTNESS" : 336.10000000000002,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 81,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.69999999999999,
+        "FRP" : 32.299999999999997,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 179,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8149999998501,
+          37.586999999950081
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 179,
+        "LATITUDE" : 37.587000000000003,
+        "LONGITUDE" : -119.815,
+        "BRIGHTNESS" : 339,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 84,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.80000000000001,
+        "FRP" : 36.100000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 180,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82599999990003,
+          37.585000000349794
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 180,
+        "LATITUDE" : 37.585000000000001,
+        "LONGITUDE" : -119.82599999999999,
+        "BRIGHTNESS" : 368.69999999999999,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.69999999999999,
+        "FRP" : 116.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 181,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83800000019983,
+          37.582999999850188
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 181,
+        "LATITUDE" : 37.582999999999998,
+        "LONGITUDE" : -119.83799999999999,
+        "BRIGHTNESS" : 361.60000000000002,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.10000000000002,
+        "FRP" : 92.599999999999994,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 182,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80500000004992,
+          37.59800000000007
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 182,
+        "LATITUDE" : 37.597999999999999,
+        "LONGITUDE" : -119.80500000000001,
+        "BRIGHTNESS" : 400.60000000000002,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 312.19999999999999,
+        "FRP" : 277.19999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 183,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.81700000034971,
+          37.596000000399727
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 183,
+        "LATITUDE" : 37.595999999999997,
+        "LONGITUDE" : -119.81699999999999,
+        "BRIGHTNESS" : 340.60000000000002,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 69,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.19999999999999,
+        "FRP" : 32.899999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 184,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82899999975018,
+          37.59399999990012
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 184,
+        "LATITUDE" : 37.594000000000001,
+        "LONGITUDE" : -119.82899999999999,
+        "BRIGHTNESS" : 336.5,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 72,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.80000000000001,
+        "FRP" : 26.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 185,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83999999980011,
+          37.592000000299834
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 185,
+        "LATITUDE" : 37.591999999999999,
+        "LONGITUDE" : -119.84,
+        "BRIGHTNESS" : 359.5,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 99,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 304.19999999999999,
+        "FRP" : 82.099999999999994,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 186,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83199999960027,
+          37.603000000349766
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 186,
+        "LATITUDE" : 37.603000000000002,
+        "LONGITUDE" : -119.83199999999999,
+        "BRIGHTNESS" : 351,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 94,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.39999999999998,
+        "FRP" : 55.700000000000003,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 187,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8429999996502,
+          37.60099999985016
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 187,
+        "LATITUDE" : 37.600999999999999,
+        "LONGITUDE" : -119.843,
+        "BRIGHTNESS" : 398.19999999999999,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 312.5,
+        "FRP" : 259.30000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 188,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85499999995,
+          37.599000000249873
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 188,
+        "LATITUDE" : 37.598999999999997,
+        "LONGITUDE" : -119.855,
+        "BRIGHTNESS" : 332.19999999999999,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 50,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 302.60000000000002,
+        "FRP" : 21.699999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 189,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79900000034968,
+          37.628000000299835
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 189,
+        "LATITUDE" : 37.628,
+        "LONGITUDE" : -119.79900000000001,
+        "BRIGHTNESS" : 343.69999999999999,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 81,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.60000000000002,
+        "FRP" : 43.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 190,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88399999999996,
+          37.614000000399756
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 190,
+        "LATITUDE" : 37.613999999999997,
+        "LONGITUDE" : -119.884,
+        "BRIGHTNESS" : 349.30000000000001,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 93,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 307.80000000000001,
+        "FRP" : 55.100000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 191,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89900000014984,
+          37.621000000349795
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 191,
+        "LATITUDE" : 37.621000000000002,
+        "LONGITUDE" : -119.899,
+        "BRIGHTNESS" : 337.30000000000001,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 77,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.80000000000001,
+        "FRP" : 29.600000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 192,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90199999999999,
+          37.629999999900122
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 192,
+        "LATITUDE" : 37.630000000000003,
+        "LONGITUDE" : -119.902,
+        "BRIGHTNESS" : 358.10000000000002,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 98,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 308.69999999999999,
+        "FRP" : 77.400000000000006,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 193,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.91400000029972,
+          37.628000000299835
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 193,
+        "LATITUDE" : 37.628,
+        "LONGITUDE" : -119.914,
+        "BRIGHTNESS" : 323.89999999999998,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 29,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.19999999999999,
+        "FRP" : 10.4,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 194,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89699999965023,
+          37.638000000099964
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 194,
+        "LATITUDE" : 37.637999999999998,
+        "LONGITUDE" : -119.89700000000001,
+        "BRIGHTNESS" : 364.30000000000001,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 310.5,
+        "FRP" : 98.900000000000006,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 195,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.91000000019983,
+          37.635999999600358
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 195,
+        "LATITUDE" : 37.636000000000003,
+        "LONGITUDE" : -119.91,
+        "BRIGHTNESS" : 340.80000000000001,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 86,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 309.19999999999999,
+        "FRP" : 37.100000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 196,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85200000009991,
+          37.65499999985019
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 196,
+        "LATITUDE" : 37.655000000000001,
+        "LONGITUDE" : -119.852,
+        "BRIGHTNESS" : 328.80000000000001,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 47,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 305.30000000000001,
+        "FRP" : 17.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 197,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87700000004992,
+          37.65099999975024
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 197,
+        "LATITUDE" : 37.651000000000003,
+        "LONGITUDE" : -119.877,
+        "BRIGHTNESS" : 337.69999999999999,
+        "SCAN" : 1.1000000000000001,
+        "TRACK" : 1,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 83,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 308.80000000000001,
+        "FRP" : 30.800000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 198,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.66199999990005,
+          39.04900000005
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 198,
+        "LATITUDE" : 39.048999999999999,
+        "LONGITUDE" : -121.66200000000001,
+        "BRIGHTNESS" : 327.80000000000001,
+        "SCAN" : 1.2,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 65,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 312,
+        "FRP" : 12.9,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 199,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.63900000044964,
+          39.197000000149956
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 199,
+        "LATITUDE" : 39.197000000000003,
+        "LONGITUDE" : -121.639,
+        "BRIGHTNESS" : 331.89999999999998,
+        "SCAN" : 1.2,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 77,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 310.5,
+        "FRP" : 20.199999999999999,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 200,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -121.63199999960028,
+          39.201000000249849
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 200,
+        "LATITUDE" : 39.201000000000001,
+        "LONGITUDE" : -121.63200000000001,
+        "BRIGHTNESS" : 326.19999999999999,
+        "SCAN" : 1.2,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 60,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 309.19999999999999,
+        "FRP" : 12.300000000000001,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 201,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -123.55799999960027,
+          41.952000000399778
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 201,
+        "LATITUDE" : 41.951999999999998,
+        "LONGITUDE" : -123.55800000000001,
+        "BRIGHTNESS" : 314.80000000000001,
+        "SCAN" : 1.3,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531699200000,
+        "ACQ_TIME" : "2100",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 62,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 299.30000000000001,
+        "FRP" : 11.5,
+        "DAYNIGHT" : "D"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 202,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83500000034968,
+          37.571000000449715
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 202,
+        "LATITUDE" : 37.570999999999998,
+        "LONGITUDE" : -119.83499999999999,
+        "BRIGHTNESS" : 309.10000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 27,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.60000000000002,
+        "FRP" : 14.1,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 203,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83800000019983,
+          37.581999999600328
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 203,
+        "LATITUDE" : 37.582000000000001,
+        "LONGITUDE" : -119.83799999999999,
+        "BRIGHTNESS" : 359.10000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.39999999999998,
+        "FRP" : 159.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 204,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85499999995,
+          37.580000000000041
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 204,
+        "LATITUDE" : 37.579999999999998,
+        "LONGITUDE" : -119.855,
+        "BRIGHTNESS" : 307.69999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 18,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.10000000000002,
+        "FRP" : 11.300000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 205,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80200000019983,
+          37.596999999750267
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 205,
+        "LATITUDE" : 37.597000000000001,
+        "LONGITUDE" : -119.80200000000001,
+        "BRIGHTNESS" : 313.69999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 44,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.69999999999999,
+        "FRP" : 19,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 206,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83800000019983,
+          37.592999999650317
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 206,
+        "LATITUDE" : 37.593000000000004,
+        "LONGITUDE" : -119.83799999999999,
+        "BRIGHTNESS" : 317.30000000000001,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 58,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.80000000000001,
+        "FRP" : 23.300000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 207,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.7840000001998,
+          37.610000000299806
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 207,
+        "LATITUDE" : 37.609999999999999,
+        "LONGITUDE" : -119.78400000000001,
+        "BRIGHTNESS" : 313,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 66,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.30000000000001,
+        "FRP" : 18.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 208,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80099999995002,
+          37.607999999800199
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 208,
+        "LATITUDE" : 37.607999999999997,
+        "LONGITUDE" : -119.801,
+        "BRIGHTNESS" : 326.69999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.60000000000002,
+        "FRP" : 43.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 209,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83900000044963,
+          37.603999999700306
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 209,
+        "LATITUDE" : 37.603999999999999,
+        "LONGITUDE" : -119.839,
+        "BRIGHTNESS" : 341.10000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.19999999999999,
+        "FRP" : 81.799999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 210,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85799999980014,
+          37.602000000099963
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 210,
+        "LATITUDE" : 37.601999999999997,
+        "LONGITUDE" : -119.858,
+        "BRIGHTNESS" : 335.10000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295,
+        "FRP" : 63.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 211,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.78800000029975,
+          37.621000000349795
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 211,
+        "LATITUDE" : 37.621000000000002,
+        "LONGITUDE" : -119.788,
+        "BRIGHTNESS" : 321.80000000000001,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.89999999999998,
+        "FRP" : 34.700000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 212,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80399999980011,
+          37.618999999850189
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 212,
+        "LATITUDE" : 37.619,
+        "LONGITUDE" : -119.804,
+        "BRIGHTNESS" : 310.39999999999998,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 57,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.5,
+        "FRP" : 13.9,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 213,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87700000004992,
+          37.611999999900149
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 213,
+        "LATITUDE" : 37.612000000000002,
+        "LONGITUDE" : -119.877,
+        "BRIGHTNESS" : 383,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.69999999999999,
+        "FRP" : 316.39999999999998,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 214,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.89399999980014,
+          37.610000000299806
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 214,
+        "LATITUDE" : 37.609999999999999,
+        "LONGITUDE" : -119.89400000000001,
+        "BRIGHTNESS" : 342.69999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.19999999999999,
+        "FRP" : 88.799999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 215,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.78899999965023,
+          37.610000000299806
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 215,
+        "LATITUDE" : 37.609999999999999,
+        "LONGITUDE" : -119.789,
+        "BRIGHTNESS" : 323.5,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.39999999999998,
+        "FRP" : 38.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 216,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8069999996502,
+          37.607999999800199
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 216,
+        "LATITUDE" : 37.607999999999997,
+        "LONGITUDE" : -119.807,
+        "BRIGHTNESS" : 316.89999999999998,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 94,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.89999999999998,
+        "FRP" : 24.300000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 217,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84600000039967,
+          37.60499999995011
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 217,
+        "LATITUDE" : 37.604999999999997,
+        "LONGITUDE" : -119.846,
+        "BRIGHTNESS" : 343.30000000000001,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.60000000000002,
+        "FRP" : 91.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 218,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86400000039964,
+          37.603000000349766
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 218,
+        "LATITUDE" : 37.603000000000002,
+        "LONGITUDE" : -119.864,
+        "BRIGHTNESS" : 315.19999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 91,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.39999999999998,
+        "FRP" : 21.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 219,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79299999975018,
+          37.621000000349795
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 219,
+        "LATITUDE" : 37.621000000000002,
+        "LONGITUDE" : -119.79300000000001,
+        "BRIGHTNESS" : 323.69999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 298,
+        "FRP" : 39.700000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 220,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86400000039964,
+          37.614000000399756
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 220,
+        "LATITUDE" : 37.613999999999997,
+        "LONGITUDE" : -119.864,
+        "BRIGHTNESS" : 321.19999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 295.80000000000001,
+        "FRP" : 32.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 221,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88299999975015,
+          37.611999999900149
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 221,
+        "LATITUDE" : 37.612000000000002,
+        "LONGITUDE" : -119.883,
+        "BRIGHTNESS" : 384.89999999999998,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 301.69999999999999,
+        "FRP" : 333.10000000000002,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 222,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90000000039964,
+          37.610999999650289
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 222,
+        "LATITUDE" : 37.610999999999997,
+        "LONGITUDE" : -119.90000000000001,
+        "BRIGHTNESS" : 306.89999999999998,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 70,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.39999999999998,
+        "FRP" : 10.699999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 223,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.78100000034971,
+          37.632999999750268
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 223,
+        "LATITUDE" : 37.633000000000003,
+        "LONGITUDE" : -119.78100000000001,
+        "BRIGHTNESS" : 314.60000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 90,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.69999999999999,
+        "FRP" : 22.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 224,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.79900000034968,
+          37.631000000149925
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 224,
+        "LATITUDE" : 37.631,
+        "LONGITUDE" : -119.79900000000001,
+        "BRIGHTNESS" : 330.60000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.19999999999999,
+        "FRP" : 54.799999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 225,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90199999999999,
+          37.632999999750268
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 225,
+        "LATITUDE" : 37.633000000000003,
+        "LONGITUDE" : -119.902,
+        "BRIGHTNESS" : 321.5,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.5,
+        "FRP" : 32.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 226,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83400000009988,
+          37.65099999975024
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 226,
+        "LATITUDE" : 37.651000000000003,
+        "LONGITUDE" : -119.834,
+        "BRIGHTNESS" : 314.30000000000001,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 89,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.5,
+        "FRP" : 21.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 227,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88399999999996,
+          37.646000000299807
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 227,
+        "LATITUDE" : 37.646000000000001,
+        "LONGITUDE" : -119.884,
+        "BRIGHTNESS" : 320.69999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.5,
+        "FRP" : 31.300000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 228,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90399999960027,
+          37.643999999800201
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 228,
+        "LATITUDE" : 37.643999999999998,
+        "LONGITUDE" : -119.904,
+        "BRIGHTNESS" : 335.60000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.19999999999999,
+        "FRP" : 66.400000000000006,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 229,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83299999985007,
+          37.66199999980023
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 229,
+        "LATITUDE" : 37.661999999999999,
+        "LONGITUDE" : -119.833,
+        "BRIGHTNESS" : 323.10000000000002,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.5,
+        "FRP" : 37.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 230,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.84999999960024,
+          37.660000000199886
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 230,
+        "LATITUDE" : 37.659999999999997,
+        "LONGITUDE" : -119.84999999999999,
+        "BRIGHTNESS" : 326.39999999999998,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 297.19999999999999,
+        "FRP" : 43.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 231,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.86799999960027,
+          37.658999999950083
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 231,
+        "LATITUDE" : 37.658999999999999,
+        "LONGITUDE" : -119.86799999999999,
+        "BRIGHTNESS" : 312.69999999999999,
+        "SCAN" : 1.6000000000000001,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 86,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 296.80000000000001,
+        "FRP" : 18.600000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 232,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -123.5470000004496,
+          41.952000000399778
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 232,
+        "LATITUDE" : 41.951999999999998,
+        "LONGITUDE" : -123.547,
+        "BRIGHTNESS" : 315.80000000000001,
+        "SCAN" : 1.2,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 92,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.30000000000001,
+        "FRP" : 16.899999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 233,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -123.56000000009988,
+          41.949999999900115
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 233,
+        "LATITUDE" : 41.950000000000003,
+        "LONGITUDE" : -123.56,
+        "BRIGHTNESS" : 306.5,
+        "SCAN" : 1.2,
+        "TRACK" : 1.1000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "0625",
+        "SATELLITE" : "T",
+        "CONFIDENCE" : 68,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.60000000000002,
+        "FRP" : 8.4000000000000004,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 234,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -123.54399999970019,
+          41.952000000399778
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 234,
+        "LATITUDE" : 41.951999999999998,
+        "LONGITUDE" : -123.544,
+        "BRIGHTNESS" : 304.69999999999999,
+        "SCAN" : 1.3999999999999999,
+        "TRACK" : 1.2,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 61,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.30000000000001,
+        "FRP" : 9.5,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 235,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.78199999970019,
+          37.628000000299835
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 235,
+        "LATITUDE" : 37.628,
+        "LONGITUDE" : -119.782,
+        "BRIGHTNESS" : 309.60000000000002,
+        "SCAN" : 2.8999999999999999,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 71,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.5,
+        "FRP" : 38.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 236,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82800000039964,
+          37.66499999965032
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 236,
+        "LATITUDE" : 37.664999999999999,
+        "LONGITUDE" : -119.828,
+        "BRIGHTNESS" : 306.19999999999999,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 53,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.60000000000002,
+        "FRP" : 26.699999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 237,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.90000000039964,
+          37.65099999975024
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 237,
+        "LATITUDE" : 37.651000000000003,
+        "LONGITUDE" : -119.90000000000001,
+        "BRIGHTNESS" : 314.60000000000002,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 89,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.39999999999998,
+        "FRP" : 53.200000000000003,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 238,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.87000000009988,
+          37.643999999800201
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 238,
+        "LATITUDE" : 37.643999999999998,
+        "LONGITUDE" : -119.87,
+        "BRIGHTNESS" : 306.19999999999999,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 19,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.10000000000002,
+        "FRP" : 24.199999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 239,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.78599999980014,
+          37.624999999550369
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 239,
+        "LATITUDE" : 37.625,
+        "LONGITUDE" : -119.786,
+        "BRIGHTNESS" : 311.39999999999998,
+        "SCAN" : 2.8999999999999999,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 57,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.89999999999998,
+        "FRP" : 42.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 240,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.78499999955028,
+          37.609000000050003
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 240,
+        "LATITUDE" : 37.609000000000002,
+        "LONGITUDE" : -119.785,
+        "BRIGHTNESS" : 305.60000000000002,
+        "SCAN" : 2.8999999999999999,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 26,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.89999999999998,
+        "FRP" : 25.699999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 241,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.88599999960024,
+          37.617999999600329
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 241,
+        "LATITUDE" : 37.618000000000002,
+        "LONGITUDE" : -119.886,
+        "BRIGHTNESS" : 310.39999999999998,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 24,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293.69999999999999,
+        "FRP" : 37.100000000000001,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 242,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.85499999995,
+          37.610999999650289
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 242,
+        "LATITUDE" : 37.610999999999997,
+        "LONGITUDE" : -119.855,
+        "BRIGHTNESS" : 322.30000000000001,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 97,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.30000000000001,
+        "FRP" : 80.400000000000006,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 243,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.8210000004496,
+          37.603000000349766
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 243,
+        "LATITUDE" : 37.603000000000002,
+        "LONGITUDE" : -119.821,
+        "BRIGHTNESS" : 322.80000000000001,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 100,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 294.10000000000002,
+        "FRP" : 84.900000000000006,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 244,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.82899999975018,
+          37.588999999550367
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 244,
+        "LATITUDE" : 37.588999999999999,
+        "LONGITUDE" : -119.82899999999999,
+        "BRIGHTNESS" : 316.89999999999998,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 93,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 293,
+        "FRP" : 61.799999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 245,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83599999970022,
+          37.575999999900148
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 245,
+        "LATITUDE" : 37.576000000000001,
+        "LONGITUDE" : -119.836,
+        "BRIGHTNESS" : 306.19999999999999,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1035",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 67,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 291.80000000000001,
+        "FRP" : 29.899999999999999,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 246,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.83800000019983,
+          37.588999999550367
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 246,
+        "LATITUDE" : 37.588999999999999,
+        "LONGITUDE" : -119.83799999999999,
+        "BRIGHTNESS" : 309.39999999999998,
+        "SCAN" : 2.7999999999999998,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1040",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 77,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.30000000000001,
+        "FRP" : 39.799999999999997,
+        "DAYNIGHT" : "N"
+      }
+    },
+    {
+      "type" : "Feature",
+      "id" : 247,
+      "geometry" : {
+        "type" : "Point",
+        "coordinates" : [
+          -119.80399999980011,
+          37.581000000249844
+        ]
+      },
+      "properties" : {
+        "OBJECTID" : 247,
+        "LATITUDE" : 37.581000000000003,
+        "LONGITUDE" : -119.804,
+        "BRIGHTNESS" : 306.80000000000001,
+        "SCAN" : 2.8999999999999999,
+        "TRACK" : 1.6000000000000001,
+        "ACQ_DATE" : 1531785600000,
+        "ACQ_TIME" : "1040",
+        "SATELLITE" : "A",
+        "CONFIDENCE" : 69,
+        "VERSION" : "6.0NRT",
+        "BRIGHT_T31" : 292.60000000000002,
+        "FRP" : 32.399999999999999,
+        "DAYNIGHT" : "N"
+      }
+    }
+  ]
+}
