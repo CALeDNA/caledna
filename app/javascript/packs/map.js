@@ -159,6 +159,8 @@
 
   var markerFormatEls = document.querySelectorAll('.js-marker-format');
   var sampleStatusEl = document.querySelector('.js-sample-status');
+  var searchEl = document.querySelector('.js-map-search');
+  var searchKeywordEl = document.querySelector('.js-map-search-keyword');
 
   // =============
   // event listeners
@@ -194,9 +196,40 @@
     }
   })
 
+  searchEl.addEventListener('submit', function(event){
+    event.preventDefault()
+    var keyword = searchKeywordEl.value
+
+    if(isSampleBarcode(keyword)) {
+      // highlight one sample
+      filteredSamplesData = filterSamplesByBarcode(samplesData, keyword)
+      if(currentMarkerFormat == 'cluster') {
+        renderMarkerCluster(filteredSamplesData)
+      } else {
+        renderIndividualMarkers(filteredSamplesData)
+      }
+    } else {
+      // search taxa
+      console.log('search taxa')
+    }
+
+  })
+
+
+
   // =============
   // misc
   // =============
+
+  function isSampleBarcode(string) {
+    return /^k\d{4}-l(a|b|c)-s(1|2)$/.test(string.toLowerCase())
+  }
+
+  function filterSamplesByBarcode(samples, barcode) {
+    return samples.filter(function(sample) {
+      return sample.barcode == barcode
+    })
+  }
 
   function findAsvCount(sample, asvsCounts) {
     var asvs_data = asvsCounts.filter(function(counts) {

@@ -1,21 +1,32 @@
 <div class="row">
   <div class="col-md-3">
     <div class="radio">
-    Marker format:
+      Marker format:
       <label>
         <input type="radio" name="markerFormat" checked class="js-marker-format" value="cluster"> cluster markers
         <input type="radio" name="markerFormat" class="js-marker-format" value="individual"> individual markers
       </label>
     </div>
+    <hr>
 
-   <label for="sample-status">Filter samples by status:</label>
+    <label for="sample-status">Filter samples by status:</label>
     <select class="form-control js-sample-status" id="sample-status">
       <option value="all">show all</option>
       <option value="approved">approved</option>
       <option value="processing_sample">being processed</option>
       <option value="results_completed">results completed</option>
     </select>
+    <hr>
+
+    <form class="js-map-search">
+      <p>
+        Enter in sample barcode (e.g. 'K0324-LB-S2')
+      </p>
+      <input type='text' class='js-map-search-keyword'>
+      <input type='submit' value="Search">
+    </form>
   </div>
+
   <div class="col-md-9">
     <div id='mapid-advance'></div>
   </div>
