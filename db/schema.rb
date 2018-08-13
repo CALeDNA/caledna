@@ -10,10 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_29_224914) do
+ActiveRecord::Schema.define(version: 2018_08_23_061740) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -104,7 +106,7 @@ ActiveRecord::Schema.define(version: 2018_07_29_224914) do
   end
 
   create_table "external_resources", force: :cascade do |t|
-    t.integer "ncbi_id", default: -> { "nextval('external_resources_taxon_id_seq'::regclass)" }
+    t.integer "ncbi_id"
     t.integer "eol_id"
     t.integer "gbif_id"
     t.string "wikidata_image"
@@ -118,9 +120,9 @@ ActiveRecord::Schema.define(version: 2018_07_29_224914) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "iucn_status"
     t.string "source"
   end
 
@@ -312,6 +314,8 @@ ActiveRecord::Schema.define(version: 2018_07_29_224914) do
     t.integer "cal_division_id"
     t.integer "asvs_count", default: 0
     t.string "ids", default: [], array: true
+    t.string "alt_names"
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (alt_names)::text)))", name: "idx_taxa_search", using: :gin
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "boo"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"

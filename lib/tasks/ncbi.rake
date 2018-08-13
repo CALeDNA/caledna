@@ -14,6 +14,12 @@ namespace :ncbi do
     create_canonical_name
   end
 
+  desc 'create alt_names'
+  task create_alt_names: :environment do
+    puts 'create alt_names...'
+    create_alt_names
+  end
+
   desc 'create lineage info'
   task create_lineage_info: :environment do
     puts 'create lineage info...'

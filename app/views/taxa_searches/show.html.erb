@@ -10,19 +10,14 @@
 </div>
 
 <table class="table taxa-search">
-  <% @matches.each do |taxon| %>
+  <% @matches.each do |match| %>
     <tr>
       <td>
-        <% if taxon.image.present? %>
-          <%= link_to(image_tag(taxon.image[:url], alt: taxon.canonicalName, width: 200), taxon_path(id: taxon.id)) %>
-        <% else %>
-          <%= link_to(image_tag('blank_photo.svg', width: 200), taxon_path(id: taxon.id)) %>
-        <% end %>
-        <p>
-          <%= taxon.taxonRank %>: <%= link_to taxon.canonicalName, taxon_path(id: taxon.id) %><br>
-          <%= taxon.common_names %>
-        </p>
+        <%= match['rank'] %>: <%= link_to match['canonical_name'], taxon_path(id: match['taxon_id']) %><br>
+        <%= "(#{match['alt_names'].split(' | ').join(', ')})" if match['alt_names'] %>
       </td>
     </tr>
   <% end %>
 </table>
+
+<%= paginate @matches %>

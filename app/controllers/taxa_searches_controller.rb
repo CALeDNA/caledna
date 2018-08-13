@@ -1,40 +1,62 @@
 # frozen_string_literal: true
 
 class TaxaSearchesController < ApplicationController
+  include CustomPagination
+
   def show
-    if params[:search]
+    if query
       @matches = matches
-      @query = search_params[:query]
+      @query = query
     else
       @matches = []
       @query = nil
     end
   end
 
-  private
-
   def matches
-    matches = []
-    matches += taxa_matches if taxa_matches.present?
-    matches += vernaculars_matches if vernaculars_matches.present?
-    matches
+    records = conn.execute(result_sql)
+    add_pagination_methods(records)
+    records
   end
 
-  def taxa_matches
-    NcbiNode.where("lower(\"canonical_name\") = '#{query}'")
+  def conn
+    @conn ||= ActiveRecord::Base.connection
   end
 
-  def vernaculars_matches
-    vernacular_ids =
-      NcbiName.where("lower(\"name\") = '#{query}'").pluck(:taxon_id)
-    NcbiNode.where(taxon_id: vernacular_ids)
+  def result_sql
+    <<-SQL
+    SELECT taxon_id, canonical_name, rank, alt_names, inaturalist_id, eol_id,
+    wikidata_image
+    FROM (
+      SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
+      ncbi_nodes.alt_names, inaturalist_id, eol_id, wikidata_image,
+      to_tsvector('simple', canonical_name) ||
+      to_tsvector('english', alt_names) AS doc
+      FROM ncbi_nodes
+      LEFT JOIN external_resources
+      ON external_resources.ncbi_id = ncbi_nodes.taxon_id
+      GROUP BY  ncbi_nodes.taxon_id, external_resources.inaturalist_id,
+      external_resources.eol_id, external_resources.wikidata_image
+    ) as search
+    WHERE search.doc @@ plainto_tsquery(#{conn.quote(query)})
+    LIMIT #{limit} OFFSET #{offset}
+    SQL
+  end
+
+  def count_sql
+    <<-SQL
+    SELECT count(taxon_id)
+    FROM (
+      SELECT taxon_id,
+      to_tsvector('simple', canonical_name) ||
+      to_tsvector('english', alt_names) as doc
+      FROM ncbi_nodes
+    ) AS search
+    WHERE search.doc @@ plainto_tsquery(#{conn.quote(query)});
+    SQL
   end
 
   def query
-    search_params[:query].downcase
-  end
-
-  def search_params
-    params.require(:search).permit(:query)
+    params[:query].try(:downcase)
   end
 end

@@ -96,14 +96,11 @@ class NcbiNode < ApplicationRecord
   end
 
   def vernaculars
-    ncbi_names.where(taxon_id: taxon_id)
-              .where("name_class = 'common name' OR " \
-              "name_class = 'genbank common name'")
+    ncbi_names.vernaculars.where(taxon_id: taxon_id)
   end
 
   def synonyms
-    ncbi_names.where.not(name_class: 'common name')
-              .where.not(name_class: 'genbank common name')
+    ncbi_names.synonyms
   end
 
   def batch_common_names(vernaculars, parenthesis = true)

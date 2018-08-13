@@ -31,6 +31,22 @@ module FormatNcbi
     end
   end
 
+  def create_alt_names
+    sql = "name_class = 'common name' OR " \
+      "name_class = 'genbank common name' OR " \
+      "name_class = 'genbank synonym'  OR " \
+      "name_class = 'synonym' OR " \
+      "name_class = 'equivalent name'"
+
+    NcbiName.where(sql).all.each do |name|
+      clean_name = name.name.delete("'")
+      sql = 'UPDATE ncbi_nodes SET alt_names =  ' \
+        "coalesce('#{clean_name}' || ' | ' || alt_names, '#{clean_name}') " \
+        "WHERE taxon_id = #{name.taxon_id} "
+      ActiveRecord::Base.connection.execute(sql)
+    end
+  end
+
   def create_ids
     nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
     nodes.each do |node|

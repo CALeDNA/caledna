@@ -5,6 +5,75 @@ require 'rails_helper'
 describe FormatNcbi do
   let(:dummy_class) { Class.new { extend FormatNcbi } }
 
+  describe '#create_alt_names' do
+    def subject
+      dummy_class.create_alt_names
+    end
+
+    it 'adds one name to alt_name when there is one related name' do
+      node = create(:ncbi_node, taxon_id: 1)
+      create(:ncbi_name, taxon_id: 1, name: 'name', name_class: 'synonym')
+      subject
+
+      expect(node.reload.alt_names).to eq('name')
+    end
+
+    it 'adds multiple names to alt_name when there arme many related names' do
+      node = create(:ncbi_node, taxon_id: 1)
+      create(:ncbi_name, taxon_id: 1, name: 'name1', name_class: 'synonym')
+      create(:ncbi_name, taxon_id: 1, name: 'name2', name_class: 'synonym')
+      subject
+
+      expect(node.reload.alt_names).to eq('name2 | name1')
+    end
+
+    it 'appends new name to alt_name when alt_name has content' do
+      node = create(:ncbi_node, taxon_id: 1, alt_names: 'name1')
+      create(:ncbi_name, taxon_id: 1, name: 'name2', name_class: 'synonym')
+      create(:ncbi_name, taxon_id: 1, name: 'name3', name_class: 'synonym')
+      subject
+
+      expect(node.reload.alt_names).to eq('name3 | name2 | name1')
+    end
+
+    it 'does not change alt_name when name_class is invalid' do
+      node = create(:ncbi_node, taxon_id: 1)
+      create(:ncbi_name, taxon_id: 1, name: 'name', name_class: 'random')
+      subject
+
+      expect(node.reload.alt_names).to eq(nil)
+    end
+
+    it 'ignores names for other taxons' do
+      node = create(:ncbi_node, taxon_id: 1)
+      create(:ncbi_node, taxon_id: 2)
+      create(:ncbi_name, taxon_id: 2, name: 'name', name_class: 'synonym')
+      subject
+
+      expect(node.reload.alt_names).to eq(nil)
+    end
+
+    it 'updates multiple ncbi_nodes' do
+      node1 = create(:ncbi_node, taxon_id: 1)
+      create(:ncbi_name, taxon_id: 1, name: 'name1', name_class: 'synonym')
+
+      node2 = create(:ncbi_node, taxon_id: 2)
+      create(:ncbi_name, taxon_id: 2, name: 'name2', name_class: 'synonym')
+      subject
+
+      expect(node1.reload.alt_names).to eq('name1')
+      expect(node2.reload.alt_names).to eq('name2')
+    end
+
+    it 'removes quotes before adding to alt_name' do
+      node = create(:ncbi_node, taxon_id: 1)
+      create(:ncbi_name, taxon_id: 1, name: "name 'a'", name_class: 'synonym')
+      subject
+
+      expect(node.reload.alt_names).to eq('name a')
+    end
+  end
+
   describe '#create_canonical_name' do
     def subject
       dummy_class.create_canonical_name
