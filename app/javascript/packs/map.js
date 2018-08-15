@@ -127,12 +127,30 @@
       onEachFeature: onEachFeatureHandler
     });
 
-    var overlayMaps = {
-      "UC Reserves": uc_reserves
-    };
+    $.get("/data/HyspIRI_CA.geojson", function(data) {
+      var geojsonMarkerOptions = {
+        radius: 1,
+        fillColor: "#000",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
 
-    L.control.layers(baseMaps, overlayMaps ).addTo(map);
+      var HyspIRI_CA = L.geoJSON(JSON.parse(data), {
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
+      });
 
+      var overlayMaps = {
+        "HyspIRI CA": HyspIRI_CA,
+        "UC Reserves": uc_reserves
+      };
+
+      L.control.layers(baseMaps, overlayMaps ).addTo(map);
+
+    })
   })
 
   $.get( "/api/v1/samples", function(data) {
