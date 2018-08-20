@@ -106,6 +106,11 @@
     individualMarkerLayer = L.layerGroup(markers)
   }
 
+  function createRasterLayer(rasterFile) {
+    var imgBounds = [[32.5325005393,-124.416666666],[42.0158338727,-114.125]];
+    return new L.imageOverlay(rasterFile, imgBounds);
+  }
+
 // =============
 // geojson layers
 // =============
@@ -121,6 +126,7 @@
 // =============
 // fetch data
 // =============
+
 
   $.get("/data/map_layers/uc_reserves.geojson", function(data) {
     var uc_reserves = L.geoJSON(JSON.parse(data), {
@@ -143,9 +149,20 @@
         }
       });
 
+      var bldfie = createRasterLayer('/data/map_rasters/bldfie_0.png')
+      var clyppt = createRasterLayer('/data/map_rasters/clyppt_1.png')
+      var sndppt = createRasterLayer('/data/map_rasters/sndppt_2.png')
+      var sltppt = createRasterLayer('/data/map_rasters/sltppt_3.png')
+      var hii = createRasterLayer('/data/map_rasters/hii_4.png')
+
       var overlayMaps = {
-        "HyspIRI CA": HyspIRI_CA,
-        "UC Reserves": uc_reserves
+        "HyspIRI": HyspIRI_CA,
+        "UC Reserves": uc_reserves,
+        "bldfie (bulk density)": bldfie,
+        "clyppt (amount clay)": clyppt,
+        "sltppt (amount silt)": sltppt,
+        "sndppt (amount sand)": sndppt,
+        "hii (human impact)": hii
       };
 
       L.control.layers(baseMaps, overlayMaps ).addTo(map);
