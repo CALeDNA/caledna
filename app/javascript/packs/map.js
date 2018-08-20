@@ -122,12 +122,12 @@
 // fetch data
 // =============
 
-  $.get("/data/uc_reserves.geojson", function(data) {
+  $.get("/data/map_layers/uc_reserves.geojson", function(data) {
     var uc_reserves = L.geoJSON(JSON.parse(data), {
       onEachFeature: onEachFeatureHandler
     });
 
-    $.get("/data/HyspIRI_CA.geojson", function(data) {
+    $.get("/data/map_layers/HyspIRI_CA.geojson", function(data) {
       var geojsonMarkerOptions = {
         radius: 1,
         fillColor: "#000",

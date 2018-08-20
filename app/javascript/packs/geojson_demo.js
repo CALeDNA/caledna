@@ -41,11 +41,11 @@
     }
   }
 
-  $.get("/data/MODIS_C6_CA_ActiveFire_7d_18.07.16.geojson", function(data) {
+  $.get("/data/demo_map_layers/MODIS_C6_CA_ActiveFire_7d_18.07.16.geojson", function(data) {
     var fires = L.geoJSON(JSON.parse(data),
       { onEachFeature: fireHandler });
 
-    $.get("/data/CA_Ecoregions_Fish&WildlifeServices.geojson", function(data) {
+    $.get("/data/demo_map_layers/CA_Ecoregions_Fish&WildlifeServices.geojson", function(data) {
       var ecoregions = L.geoJSON(JSON.parse(data),
         { onEachFeature: ecoRegionHandler });
 
