@@ -111,6 +111,13 @@
     return new L.imageOverlay(rasterFile, imgBounds);
   }
 
+  function createLegend (legendImg) {
+    var div = L.DomUtil.create('div', 'info legend');
+    div.innerHTML += '<img src="' + legendImg + '" alt="legend" width="80px">';
+    return div;
+  }
+
+
 // =============
 // geojson layers
 // =============
@@ -126,6 +133,62 @@
 // =============
 // fetch data
 // =============
+
+  var bldfie = createRasterLayer('/data/map_rasters/bldfie_0.png')
+  var clyppt = createRasterLayer('/data/map_rasters/clyppt_1.png')
+  var sndppt = createRasterLayer('/data/map_rasters/sndppt_2.png')
+  var sltppt = createRasterLayer('/data/map_rasters/sltppt_3.png')
+  var hii = createRasterLayer('/data/map_rasters/hii_4.png')
+
+  var meixiOverlays = {
+    "bldfie (bulk density)": bldfie,
+    "clyppt (amount clay)": clyppt,
+    "sltppt (amount silt)": sltppt,
+    "sndppt (amount sand)": sndppt,
+    "hii (human impact)": hii
+  }
+
+  var legend = L.control({position: 'bottomright'});
+
+  map.on('overlayadd', function (eventLayer) {
+    map.removeControl(legend);
+
+    if (eventLayer.name === "bldfie (bulk density)") {
+      legend.onAdd = function () {
+        return createLegend('/data/map_rasters/bldfie_legend.png')
+      }
+      legend.addTo(map);
+
+    } else if (eventLayer.name === "clyppt (amount clay)") {
+      legend.onAdd = function () {
+        return createLegend('/data/map_rasters/clyppt_legend.png')
+      }
+      legend.addTo(map);
+
+    } else if (eventLayer.name === "sltppt (amount silt)") {
+      legend.onAdd = function () {
+        return createLegend('/data/map_rasters/sltppt_legend.png')
+      }
+      legend.addTo(map);
+
+    } else if (eventLayer.name === "sndppt (amount sand)") {
+      legend.onAdd = function () {
+        return createLegend('/data/map_rasters/sndppt_legend.png')
+      }
+      legend.addTo(map);
+
+    } else if (eventLayer.name === "hii (human impact)") {
+      legend.onAdd = function () {
+        return createLegend('/data/map_rasters/hii_legend.png')
+      }
+      legend.addTo(map);
+    }
+  });
+
+
+  map.on('overlayremove', function (eventLayer) {
+    map.removeControl(legend);
+  });
 
 
   $.get("/data/map_layers/uc_reserves.geojson", function(data) {
@@ -149,21 +212,14 @@
         }
       });
 
-      var bldfie = createRasterLayer('/data/map_rasters/bldfie_0.png')
-      var clyppt = createRasterLayer('/data/map_rasters/clyppt_1.png')
-      var sndppt = createRasterLayer('/data/map_rasters/sndppt_2.png')
-      var sltppt = createRasterLayer('/data/map_rasters/sltppt_3.png')
-      var hii = createRasterLayer('/data/map_rasters/hii_4.png')
+
 
       var overlayMaps = {
         "HyspIRI": HyspIRI_CA,
         "UC Reserves": uc_reserves,
-        "bldfie (bulk density)": bldfie,
-        "clyppt (amount clay)": clyppt,
-        "sltppt (amount silt)": sltppt,
-        "sndppt (amount sand)": sndppt,
-        "hii (human impact)": hii
+        ...meixiOverlays
       };
+
 
       L.control.layers(baseMaps, overlayMaps ).addTo(map);
 
