@@ -341,7 +341,7 @@ function addEventListener(map, samplesData) {
           currentMarkerFormat = 'individual'
 
           map.removeLayer(markerClusterLayer);
-          renderIndividualMarkers(filteredSamplesData)
+          renderIndividualMarkers(filteredSamplesData, map)
         }
       });
     });
@@ -355,7 +355,7 @@ function addEventListener(map, samplesData) {
       if(currentMarkerFormat == 'cluster') {
         renderMarkerCluster(filteredSamplesData, map)
       } else {
-        renderIndividualMarkers(filteredSamplesData)
+        renderIndividualMarkers(filteredSamplesData, map)
       }
     })
   }
@@ -371,7 +371,7 @@ function addEventListener(map, samplesData) {
         if(currentMarkerFormat == 'cluster') {
           renderMarkerCluster(filteredSamplesData, map)
         } else {
-          renderIndividualMarkers(filteredSamplesData)
+          renderIndividualMarkers(filteredSamplesData, map)
         }
       } else {
         // search taxa
@@ -411,7 +411,7 @@ function retrieveSamplesByStatus(status, samples) {
     var processed = filterSamplesByStatus(samples, 'processing_sample')
     var assigned = filterSamplesByStatus(samples, 'assigned')
     return processed.concat(assigned)
-  } else if(event.target.value == 'results_completed') {
+  } else if(status == 'results_completed') {
     return filterSamplesByStatus(samples, 'results_completed')
   } else {
     return samples
@@ -428,8 +428,9 @@ function filterSamplesByStatus(samples, status) {
 export default {
   fetchSamples,
   createMap,
-  createOverlayEventListeners,
   addEventListener,
+  createOverlays,
+  createOverlayEventListeners,
   createMarkerCluster,
   createCircleMarker,
   renderBasicIndividualMarkers
