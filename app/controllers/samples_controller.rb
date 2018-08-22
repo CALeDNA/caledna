@@ -12,9 +12,7 @@ class SamplesController < ApplicationController
 
   def show
     @division_counts = division_counts
-    @asvs_count = asvs_count(params[:sample_id])
     @sample = sample
-    @batch_vernaculars = batch_vernaculars
     @organisms_groups = organisms_groups
   end
 

@@ -1,4 +1,4 @@
-<%= javascript_pack_tag 'samples_show' %>
+<%= javascript_pack_tag 'samples_detail_charts' %>
 
 <h1><%= @sample.barcode %></h1>
 
@@ -8,7 +8,7 @@
   <% if @sample.extractions.first && @sample.extractions.first.local_fastq_storage_url.present? %>
     <li role="presentation"><a href="#labwork_details" aria-controls="labwork_details" role="tab" data-toggle="tab">Labwork</a></li>
   <% end %>
-  <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
+  <% if @sample.status == :results_completed %>
     <li role="presentation"><a href="#organisms" aria-controls="organisms" role="tab" data-toggle="tab">DNA Results</a></li>
   <% end %>
 </ul>
@@ -30,7 +30,7 @@
       <%= render partial: "labwork_details", locals: { sample: @sample } %>
     </div>
   <% end %>
-  <% if SamplesHelper.asvs_count(@asvs_count, @sample).present? %>
+  <% if @sample.status == :results_completed %>
     <div role="tabpanel" class="tab-pane" id="organisms">
       <%= render partial: "organisms",
         locals: {
