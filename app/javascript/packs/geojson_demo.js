@@ -13,7 +13,7 @@
   });
 
   var latlng = L.latLng(initialLat, initialLng);
-  var map = L.map('mapid-advance', {
+  var map = L.map('mapid', {
     center: latlng,
     zoom: initialZoom,
     maxZoom: maxZoom,

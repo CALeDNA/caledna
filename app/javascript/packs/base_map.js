@@ -1,4 +1,3 @@
-(function(){
   // =============
   // config map
   // =============
@@ -13,6 +12,7 @@
   var filteredSamplesData = []
   var disableClustering = 15;
   var currentMarkerFormat = 'cluster';
+  var apiEndpoint =  null;
 
   var openstreetmap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
@@ -34,7 +34,7 @@
 
 
   var latlng = L.latLng(initialLat, initialLng);
-  var map = L.map('mapid-advance', {
+  var map = L.map('mapid', {
     center: latlng,
     zoom: initialZoom,
     maxZoom: maxZoom,
@@ -226,23 +226,29 @@
     })
   })
 
-  $.get( "/api/v1/samples", function(data) {
-    var samples = data.samples.data;
-    var asvsCounts = data.asvs_count;
+  function fetchSamples(apiEndpoint) {
+    debugger
+    $.get(apiEndpoint, function(data) {
+      debugger
+      var samples = data.samples.data;
+      var asvsCounts = data.asvs_count;
 
-    samplesData = samples.filter(function(rawSample) {
-      var sample = rawSample.attributes;
-      return sample.latitude && sample.longitude;
-    }).map(function(sample) {
-      var asvs_count = findAsvCount(sample, asvsCounts);
-      return formatSamplesData(sample, asvs_count)
-    })
+      samplesData = samples.filter(function(rawSample) {
+        var sample = rawSample.attributes;
+        return sample.latitude && sample.longitude;
+      }).map(function(sample) {
+        var asvs_count = findAsvCount(sample, asvsCounts);
+        return formatSamplesData(sample, asvs_count)
+      })
 
-    filteredSamplesData = samplesData
+      filteredSamplesData = samplesData
 
-    createMarkerCluster(filteredSamplesData, createCircleMarker)
-    map.addLayer(markerClusterLayer);
-  });
+      createMarkerCluster(filteredSamplesData, createCircleMarker)
+      map.addLayer(markerClusterLayer);
+    });
+
+  }
+
 
   // =============
   // config event listeners
@@ -257,56 +263,61 @@
   // event listeners
   // =============
 
-  markerFormatEls.forEach(function(el){
-    el.addEventListener('click', function(event) {
-      var format = event.target.value
+  // function addEventListener() {
+    if(markerFormatEls) {
+      markerFormatEls.forEach(function(el){
+        el.addEventListener('click', function(event) {
+          var format = event.target.value
 
-      if(format == 'cluster' && currentMarkerFormat == 'individual') {
-        currentMarkerFormat = 'cluster'
+          if(format == 'cluster' && currentMarkerFormat == 'individual') {
+            currentMarkerFormat = 'cluster'
 
-        map.removeLayer(individualMarkerLayer);
-        renderMarkerCluster(filteredSamplesData)
-      } else if (format == 'individual' && currentMarkerFormat == 'cluster') {
-        currentMarkerFormat = 'individual'
+            map.removeLayer(individualMarkerLayer);
+            renderMarkerCluster(filteredSamplesData)
+          } else if (format == 'individual' && currentMarkerFormat == 'cluster') {
+            currentMarkerFormat = 'individual'
 
-        map.removeLayer(markerClusterLayer);
-        renderIndividualMarkers(filteredSamplesData)
-      }
-    });
-  });
-
-
-  sampleStatusEl.addEventListener('change', function(event) {
-    var status = event.target.value;
-    filteredSamplesData = retrieveSamplesByStatus(status, samplesData)
-
-    if(currentMarkerFormat == 'cluster') {
-      renderMarkerCluster(filteredSamplesData)
-    } else {
-      renderIndividualMarkers(filteredSamplesData)
-    }
-  })
-
-  searchEl.addEventListener('submit', function(event){
-    event.preventDefault()
-    var keyword = searchKeywordEl.value
-
-    if(isSampleBarcode(keyword)) {
-      // highlight one sample
-      filteredSamplesData = filterSamplesByBarcode(samplesData, keyword)
-      if(currentMarkerFormat == 'cluster') {
-        renderMarkerCluster(filteredSamplesData)
-      } else {
-        renderIndividualMarkers(filteredSamplesData)
-      }
-    } else {
-      // search taxa
-      console.log('search taxa')
+            map.removeLayer(markerClusterLayer);
+            renderIndividualMarkers(filteredSamplesData)
+          }
+        });
+      });
     }
 
-  })
+    if (sampleStatusEl) {
+      sampleStatusEl.addEventListener('change', function(event) {
+        var status = event.target.value;
+        filteredSamplesData = retrieveSamplesByStatus(status, samplesData)
 
+        if(currentMarkerFormat == 'cluster') {
+          renderMarkerCluster(filteredSamplesData)
+        } else {
+          renderIndividualMarkers(filteredSamplesData)
+        }
+      })
+    }
 
+    if (searchEl) {
+      searchEl.addEventListener('submit', function(event){
+        event.preventDefault()
+        var keyword = searchKeywordEl.value
+
+        if(isSampleBarcode(keyword)) {
+          // highlight one sample
+          filteredSamplesData = filterSamplesByBarcode(samplesData, keyword)
+          if(currentMarkerFormat == 'cluster') {
+            renderMarkerCluster(filteredSamplesData)
+          } else {
+            renderIndividualMarkers(filteredSamplesData)
+          }
+        } else {
+          // search taxa
+          console.log('search taxa')
+        }
+      })
+    }
+
+  // }
 
   // =============
   // misc
@@ -361,4 +372,7 @@
     })
   }
 
-})()
+
+  export {
+    fetchSamples
+  };
