@@ -295,14 +295,7 @@ function fetchSamples(apiEndpoint, map, cb) {
     })
     filteredSamplesData = samplesData
 
-        var sample = rawSample.attributes;
-        return sample.latitude && sample.longitude;
-      }).map(function(sample) {
-        return formatSamplesData(sample, asvs_count)
-      })
-    }
     cb({ samplesData })
-
   });
 
 }
