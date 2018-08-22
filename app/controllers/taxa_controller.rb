@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class TaxaController < ApplicationController
+  include CustomPagination
+
   def index
     # TODO: r-enable highlights
     # @highlights = Highlight.asv
@@ -81,41 +83,51 @@ class TaxaController < ApplicationController
   end
 
   def paginated_samples
-    if params[:view]
-      Kaminari.paginate_array(samples).page(params[:page])
-    else
-      samples
-    end
-  end
-
-  def raw_samples
-    sql = sql_select + sql_where
-    @raw_samples ||= conn.exec_query(sql)
+    params[:view] ? raw_samples : []
   end
 
   def samples
     @samples ||= raw_samples.map { |r| OpenStruct.new(r) }
   end
 
+  def raw_samples
+    sql = <<-SQL
+      SELECT DISTINCT samples.id, samples.barcode, status_cd AS status,
+      samples.latitude, samples.longitude,
+      array_agg(ncbi_nodes.canonical_name) AS taxa
+      FROM asvs
+      JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
+      JOIN samples ON samples.id = asvs.sample_id
+      WHERE samples.missing_coordinates = false
+    SQL
+    sql += " AND ids @> '{#{conn.quote(id)}}' " \
+    'GROUP BY samples.id ' \
+    "LIMIT #{limit} OFFSET #{offset};"
+
+    raw_records = conn.exec_query(sql)
+    records = raw_records.map { |r| OpenStruct.new(r) }
+
+    add_pagination_methods(records)
+    records
+  end
+
+  def count_sql
+    sql = <<-SQL
+      SELECT count(DISTINCT(samples.id))
+      FROM asvs
+      JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
+      JOIN samples ON samples.id = asvs.sample_id
+      WHERE samples.missing_coordinates = false
+    SQL
+    sql += "AND ids @> '{#{conn.quote(id)}}'"
+  end
+
   def conn
     @conn ||= ActiveRecord::Base.connection
   end
 
-  def sql_select
-    'SELECT DISTINCT samples.id, samples.barcode, status_cd as status, ' \
-    'samples.latitude, samples.longitude, field_data_project_id, ' \
-    'field_data_projects.name as field_data_project_name ' \
-    'FROM asvs ' \
-    'JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id" ' \
-    'JOIN samples ON samples.id = asvs.sample_id ' \
-    'JOIN field_data_projects ON samples.field_data_project_id ' \
-    ' = field_data_projects.id '
-  end
-
-  def sql_where
-    id = params[:id].to_i
-    'WHERE samples.missing_coordinates = false ' \
-    "AND ids @> '{#{conn.quote(id)}}' " \
+  def id
+    params[:id].to_i
   end
 
   def query_string
