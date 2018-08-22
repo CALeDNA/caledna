@@ -94,9 +94,16 @@
     <% if params[:view] == 'list' %>
       <%= render partial: "list", locals: { samples: samples, asvs_count: @asvs_count }  %>
     <% else %>
-      <%= render partial: "samples/map", locals: { samples: samples,
-      asvs_count: @asvs_count,
-      initial_lat: params[:lat], initial_lng: params[:lng] } %>
+      <svg height="30" width="100%">
+        <circle cx="15" cy="15" r="10" stroke="#222" stroke-width="2" fill="#5aa172" />
+        <text x="30" y="20">samples with <%= taxon.canonicalName %></text>
+      </svg>
+
+      <svg height="30" width="100%">
+        <circle cx="15" cy="15" r="10" stroke="#777" stroke-width="2" fill="#ddd" />
+        <text x="30" y="20">samples with results</text>
+      </svg>
+      <%= render partial: "map" %>
     <% end %>
   <% else %>
     <div class="panel panel-default">

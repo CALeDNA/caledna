@@ -14,7 +14,6 @@ class TaxaController < ApplicationController
   def show
     @taxon = taxon
     @samples = paginated_samples
-    @asvs_count = asvs_count
   end
 
   private

@@ -284,7 +284,9 @@ function fetchSamples(apiEndpoint, map, cb) {
   $.get(apiEndpoint, function(data) {
     var samples = data.samples ? data.samples.data : [data.sample.data];
     var asvsCounts = data.asvs_count;
+    var baseSamples = data.base_samples && data.base_samples.data;
     var samplesData;
+    var baseSamplesData;
 
     samplesData = samples.filter(function(rawSample) {
       var sample = rawSample.attributes;
@@ -295,7 +297,17 @@ function fetchSamples(apiEndpoint, map, cb) {
     })
     filteredSamplesData = samplesData
 
-    cb({ samplesData })
+    if (baseSamples) {
+      baseSamplesData = baseSamples.filter(function(rawSample) {
+        var sample = rawSample.attributes;
+        return sample.latitude && sample.longitude;
+      }).map(function(sample) {
+        var asvs_count = null;
+        return formatSamplesData(sample, asvs_count)
+      })
+    }
+
+    cb({ samplesData, baseSamplesData })
   });
 
 }
