@@ -14,6 +14,7 @@ class ResearchProjectsController < ApplicationController
     @asvs_count = project.present? ? asvs_count : []
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def pillar_point
     if project.present?
       @project = project
@@ -35,6 +36,7 @@ class ResearchProjectsController < ApplicationController
       blank_page
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
 
@@ -77,7 +79,7 @@ class ResearchProjectsController < ApplicationController
     counts
   end
 
-
+  # rubocop:disable Metrics/MethodLength
   def inat_division_stats
     sql = <<-SQL
       SELECT  kingdom as category, count("taxonID")
@@ -88,15 +90,15 @@ class ResearchProjectsController < ApplicationController
       WHERE (research_project_sources.sourceable_type = 'InatObservation')
     SQL
 
-    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
-
-    sql += <<-SQL
-      GROUP BY kingdom;
-    SQL
+    sql += 'AND (research_project_sources.research_project_id = ' \
+      "#{conn.quote(project.id)}) " \
+      'GROUP BY kingdom'
 
     conn.execute(sql)
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def inat_division_unique_stats
     sql = <<-SQL
       SELECT kingdom as category, count("taxonID") FROM (
@@ -108,7 +110,8 @@ class ResearchProjectsController < ApplicationController
         WHERE (research_project_sources.sourceable_type = 'InatObservation')
       SQL
 
-    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
+    sql += 'AND (research_project_sources.research_project_id =  ' \
+      "#{conn.quote(project.id)}) "
 
     sql += <<-SQL
         ORDER BY kingdom
@@ -118,7 +121,9 @@ class ResearchProjectsController < ApplicationController
 
     conn.execute(sql)
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def cal_division_stats
     sql = <<-SQL
       SELECT "name" AS category, COUNT(name) AS count
@@ -132,7 +137,8 @@ class ResearchProjectsController < ApplicationController
       WHERE (research_project_sources.sourceable_type = 'Extraction')
     SQL
 
-    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
+    sql += 'AND (research_project_sources.research_project_id = ' \
+      "#{conn.quote(project.id)})"
 
     sql += <<-SQL
       GROUP BY name
@@ -141,7 +147,9 @@ class ResearchProjectsController < ApplicationController
 
     conn.execute(sql)
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def cal_division_unique_stats
     sql = <<-SQL
       SELECT name as category, count("taxonID") FROM (
@@ -152,7 +160,8 @@ class ResearchProjectsController < ApplicationController
       JOIN research_project_sources ON sourceable_id = extraction_id
       WHERE (research_project_sources.sourceable_type = 'Extraction')
     SQL
-    sql += "AND (research_project_sources.research_project_id = #{conn.quote(project.id)})"
+    sql += 'AND (research_project_sources.research_project_id = ' \
+      "#{conn.quote(project.id)})"
 
     sql += <<-SQL
       ORDER BY name
@@ -162,6 +171,7 @@ class ResearchProjectsController < ApplicationController
 
     conn.execute(sql)
   end
+  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength
   def inat_stats
@@ -268,7 +278,6 @@ class ResearchProjectsController < ApplicationController
       inat_observations
     end
   end
-
 
   def sample_ids
     sql = 'SELECT sample_id ' \

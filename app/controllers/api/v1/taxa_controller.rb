@@ -33,6 +33,7 @@ module Api
         @asvs_count ||= ActiveRecord::Base.connection.execute(sql)
       end
 
+      # rubocop:disable Metrics/MethodLength
       def raw_samples
         sql = 'SELECT DISTINCT samples.id, samples.barcode, ' \
           'samples.latitude, samples.longitude, field_data_project_id, ' \
@@ -48,6 +49,7 @@ module Api
 
         @raw_samples ||= conn.exec_query(sql)
       end
+      # rubocop:enable Metrics/MethodLength
 
       def samples
         @samples ||= raw_samples.map { |r| OpenStruct.new(r) }

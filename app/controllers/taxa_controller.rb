@@ -90,6 +90,7 @@ class TaxaController < ApplicationController
     @samples ||= raw_samples.map { |r| OpenStruct.new(r) }
   end
 
+  # rubocop:disable Metrics/MethodLength
   def raw_samples
     sql = <<-SQL
       SELECT DISTINCT samples.id, samples.barcode, status_cd AS status,
@@ -110,6 +111,7 @@ class TaxaController < ApplicationController
     add_pagination_methods(records)
     records
   end
+  # rubocop:enable Metrics/MethodLength
 
   def count_sql
     sql = <<-SQL
@@ -120,6 +122,7 @@ class TaxaController < ApplicationController
       WHERE samples.missing_coordinates = false
     SQL
     sql += "AND ids @> '{#{conn.quote(id)}}'"
+    sql
   end
 
   def conn

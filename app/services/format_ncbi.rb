@@ -31,6 +31,7 @@ module FormatNcbi
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def create_alt_names
     sql = "name_class = 'common name' OR " \
       "name_class = 'genbank common name' OR " \
@@ -46,6 +47,7 @@ module FormatNcbi
       ActiveRecord::Base.connection.execute(sql)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def create_ids
     nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
