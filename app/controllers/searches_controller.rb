@@ -49,7 +49,7 @@ class SearchesController < ApplicationController
 
   def multisearch_samples
     @multisearch_samples ||=
-      Sample.includes(:field_data_project).approved
+      Sample.includes(:field_data_project).approved.with_coordinates
             .where(id: multisearch_ids)
   end
 

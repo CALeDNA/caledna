@@ -57,7 +57,7 @@ class SamplesController < ApplicationController
   end
 
   def sample
-    @sample ||= Sample.approved.find(params[:id])
+    @sample ||= Sample.approved.with_coordinates.find(params[:id])
   end
 
   # TODO: add test

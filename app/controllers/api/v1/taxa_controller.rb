@@ -44,7 +44,7 @@ module Api
           'JOIN samples ON samples.id = asvs.sample_id ' \
           'JOIN field_data_projects ON samples.field_data_project_id ' \
           ' = field_data_projects.id ' \
-          'WHERE samples.missing_coordinates = false ' \
+          'WHERE latitude IS NOT NULL AND longitude IS NOT NULL ' \
           "AND ids @> '{#{conn.quote(params[:id].to_i)}}' "
 
         @raw_samples ||= conn.exec_query(sql)

@@ -19,6 +19,9 @@ class Sample < ApplicationRecord
     where.not(status_cd: :submitted).where.not(status_cd: :rejected)
     .where.not(status_cd: :duplicate_barcode)
   end)
+  scope :with_coordinates, (lambda do
+    where.not(latitude: nil).where.not(longitude: nil)
+  end)
 
   as_enum :status,
           %i[submitted approved rejected duplicate_barcode assigned

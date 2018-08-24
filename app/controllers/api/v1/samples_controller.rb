@@ -30,7 +30,7 @@ module Api
       end
 
       def sample
-        @sample ||= Sample.approved.find(params[:id])
+        @sample ||= Sample.approved.with_coordinates.find(params[:id])
       end
 
       def query_string

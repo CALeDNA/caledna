@@ -13,7 +13,7 @@
   <% @projects.each do |project| %>
     <tr class="clickable_row" data-path='<%=  field_data_project_path project%>' >
       <td><%= project.name %></td>
-      <td><%= project.samples.approved.count %> </td>
+      <td><%= project.samples.approved.with_coordinates.count %> </td>
     </tr>
   <% end %>
 </table>

@@ -13,8 +13,8 @@
     </p>
 
     <p>
-      <%= pluralize(@project.samples.approved.count, 'sample') %> approved.
-      <% if @project.samples.approved.count > 0 %>
+      <%= pluralize(@project.samples.approved.with_coordinates.count, 'sample') %> approved.
+      <% if @project.samples.approved.with_coordinates.count > 0 %>
         <%= render partial: 'samples_links', locals: {
           map_path: field_data_project_path(id: @project.id),
           list_path: field_data_project_path(id: @project.id, view: :list) } %>

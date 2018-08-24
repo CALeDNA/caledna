@@ -7,7 +7,7 @@ module Api
 
       def home_page
         stats = {
-          samples_approved: Sample.approved.count,
+          samples_approved: Sample.approved.with_coordinates.count,
           users: User::EXISTING_USERS + User.count,
           organisms: organism_count.first['count']
         }

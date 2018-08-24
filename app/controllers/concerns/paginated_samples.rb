@@ -6,8 +6,8 @@ module PaginatedSamples
   private
 
   def samples
-    Sample.includes(:field_data_project).approved.order(:barcode)
-          .where(query_string)
+    Sample.includes(:field_data_project)
+          .approved.with_coordinates.order(:barcode).where(query_string)
   end
 
   def paginated_samples

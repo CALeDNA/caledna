@@ -263,7 +263,7 @@ class ResearchProjectsController < ApplicationController
   # rubocop:enable Metrics/MethodLength
 
   def samples
-    Sample.approved.order(:barcode)
+    Sample.approved.with_coordinates.order(:barcode)
           .where(id: sample_ids)
   end
 
