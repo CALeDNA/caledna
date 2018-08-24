@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 module TaxaSearchHelper
-  def self.common_name(matches)
-    names = matches.map do |match|
-      next if match['name_class'] == 'scientific name'
-      match['name']
-    end.compact
+  def self.image(record)
+    resource = FetchExternalResources.new(record.taxon_id)
 
-    "(#{names.join(', ')})" if names.present?
+    record.wikidata_image || resource.inaturalist_image || resource.eol_image
   end
 end

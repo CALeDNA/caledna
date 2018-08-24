@@ -14,7 +14,8 @@ class TaxaSearchesController < ApplicationController
   end
 
   def matches
-    records = conn.execute(result_sql)
+    raw_records = conn.execute(result_sql)
+    records = raw_records.map { |r| OpenStruct.new(r) }
     add_pagination_methods(records)
     records
   end
@@ -26,10 +27,10 @@ class TaxaSearchesController < ApplicationController
   def result_sql
     <<-SQL
     SELECT taxon_id, canonical_name, rank, alt_names, inaturalist_id, eol_id,
-    wikidata_image
+    wikidata_image, asvs_count
     FROM (
       SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
-      ncbi_nodes.alt_names, inaturalist_id, eol_id, wikidata_image,
+      ncbi_nodes.alt_names, inaturalist_id, eol_id, wikidata_image, asvs_count,
       to_tsvector('simple', canonical_name) ||
       to_tsvector('english', alt_names) AS doc
       FROM ncbi_nodes
@@ -60,5 +61,9 @@ class TaxaSearchesController < ApplicationController
 
   def query
     params[:query].try(:downcase)
+  end
+
+  def limit
+    10
   end
 end
