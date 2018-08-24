@@ -188,13 +188,23 @@ var clyppt = createRasterLayer('/data/map_rasters/clyppt_1.png')
 var sndppt = createRasterLayer('/data/map_rasters/sndppt_2.png')
 var sltppt = createRasterLayer('/data/map_rasters/sltppt_3.png')
 var hii = createRasterLayer('/data/map_rasters/hii_4.png')
+var elevation = createRasterLayer('/data/map_rasters/elevation_0.png')
+var precipitation = createRasterLayer('/data/map_rasters/precipitation_0.png')
+var popdens_geo = createRasterLayer('/data/map_rasters/popdens_geo_2.png')
+var popdens_cap1000 = createRasterLayer('/data/map_rasters/popdens_cap1000_0.png')
+var popdens_cap5000 = createRasterLayer('/data/map_rasters/popdens_cap5000_1.png')
 
-var meixiOverlays = {
-  "bldfie (bulk density)": bldfie,
-  "clyppt (amount clay)": clyppt,
-  "sltppt (amount silt)": sltppt,
-  "sndppt (amount sand)": sndppt,
-  "hii (human impact)": hii
+var environmentLayers = {
+  "bldfie (bulk density)": { layer: bldfie, legend: 'bldfie_legend.png' },
+  "clyppt (amount clay)": { layer: clyppt, legend: 'clyppt_legend.png' },
+  "sltppt (amount silt)": { layer: sltppt, legend: 'sltppt_legend.png' },
+  "sndppt (amount sand)": { layer: sndppt, legend: 'sndppt_legend.png' },
+  "hii (human impact)": { layer: hii, legend: 'hii_legend.png' },
+  "elevation": { layer: elevation, legend: 'elevation_legend.png' },
+  "precipitation": { layer: precipitation, legend: 'precipitation_legend.png' },
+  "population density": { layer: popdens_geo, legend: 'popdens_geo_legend.png' },
+  "population density cap 1000": { layer: popdens_cap1000, legend: 'popdens_cap1000_legend.png' },
+  "population density cap 5000": { layer: popdens_cap5000, legend: 'popdens_cap5000_legend.png' },
 }
 
 var legend = L.control({position: 'bottomright'});
@@ -203,33 +213,9 @@ function createOverlayEventListeners(map) {
   map.on('overlayadd', function (eventLayer) {
     map.removeControl(legend);
 
-    if (eventLayer.name === "bldfie (bulk density)") {
+    if(environmentLayers[eventLayer.name]) {
       legend.onAdd = function () {
-        return createLegend('/data/map_rasters/bldfie_legend.png')
-      }
-      legend.addTo(map);
-
-    } else if (eventLayer.name === "clyppt (amount clay)") {
-      legend.onAdd = function () {
-        return createLegend('/data/map_rasters/clyppt_legend.png')
-      }
-      legend.addTo(map);
-
-    } else if (eventLayer.name === "sltppt (amount silt)") {
-      legend.onAdd = function () {
-        return createLegend('/data/map_rasters/sltppt_legend.png')
-      }
-      legend.addTo(map);
-
-    } else if (eventLayer.name === "sndppt (amount sand)") {
-      legend.onAdd = function () {
-        return createLegend('/data/map_rasters/sndppt_legend.png')
-      }
-      legend.addTo(map);
-
-    } else if (eventLayer.name === "hii (human impact)") {
-      legend.onAdd = function () {
-        return createLegend('/data/map_rasters/hii_legend.png')
+        return createLegend('/data/map_rasters/' + environmentLayers[eventLayer.name].legend)
       }
       legend.addTo(map);
     }
@@ -267,8 +253,11 @@ function createOverlays (map) {
       var overlayMaps = {
         "HyspIRI": HyspIRI_CA,
         "UC Reserves": uc_reserves,
-        ...meixiOverlays
       };
+
+      var envLayers = Object.keys(environmentLayers).map(function(layer){
+        overlayMaps[layer] = environmentLayers[layer].layer
+      })
 
       L.control.layers(baseMaps, overlayMaps ).addTo(map);
     })
