@@ -15,7 +15,7 @@ class TaxaController < ApplicationController
 
   def show
     @taxon = taxon
-    @samples = paginated_samples
+    @samples = samples
   end
 
   private
@@ -82,16 +82,16 @@ class TaxaController < ApplicationController
     ].compact
   end
 
-  def paginated_samples
-    params[:view] ? raw_samples : []
-  end
-
   def samples
-    @samples ||= raw_samples.map { |r| OpenStruct.new(r) }
+    if params[:view]
+      paginated_samples
+    else
+      OpenStruct.new(total_records: total_records)
+    end
   end
 
   # rubocop:disable Metrics/MethodLength
-  def raw_samples
+  def paginated_samples
     sql = <<-SQL
       SELECT DISTINCT samples.id, samples.barcode, status_cd AS status,
       samples.latitude, samples.longitude,

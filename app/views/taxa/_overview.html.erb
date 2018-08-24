@@ -77,7 +77,7 @@
     </div>
   <% end %>
 <% else %>
-  <h2 id="samples" class="title"><%= pluralize(samples.count, 'Sample') %></h2>
+  <h2 id="samples" class="title"><%= pluralize(samples.total_records, 'Sample') %></h2>
 
   <% if samples.present? %>
     <div class="samples-menu">
