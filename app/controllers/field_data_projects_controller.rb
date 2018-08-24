@@ -12,12 +12,28 @@ class FieldDataProjectsController < ApplicationController
   end
 
   def show
-    @samples = paginated_samples
+    @samples = samples
     @project = FieldDataProject.find(params[:id])
-    @asvs_count = asvs_count
+    @asvs_count = counts
   end
 
   private
+
+  def counts
+    if params[:view]
+      asvs_count
+    else
+      []
+    end
+  end
+
+  def samples
+    if params[:view]
+      paginated_samples
+    else
+      []
+    end
+  end
 
   def query_string
     query = {}

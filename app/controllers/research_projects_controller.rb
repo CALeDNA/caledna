@@ -249,7 +249,8 @@ class ResearchProjectsController < ApplicationController
     'research_project_sources.research_project_id ' \
     'JOIN samples ' \
     'ON research_project_sources.sample_id = samples.id ' \
-    "WHERE samples.status_cd != 'processed_invalid_sample' "
+    "WHERE samples.status_cd != 'processed_invalid_sample' " \
+    'AND latitude IS NOT NULL AND longitude IS NOT NULL ' \
 
     unless current_researcher.present?
       sql += 'AND research_projects.published = true ' \
@@ -284,7 +285,8 @@ class ResearchProjectsController < ApplicationController
       'FROM research_project_sources ' \
       'JOIN samples ' \
       'ON samples.id = research_project_sources.sample_id ' \
-      "WHERE research_project_sources.research_project_id = #{project.id};"
+      'WHERE latitude IS NOT NULL AND longitude IS NOT NULL ' \
+      "AND research_project_sources.research_project_id = #{project.id};"
 
     @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
                                       .pluck('sample_id')

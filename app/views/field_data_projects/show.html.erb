@@ -22,8 +22,8 @@
     </p>
 
     <p>
-      <%= pluralize(@project.samples.processing_sample.count, 'sample') %> being processed.
-      <% if @project.samples.processing_sample.count > 0 %>
+      <%= pluralize(@project.samples.processing_sample.with_coordinates.count, 'sample') %> being processed.
+      <% if @project.samples.processing_sample.with_coordinates.count > 0 %>
         <%= render partial: 'samples_links', locals: {
           map_path: field_data_project_path(id: @project.id, status: :processing_sample),
           list_path: field_data_project_path(id: @project.id, status: :processing_sample, view: :list) } %>
@@ -31,8 +31,8 @@
     </p>
 
     <p>
-      <%= pluralize(@project.samples.results_completed.count, 'sample') %> with DNA results.
-      <% if @project.samples.results_completed.count > 0 %>
+      <%= pluralize(@project.samples.results_completed.with_coordinates.count, 'sample') %> with DNA results.
+      <% if @project.samples.results_completed.with_coordinates.count > 0 %>
         <%= render partial: 'samples_links', locals: {
           map_path: field_data_project_path(id: @project.id, status: :results_completed),
           list_path: field_data_project_path(id: @project.id, status: :results_completed, view: :list) } %>
@@ -48,10 +48,9 @@
 </div>
 
 <% if params[:view] == 'list' %>
-  <%= render partial: "samples/list",
+  <%= render partial: "list",
     locals: { samples: @samples, asvs_count: @asvs_count }  %>
 <% else %>
-  <%= render partial: "samples/map", locals: { samples: @samples,
-    asvs_count: @asvs_count,
-    initial_lat: nil, initial_lng: nil, field_data_project: @project} %>
+  <%= render partial: "samples/map" %>
+  <%= javascript_pack_tag 'projects_detail_map' %>
 <% end %>

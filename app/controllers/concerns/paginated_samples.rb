@@ -5,18 +5,13 @@ module PaginatedSamples
 
   private
 
-  def samples
+  def all_samples
     Sample.includes(:field_data_project)
           .approved.with_coordinates.order(:barcode).where(query_string)
   end
 
   def paginated_samples
-    if params[:view]
-      subject =
-        samples.class == Array ? Kaminari.paginate_array(samples) : samples
-      subject.page(params[:page])
-    else
-      samples
-    end
+    subject = Kaminari.paginate_array(all_samples)
+    @paginated_samples ||= subject.page(params[:page])
   end
 end

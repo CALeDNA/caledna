@@ -9,7 +9,7 @@ module Api
 
       def index
         render json: {
-          samples: SampleSerializer.new(samples),
+          samples: SampleSerializer.new(all_samples),
           asvs_count: asvs_count
         }, status: :ok
       end
