@@ -11,7 +11,9 @@
       <td><%= link_to sample.barcode, sample_path(id: sample.id) %></td>
       <td><%= sample.latitude %> </td>
       <td><%= sample.longitude %></td>
-      <td><%= sample.taxa.gsub(/[{}"]/, '').split(',').join(', ') %></td>
+      <td>
+        <%= sanitize TaxaHelper.format_matching_taxa(sample.taxa) %>
+      </td>
     </tr>
   <% end %>
 </table>

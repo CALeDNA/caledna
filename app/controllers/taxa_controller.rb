@@ -95,7 +95,8 @@ class TaxaController < ApplicationController
     sql = <<-SQL
       SELECT DISTINCT samples.id, samples.barcode, status_cd AS status,
       samples.latitude, samples.longitude,
-      array_agg(ncbi_nodes.canonical_name) AS taxa
+      array_agg(ncbi_nodes.canonical_name || ' | ' || ncbi_nodes.taxon_id)
+      AS taxa
       FROM asvs
       JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
       JOIN samples ON samples.id = asvs.sample_id
