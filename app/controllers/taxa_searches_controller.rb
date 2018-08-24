@@ -38,7 +38,8 @@ class TaxaSearchesController < ApplicationController
       GROUP BY  ncbi_nodes.taxon_id, external_resources.inaturalist_id,
       external_resources.eol_id, external_resources.wikidata_image
     ) as search
-    WHERE search.doc @@ plainto_tsquery(#{conn.quote(query)})
+    WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})
+    OR search.doc @@ plainto_tsquery('english', #{conn.quote(query)})
     LIMIT #{limit} OFFSET #{offset}
     SQL
   end
@@ -52,7 +53,8 @@ class TaxaSearchesController < ApplicationController
       to_tsvector('english', alt_names) as doc
       FROM ncbi_nodes
     ) AS search
-    WHERE search.doc @@ plainto_tsquery(#{conn.quote(query)});
+    WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})
+    OR search.doc @@ plainto_tsquery('english', #{conn.quote(query)})
     SQL
   end
 
