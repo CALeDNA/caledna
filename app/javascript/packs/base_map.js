@@ -142,15 +142,14 @@ function createLegend (legendImg) {
 }
 
 function renderMarkerCluster(samples, map) {
-  markerClusterLayer.clearLayers()
   createMarkerCluster(samples, createCircleMarker)
   map.addLayer(markerClusterLayer);
 }
 
 function renderIndividualMarkers (samples, map) {
-  map.removeLayer(individualMarkerLayer);
   createMarkerLayer(samples, createCircleMarker)
   individualMarkerLayer.addTo(map)
+  return individualMarkerLayer
 }
 
 function renderBasicIndividualMarkers (samples, map) {
@@ -164,6 +163,7 @@ function renderBasicIndividualMarkers (samples, map) {
     })
   })
   individualMarkerLayer.addTo(map)
+  return individualMarkerLayer
 }
 
 
@@ -336,6 +336,8 @@ function addEventListener(map, samplesData) {
           currentMarkerFormat = 'cluster'
 
           map.removeLayer(individualMarkerLayer);
+          markerClusterLayer.clearLayers()
+
           renderMarkerCluster(filteredSamplesData, map)
         } else if (format == 'individual' && currentMarkerFormat == 'cluster') {
           currentMarkerFormat = 'individual'
@@ -353,8 +355,10 @@ function addEventListener(map, samplesData) {
       filteredSamplesData = retrieveSamplesByStatus(status, samplesData)
 
       if(currentMarkerFormat == 'cluster') {
+        markerClusterLayer.clearLayers()
         renderMarkerCluster(filteredSamplesData, map)
       } else {
+        map.removeLayer(individualMarkerLayer);
         renderIndividualMarkers(filteredSamplesData, map)
       }
     })
@@ -433,5 +437,6 @@ export default {
   createOverlayEventListeners,
   createMarkerCluster,
   createCircleMarker,
-  renderBasicIndividualMarkers
+  renderBasicIndividualMarkers,
+  renderIndividualMarkers
 };
