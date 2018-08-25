@@ -1,6 +1,6 @@
 # CALeDNA
 
-[ ![Codeship Status for caledna/caledna](https://app.codeship.com/projects/cec73960-e110-0135-f609-6eccc654fb46/status?branch=master)](https://app.codeship.com/projects/266576)
+[ ![Codeship Status for UCcongenomics/caledna](https://app.codeship.com/projects/9d8e7c50-8a26-0136-e0af-1ac6b3aaffd6/status?branch=master)](https://app.codeship.com/projects/303212)
 
 Rails app that handles the data management flow for [CALeDNA](http://ucedna.com).
 
