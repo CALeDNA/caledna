@@ -71,13 +71,11 @@ function formatSamplesData(rawSample, asvsCount) {
   if (sample.id) {
     var id = sample.id;
     var barcode = sample.barcode;
-    var projectName = sample.field_data_project_name;
     var sampleLink = "<a href='/samples/" + sample.id + "'>" + barcode + "</a>";
     var status = sample.status;
     var asvsCount = asvsCount || '--';
     var body =
       '<b>Sample:</b> ' + sampleLink + '<br>' +
-      '<b>Project:</b> ' + projectName + '<br>' +
       '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
       '<b>Status</b>: ' + status + '<br>' +
       '<b>Organism count</b>: ' + asvsCount + '<br>';

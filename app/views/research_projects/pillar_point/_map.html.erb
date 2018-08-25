@@ -64,7 +64,6 @@
           <%= sample.longitude %>,
           <%= sample.id %>,
           "<%= sample.barcode %>",
-          '<%= link_to sample.field_data_project_name,  field_data_project_path(id: sample.field_data_project_id) %>',
           '<%= link_to sample.barcode, sample_path(id: sample.id) %>',
           '<%= sample.status %>',
           '<%= SamplesHelper.asvs_count(asvs_count, sample) %>'
@@ -77,13 +76,11 @@
       var lng = point[1];
       var id = point[2];
       var barcode = point[3];
-      var projectName = point[4];
       var sampleLink = point[5];
       var status = point[6];
       var asvsCount = point[7];
       var body =
         '<b>Sample:</b> ' + sampleLink + '<br>' +
-        '<b>Project:</b> ' + projectName + '<br>' +
         '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
         '<b>Status</b>: ' + status + '<br>' +
         '<b>Organism count</b>: ' + asvsCount + '<br>';
