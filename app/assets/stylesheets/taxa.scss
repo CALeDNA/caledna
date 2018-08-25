@@ -19,7 +19,9 @@
 }
 
 .taxa-markers {
-  display: flex;
-  align-items: center;
   margin-bottom: 10px;
+  div {
+    display: flex;
+    align-items: center;
+  }
 }

@@ -89,18 +89,20 @@
       <%= render partial: "list", locals: { samples: samples, asvs_count: @asvs_count }  %>
     <% else %>
       <div class="taxa-markers">
-        <input type="checkbox" checked value="asvs" class="js-taxa-markers">
-        <svg height="30">
-          <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
-          <text x="30" y="20">samples with <%= taxon.canonicalName %></text>
-        </svg>
-
-
-        <input type="checkbox" value="presence" class="js-taxa-markers">
-        <svg height="30">
-          <circle cx="15" cy="15" r="7" stroke="#777" stroke-width="2" fill="#ddd" />
-          <text x="30" y="20">samples with results</text>
-        </svg>
+        <div>
+          <input type="checkbox" checked value="asvs" class="js-taxa-markers">
+          <svg height="30">
+            <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
+            <text x="30" y="20">samples with <%= taxon.canonicalName %></text>
+          </svg>
+        </div>
+        <div>
+          <input type="checkbox" value="presence" class="js-taxa-markers">
+          <svg height="30">
+            <circle cx="15" cy="15" r="7" stroke="#777" stroke-width="2" fill="#ddd" />
+            <text x="30" y="20">samples with results</text>
+          </svg>
+        </div>
       </div>
       <%= render partial: "map" %>
     <% end %>
