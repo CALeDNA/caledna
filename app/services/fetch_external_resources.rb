@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class FetchExternalResources
-
   attr_reader :taxon_id, :taxon
 
   LINKS = %i[
@@ -20,9 +19,9 @@ class FetchExternalResources
     worms_link
   ].freeze
 
-
   # rubocop:disable Lint/AmbiguousOperator
   delegate *LINKS, to: :wikidata_data
+  # rubocop:enable Lint/AmbiguousOperator
 
   def initialize(taxon_id, taxon = nil)
     @taxon_id = taxon_id
@@ -67,7 +66,6 @@ class FetchExternalResources
     end
   end
 
-
   def inaturalist_image
     return if inaturalist_taxa.blank?
 
@@ -88,7 +86,6 @@ class FetchExternalResources
     @eol_api ||= ::EolApi.new
   end
 
-
   private
 
   def external_resource
@@ -99,12 +96,9 @@ class FetchExternalResources
     @wikidata_api ||= WikidataApi.new
   end
 
-
   def inaturalist_api
     @inaturalist_api ||= ::InaturalistApi.new
   end
-
-
 
   def eol_image_id
     return if eol_link.blank?

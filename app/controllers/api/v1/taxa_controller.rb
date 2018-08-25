@@ -51,8 +51,9 @@ module Api
       end
 
       def cached_samples
+        ids = cached_taxa_search.sample_ids.join(', ')
         sql = select_sql
-        sql += " AND samples.id in (#{cached_taxa_search.sample_ids.join(', ')}) " \
+        sql += " AND samples.id in (#{ids}) " \
           'GROUP BY samples.id '
 
         raw_records = conn.exec_query(sql)

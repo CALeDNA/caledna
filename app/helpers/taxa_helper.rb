@@ -9,17 +9,15 @@ module TaxaHelper
   def self.format_matching_taxa(taxa)
     max_limit = 25
     taxa_array = taxa.gsub(/[{}"]/, '').split(',')
+    helpers = ActionController::Base.helpers
 
-    results = "#{ActionController::Base.helpers.pluralize(taxa_array.length, 'match')}<br>"
+    results = "#{helpers.pluralize(taxa_array.length, 'match')}<br>"
     results += taxa_array.take(max_limit).map do |taxon|
       name, id = taxon.split(' | ')
       path = Rails.application.routes.url_helpers.taxon_path(id: id)
-      ActionController::Base.helpers.link_to(name, path)
+      helpers.link_to(name, path)
     end.join(', ')
-
-    if taxa_array.length > max_limit
-      results += '...'
-    end
+    results += '...' if taxa_array.length > max_limit
     results
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
