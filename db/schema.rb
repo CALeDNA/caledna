@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_25_022007) do
+ActiveRecord::Schema.define(version: 2018_08_25_030554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -536,6 +536,16 @@ ActiveRecord::Schema.define(version: 2018_08_25_022007) do
     t.string "name"
     t.string "datasetID", null: false
     t.text "citation"
+  end
+
+  create_table "taxa_search_caches", force: :cascade do |t|
+    t.integer "taxon_id"
+    t.integer "sample_ids", array: true
+    t.integer "asvs_count"
+    t.string "rank"
+    t.string "canonical_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "uploads", force: :cascade do |t|

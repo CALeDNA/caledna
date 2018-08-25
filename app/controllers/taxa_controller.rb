@@ -84,15 +84,18 @@ class TaxaController < ApplicationController
 
   def samples
     if params[:view]
-      paginated_samples
+      cached_taxa_search.present? ? cached_samples : paginated_samples
     else
       OpenStruct.new(total_records: total_records)
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def paginated_samples
-    sql = <<-SQL
+  def cached_taxa_search
+    @cached_taxa_search ||= TaxaSearchCache.find_by(taxon_id: id)
+  end
+
+  def select_sql
+    <<-SQL
       SELECT DISTINCT samples.id, samples.barcode, status_cd AS status,
       samples.latitude, samples.longitude,
       array_agg(ncbi_nodes.canonical_name || ' | ' || ncbi_nodes.taxon_id)
@@ -102,9 +105,14 @@ class TaxaController < ApplicationController
       JOIN samples ON samples.id = asvs.sample_id
       WHERE latitude IS NOT NULL AND longitude IS NOT NULL
     SQL
-    sql += " AND ids @> '{#{conn.quote(id)}}' " \
-    'GROUP BY samples.id ' \
-    "LIMIT #{limit} OFFSET #{offset};"
+  end
+
+  def cached_samples
+    sql = select_sql
+    sql += " AND samples.id in (#{cached_taxa_search.sample_ids.join(', ')}) " \
+      " AND ids @> '{#{conn.quote(id)}}' " \
+      'GROUP BY samples.id ' \
+      "LIMIT #{limit} OFFSET #{offset};"
 
     raw_records = conn.exec_query(sql)
     records = raw_records.map { |r| OpenStruct.new(r) }
@@ -112,7 +120,30 @@ class TaxaController < ApplicationController
     add_pagination_methods(records)
     records
   end
-  # rubocop:enable Metrics/MethodLength
+
+  def paginated_samples
+    sql = select_sql
+    sql += " AND ids @> '{#{conn.quote(id)}}' " \
+      'GROUP BY samples.id ' \
+      "LIMIT #{limit} OFFSET #{offset};"
+
+    raw_records = conn.exec_query(sql)
+    records = raw_records.map { |r| OpenStruct.new(r) }
+
+    add_pagination_methods(records)
+    records
+  end
+
+  def total_records
+    @total_records ||= begin
+      if cached_taxa_search.present?
+        cached_taxa_search.asvs_count
+      else
+        res = conn.execute(count_sql)
+        res.getvalue(0, 0)
+      end
+    end
+  end
 
   def count_sql
     sql = <<-SQL
@@ -135,9 +166,6 @@ class TaxaController < ApplicationController
   end
 
   def query_string
-    query = {}
-    project_id = params[:field_data_project_id]
-    query[:field_data_project_id] = project_id if project_id
-    query
+    {}
   end
 end
