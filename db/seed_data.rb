@@ -3,10 +3,8 @@
 module SeedData
   def delete_records
     puts 'deleting some records...'
-
-    Researcher.destroy_all
-    ExtractionType.destroy_all
-    FieldDataProject.destroy_all
+    sql = 'TRUNCATE researchers, extraction_types, field_data_projects CASCADE'
+    ActiveRecord::Base.connection.execute(sql)
   end
 
   def reset_search

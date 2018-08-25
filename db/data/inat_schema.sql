@@ -25,7 +25,7 @@ CREATE TABLE "inat_observations" (
   "dateIdentified" varchar(255),
   "identificationRemarks" text,
 
-  "taxonID" varchar(255),
+  "taxonID" int,
   "scientificName" varchar(255),
   "taxonRank" varchar(255),
   "kingdom" varchar(255),
@@ -41,7 +41,7 @@ CREATE TABLE "inat_observations" (
 );
 
 CREATE TABLE "inat_taxa" (
-  "taxonID" varchar(255),
+  "taxonID" int,
   "scientificName" varchar(255),
   "taxonRank" varchar(255),
   "kingdom" varchar(255),

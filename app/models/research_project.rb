@@ -13,6 +13,7 @@ class ResearchProject < ApplicationRecord
   private
 
   def set_slug
+    return if try(:slug).nil?
     self.slug = name.parameterize.truncate(80, omission: '')
   end
 end
