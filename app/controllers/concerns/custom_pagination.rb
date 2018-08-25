@@ -20,12 +20,14 @@ module CustomPagination
   end
 
   def total_pages
-    (total_records.to_f / limit).ceil
+    @total_pages ||= (total_records.to_f / limit).ceil
   end
 
   def total_records
-    res = conn.execute(count_sql)
-    @total_records ||= res.getvalue(0, 0)
+    @total_records ||= begin
+      res = conn.execute(count_sql)
+      res.getvalue(0, 0)
+    end
   end
 
   def limit

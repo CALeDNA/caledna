@@ -100,7 +100,7 @@ class TaxaController < ApplicationController
       FROM asvs
       JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
       JOIN samples ON samples.id = asvs.sample_id
-      WHERE samples.missing_coordinates = false
+      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
     SQL
     sql += " AND ids @> '{#{conn.quote(id)}}' " \
     'GROUP BY samples.id ' \
@@ -120,7 +120,7 @@ class TaxaController < ApplicationController
       FROM asvs
       JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
       JOIN samples ON samples.id = asvs.sample_id
-      WHERE samples.missing_coordinates = false
+      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
     SQL
     sql += "AND ids @> '{#{conn.quote(id)}}'"
     sql
