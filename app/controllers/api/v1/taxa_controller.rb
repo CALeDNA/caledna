@@ -3,6 +3,8 @@
 module Api
   module V1
     class TaxaController < Api::V1::ApplicationController
+      include BatchData
+
       def index
         taxa = ::Taxon.where('lower("canonicalName") like ?', "#{query}%")
                       .limit(10)
@@ -25,12 +27,6 @@ module Api
         params[:query].downcase
       end
 
-      def asvs_count
-        sql = 'SELECT sample_id, COUNT(*) ' \
-              'FROM asvs ' \
-              "WHERE \"taxonID\" = #{params[:id]} " \
-              'GROUP BY sample_id '
-        @asvs_count ||= ActiveRecord::Base.connection.execute(sql)
       end
 
       # rubocop:disable Metrics/MethodLength
