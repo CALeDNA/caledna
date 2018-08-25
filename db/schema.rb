@@ -10,10 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_26_134014) do
+ActiveRecord::Schema.define(version: 2018_08_26_134015) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -49,7 +51,7 @@ ActiveRecord::Schema.define(version: 2018_08_26_134014) do
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
   end
 
-  create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
+  create_table "cal_taxa", id: :serial, force: :cascade do |t|
     t.string "datasetID"
     t.string "parentNameUsageID"
     t.text "scientificName"
@@ -67,8 +69,8 @@ ActiveRecord::Schema.define(version: 2018_08_26_134014) do
     t.string "original_taxonomy_phylum"
     t.jsonb "original_hierarchy"
     t.boolean "normalized"
-    t.string "genericName"
     t.integer "taxonID"
+    t.string "genericName"
     t.string "complete_taxonomy"
     t.integer "rank_order"
     t.datetime "created_at", null: false
@@ -76,7 +78,7 @@ ActiveRecord::Schema.define(version: 2018_08_26_134014) do
     t.boolean "exact_gbif_match"
     t.text "notes"
     t.string "original_taxonomy_superkingdom"
-    t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true
+    t.index ["kingdom", "canonicalName"], name: "cal_taxa_kingdom_canonicalName_idx1", unique: true
     t.index ["original_taxonomy_phylum"], name: "index_cal_taxa_on_original_taxonomy_phylum"
   end
 
@@ -119,9 +121,9 @@ ActiveRecord::Schema.define(version: 2018_08_26_134014) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "iucn_status"
     t.string "source"
   end
 
@@ -321,8 +323,11 @@ ActiveRecord::Schema.define(version: 2018_08_26_134014) do
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
+    t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
+    t.index ["lineage"], name: "idx_ncbi_nodes_lineage", using: :gin
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
+    t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx"
   end
 
   create_table "pages", id: :serial, force: :cascade do |t|
@@ -442,6 +447,7 @@ ActiveRecord::Schema.define(version: 2018_08_26_134014) do
     t.string "environmental_features"
     t.string "environmental_settings"
     t.boolean "missing_coordinates", default: false
+    t.jsonb "metadata", default: {}
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
     t.index ["status_cd"], name: "index_samples_on_status_cd"
@@ -537,6 +543,7 @@ ActiveRecord::Schema.define(version: 2018_08_26_134014) do
     t.index ["kingdom"], name: "index_taxa_on_kingdom"
     t.index ["phylum"], name: "index_taxa_on_phylum"
     t.index ["scientificName"], name: "index_taxa_on_scientificName"
+    t.index ["taxonID"], name: "taxon_pkey", unique: true
     t.index ["taxonRank"], name: "index_taxa_on_taxonRank"
     t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx"
   end

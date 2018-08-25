@@ -68,6 +68,10 @@ module ImportCsv
         location_letter = match[2]
         sample_number = match[3]
         "#{kit}-L#{location_letter}-S#{sample_number}"
+
+      # NOTE: X203C1
+      elsif /^X\d{2,3}[ABC][12]/.match?(sample)
+        sample.split('X').last
       else
         sample.split('.').first
       end

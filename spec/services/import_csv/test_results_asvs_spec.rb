@@ -45,6 +45,18 @@ describe ImportCsv::TestResultsAsvs do
 
       expect(subject(header)).to eq('K0123-LA-S1')
     end
+
+    it 'removes X from abbreviated barcode' do
+      header = 'X11A1'
+
+      expect(subject(header)).to eq('11A1')
+    end
+
+    it 'removes X from abbreviated barcode' do
+      header = 'X183A1'
+
+      expect(subject(header)).to eq('183A1')
+    end
   end
 
   describe('#import_csv') do
