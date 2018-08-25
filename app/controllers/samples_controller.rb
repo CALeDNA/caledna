@@ -14,6 +14,7 @@ class SamplesController < ApplicationController
     @division_counts = division_counts
     @sample = sample
     @organisms_groups = organisms_groups
+    @batch_vernaculars = batch_vernaculars
   end
 
   private

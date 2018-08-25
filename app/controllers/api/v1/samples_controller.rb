@@ -17,7 +17,6 @@ module Api
       def show
         render json: {
           sample: SampleSerializer.new(sample),
-          batch_vernaculars: batch_vernaculars,
           asvs_count: [sample_asv_count]
         }, status: :ok
       end
