@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_25_111815) do
+ActiveRecord::Schema.define(version: 2018_08_26_134014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 2018_08_25_111815) do
     t.string "genus"
     t.string "specificEpithet"
     t.jsonb "hierarchy"
-    t.string "original_taxonomy"
+    t.string "original_taxonomy_phylum"
     t.jsonb "original_hierarchy"
     t.boolean "normalized"
     t.string "genericName"
@@ -75,8 +75,9 @@ ActiveRecord::Schema.define(version: 2018_08_25_111815) do
     t.datetime "updated_at", null: false
     t.boolean "exact_gbif_match"
     t.text "notes"
+    t.string "original_taxonomy_superkingdom"
     t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true
-    t.index ["original_taxonomy"], name: "index_cal_taxa_on_original_taxonomy"
+    t.index ["original_taxonomy_phylum"], name: "index_cal_taxa_on_original_taxonomy_phylum"
   end
 
   create_table "event_registrations", force: :cascade do |t|
@@ -314,6 +315,8 @@ ActiveRecord::Schema.define(version: 2018_08_25_111815) do
     t.string "ids", default: [], array: true
     t.string "alt_names"
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (alt_names)::text)))", name: "idx_taxa_search", using: :gin
+    t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"

@@ -2,9 +2,9 @@
 
 module ProcessTestResults
   # rubocop:disable Metrics/MethodLength
-  def find_taxon_from_string(taxonomy_string)
-    rank = get_taxon_rank(taxonomy_string)
-    hierarchy = get_hierarchy(taxonomy_string, rank)
+  def find_taxon_from_string_phylum(taxonomy_string)
+    rank = get_taxon_rank_phylum(taxonomy_string)
+    hierarchy = get_hierarchy_phylum(taxonomy_string, rank)
 
     raise TaxaError('rank not found') if rank.blank?
     raise TaxaError('hierarchy not found') if hierarchy.blank?
@@ -17,18 +17,59 @@ module ProcessTestResults
       rank: rank,
       original_hierarchy: hierarchy,
       complete_taxonomy: complete_taxonomy,
-      original_taxonomy: taxonomy_string
+      original_taxonomy_phylum: taxonomy_string
     }
   end
   # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
+  def find_taxon_from_string_superkingdom(taxonomy_string)
+    rank = get_taxon_rank_superkingdom(taxonomy_string)
+    hierarchy = get_hierarchy_superkingdom(taxonomy_string, rank)
+
+    raise TaxaError('rank not found') if rank.blank?
+    raise TaxaError('hierarchy not found') if hierarchy.blank?
+
+    taxon = find_exact_taxon(hierarchy, rank) || nil
+    {
+      taxon_hierarchy: taxon.try(:hierarchy),
+      taxon_id: taxon.try(:taxon_id),
+      rank: rank,
+      original_hierarchy: hierarchy,
+      complete_taxonomy: taxonomy_string,
+      original_taxonomy_superkingdom: taxonomy_string,
+      original_taxonomy_phylum:
+        convert_superkingdom_taxonomy_string(taxonomy_string)
+    }
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def convert_superkingdom_taxonomy_string(string)
+    return ';;;;;' if string == ';;;;;;'
+    string.gsub(/^.*?;/, '')
+  end
+
   def find_cal_taxon_from_string(string)
-    CalTaxon.where(original_taxonomy: string, normalized: true).first
+    sql = 'original_taxonomy_phylum = ? OR ' \
+      'original_taxonomy_superkingdom = ?'
+    CalTaxon.where(sql, string, string)
+            .where(normalized: true).first
+  end
+
+  def phylum_taxonomy_string?(string)
+    parts = string.split(';', -1)
+    if parts.length == 6
+      true
+    elsif parts.length == 7
+      false
+    else
+      raise TaxaError, 'invalid taxonomy string'
+    end
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def get_taxon_rank(string)
+  def get_taxon_rank_phylum(string)
     return 'unknown' if string == 'NA'
     return 'unknown' if string == ';;;;;'
 
@@ -50,7 +91,7 @@ module ProcessTestResults
     end
   end
 
-  def get_hierarchy(string, rank)
+  def get_hierarchy_phylum(string, rank)
     hierarchy = {}
     return hierarchy if string == 'NA'
     return hierarchy if string == ';;;;;'
@@ -74,11 +115,60 @@ module ProcessTestResults
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def get_taxon_rank_superkingdom(string)
+    return 'unknown' if string == 'NA'
+    return 'unknown' if string == ';;;;;;'
+
+    taxa = string.split(';', -1)
+    if taxa_present(taxa[6])
+      'species'
+    elsif taxa_present(taxa[5])
+      'genus'
+    elsif taxa_present(taxa[4])
+      'family'
+    elsif taxa_present(taxa[3])
+      'order'
+    elsif taxa_present(taxa[2])
+      'class'
+    elsif taxa_present(taxa[1])
+      'phylum'
+    elsif taxa_present(taxa[0])
+      'superkingdom'
+    else
+      'unknown'
+    end
+  end
+
+  def get_hierarchy_superkingdom(string, rank)
+    hierarchy = {}
+    return hierarchy if string == 'NA'
+    return hierarchy if string == ';;;;;;'
+
+    taxa = string.split(';', -1)
+    hierarchy[:species] = taxa[6] if taxa_present(taxa[6])
+    hierarchy[:genus] = taxa[5] if taxa_present(taxa[5])
+    hierarchy[:family] = taxa[4] if taxa_present(taxa[4])
+    hierarchy[:order] = taxa[3] if taxa_present(taxa[3])
+    hierarchy[:class] = taxa[2] if taxa_present(taxa[2])
+    hierarchy[:phylum] = taxa[1] if taxa_present(taxa[1])
+    hierarchy[:superkingdom] = taxa[0] if taxa_present(taxa[0])
+
+    taxon = find_exact_taxon(hierarchy, rank, skip_kingdom: true)
+
+    hierarchy[:kingdom] = get_kingdom(taxon) if taxon
+
+    hierarchy
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
   # NOTE: adds kingdoms to taxonomy string since test results don't include
   # kingdoms
   def get_complete_taxon_string(string)
-    rank = get_taxon_rank(string)
-    hierarchy = get_hierarchy(string, rank)
+    rank = get_taxon_rank_phylum(string)
+    hierarchy = get_hierarchy_phylum(string, rank)
 
     kingdom = hierarchy[:kingdom]
     superkingdom = hierarchy[:superkingdom]

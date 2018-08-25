@@ -5,9 +5,9 @@ require 'rails_helper'
 describe ProcessTestResults do
   let(:dummy_class) { Class.new { extend ProcessTestResults } }
 
-  describe '#find_taxon_from_string' do
+  describe '#find_taxon_from_string_phylum' do
     def subject(string)
-      dummy_class.find_taxon_from_string(string)
+      dummy_class.find_taxon_from_string_phylum(string)
     end
 
     it 'returns a hash of taxon info when all ranks are present' do
@@ -26,7 +26,7 @@ describe ProcessTestResults do
                                  rank: 'species')
       create(:ncbi_name, name: 'Species', taxon_id: taxon.id)
 
-      expect(subject(string)[:original_taxonomy]).to eq(string)
+      expect(subject(string)[:original_taxonomy_phylum]).to eq(string)
       expect(subject(string)[:complete_taxonomy])
         .to eq("Superkingdom;Kingdom;#{string}")
       expect(subject(string)[:taxon_id]).to eq(taxon.id)
@@ -49,7 +49,8 @@ describe ProcessTestResults do
                                  rank: 'genus')
       create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
 
-      expect(subject(string)[:original_taxonomy]).to eq(';Class;Order;;Genus;')
+      expect(subject(string)[:original_taxonomy_phylum])
+        .to eq(';Class;Order;;Genus;')
       expect(subject(string)[:complete_taxonomy])
         .to eq("Superkingdom;;#{string}")
       expect(subject(string)[:taxon_id]).to eq(taxon.id)
@@ -72,7 +73,7 @@ describe ProcessTestResults do
                                  rank: 'genus')
       create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
 
-      expect(subject(string)[:original_taxonomy])
+      expect(subject(string)[:original_taxonomy_phylum])
         .to eq('NA;Class;Order;NA;Genus;')
       expect(subject(string)[:complete_taxonomy])
         .to eq("Superkingdom;;#{string}")
@@ -85,9 +86,9 @@ describe ProcessTestResults do
     end
   end
 
-  describe '#get_taxon_rank' do
+  describe '#get_taxon_rank_phylum' do
     def subject(string)
-      dummy_class.get_taxon_rank(string)
+      dummy_class.get_taxon_rank_phylum(string)
     end
 
     it 'returns species if it exists' do
@@ -141,9 +142,9 @@ describe ProcessTestResults do
     end
   end
 
-  describe '#get_hierarchy' do
+  describe '#get_hierarchy_phylum' do
     def subject(string, rank)
-      dummy_class.get_hierarchy(string, rank)
+      dummy_class.get_hierarchy_phylum(string, rank)
     end
 
     it 'returns taxon data when taxon has long lineage' do
@@ -287,6 +288,301 @@ describe ProcessTestResults do
 
     it 'retuns empty hash when entire string is ";;;;;"' do
       string = ';;;;;'
+      rank = nil
+      expect(subject(string, rank)).to eq({})
+    end
+  end
+
+  describe '#find_taxon_from_string_superkingdom' do
+    def subject(string)
+      dummy_class.find_taxon_from_string_superkingdom(string)
+    end
+
+    it 'returns a hash of taxon info when all ranks are present' do
+      string = 'Superkingdom;Phylum;Class;Order;Family;Genus;Species'
+      lineage = [
+        [1, 'Superkingdom', 'superkingdom'],
+        [2, 'Kingdom', 'kingdom'],
+        [3, 'Phylum', 'phylum'],
+        [4, 'Class', 'class'],
+        [5, 'Order', 'order'],
+        [6, 'Family', 'family'],
+        [7, 'Genus', 'genus'],
+        [8, 'Species', 'species']
+      ]
+      taxon = create(:ncbi_node, lineage: lineage, canonical_name: 'Species',
+                                 rank: 'species')
+      create(:ncbi_name, name: 'Species', taxon_id: taxon.id)
+
+      expect(subject(string)[:original_taxonomy_superkingdom]).to eq(string)
+      expect(subject(string)[:original_taxonomy_phylum])
+        .to eq('Phylum;Class;Order;Family;Genus;Species')
+      expect(subject(string)[:complete_taxonomy]).to eq(string)
+      expect(subject(string)[:taxon_id]).to eq(taxon.id)
+      expect(subject(string)[:rank]).to eq('species')
+      expect(subject(string)[:original_hierarchy]).to include(
+        superkingdom: 'Superkingdom', kingdom: 'Kingdom', class: 'Class',
+        order: 'Order', family: 'Family', genus: 'Genus', species: 'Species'
+      )
+    end
+
+    it 'returns a hash of taxon info when there are missing ranks' do
+      string = 'Superkingdom;;Class;Order;;Genus;'
+      lineage = [
+        [1, 'Superkingdom', 'superkingdom'],
+        [4, 'Class', 'class'],
+        [5, 'Order', 'order'],
+        [7, 'Genus', 'genus']
+      ]
+      taxon = create(:ncbi_node, lineage: lineage, canonical_name: 'Genus',
+                                 rank: 'genus')
+      create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
+
+      expect(subject(string)[:original_taxonomy_superkingdom]).to eq(string)
+      expect(subject(string)[:original_taxonomy_phylum])
+        .to eq(';Class;Order;;Genus;')
+      expect(subject(string)[:complete_taxonomy]).to eq(string)
+      expect(subject(string)[:taxon_id]).to eq(taxon.id)
+      expect(subject(string)[:rank]).to eq('genus')
+      expect(subject(string)[:original_hierarchy]).to include(
+        superkingdom: 'Superkingdom', class: 'Class',
+        order: 'Order', genus: 'Genus'
+      )
+    end
+
+    it 'returns a hash of taxon info when there are NA ranks' do
+      string = 'Superkingdom;NA;Class;Order;NA;Genus;'
+      lineage = [
+        [1, 'Superkingdom', 'superkingdom'],
+        [4, 'Class', 'class'],
+        [5, 'Order', 'order'],
+        [7, 'Genus', 'genus']
+      ]
+      taxon = create(:ncbi_node, lineage: lineage, canonical_name: 'Genus',
+                                 rank: 'genus')
+      create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
+
+      expect(subject(string)[:original_taxonomy_superkingdom]).to eq(string)
+      expect(subject(string)[:original_taxonomy_phylum])
+        .to eq('NA;Class;Order;NA;Genus;')
+      expect(subject(string)[:complete_taxonomy]).to eq(string)
+      expect(subject(string)[:taxon_id]).to eq(taxon.id)
+      expect(subject(string)[:rank]).to eq('genus')
+      expect(subject(string)[:original_hierarchy]).to include(
+        superkingdom: 'Superkingdom', class: 'Class',
+        order: 'Order', genus: 'Genus'
+      )
+    end
+  end
+
+  describe '#get_taxon_rank_superkingdom' do
+    def subject(string)
+      dummy_class.get_taxon_rank_superkingdom(string)
+    end
+
+    it 'returns species if it exists' do
+      string = 'Superkingdom;Phylum;Class;Order;Family;Genus;Species'
+      expect(subject(string)).to eq('species')
+    end
+
+    it 'returns species if only species exists' do
+      string = ';;;;;;Species'
+      expect(subject(string)).to eq('species')
+    end
+
+    it 'returns genus if it exists' do
+      string = 'Superkingdom;Phylum;Class;Order;Family;Genus;'
+      expect(subject(string)).to eq('genus')
+    end
+
+    it 'returns family if it exists' do
+      string = 'Superkingdom;Phylum;Class;Order;Family;;'
+      expect(subject(string)).to eq('family')
+    end
+
+    it 'returns order if it exists' do
+      string = 'Superkingdom;Phylum;Class;Order;;;'
+      expect(subject(string)).to eq('order')
+    end
+
+    it 'returns class if it exists' do
+      string = 'Superkingdom;Phylum;Class;;;;'
+      expect(subject(string)).to eq('class')
+    end
+
+    it 'returns phylum if it exists' do
+      string = 'Superkingdom;Phylum;;;;;'
+      expect(subject(string)).to eq('phylum')
+    end
+
+    it 'returns superkingdom if it exists' do
+      string = 'Superkingdom;;;;;;'
+      expect(subject(string)).to eq('superkingdom')
+    end
+
+    it 'ignores "NA"' do
+      string = 'Superkingdom;Phylum;Class;Order;Family;NA;NA'
+      expect(subject(string)).to eq('family')
+    end
+
+    it 'retuns "unknown" when entire string is "NA"' do
+      string = 'NA'
+      expect(subject(string)).to eq('unknown')
+    end
+
+    it 'retuns "unknown" when entire string is ";;;;;;"' do
+      string = ';;;;;;'
+      expect(subject(string)).to eq('unknown')
+    end
+  end
+
+  describe '#get_hierarchy_superkingdom' do
+    def subject(string, rank)
+      dummy_class.get_hierarchy_superkingdom(string, rank)
+    end
+
+    it 'returns taxon data when taxon has long lineage' do
+      lineage = [
+        [131_567, 'cellular organisms', 'no rank'],
+        [2_759, 'Eukaryota', 'superkingdom'],
+        [33_154, 'Opisthokonta', 'no rank'],
+        [33_208, 'Metazoa', 'kingdom'],
+        [6_072, 'Eumetazoa', 'no rank'],
+        [33_213, 'Bilateria', 'no rank'],
+        [33_317, 'Protostomia', 'no rank'],
+        [1_206_794, 'Ecdysozoa', 'no rank'],
+        [88_770, 'Panarthropoda', 'no rank'],
+        [6_656, 'Arthropoda', 'phylum'],
+        [6_843, 'Chelicerata', 'subphylum'],
+        [6_854, 'Arachnida', 'class'],
+        [6_933, 'Acari', 'subclass'],
+        [6_946, 'Acariformes', 'superorder'],
+        [83_136, 'Trombidiformes', 'order'],
+        [6_947, 'Prostigmata', 'suborder'],
+        [83_138, 'Anystina', 'infraorder'],
+        [83_141, 'Parasitengona', 'no rank'],
+        [92_068, 'Hydracarina', 'no rank'],
+        [257_018, 'Lebertioidea', 'superfamily'],
+        [1_046_929, 'Teutoniidae', 'family'],
+        [1_046_930, 'Teutonia', 'genus']
+      ]
+      taxon = create(:ncbi_node, lineage: lineage, canonical_name: 'Teutonia',
+                                 rank: 'genus')
+      create(:ncbi_name, name: 'Teutonia', taxon_id: taxon.id)
+
+      string =
+        'Eukaryota;Arthropoda;Arachnida;Trombidiformes;Teutoniidae;Teutonia;'
+      rank = 'genus'
+
+      expect(subject(string, rank)).to eq(
+        superkingdom: 'Eukaryota', kingdom: 'Metazoa', phylum: 'Arthropoda',
+        class: 'Arachnida',
+        order: 'Trombidiformes', family: 'Teutoniidae', genus: 'Teutonia'
+      )
+    end
+
+    it 'returns a hash of taxonomy names' do
+      taxon = create(
+        :ncbi_node,
+        canonical_name: 'Species',
+        rank: 'species',
+        lineage: [
+          [1, 'Superkingdom', 'superkingdom'],
+          [2, 'Kingdom', 'kingdom'],
+          [3, 'Phylum', 'phylum'],
+          [4, 'Class', 'class'],
+          [5, 'Order', 'order'],
+          [6, 'Family', 'family'],
+          [7, 'Genus', 'genus'],
+          [8, 'Species', 'species']
+        ]
+      )
+      create(:ncbi_name, name: 'Species', taxon_id: taxon.id)
+
+      string = 'Superkingdom;Phylum;Class;Order;Family;Genus;Species'
+      rank = 'species'
+      expected = {
+        superkingdom: 'Superkingdom',
+        kingdom: 'Kingdom',
+        phylum: 'Phylum',
+        class: 'Class',
+        order: 'Order',
+        family: 'Family',
+        genus: 'Genus',
+        species: 'Species'
+      }
+
+      expect(subject(string, rank)).to eq(expected)
+    end
+
+    it 'returns hash that does not contain missing taxa' do
+      taxon = create(
+        :ncbi_node,
+        canonical_name: 'Genus',
+        rank: 'genus',
+        lineage: [
+          [1, 'Superkingdom', 'superkingdom'],
+          [2, 'Kingdom', 'kingdom'],
+          [3, 'Phylum', 'phylum'],
+          [4, 'Class', 'class'],
+          [6, 'Family', 'family'],
+          [7, 'Genus', 'genus']
+        ]
+      )
+      create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
+
+      string = 'Superkingdom;Phylum;Class;;Family;Genus;'
+      rank = 'genus'
+      expected = {
+        superkingdom: 'Superkingdom',
+        kingdom: 'Kingdom',
+        phylum: 'Phylum',
+        class: 'Class',
+        family: 'Family',
+        genus: 'Genus'
+      }
+
+      expect(subject(string, rank)).to eq(expected)
+    end
+
+    it 'returns hash that does not contain "NA" taxa' do
+      taxon = create(
+        :ncbi_node,
+        canonical_name: 'Genus',
+        rank: 'genus',
+        lineage: [
+          [1, 'Superkingdom', 'superkingdom'],
+          [2, 'Kingdom', 'kingdom'],
+          [3, 'Phylum', 'phylum'],
+          [4, 'Class', 'class'],
+          [6, 'Family', 'family'],
+          [7, 'Genus', 'genus']
+        ]
+      )
+      create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
+
+      string = 'Superkingdom;Phylum;Class;NA;Family;Genus;NA'
+      rank = 'genus'
+      expected = {
+        superkingdom: 'Superkingdom',
+        kingdom: 'Kingdom',
+        phylum: 'Phylum',
+        class: 'Class',
+        family: 'Family',
+        genus: 'Genus'
+      }
+
+      expect(subject(string, rank)).to eq(expected)
+    end
+
+    it 'retuns empty hash when entire string is "NA"' do
+      string = 'NA'
+      rank = nil
+      expect(subject(string, rank)).to eq({})
+    end
+
+    it 'retuns empty hash when entire string is ";;;;;;"' do
+      string = ';;;;;;'
       rank = nil
       expect(subject(string, rank)).to eq({})
     end
@@ -943,6 +1239,107 @@ describe ProcessTestResults do
       string = 'abc'
 
       expect(subject(string)).to eq(string)
+    end
+  end
+
+  describe '#phylum_taxonomy_string?' do
+    def subject(string)
+      dummy_class.phylum_taxonomy_string?(string)
+    end
+
+    it 'returns true when taxonomy string has 6 taxa' do
+      string = 'phylum;class;order;family;genus;species'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'returns correct results with "NA"' do
+      string = 'NA;NA;order;NA;genus;species'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'returns correct results with ";"' do
+      string = ';;order;;genus;species'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'returns false when taxonomy string has 7 taxa' do
+      string = 'superkingdom;phylum;class;order;family;genus;species'
+
+      expect(subject(string)).to eq(false)
+    end
+
+    it 'correctly analyzes phlyum string when taxa is missing' do
+      string = ';class;order;family;;'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'correctly analyzes superkingdom string when taxa is missing' do
+      string = ';phylum;class;order;family;genus;'
+
+      expect(subject(string)).to eq(false)
+    end
+
+    it 'correctly analyzes phlyum string when not taxa' do
+      string = ';;;;;'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'correctly analyzes superkingdom string when no taxa' do
+      string = ';;;;;;'
+
+      expect(subject(string)).to eq(false)
+    end
+
+    it 'correctly counts missing taxa for superkingdoms' do
+      string = ';phylum;class;order;family;genus;'
+
+      expect(subject(string)).to eq(false)
+    end
+
+    it 'it raise an error when there are invalid number of taxa' do
+      string = 'random;string;will;fail'
+
+      message = /invalid taxonomy string/
+      expect { subject(string) }.to raise_error(TaxaError, message)
+    end
+  end
+
+  describe '#convert_superkingdom_taxonomy_string' do
+    def subject(string)
+      dummy_class.convert_superkingdom_taxonomy_string(string)
+    end
+
+    it 'converts a superkingdom taxonomy string to a phlymum string' do
+      phylum_string = 'phylum;class;order;family;genus;species'
+      superkingdom_string = "superkingdom;#{phylum_string}"
+
+      expect(subject(superkingdom_string)).to eq(phylum_string)
+    end
+
+    it 'returns valid string when there are ; in string' do
+      phylum_string = ';class;;family;genus;species'
+      superkingdom_string = "superkingdom;#{phylum_string}"
+
+      expect(subject(superkingdom_string)).to eq(phylum_string)
+    end
+
+    it 'returns valid string when string ends in ;' do
+      phylum_string = ';class;;family;genus;'
+      superkingdom_string = "superkingdom;#{phylum_string}"
+
+      expect(subject(superkingdom_string)).to eq(phylum_string)
+    end
+
+    it 'returns ";;;;;" for ";;;;;;"' do
+      phylum_string = ';;;;;'
+      superkingdom_string = ";#{phylum_string}"
+
+      expect(subject(superkingdom_string)).to eq(phylum_string)
     end
   end
 end

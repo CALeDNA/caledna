@@ -22,6 +22,10 @@ class CalTaxon < ApplicationRecord
     original_hierarchy[taxonRank.to_s]
   end
 
+  def original_taxonomy
+    original_taxonomy_phylum || original_taxonomy_superkingdom
+  end
+
   def taxa
     original_taxonomy
       .split(';')

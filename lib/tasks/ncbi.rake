@@ -48,7 +48,7 @@ namespace :ncbi do
   task update_cal_taxon: :environment do
     puts 'update cal_taxon...'
     CalTaxon.where(exact_gbif_match: false).all.each do |taxon|
-      results = find_taxon_from_string(taxon.original_taxonomy)
+      results = find_taxon_from_string_phylum(taxon.original_taxonomy)
 
       if results[:taxon_id].blank? && results[:rank].present?
         update_data = {
