@@ -1,0 +1,52 @@
+CREATE SCHEMA external;
+
+CREATE TABLE external.gbif_occurrences (
+  gbifid integer,
+  datasetkey character varying,
+  occurrenceid character varying,
+  kingdom character varying,
+  phylum character varying,
+  classname character varying,
+  "order" character varying,
+  family character varying,
+  genus character varying,
+  species character varying,
+  infraspecificepithet character varying,
+  taxonrank character varying,
+  scientificname character varying,
+  countrycode character varying,
+  locality character varying,
+  publishingorgkey character varying,
+  decimallatitude numeric,
+  decimallongitude numeric,
+  coordinateuncertaintyinmeters numeric,
+  coordinateprecision numeric,
+  elevation numeric,
+  elevationaccuracy numeric,
+  depth numeric,
+  depthaccuracy numeric,
+  eventdate character varying,
+  day integer,
+  month integer,
+  year integer,
+  taxonkey integer,
+  specieskey integer,
+  basisofrecord character varying,
+  institutioncode character varying,
+  collectioncode character varying,
+  catalognumber character varying,
+  recordnumber character varying,
+  identifiedby character varying,
+  license character varying,
+  rightsholder character varying,
+  recordedby character varying,
+  typestatus character varying,
+  establishmentmeans character varying,
+  lastinterpreted character varying,
+  mediatype character varying,
+  issue character varying
+);
+
+CREATE INDEX gbif_ob_taxonkey_idx ON external.gbif_occurrences(taxonkey);
+CREATE INDEX gbif_ob_scientificname_idx ON external.gbif_occurrences(scientificname);
+CREATE INDEX gbif_ob_taxonrank_idx ON external.gbif_occurrences(taxonrank);

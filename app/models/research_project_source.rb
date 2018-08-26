@@ -7,4 +7,5 @@ class ResearchProjectSource < ApplicationRecord
 
   scope :inat, -> { where(sourceable_type: 'InatObservation') }
   scope :cal, -> { where(sourceable_type: 'Extraction') }
+  scope :gbif, -> { where(sourceable_type: 'GbifOccurrence') }
 end

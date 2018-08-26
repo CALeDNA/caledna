@@ -36,6 +36,7 @@ module ImportCsv
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/PerceivedComplexity
     def convert_header_to_barcode(cell)
       sample = cell.split('_').last
       if /K\d{4}/.match?(sample)
@@ -77,6 +78,7 @@ module ImportCsv
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/PerceivedComplexity
 
     private
 

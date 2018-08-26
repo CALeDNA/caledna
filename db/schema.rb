@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_26_134015) do
+ActiveRecord::Schema.define(version: 2018_08_26_134018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -371,6 +371,7 @@ ActiveRecord::Schema.define(version: 2018_08_26_134015) do
     t.datetime "updated_at", null: false
     t.integer "sample_id"
     t.string "sourceable_type"
+    t.jsonb "metadata", default: {}
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
     t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
