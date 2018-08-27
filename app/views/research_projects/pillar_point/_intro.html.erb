@@ -1,10 +1,10 @@
 <p>Some questions we hope to answer.</p>
 
 <ol>
-<li>How does eDNA complement iNaturalist data?</li>
-<li>What is the spatial distribution of eDNA in relation to iNaturalist?</li>
-<li>Is there seasonal community variation in iNat? And can we capture that variation with eDNA?</li>
-<li>What are the human impacts on the Pillar Point area? And can we track that via sequence data and/or iNaturalist?</li>
+<li>How does eDNA complement GBIF data?</li>
+<li>What is the spatial distribution of eDNA in relation to GBIF?</li>
+<li>Is there seasonal community variation in GBIF? And can we capture that variation with eDNA?</li>
+<li>What are the human impacts on the Pillar Point area? And can we track that via sequence data and/or GBIF?</li>
 </ol>
 
 <h2>Stats</h2>
@@ -20,8 +20,8 @@
     <td><%= @stats[:cal_stats][:organisms] %></td>
   </tr>
   <tr>
-    <td>iNaturalist</td>
-    <td><%= @stats[:inat_stats][:occurrences] %> observations</td>
-    <td><%= @stats[:inat_stats][:organisms] %></td>
+    <td>GBIF</td>
+    <td><%= @stats[:gbif_stats][:occurrences] %> observations</td>
+    <td><%= @stats[:gbif_stats][:organisms] %></td>
   </tr>
 </table>

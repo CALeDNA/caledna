@@ -56,6 +56,7 @@ var markerClusterLayer = L.markerClusterGroup({
 
 function createMap () {
   return L.map('mapid', {
+    preferCanvas: true,
     center: latlng,
     zoom: initialZoom,
     maxZoom: maxZoom,
@@ -94,16 +95,40 @@ function formatSamplesData(rawSample, asvsCount) {
   }
 }
 
-function createCircleMarker (sample, customOptions) {
-  var defaultOptions = {
-    fillColor: fillColor,
-    radius: 7,
-    fillOpacity: .7,
-    color: strokeColor,
-    weight: 2
-  };
+function formatGBIFData(rawSample) {
+  var sample = rawSample.attributes;
+  var lat = sample.latitude;
+  var lng = sample.longitude;
+  var body;
 
-  var options = customOptions ? customOptions : defaultOptions;
+  if (sample.id) {
+    var id = sample.id;
+    var sampleLink = "<a href='https://www.gbif.org/occurrence/" + sample.id + "'>" + sample.id + "</a>";
+    body =
+      '<b>Sample:</b> ' + sampleLink + '<br>' +
+      '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
+      '<b>Kingdom</b>: ' + sample.kingdom + '<br>' +
+      '<b>Species</b>: ' + sample.species
+  }
+
+  return {
+    lat: lat,
+    lng: lng,
+    body: body,
+  }
+}
+
+var defaultCircleOptions = {
+  fillColor: fillColor,
+  radius: 7,
+  fillOpacity: .7,
+  color: strokeColor,
+  weight: 2
+};
+
+function createCircleMarker (sample, customOptions) {
+  var options = customOptions ? customOptions : defaultCircleOptions;
+
 
   var circleMarker = L.circleMarker(L.latLng(sample.lat, sample.lng), options);
   if (sample.body) {
@@ -111,6 +136,10 @@ function createCircleMarker (sample, customOptions) {
   }
 
   return circleMarker;
+}
+
+function createIconMarker(sample, map) {
+  return L.marker([sample.lat, sample.lng]);
 }
 
 function createMarkerCluster(samples, createMarkerFn) {
@@ -274,6 +303,7 @@ function fetchSamples(apiEndpoint, map, cb) {
     var baseSamples = data.base_samples && data.base_samples.data;
     var samplesData;
     var baseSamplesData;
+    var researchProjectData = data.research_project_data;
 
     samplesData = samples.filter(function(rawSample) {
       var sample = rawSample.attributes;
@@ -294,7 +324,7 @@ function fetchSamples(apiEndpoint, map, cb) {
       })
     }
 
-    cb({ samplesData, baseSamplesData })
+    cb({ samplesData, baseSamplesData, researchProjectData })
   });
 
 }
@@ -370,7 +400,6 @@ function addEventListener(map, samplesData) {
       }
     })
   }
-
 }
 
 // =============
@@ -425,5 +454,7 @@ export default {
   createMarkerCluster,
   createCircleMarker,
   renderBasicIndividualMarkers,
-  renderIndividualMarkers
+  renderIndividualMarkers,
+  formatGBIFData,
+  createIconMarker,
 };

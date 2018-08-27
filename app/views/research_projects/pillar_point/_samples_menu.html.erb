@@ -1,17 +1,17 @@
 
-<% inat_source = params[:source] == 'inat' %>
+<% gbif_source = params[:source] == 'gbif' %>
 <% list_view = params[:view] == 'list' %>
 
 <h2>Samples</h2>
 <% if params[:view] == 'list' %>
   <div class="radio">
     <label>
-      <input type="radio" name="source" class="js-source-list" data-source="cal" <%= 'checked' unless inat_source %>> CALeDNA
+      <input type="radio" name="source" class="js-source-list" data-source="cal" <%= 'checked' unless gbif_source %>> CALeDNA
     </label>
   </div>
   <div class="radio">
     <label>
-      <input type="radio" name="source" class="js-source-list" data-source="inat" <%= 'checked' if inat_source %>> iNaturalist
+      <input type="radio" name="source" class="js-source-list" data-source="gbif" <%= 'checked' if gbif_source %>> GBIF
     </label>
   </div>
 <% else %>
@@ -22,7 +22,7 @@
   </div>
   <div class="checkbox">
     <label>
-      <input type="checkbox" class="js-source" data-source="inat" checked> iNaturalist
+      <input type="checkbox" class="js-source" data-source="gbif" checked> GBIF
     </label>
   </div>
 <% end %>

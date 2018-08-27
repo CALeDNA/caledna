@@ -16,18 +16,18 @@
     </tr>
     <% else %>
       <tr>
-        <td><%= link_to occurrence.id, occurrence.occurrenceID %></td>
+        <td><a href="https://www.gbif.org/occurrence/<%= occurrence.id %>"><%= occurrence.id %></a></td>
         <td>
-          <%= occurrence.decimalLatitude %>, <%= occurrence.decimalLongitude %>
+          <%= occurrence.decimallatitude %>, <%= occurrence.decimallongitude %>
         </td>
         <td>
           <%= occurrence.kingdom %>,
           <%= occurrence.phylum %>,
-          <%= occurrence.className %>,
+          <%= occurrence.classname %>,
           <%= occurrence.order %>,
           <%= occurrence.family %>,
           <%= occurrence.genus %>,
-          <%= occurrence.scientificName %>,
+          <%= occurrence.scientificname %>,
         </td>
       </tr>
     <% end %>
@@ -38,11 +38,6 @@
 
 <script>
 (function(){
-
-  // ======================
-  // app state
-  // ======================
-  var sources = { cal: true, inat: true }
 
   // ======================
   // select elements
@@ -62,8 +57,8 @@
     var location = window.location
     if (source == 'cal') {
       location.href = location.origin + location.pathname + '?view=list'
-    } else if (source == 'inat') {
-      location.href = location.origin + location.pathname + '?view=list&source=inat'
+    } else if (source == 'gbif') {
+      location.href = location.origin + location.pathname + '?view=list&source=gbif'
     }
   }
 

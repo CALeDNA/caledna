@@ -23,7 +23,7 @@ module PillarPointHelper
   # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength
-  def self.inat_counts(counts)
+  def self.gbif_counts(counts)
     categories = [
       'Animalia', 'Archaea', 'Bacteria', 'Chromista', '--', 'Fungi',
       'Plantae', '--'
