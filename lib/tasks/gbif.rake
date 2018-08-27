@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength
 namespace :gbif do
   task import_missing_fields_for_occ_taxa: :environment do
     api = GbifApi.new
@@ -39,7 +40,8 @@ namespace :gbif do
 
       taxon.taxonkey = result['usageKey']
       taxon.scientificname = result['scientificName']
-      sql = "UPDATE external.gbif_occ_taxa SET taxonkey = #{result['usageKey']},  " \
+      sql = 'UPDATE external.gbif_occ_taxa ' \
+      "SET taxonkey = #{result['usageKey']},  " \
       "scientificname = #{conn.quote(result['scientificName'])} " \
       "WHERE taxonrank = #{conn.quote(rank)} " \
       'AND taxonkey IS NULL '
@@ -49,3 +51,4 @@ namespace :gbif do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
