@@ -105,9 +105,21 @@ function formatSamplesData(rawSample, asvsCount) {
 }
 
 function formatGBIFData(rawSample) {
+  var colors = {
+    Animalia: 'rgb(30, 144, 255)',
+    Archaea: 'rgb(30, 30, 30)',
+    Bacteria: 'rgb(30, 30, 30)',
+    Chromista: 'rgb(153, 51, 0)',
+    Fungi: 'rgb(255, 20, 147)',
+    Plantae: 'rgb(115, 172, 19)',
+    Protozoa: '',
+    Viruses: 'rgb(30, 30, 30)',
+  }
+
   var sample = rawSample.attributes;
   var lat = sample.latitude;
   var lng = sample.longitude;
+  var color;
   var body;
 
   if (sample.id) {
@@ -120,10 +132,15 @@ function formatGBIFData(rawSample) {
       '<b>Species</b>: ' + sample.species
   }
 
+  if (sample.kingdom) {
+    color = colors[sample.kingdom]
+  }
+
   return {
     lat: lat,
     lng: lng,
     body: body,
+    color: color,
   }
 }
 
@@ -138,6 +155,9 @@ var defaultCircleOptions = {
 function createCircleMarker (sample, customOptions) {
   var options = customOptions ? customOptions : defaultCircleOptions;
 
+  if(sample.color) {
+    options.fillColor = sample.color
+  }
 
   var circleMarker = L.circleMarker(L.latLng(sample.lat, sample.lng), options);
   if (sample.body) {
