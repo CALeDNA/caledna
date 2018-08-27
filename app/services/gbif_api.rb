@@ -18,6 +18,10 @@ class GbifApi
     self.class.get('/species/match', query: { name: keyword })
   end
 
+  def taxa_by_rank(query)
+    self.class.get('/species/match', query: query)
+  end
+
   def media(id)
     self.class.get("/species/#{id}/media", @options)
   end
