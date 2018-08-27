@@ -31,6 +31,8 @@ class ResearchProjectsController < ApplicationController
     if params[:section] == 'occurrence_comparsion'
       @division_counts = project_service.division_counts
       @division_counts_unique = project_service.division_counts_unique
+    elsif params[:section] == 'gbif_breakdown'
+      @gbif_breakdown = project_service.gbif_breakdown
     elsif params[:view] == 'list'
       @occurrences = occurrences
       @stats = project_service.stats

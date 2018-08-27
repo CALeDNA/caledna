@@ -26,6 +26,14 @@ module ResearchProjectService
       }
     end
 
+    def gbif_breakdown
+      {
+        all: convert_counts(gbif_division_unique_stats),
+        inat_only: convert_counts(inat_division_unique_stats),
+        exclude_inat: convert_counts(exclude_inat_division_unique_stats)
+      }
+    end
+
     def stats
       { gbif_stats: gbif_stats, cal_stats: cal_stats }
     end
@@ -50,31 +58,36 @@ module ResearchProjectService
       SQL
 
       sql += 'AND (research_project_sources.research_project_id = ' \
-        "#{conn.quote(project.id)}) " \
-        'GROUP BY kingdom'
+        "#{conn.quote(project.id)}) "
+
+      sql += <<-SQL
+        AND (metadata ->> 'location' != 'Montara SMR')
+        GROUP BY kingdom
+      SQL
 
       conn.execute(sql)
     end
     # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/MethodLength
+    def gbif_unique_sql
+      <<-SQL
+      SELECT kingdom as category, count(taxonkey) FROM (
+        SELECT DISTINCT(taxonkey), kingdom
+        FROM external.gbif_occurrences
+        JOIN research_project_sources
+        ON research_project_sources.sourceable_id =
+          external.gbif_occurrences.gbifid
+        WHERE (research_project_sources.sourceable_type = 'GbifOccurrence')
+      SQL
+    end
+
     def gbif_division_unique_stats
-      # and basisofrecord = 'PRESERVED_SPECIMEN'
-
-      sql = <<-SQL
-        SELECT kingdom as category, count(specieskey) FROM (
-          SELECT  distinct(specieskey), kingdom
-          FROM external.gbif_occurrences
-          JOIN research_project_sources
-          ON research_project_sources.sourceable_id =
-            external.gbif_occurrences.gbifid
-          WHERE (research_project_sources.sourceable_type = 'GbifOccurrence')
-        SQL
-
+      sql = gbif_unique_sql
       sql += 'AND (research_project_sources.research_project_id =  ' \
         "#{conn.quote(project.id)}) "
 
       sql += <<-SQL
+          AND (metadata ->> 'location' != 'Montara SMR')
           ORDER BY kingdom
         ) AS foo
         GROUP BY kingdom;
@@ -82,7 +95,37 @@ module ResearchProjectService
 
       conn.execute(sql)
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def inat_division_unique_stats
+      sql = gbif_unique_sql
+      sql += 'AND (research_project_sources.research_project_id =  ' \
+        "#{conn.quote(project.id)}) "
+
+      sql += <<-SQL
+          AND (metadata ->> 'location' != 'Montara SMR')
+          AND external.gbif_occurrences.datasetkey = '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
+          ORDER BY kingdom
+        ) AS foo
+        GROUP BY kingdom;
+      SQL
+      conn.execute(sql)
+    end
+
+    def exclude_inat_division_unique_stats
+      sql = gbif_unique_sql
+      sql += 'AND (research_project_sources.research_project_id =  ' \
+        "#{conn.quote(project.id)}) "
+
+      sql += <<-SQL
+          AND (metadata ->> 'location' != 'Montara SMR')
+          AND external.gbif_occurrences.datasetkey != '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
+          ORDER BY kingdom
+        ) AS foo
+        GROUP BY kingdom;
+      SQL
+      conn.execute(sql)
+    end
+
 
     # rubocop:disable Metrics/MethodLength
     def cal_division_stats
@@ -139,9 +182,10 @@ module ResearchProjectService
       observations = gbif_occurrences.count
       unique_organisms =
         GbifOccurrence
-        .select('DISTINCT(specieskey)')
+        .select('DISTINCT(taxonkey)')
         .joins(:research_project_sources)
         .where("research_project_sources.sourceable_type = 'GbifOccurrence'")
+        .where("metadata ->> 'location' != 'Montara SMR'")
         .where('research_project_sources.research_project_id = ?', project.id)
         .count
 

@@ -7,6 +7,8 @@
 
   <% if params[:section] == 'occurrence_comparsion' %>
     <%= render partial: "research_projects/pillar_point/occurrence_comparsion" %>
+  <% elsif params[:section] == 'gbif_breakdown' %>
+    <%= render partial: "research_projects/pillar_point/gbif_breakdown" %>
   <% elsif params[:view] == 'list' %>
     <%= render partial: "research_projects/pillar_point/intro" %>
     <%= render partial: "research_projects/pillar_point/samples_menu" %>

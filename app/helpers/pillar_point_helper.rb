@@ -20,9 +20,7 @@ module PillarPointHelper
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength
   def self.gbif_counts(counts)
     categories = [
       'Animalia', 'Archaea', 'Bacteria', 'Chromista', '--', 'Fungi',
@@ -31,7 +29,22 @@ module PillarPointHelper
 
     categories.map do |category|
       if counts[category].nil?
-        ['--', nil]
+        [category, nil]
+      else
+        [category, counts[category]]
+      end
+    end
+  end
+
+  def self.only_gbif_counts(counts)
+    categories = [
+      'Animalia', 'Archaea', 'Bacteria', 'Chromista', 'Fungi',
+      'Plantae'
+    ]
+
+    categories.map do |category|
+      if counts[category].nil?
+        [category, nil]
       else
         [category, counts[category]]
       end

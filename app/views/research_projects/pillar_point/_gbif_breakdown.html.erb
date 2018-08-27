@@ -1,0 +1,28 @@
+<h2>Pillar Point Unique Species: GBIF Species Breakdown</h2>
+
+<div class="row">
+  <div class="col-sm-6">
+
+    <h3>GBIF</h3>
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.only_gbif_counts(@gbif_breakdown[:all]),
+        total: PillarPointHelper.total(@gbif_breakdown[:all].values)
+      } %>
+
+    <h3>Exclude iNaturalist Observations</h3>
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.only_gbif_counts(@gbif_breakdown[:exclude_inat]),
+        total: PillarPointHelper.total(@gbif_breakdown[:exclude_inat].values)
+      } %>
+  </div>
+  <div class="col-sm-6">
+    <h3>iNaturalist Observations</h3>
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.only_gbif_counts(@gbif_breakdown[:inat_only]),
+        total: PillarPointHelper.total(@gbif_breakdown[:inat_only].values)
+      } %>
+  </div>
+</div>

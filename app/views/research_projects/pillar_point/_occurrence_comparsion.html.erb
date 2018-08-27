@@ -1,99 +1,37 @@
-<%
-  cal_total = PillarPointHelper.total(@division_counts[:cal].values)
-  cal_unique_total = PillarPointHelper.total(@division_counts_unique[:cal].values)
-
-  gbif_total = PillarPointHelper.total(@division_counts[:gbif].values)
-  gbif_unique_total = PillarPointHelper.total(@division_counts_unique[:gbif].values)
-%>
-
 <div class="row">
   <div class="col-sm-6">
     <h2>CALeDNA</h2>
+
     <h3>Total ASVS</h3>
-    <table class="table">
-      <tr>
-        <th>divisions</th>
-        <th>count</th>
-        <th>percent</th>
-      </tr>
-      <% PillarPointHelper.cal_counts(@division_counts[:cal]).each do |name, count| %>
-      <tr>
-        <td><%= name %></td>
-        <td><%= count %></td>
-        <td><%= percentage(count, cal_total)%></td>
-      </tr>
-      <% end %>
-      <tr>
-        <td>Total</td>
-        <td><%= cal_total %></td>
-        <td></td>
-      </tr>
-    </table>
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.cal_counts(@division_counts[:cal]),
+        total:  PillarPointHelper.total(@division_counts[:cal].values)
+      } %>
 
     <h3>Unique Organism</h3>
-    <table class="table">
-      <tr>
-        <th>divisions</th>
-        <th>count</th>
-        <th>percent</th>
-      </tr>
-      <% PillarPointHelper.cal_counts(@division_counts_unique[:cal]).each do |name, count| %>
-      <tr>
-        <td><%= name %></td>
-        <td><%= count %></td>
-        <td><%= percentage(count, cal_unique_total)%></td>
-      </tr>
-      <% end %>
-      <tr>
-        <td>Total</td>
-        <td><%= cal_unique_total %></td>
-        <td></td>
-      </tr>
-    </table>
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.cal_counts(@division_counts_unique[:cal]),
+        total: PillarPointHelper.total(@division_counts_unique[:cal].values)
+      } %>
   </div>
-  <div class="col-sm-6">
 
+  <div class="col-sm-6">
     <h2>GBIF</h2>
+
     <h3>Total Occurrences</h3>
-    <table class="table">
-      <tr>
-        <th>kingdom</th>
-        <th>count</th>
-        <th>percent</th>
-      </tr>
-      <% PillarPointHelper.gbif_counts(@division_counts[:gbif]).each do |name, count| %>
-      <tr>
-        <td><%= name %></td>
-        <td><%= count %></td>
-        <td><%= percentage(count, gbif_total)%></td>
-      </tr>
-      <% end %>
-      <tr>
-        <td>Total</td>
-        <td><%= gbif_total %></td>
-        <td></td>
-      </tr>
-    </table>
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts[:gbif]),
+        total: PillarPointHelper.total(@division_counts[:gbif].values)
+      } %>
 
     <h3>Unique Species</h3>
-    <table class="table">
-      <tr>
-        <th>kingdom</th>
-        <th>count</th>
-        <th>percent</th>
-      </tr>
-      <% PillarPointHelper.gbif_counts(@division_counts_unique[:gbif]).each do |name, count| %>
-      <tr>
-        <td><%= name %></td>
-        <td><%= count %></td>
-        <td><%= percentage(count, gbif_unique_total)%></td>
-      </tr>
-      <% end %>
-      <tr>
-        <td>Total</td>
-        <td><%= gbif_unique_total %></td>
-        <td></td>
-      </tr>
-    </table>
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts_unique[:gbif]),
+        total: PillarPointHelper.total(@division_counts_unique[:gbif].values)
+      } %>
   </div>
 </div>

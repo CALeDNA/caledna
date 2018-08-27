@@ -1,0 +1,19 @@
+<table class="table">
+  <tr>
+    <th>divisions</th>
+    <th>count</th>
+    <th>percent</th>
+  </tr>
+  <% occurrence_stats.each do |name, count| %>
+  <tr>
+    <td><%= name %></td>
+    <td><%= count %></td>
+    <td><%= percentage(count, total)%></td>
+  </tr>
+  <% end %>
+  <tr>
+    <td>Total</td>
+    <td><%= total %></td>
+    <td></td>
+  </tr>
+</table>
