@@ -7,3 +7,6 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
     baseMap.createMarkerCluster(data.samplesData, baseMap.createCircleMarker)
   map.addLayer(markerClusterLayer);
 })
+
+baseMap.createOverlayEventListeners(map);
+baseMap.createOverlays(map);

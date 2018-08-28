@@ -15,6 +15,9 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
   asvsLayer = baseMap.renderIndividualMarkers(samplesData, map)
 })
 
+baseMap.createOverlayEventListeners(map);
+baseMap.createOverlays(map);
+
 var taxaMarkerEls = document.querySelectorAll('.js-taxa-markers');
 if(taxaMarkerEls) {
   taxaMarkerEls.forEach(function(el){

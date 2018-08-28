@@ -9,3 +9,6 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
   marker.addTo(map);
   map.panTo(new L.LatLng(sample.lat, sample.lng));
 })
+
+baseMap.createOverlayEventListeners(map);
+baseMap.createOverlays(map);
