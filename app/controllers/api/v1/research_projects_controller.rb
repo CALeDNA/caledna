@@ -19,6 +19,7 @@ module Api
           asvs_count: asvs_count
         }
         json.merge!(pillar_point_data) if project.slug == 'pillar-point'
+        json
       end
 
       def pillar_point_data
