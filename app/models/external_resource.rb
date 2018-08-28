@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class ExternalResource < ApplicationRecord
+  # http://resolver.globalnames.org/data_sources
+  GLOBAL_NAMES_SOURCE_IDS = [12, 11, 180, 3, 163, 174, 4, 9, 1, 2].freeze
+
   has_one :ncbi_node, foreign_key: 'taxon_id'
 
   scope :missing_links, (lambda do
