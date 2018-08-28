@@ -1,9 +1,9 @@
 import baseMap from './base_map.js';
 
-var apiEndpoint = `/api/v1/research_projects/pillar-point`;
 var map = baseMap.createMap()
 map.setZoom(15);
 map.panTo(new L.LatLng(37.49547, -122.496478));
+var apiEndpoint = `/api/v1/research_projects/pillar-point?include_research=true`;
 
 var sources = { cal: true, gbif: true }
 var gbifMarkerLayer;

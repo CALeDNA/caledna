@@ -18,8 +18,12 @@ module Api
           samples: SampleSerializer.new(all_samples),
           asvs_count: asvs_count
         }
-        json.merge!(pillar_point_data) if project.slug == 'pillar-point'
+        json.merge!(pillar_point_data) if include_research?
         json
+      end
+
+      def include_research?
+        params[:include_research] == 'true'
       end
 
       def pillar_point_data
