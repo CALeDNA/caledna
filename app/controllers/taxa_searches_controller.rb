@@ -41,6 +41,7 @@ class TaxaSearchesController < ApplicationController
     ) as search
     WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})
     OR search.doc @@ plainto_tsquery('english', #{conn.quote(query)})
+    ORDER BY asvs_count DESC
     LIMIT #{limit} OFFSET #{offset}
     SQL
   end
