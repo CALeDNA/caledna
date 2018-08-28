@@ -85,6 +85,10 @@ class ResearchProjectsController < ApplicationController
                                       .pluck('sample_id')
   end
 
+  def paginated_samples
+    samples.page(params[:page])
+  end
+
   def extraction_ids
     @extraction_ids ||= ResearchProjectSource
                         .where(
