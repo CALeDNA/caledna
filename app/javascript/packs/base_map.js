@@ -297,6 +297,8 @@ function createOverlays (map) {
 // =============
 
 function fetchSamples(apiEndpoint, map, cb) {
+  var spinner = addSpinner(map);
+
   $.get(apiEndpoint, function(data) {
     var samples = data.samples ? data.samples.data : [data.sample.data];
     var asvsCounts = data.asvs_count;
@@ -323,6 +325,9 @@ function fetchSamples(apiEndpoint, map, cb) {
         return formatSamplesData(sample, asvs_count)
       })
     }
+
+     map.removeLayer(spinner);
+
 
     cb({ samplesData, baseSamplesData, researchProjectData })
   });
@@ -406,6 +411,16 @@ function addEventListener(map, samplesData) {
 // misc
 // =============
 
+function addSpinner(map) {
+  return L.marker([initialLat, initialLng], {
+    icon: L.divIcon({
+      html: '<div class="fa-5x"><i class="fas fa-circle-notch fa-spin"></i></div>',
+      iconSize: [20, 20],
+      className: 'mySpinner'
+    })
+  }).addTo(map);
+}
+
 function isSampleBarcode(string) {
   return /^k\d{4}-l(a|b|c)-s(1|2)$/.test(string.toLowerCase())
 }
@@ -422,7 +437,6 @@ function findAsvCount(sample, asvsCounts) {
   })[0]
   return asvs_data ? asvs_data.count : null;
 }
-
 
 function retrieveSamplesByStatus(status, samples) {
   if(status == 'approved') {
