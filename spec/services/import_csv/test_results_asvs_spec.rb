@@ -10,52 +10,155 @@ describe ImportCsv::TestResultsAsvs do
       dummy_class.convert_header_to_barcode(header)
     end
 
-    it 'converts kit.number header into valid kit number' do
+    it 'converts kit.number header' do
       header = 'X16S_K0078.C2.S59.L001'
 
       expect(subject(header)).to eq('K0078-LC-S2')
     end
 
-    it 'converts kitnumber header into valid kit number' do
-      header = 'PITS_K0001A1.S1.L001'
+    it 'converts K_L_S_ header' do
+      headers = [
+        ['X16S_K1LAS1.S18.L001', 'K0001-LA-S1'],
+        ['X16S_K12LAS1.S18.L001', 'K0012-LA-S1'],
+        ['X16S_K123LAS1.S18.L001', 'K0123-LA-S1'],
+        ['X16S_K1234LAS1.S18.L001', 'K1234-LA-S1']
+      ]
 
-      expect(subject(header)).to eq('K0001-LA-S1')
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
     end
 
-    it 'converts header without primer into valid kit number' do
-      header = 'K0001A1.S1.L001'
+    it 'converts K_S_L_ header' do
+      headers = [
+        ['X16S_K1S1LA.S18.L001', 'K0001-LA-S1'],
+        ['X16S_K12S1LA.S18.L001', 'K0012-LA-S1'],
+        ['X16S_K123S1LA.S18.L001', 'K0123-LA-S1'],
+        ['X16S_K1234S1LA.S18.L001', 'K1234-LA-S1']
+      ]
 
-      expect(subject(header)).to eq('K0001-LA-S1')
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
     end
 
-    it 'converts header into a random sample number' do
-      header = 'X16S_ShrubBlank1.S72.L001'
+    it 'converts K_S_L_R_ header' do
+      headers = [
+        ['X16S_K1S1LAR1.S18.L001', 'K0001-LA-S1-R1'],
+        ['X16S_K12S1LAR1.S18.L001', 'K0012-LA-S1-R1'],
+        ['X16S_K123S1LAR1.S18.L001', 'K0123-LA-S1-R1'],
+        ['X16S_K1234S1LAR1.S18.L001', 'K1234-LA-S1-R1']
+      ]
 
-      expect(subject(header)).to eq('ShrubBlank1')
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
     end
 
-    it 'converts 2-digit header into valid barcode' do
-      header = 'X16S_12A1.S18.L001'
+    it 'converts K_LS header' do
+      headers = [
+        ['X16S_K1A1.S18.L001', 'K0001-LA-S1'],
+        ['X16S_K12A1.S18.L001', 'K0012-LA-S1'],
+        ['X16S_K123A1.S18.L001', 'K0123-LA-S1'],
+        ['X16S_K1234A1.S18.L001', 'K1234-LA-S1']
+      ]
 
-      expect(subject(header)).to eq('K0012-LA-S1')
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
     end
 
-    it 'converts 3-digit header into valid barcode' do
-      header = 'X16S_123A1.S18.L001'
+    it 'converts _LS header' do
+      headers = [
+        ['X16S_1A1.S18.L001', 'K0001-LA-S1'],
+        ['X16S_12A1.S18.L001', 'K0012-LA-S1'],
+        ['X16S_123A1.S18.L001', 'K0123-LA-S1'],
+        ['X16S_1234A1.S18.L001', 'K1234-LA-S1']
+      ]
 
-      expect(subject(header)).to eq('K0123-LA-S1')
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
     end
 
-    it 'removes X from abbreviated barcode' do
-      header = 'X11A1'
 
-      expect(subject(header)).to eq('11A1')
+    it 'converts header without primers' do
+      headers = [
+        ['K1A1.S18.L001', 'K0001-LA-S1'],
+        ['K12A1.S18.L001', 'K0012-LA-S1'],
+        ['K123A1.S18.L001', 'K0123-LA-S1'],
+        ['K1234A1.S18.L001', 'K1234-LA-S1']
+      ]
+
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
     end
 
-    it 'removes X from abbreviated barcode' do
-      header = 'X183A1'
+    it 'converts abbreviated K_LS header' do
+      headers =  [
+        ['K1B1', 'K0001-LB-S1'],
+        ['K12B1', 'K0012-LB-S1'],
+        ['K123B1', 'K0123-LB-S1'],
+        ['K1234B1', 'K1234-LB-S1']
+      ]
 
-      expect(subject(header)).to eq('183A1')
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
+    end
+
+    it 'converts abbreviated X_LS header' do
+      headers =  [
+        ['X1B1', 'K0001-LB-S1'],
+        ['X12B1', 'K0012-LB-S1'],
+        ['X123B1', 'K0123-LB-S1'],
+        ['X1234B1', 'K1234-LB-S1']
+      ]
+
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
+    end
+
+    it 'converts abbreviated _LS header' do
+      headers =  [
+        ['1B1', 'K0001-LB-S1'],
+        ['12B1', 'K0012-LB-S1'],
+        ['123B1', 'K0123-LB-S1'],
+        ['1234B1', 'K1234-LB-S1']
+      ]
+
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
+    end
+
+    it 'returns nil for "blank" samples' do
+      headers = [
+        'K0401.blank.S135.L001', 'X16s_K0001Blank.S1.L001', 'forestpcrBLANK',
+        'X16S_ShrubBlank1'
+      ]
+      headers.each do |header|
+        expect(subject(header)).to eq(nil)
+      end
+    end
+
+    it 'returns nil for "neg" samples' do
+      headers = [
+        'K0401.extneg.S135.L001', 'X16s_K0001Neg.S1.L001', 'forestpcrNEG',
+        'X16S_neg'
+      ]
+
+      headers.each do |header|
+        expect(subject(header)).to eq(nil)
+      end
+    end
+
+    it 'returns nil for invalid barcode' do
+      header = 'PITS_forest.S96.L001'
+
+      expect(subject(header)).to eq(nil)
     end
   end
 
@@ -105,9 +208,9 @@ describe ImportCsv::TestResultsAsvs do
       it 'creates sample & extraction' do
         expect { subject(file, research_project.id, extraction_type.id) }
           .to change { Sample.count }
-          .by(2)
+          .by(1)
           .and change { Extraction.count }
-          .by(2)
+          .by(1)
       end
     end
 
@@ -120,7 +223,7 @@ describe ImportCsv::TestResultsAsvs do
           .to change { Sample.count }
           .by(0)
           .and change { Extraction.count }
-          .by(2)
+          .by(1)
       end
     end
 
