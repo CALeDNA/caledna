@@ -54,7 +54,16 @@ var markerClusterLayer = L.markerClusterGroup({
 // create markers
 // =============
 
-function createMap () {
+function createMap (customLatlng = null, customInitialZoom = null) {
+  if(customLatlng) {
+    latlng = customLatlng
+    initialLat = latlng.lat
+    initialLng = latlng.lng
+  }
+  if(customInitialZoom) {
+    initialZoom = customInitialZoom
+  }
+
   return L.map('mapid', {
     preferCanvas: true,
     center: latlng,
@@ -326,7 +335,7 @@ function fetchSamples(apiEndpoint, map, cb) {
       })
     }
 
-     map.removeLayer(spinner);
+    map.removeLayer(spinner);
 
 
     cb({ samplesData, baseSamplesData, researchProjectData })
