@@ -123,17 +123,8 @@ Rails.application.routes.draw do
     resources :survey_responses, only: %i[create show]
   end
 
-  tables = ActiveRecord::Base.connection.tables
-  valid_model = tables.include?('research_projects') &&
-                ResearchProject.first.try(:slug)
-
-  if valid_model
-    ResearchProject.all.each do |project|
-      get "research_projects/#{project.slug}",
-          to: "research_projects##{project.slug.underscore}",
-          defaults: { id: project.slug }
-    end
-  end
+  get 'research_projects/pillar-point', to: 'research_projects#pillar_point',
+                                        defaults: { id: 'pillar-point' }
 
   resources :research_projects, only: %i[index show]
 
