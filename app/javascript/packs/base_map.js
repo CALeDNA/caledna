@@ -227,8 +227,6 @@ var hii = createRasterLayer('/data/map_rasters/hii_4.png')
 var elevation = createRasterLayer('/data/map_rasters/elevation_0.png')
 var precipitation = createRasterLayer('/data/map_rasters/precipitation_0.png')
 var popdens_geo = createRasterLayer('/data/map_rasters/popdens_geo_2.png')
-var popdens_cap1000 = createRasterLayer('/data/map_rasters/popdens_cap1000_0.png')
-var popdens_cap5000 = createRasterLayer('/data/map_rasters/popdens_cap5000_1.png')
 
 var environmentLayers = {
   "bldfie (bulk density)": { layer: bldfie, legend: 'bldfie_legend.png' },
@@ -239,8 +237,6 @@ var environmentLayers = {
   "elevation": { layer: elevation, legend: 'elevation_legend.png' },
   "precipitation": { layer: precipitation, legend: 'precipitation_legend.png' },
   "population density": { layer: popdens_geo, legend: 'popdens_geo_legend.png' },
-  "population density cap 1000": { layer: popdens_cap1000, legend: 'popdens_cap1000_legend.png' },
-  "population density cap 5000": { layer: popdens_cap5000, legend: 'popdens_cap5000_legend.png' },
 }
 
 var legend = L.control({position: 'bottomright'});
@@ -256,7 +252,6 @@ function createOverlayEventListeners(map) {
       legend.addTo(map);
     }
   });
-
 
   map.on('overlayremove', function (eventLayer) {
     map.removeControl(legend);
