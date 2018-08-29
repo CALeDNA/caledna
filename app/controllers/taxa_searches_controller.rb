@@ -32,7 +32,7 @@ class TaxaSearchesController < ApplicationController
       SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
       ncbi_nodes.alt_names, inaturalist_id, eol_id, wikidata_image, asvs_count,
       to_tsvector('simple', canonical_name) ||
-      to_tsvector('english', alt_names) AS doc
+      to_tsvector('english', coalesce(alt_names, '')) AS doc
       FROM ncbi_nodes
       LEFT JOIN external_resources
       ON external_resources.ncbi_id = ncbi_nodes.taxon_id
@@ -52,7 +52,7 @@ class TaxaSearchesController < ApplicationController
     FROM (
       SELECT taxon_id,
       to_tsvector('simple', canonical_name) ||
-      to_tsvector('english', alt_names) as doc
+      to_tsvector('english', coalesce(alt_names, '')) as doc
       FROM ncbi_nodes
     ) AS search
     WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})

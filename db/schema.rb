@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_27_151807) do
+ActiveRecord::Schema.define(version: 2018_08_29_200052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -125,6 +125,12 @@ ActiveRecord::Schema.define(version: 2018_08_27_151807) do
     t.datetime "updated_at", null: false
     t.string "iucn_status"
     t.string "source"
+    t.string "col_id"
+    t.string "wikispecies_id"
+    t.jsonb "payload"
+    t.boolean "low_score"
+    t.string "vernaculars", default: [], array: true
+    t.string "search_term"
   end
 
   create_table "extraction_types", id: :serial, force: :cascade do |t|
@@ -316,7 +322,7 @@ ActiveRecord::Schema.define(version: 2018_08_27_151807) do
     t.integer "asvs_count", default: 0
     t.string "ids", default: [], array: true
     t.string "alt_names"
-    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (alt_names)::text)))", name: "idx_taxa_search", using: :gin
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "idx_taxa_search", using: :gin
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
