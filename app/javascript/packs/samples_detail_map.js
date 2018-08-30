@@ -12,3 +12,4 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
 
 baseMap.createOverlayEventListeners(map);
 baseMap.createOverlays(map);
+baseMap.addMapLayerModal(map);

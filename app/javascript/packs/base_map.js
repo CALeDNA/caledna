@@ -1,4 +1,4 @@
-import { callbackify } from "util";
+import 'leaflet-easybutton';
 
 // =============
 // config map
@@ -173,7 +173,7 @@ function createRasterLayer(rasterFile) {
 
 function createLegend (legendImg) {
   var div = L.DomUtil.create('div', 'info legend');
-  div.innerHTML += '<img src="' + legendImg + '" alt="legend" width="80px">';
+  div.innerHTML += '<img src="' + legendImg + '" alt="legend" width="100px">';
   return div;
 }
 
@@ -229,14 +229,14 @@ var precipitation = createRasterLayer('/data/map_rasters/precipitation_0.png')
 var popdens_geo = createRasterLayer('/data/map_rasters/popdens_geo_2.png')
 
 var environmentLayers = {
-  "bldfie (bulk density)": { layer: bldfie, legend: 'bldfie_legend.png' },
-  "clyppt (amount clay)": { layer: clyppt, legend: 'clyppt_legend.png' },
-  "sltppt (amount silt)": { layer: sltppt, legend: 'sltppt_legend.png' },
-  "sndppt (amount sand)": { layer: sndppt, legend: 'sndppt_legend.png' },
-  "hii (human impact)": { layer: hii, legend: 'hii_legend.png' },
-  "elevation": { layer: elevation, legend: 'elevation_legend.png' },
-  "precipitation": { layer: precipitation, legend: 'precipitation_legend.png' },
-  "population density": { layer: popdens_geo, legend: 'popdens_geo_legend.png' },
+  "bldfie (bulk density)": { layer: bldfie, legend: 'legend_bldfie.png' },
+  "clyppt (amount clay)": { layer: clyppt, legend: 'legend_clyppt.png' },
+  "sltppt (amount silt)": { layer: sltppt, legend: 'legend_sltppt.png' },
+  "sndppt (amount sand)": { layer: sndppt, legend: 'legend_sndppt.png' },
+  "hii (human impact)": { layer: hii, legend: 'legend_hii.png' },
+  "elevation": { layer: elevation, legend: 'legend_elevation.png' },
+  "precipitation": { layer: precipitation, legend: 'legend_precipitation.png' },
+  "population density": { layer: popdens_geo, legend: 'legend_popdens_geo.png' },
 }
 
 var legend = L.control({position: 'bottomright'});
@@ -462,6 +462,12 @@ function filterSamplesByStatus(samples, status) {
   })
 }
 
+function addMapLayerModal (map) {
+  L.easyButton(' fa-info', function(btn, map){
+    $('#map-layer-modal').modal('show')
+  }, 'Map info').addTo( map );
+}
+
 
 export default {
   fetchSamples,
@@ -475,4 +481,5 @@ export default {
   renderIndividualMarkers,
   formatGBIFData,
   createIconMarker,
+  addMapLayerModal,
 };

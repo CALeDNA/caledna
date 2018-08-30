@@ -17,6 +17,7 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
 
 baseMap.createOverlayEventListeners(map);
 baseMap.createOverlays(map);
+baseMap.addMapLayerModal(map);
 
 var taxaMarkerEls = document.querySelectorAll('.js-taxa-markers');
 if(taxaMarkerEls) {
