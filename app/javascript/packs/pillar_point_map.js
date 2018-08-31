@@ -41,11 +41,14 @@ function chooseSourceHandler(e) {
 }
 
 baseMap.fetchSamples(apiEndpoint, map, function(data) {
-  var gbifOccurrences = data.researchProjectData
-    .gbif_occurrences.data.map(baseMap.formatGBIFData)
+  if (data.researchProjectData) {
+    var gbifOccurrences = data.researchProjectData
+      .gbif_occurrences.data.map(baseMap.formatGBIFData)
 
-  gbifMarkerLayer = baseMap.renderIndividualMarkers(gbifOccurrences, map)
-  map.addLayer(gbifMarkerLayer);
+    gbifMarkerLayer = baseMap.renderIndividualMarkers(gbifOccurrences, map)
+    map.addLayer(gbifMarkerLayer);
+  }
+
 
   calMarkerLayer =
     baseMap.createMarkerCluster(data.samplesData, baseMap.createIconMarker)
