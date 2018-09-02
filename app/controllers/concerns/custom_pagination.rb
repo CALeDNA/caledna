@@ -41,4 +41,8 @@ module CustomPagination
   def page
     params[:page].present? ? params[:page].to_i : 1
   end
+
+  def count_sql
+    raise 'must implement count_sql in the caller class'
+  end
 end
