@@ -27,7 +27,7 @@ module Api
       end
 
       def pillar_point_data
-        pp = ResearchProjectService::PillarPoint.new(project)
+        pp = ResearchProjectService::PillarPoint.new(project, params)
 
         {
           research_project_data: {

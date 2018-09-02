@@ -109,7 +109,9 @@ class ResearchProjectsController < ApplicationController
   end
 
   def project_service
-    @project_service ||= ResearchProjectService::PillarPoint.new(project)
+    @project_service ||= begin
+      ResearchProjectService::PillarPoint.new(project, params)
+    end
   end
 
   def query_string

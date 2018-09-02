@@ -2,10 +2,13 @@
 
 module ResearchProjectService
   class PillarPoint
-    attr_reader :project
+    attr_reader :project, :taxon_rank, :sort_by, :params
 
-    def initialize(project)
+    def initialize(project, params)
       @project = project
+      @taxon_rank = params[:taxon_rank] || 'phylum'
+      @sort_by = params[:sort]
+      @params = params
     end
 
     def conn
