@@ -14,6 +14,8 @@
     <%= render partial: "research_projects/pillar_point/samples_menu" %>
     <%= render partial: "research_projects/pillar_point/list",
       locals: { occurrences: @occurrences, asvs_count: @asvs_count }  %>
+  <% elsif params[:section] == 'edna_gbif_comparison' %>
+    <%= render partial: "research_projects/pillar_point/edna_gbif_comparison" %>
   <% else %>
     <%= render partial: "research_projects/pillar_point/intro" %>
     <%= render partial: "research_projects/pillar_point/samples_menu" %>

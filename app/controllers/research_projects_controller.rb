@@ -37,6 +37,9 @@ class ResearchProjectsController < ApplicationController
       @occurrences = occurrences
       @stats = project_service.stats
       @asvs_count = asvs_count
+    elsif params[:section] == 'edna_gbif_comparison'
+      @gbif_taxa = project_service.gbif_taxa
+      @gbif_taxa_with_edna = project_service.gbif_taxa_with_edna
     else
       @stats = project_service.stats
     end
