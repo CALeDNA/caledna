@@ -33,6 +33,10 @@ class ResearchProjectsController < ApplicationController
       @division_counts_unique = project_service.division_counts_unique
     elsif params[:section] == 'gbif_breakdown'
       @gbif_breakdown = project_service.gbif_breakdown
+    elsif params[:section] == 'interactions'
+      @interactions = project_service.globi_interactions
+      @globi_target_taxon = project_service.globi_target_taxon
+      @globi_requests = GlobiRequest.all
     elsif params[:view] == 'list'
       @occurrences = occurrences
       @stats = project_service.stats

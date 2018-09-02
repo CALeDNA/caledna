@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/MethodLength
 module ResearchProjectService
   class PillarPoint
-    attr_reader :project, :taxon_rank, :sort_by, :params
+    attr_reader :project, :taxon_rank, :sort_by, :params, :globi_id
 
     def initialize(project, params)
       @project = project
       @taxon_rank = params[:taxon_rank] || 'phylum'
       @sort_by = params[:sort]
       @params = params
+      @globi_id = params[:interaction_id] || GlobiRequest.first.try(:id)
     end
 
     def conn
@@ -49,7 +51,6 @@ module ResearchProjectService
       counts
     end
 
-    # rubocop:disable Metrics/MethodLength
     def gbif_division_stats
       sql = <<-SQL
         SELECT  kingdom as category, count(kingdom)
@@ -70,7 +71,6 @@ module ResearchProjectService
 
       conn.exec_query(sql)
     end
-    # rubocop:enable Metrics/MethodLength
 
     def gbif_unique_sql
       <<-SQL
@@ -129,8 +129,6 @@ module ResearchProjectService
       conn.exec_query(sql)
     end
 
-
-    # rubocop:disable Metrics/MethodLength
     def cal_division_stats
       sql = <<-SQL
         SELECT "name" AS category, COUNT(name) AS count
@@ -154,9 +152,7 @@ module ResearchProjectService
 
       conn.exec_query(sql)
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/MethodLength
     def cal_division_unique_stats
       sql = <<-SQL
         SELECT name as category, count("taxonID") FROM (
@@ -178,9 +174,7 @@ module ResearchProjectService
 
       conn.exec_query(sql)
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/MethodLength
     def gbif_stats
       observations = gbif_occurrences.count
       unique_organisms =
@@ -197,9 +191,7 @@ module ResearchProjectService
         organisms: unique_organisms
       }
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/MethodLength
     def cal_stats
       samples = ResearchProjectSource.cal.where(research_project: project).count
       unique_organisms =
@@ -215,7 +207,6 @@ module ResearchProjectService
         organisms: unique_organisms
       }
     end
-    # rubocop:enable Metrics/MethodLength
 
     def gbif_occurrences
       ids =
@@ -319,5 +310,82 @@ module ResearchProjectService
         'gbif_taxa.order, gbif_taxa.family, gbif_taxa.genus, gbif_taxa.species'
       end
     end
+
+    def globi_target_taxon
+      request = GlobiRequest.find(globi_id)
+      taxon_name = conn.quote(request.taxon_name)
+      node = NcbiNode.find(request.taxon_id)
+
+      sql = <<-SQL
+      select #{taxon_name} as taxon_name,
+      #{conn.quote(node.full_taxonomy_string)} as taxon_path,
+      #{conn.quote(node.rank)} as taxon_rank,
+      #{taxon_name} IN(
+        SELECT unnest(array[kingdom, phylum, classname, "order", family,
+        genus, species])
+        FROM research_project_sources
+        JOIN external.gbif_occurrences
+        ON external.gbif_occurrences.gbifid =
+          research_project_sources.sourceable_id
+        WHERE research_project_id = #{project.id}
+        AND sourceable_type = 'GbifOccurrence'
+        AND metadata ->> 'location' != 'Montara SMR'
+      ) as gbif_match,
+      #{taxon_name} IN(
+        SELECT  unnest(string_to_array(full_taxonomy_string, ';'))
+        FROM research_project_sources
+        JOIN asvs
+        ON asvs.extraction_id = research_project_sources.sourceable_id
+        JOIN ncbi_nodes
+        ON ncbi_nodes.taxon_id = asvs."taxonID"
+        WHERE research_project_id = #{project.id}
+        AND sourceable_type = 'Extraction'
+      ) as edna_match;
+      SQL
+
+      results = conn.exec_query(sql)
+      results.to_hash.first
+    end
+
+    def globi_interactions
+      sql = <<-SQL
+      SELECT DISTINCT
+      interaction_type, target_taxon_external_id,
+      target_taxon_name, target_taxon_path,
+      (target_taxon_name IN
+        (SELECT  unnest(string_to_array(full_taxonomy_string, ';'))
+        FROM research_project_sources
+        JOIN asvs
+        ON asvs.extraction_id = research_project_sources.sourceable_id
+        JOIN ncbi_nodes
+        ON ncbi_nodes.taxon_id = asvs."taxonID"
+        WHERE research_project_id = #{project.id}
+        AND sourceable_type = 'Extraction'
+        INTERSECT
+        SELECT (target_taxon_name)
+        FROM external.globi_interactions
+        WHERE globi_request_id = #{globi_id})) AS edna_match,
+      (target_taxon_name IN
+        (SELECT unnest(array[kingdom, phylum, classname, "order", family,
+        genus, species])
+        FROM research_project_sources
+        JOIN external.gbif_occurrences
+        ON external.gbif_occurrences.gbifid =
+          research_project_sources.sourceable_id
+        WHERE research_project_id = #{project.id}
+        AND sourceable_type = 'GbifOccurrence'
+        AND metadata ->> 'location' != 'Montara SMR'
+        INTERSECT
+        SELECT (target_taxon_name)
+        FROM external.globi_interactions
+        WHERE globi_request_id = #{globi_id})) AS gbif_match
+      FROM external.globi_interactions
+      WHERE globi_request_id = #{globi_id}
+      ORDER BY interaction_type, target_taxon_name
+      SQL
+
+      conn.exec_query(sql)
+    end
   end
 end
+# rubocop:enable Metrics/MethodLength

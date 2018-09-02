@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 module PillarPointHelper
+  def self.check_or_x(boolean)
+    if boolean
+      '<span style="font-size: 20px; color: green;">'\
+        '<i class="fas fa-check-circle"></i>'\
+      '</span>'
+    else
+      '<span style="font-size: 20px; color: red;">'\
+        '<i class="fas fa-times-circle"></i>'\
+      '</span>'
+    end
+  end
+
   def self.total(values)
     values.map(&:second).sum
   end
