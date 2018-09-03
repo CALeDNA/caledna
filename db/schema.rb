@@ -131,6 +131,9 @@ ActiveRecord::Schema.define(version: 2018_08_31_034643) do
     t.boolean "low_score"
     t.string "vernaculars", default: [], array: true
     t.string "search_term"
+    t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
+    t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
+    t.index ["source"], name: "index_external_resources_on_source"
   end
 
   create_table "extraction_types", id: :serial, force: :cascade do |t|
@@ -381,6 +384,7 @@ ActiveRecord::Schema.define(version: 2018_08_31_034643) do
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
     t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
+    t.index ["sourceable_type"], name: "index_research_project_sources_on_sourceable_type"
   end
 
   create_table "research_projects", id: :serial, force: :cascade do |t|
