@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-namespace :research_project do
+namespace :research_project_pillar_point do
   require 'csv'
 
-  task import_pillar_point_sources: :environment do
+  task create_project_sources_for_inat: :environment do
     path = "#{Rails.root}/db/data/private/pillar_point_sources.csv"
 
-    puts 'import pillar point sources'
+    puts 'import inat...'
 
     project_id = ResearchProject.find_by(name: 'Pillar Point').id
 
@@ -20,10 +20,10 @@ namespace :research_project do
     end
   end
 
-  task import_pillar_point_samples: :environment do
+  task import_samples_metadata: :environment do
     path = "#{Rails.root}/db/data/private/pillarpoint_metadata.csv"
 
-    puts 'import pillar point samples'
+    puts 'import samples metadata...'
 
     CSV.foreach(path, headers: true) do |row|
       barcode = row['sum.taxonomy']
@@ -50,8 +50,42 @@ namespace :research_project do
     end
   end
 
-  task import_pillar_point_gbif_sources: :environment do
-    puts 'import pillar point gbif sources'
+  task add_location_metadata_to_samples: :environment do
+    include InsidePolygon
+    locations = [
+      {
+        polygon: InsidePolygon::PILLAR_POINT_UNPROTECTED_EMBANKMENT,
+        location: 'Pillar Point embankment unprotected'
+      },
+      {
+        polygon: InsidePolygon::PILLAR_POINT_UNPROTECTED_EXPOSED,
+        location: 'Pillar Point exposed unprotected'
+      },
+      {
+        polygon: InsidePolygon::PILLAR_POINT_SMCA,
+        location: 'Pillar Point SMCA'
+      }
+    ]
+
+    project = ResearchProject.find_by(name: 'Pillar Point')
+
+    sources = ResearchProjectSource.where(
+      research_project: project, sourceable_type: 'Extraction')
+
+    sources.each do |source|
+      sample = source.sourceable.sample
+      locations.each do |location|
+        point = [sample.latitude, sample.longitude]
+        if inside_polygon(point, location[:polygon])
+          source.metadata[:location] = location[:location]
+          source.save
+        end
+      end
+    end
+  end
+
+  task import_gbif_occurrences: :environment do
+    puts 'import gbif ...'
 
     project_id = ResearchProject.find_by(name: 'Pillar Point').id
 
