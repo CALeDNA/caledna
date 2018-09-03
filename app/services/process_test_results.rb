@@ -1,13 +1,24 @@
 # frozen_string_literal: true
 
 module ProcessTestResults
+  def invalid_taxon?(taxonomy_string)
+    return true if taxonomy_string == 'NA'
+    return true if taxonomy_string.split(';').blank?
+    return true if taxonomy_string.split(';', -1).uniq.sort == ['', 'NA']
+
+    parts_count = taxonomy_string.split(';', -1).count
+    return true if parts_count < 6
+    return true if parts_count > 7
+    false
+  end
+
   # rubocop:disable Metrics/MethodLength
   def find_taxon_from_string_phylum(taxonomy_string)
     rank = get_taxon_rank_phylum(taxonomy_string)
     hierarchy = get_hierarchy_phylum(taxonomy_string, rank)
 
-    raise TaxaError('rank not found') if rank.blank?
-    raise TaxaError('hierarchy not found') if hierarchy.blank?
+    raise TaxaError, 'rank not found' if rank.blank?
+    raise TaxaError, 'hierarchy not found' if hierarchy.blank?
 
     taxon = find_exact_taxon(hierarchy, rank) || nil
     complete_taxonomy = get_complete_taxon_string(taxonomy_string)
@@ -27,8 +38,8 @@ module ProcessTestResults
     rank = get_taxon_rank_superkingdom(taxonomy_string)
     hierarchy = get_hierarchy_superkingdom(taxonomy_string, rank)
 
-    raise TaxaError('rank not found') if rank.blank?
-    raise TaxaError('hierarchy not found') if hierarchy.blank?
+    raise TaxaError, 'rank not found' if rank.blank?
+    raise TaxaError, 'hierarchy not found' if hierarchy.blank?
 
     taxon = find_exact_taxon(hierarchy, rank) || nil
     {
@@ -63,7 +74,7 @@ module ProcessTestResults
     elsif parts.length == 7
       false
     else
-      raise TaxaError, 'invalid taxonomy string'
+      raise TaxaError, "#{string}: invalid taxonomy string"
     end
   end
 

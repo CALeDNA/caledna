@@ -11,6 +11,8 @@ module ImportCsv
 
       CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
         taxonomy_string = row[row.headers.first]
+        next if invalid_taxon?(taxonomy_string)
+
         ImportCsvFindCalTaxonJob.perform_later(taxonomy_string)
       end
 

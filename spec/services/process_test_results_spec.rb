@@ -86,6 +86,57 @@ describe ProcessTestResults do
     end
   end
 
+  describe '#invalid_taxon?' do
+    def subject(string)
+      dummy_class.invalid_taxon?(string)
+    end
+
+    it 'returns true if string is "NA"' do
+      string = 'NA'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'returns true if string is all semicolons' do
+      strings = [';;;;;;', ';;;;;']
+
+      strings.each do |string|
+        expect(subject(string)).to eq(true)
+      end
+    end
+
+    it 'returns true if string has too many parts' do
+      string = 's;p;c;o;f;g;s;x'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'returns true if string has too few parts' do
+      string = 'p;c;o;f;g'
+
+      expect(subject(string)).to eq(true)
+    end
+
+    it 'returns true if string is only "NA" and semicolons' do
+      strings = [';NA;;;;;', ';NA;;NA;;NA;', ';;;;;;NA', 'NA;;;;;']
+
+      strings.each do |string|
+        expect(subject(string)).to eq(true)
+      end
+    end
+
+    it 'returns false otherwise' do
+      strings = [
+        'p;c;o;f;g;s', 'p;;;;;', ';;;;;s',
+        'sk;p;c;o;f;g;s', 'sk;;;;;;', ';;;;;;s'
+      ]
+
+      strings.each do |string|
+        expect(subject(string)).to eq(false)
+      end
+    end
+  end
+
   describe '#get_taxon_rank_phylum' do
     def subject(string)
       dummy_class.get_taxon_rank_phylum(string)

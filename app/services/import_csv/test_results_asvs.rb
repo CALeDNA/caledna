@@ -27,6 +27,8 @@ module ImportCsv
       )
       data.each do |row|
         taxonomy_string = row[row.headers.first]
+        next if invalid_taxon?(taxonomy_string)
+
         # NOTE: always use phylum taxon string to match older cal_taxon
         # than only have phylum_taxonomy_string
         string = if phylum_taxonomy_string?(taxonomy_string)
