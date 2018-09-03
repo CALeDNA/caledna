@@ -26,7 +26,7 @@ class ResearchProjectsController < ApplicationController
     @conn ||= ActiveRecord::Base.connection
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def researcher_view
     if params[:section] == 'occurrence_comparsion'
       @division_counts = project_service.division_counts
@@ -48,7 +48,7 @@ class ResearchProjectsController < ApplicationController
       @stats = project_service.stats
     end
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def project
     @project ||= begin

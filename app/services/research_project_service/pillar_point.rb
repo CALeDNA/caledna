@@ -311,7 +311,10 @@ module ResearchProjectService
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def globi_target_taxon
+      return unless globi_id
+
       request = GlobiRequest.find(globi_id)
       taxon_name = conn.quote(request.taxon_name)
       node = NcbiNode.find(request.taxon_id)
@@ -346,8 +349,11 @@ module ResearchProjectService
       results = conn.exec_query(sql)
       results.to_hash.first
     end
+    # rubocop:enable Metrics/AbcSize
 
     def globi_interactions
+      return [] unless globi_id
+
       sql = <<-SQL
       SELECT DISTINCT
       interaction_type, target_taxon_external_id,

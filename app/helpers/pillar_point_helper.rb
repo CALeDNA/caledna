@@ -49,9 +49,8 @@ module PillarPointHelper
   end
 
   def self.only_gbif_counts(counts)
-    categories = [
-      'Animalia', 'Archaea', 'Bacteria', 'Chromista', 'Fungi',
-      'Plantae'
+    categories = %w[
+      Animalia Archaea Bacteria Chromista Fungi Plantae
     ]
 
     categories.map do |category|
