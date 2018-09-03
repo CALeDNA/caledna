@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 namespace :research_project do
   require 'csv'
 
@@ -118,4 +117,3 @@ namespace :research_project do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

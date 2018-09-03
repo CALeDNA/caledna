@@ -106,7 +106,7 @@ describe ImportGlobalNames do
     end
 
     it 'saves nested vernaculars from the apis as a flat array' do
-      ImportGlobalNames::SCORE_THRESHOLD = 0.7
+      stub_const('ImportGlobalNames::SCORE_THRESHOLD', 0.7)
       subject(api_data, taxon_id, id_name)
       resource = ExternalResource.first
 
@@ -115,7 +115,7 @@ describe ImportGlobalNames do
     end
 
     it 'sets low_score to false if all scores are above threshold' do
-      ImportGlobalNames::SCORE_THRESHOLD = 0.7
+      stub_const('ImportGlobalNames::SCORE_THRESHOLD', 0.7)
       subject(api_data, taxon_id, id_name)
       resource = ExternalResource.first
 
@@ -123,7 +123,7 @@ describe ImportGlobalNames do
     end
 
     it 'sets low_score to true if any score is below threshold' do
-      ImportGlobalNames::SCORE_THRESHOLD = 0.85
+      stub_const('ImportGlobalNames::SCORE_THRESHOLD', 0.85)
       subject(api_data, taxon_id, id_name)
       resource = ExternalResource.first
 

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 namespace :gbif do
   task import_missing_fields_for_occ_taxa: :environment do
     api = GbifApi.new
@@ -51,4 +50,3 @@ namespace :gbif do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

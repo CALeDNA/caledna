@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength:
 namespace :ncbi do
   require_relative '../../app/services/format_ncbi'
   require_relative '../../app/services/process_test_results'
@@ -76,4 +75,3 @@ namespace :ncbi do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength:

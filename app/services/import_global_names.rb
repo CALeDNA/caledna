@@ -3,7 +3,7 @@
 module ImportGlobalNames
   SCORE_THRESHOLD = 0.75
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def create_external_resource(results:, taxon_id:, id_name:)
     return if results['data'].nil?
     return if results['data'].first['is_known_name'] == false
@@ -19,7 +19,7 @@ module ImportGlobalNames
 
     ExternalResource.create(attributes)
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   private
 

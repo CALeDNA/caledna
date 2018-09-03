@@ -11,7 +11,7 @@ describe 'Taxa' do
     end
 
     it 'returns OK when there are taxa' do
-      create(:taxon)
+      create(:ncbi_node)
       get taxa_path
 
       expect(response.status).to eq(200)

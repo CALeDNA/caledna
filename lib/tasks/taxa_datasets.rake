@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 namespace :taxa_datasets do
   desc 'import dataset info from gbif'
 
@@ -37,7 +36,6 @@ namespace :taxa_datasets do
     TaxaDataset.create(datasets)
   end
 end
-# rubocop:enable Metrics/BlockLength
 
 class GbifImport
   def gbif_api
