@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class TaxaDataset < ApplicationRecord
+class GbifDataset < ApplicationRecord
+  self.table_name = 'external.gbif_dataset'
   self.primary_key = :datasetID
 
   has_many :taxa, foreign_key: 'datasetID'

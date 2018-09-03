@@ -5,6 +5,8 @@
 class Vernacular < ApplicationRecord
   require 'languages'
 
+  self.table_name = 'external.gbif_vernaculars'
+
   belongs_to :taxon, foreign_key: 'taxonID'
   scope :english, -> { where(language: 'en') }
 

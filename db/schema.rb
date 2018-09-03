@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_31_034643) do
+ActiveRecord::Schema.define(version: 2018_09_03_005052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -515,55 +515,6 @@ ActiveRecord::Schema.define(version: 2018_08_31_034643) do
     t.index ["slug"], name: "index_surveys_on_slug"
   end
 
-  create_table "taxa", primary_key: "taxonID", id: :integer, default: nil, force: :cascade do |t|
-    t.string "datasetID", limit: 255
-    t.integer "parentNameUsageID"
-    t.integer "acceptedNameUsageID"
-    t.integer "originalNameUsageID"
-    t.text "scientificName"
-    t.text "scientificNameAuthorship"
-    t.string "canonicalName", limit: 255
-    t.string "genericName", limit: 255
-    t.string "specificEpithet", limit: 255
-    t.string "infraspecificEpithet", limit: 255
-    t.string "taxonRank", limit: 255
-    t.string "nameAccordingTo", limit: 255
-    t.text "namePublishedIn"
-    t.string "taxonomicStatus", limit: 255
-    t.string "nomenclaturalStatus", limit: 255
-    t.string "taxonRemarks", limit: 255
-    t.string "kingdom", limit: 255
-    t.string "phylum", limit: 255
-    t.string "className", limit: 255
-    t.string "order", limit: 255
-    t.string "family", limit: 255
-    t.string "genus", limit: 255
-    t.jsonb "hierarchy"
-    t.integer "asvs_count", default: 0
-    t.integer "rank_order"
-    t.string "iucn_status"
-    t.integer "iucn_taxonid"
-    t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix"
-    t.index "lower((\"canonicalName\")::text)", name: "taxon_canonicalname_idx"
-    t.index ["acceptedNameUsageID"], name: "taxa_acceptedNameUsageID_idx"
-    t.index ["asvs_count"], name: "index_taxa_on_asvs_count"
-    t.index ["canonicalName", "taxonRank"], name: "index_taxa_on_canonicalName_and_taxonRank"
-    t.index ["genus"], name: "index_taxa_on_genus"
-    t.index ["hierarchy"], name: "taxa_heirarchy_idx", using: :gin
-    t.index ["iucn_status"], name: "index_taxa_on_iucn_status"
-    t.index ["kingdom"], name: "index_taxa_on_kingdom"
-    t.index ["phylum"], name: "index_taxa_on_phylum"
-    t.index ["scientificName"], name: "index_taxa_on_scientificName"
-    t.index ["taxonID"], name: "taxon_pkey", unique: true
-    t.index ["taxonRank"], name: "index_taxa_on_taxonRank"
-    t.index ["taxonomicStatus"], name: "taxon_taxonomicstatus_idx"
-  end
-
-  create_table "taxa_datasets", primary_key: "datasetID", id: :string, force: :cascade do |t|
-    t.string "name"
-    t.text "citation"
-  end
-
   create_table "taxa_search_caches", force: :cascade do |t|
     t.integer "taxon_id"
     t.integer "sample_ids", array: true
@@ -617,20 +568,6 @@ ActiveRecord::Schema.define(version: 2018_08_31_034643) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
-  end
-
-  create_table "vernaculars", id: false, force: :cascade do |t|
-    t.integer "taxonID", null: false
-    t.text "vernacularName"
-    t.string "language", limit: 255
-    t.string "country", limit: 255
-    t.string "countryCode", limit: 255
-    t.string "sex", limit: 255
-    t.string "lifeStage", limit: 255
-    t.text "source"
-    t.index "lower(\"vernacularName\")", name: "vernacular_vernacularname_idx"
-    t.index ["language"], name: "index_vernaculars_on_language"
-    t.index ["taxonID"], name: "vernacular_taxonid_idx"
   end
 
   add_foreign_key "asvs", "extractions"

@@ -7,6 +7,8 @@ class Taxon < ApplicationRecord
   # taxonRank: kingdom phylum class order family genus species subspecies
   # variety unranked form
 
+  self.table_name = 'external.gbif_taxa'
+
   IUCN_CATEGORIES = {
     EX: 'Extinct',
     EW: 'Extinct in the Wild',
