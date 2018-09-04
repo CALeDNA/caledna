@@ -20,21 +20,29 @@ namespace :global_names do
     end
   end
 
-  task import_gbif_taxa: :environment do
+  task create_external_resources_for_gbif_taxa: :environment do
     include ImportGlobalNames
     global_names_api = ::GlobalNamesApi.new
 
-    GbifOccTaxa.all.each do |taxon|
-      puts taxon.taxonkey
+    conn = ActiveRecord::Base.connection
 
-      resource =
-        ExternalResource.find_by(gbif_id: taxon.taxonkey, source: 'globalnames')
-      next if resource.present?
+    sql = <<-SQL
+    SELECT taxonkey, scientificname
+    FROM external.gbif_occ_taxa
+    LEFT JOIN external_resources
+    ON external.gbif_occ_taxa.taxonkey = external_resources.gbif_id
+    WHERE gbif_id IS NULL;
+    SQL
+
+    records = conn.exec_query(sql).to_a
+
+    records.each do |record|
+      puts record['taxonkey']
 
       source_ids = ExternalResource::GLOBAL_NAMES_SOURCE_IDS.join('|')
-      results = global_names_api.names(taxon.scientificname, source_ids)
+      results = global_names_api.names(record['scientificname'], source_ids)
 
-      create_external_resource(results: results, taxon_id: taxon.taxonkey,
+      create_external_resource(results: results, taxon_id: record['taxonkey'],
                                id_name: 'gbif_id')
     end
   end
