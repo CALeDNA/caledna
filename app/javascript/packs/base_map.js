@@ -148,7 +148,11 @@ function createCircleMarker (sample, customOptions) {
 }
 
 function createIconMarker(sample, map) {
-  return L.marker([sample.lat, sample.lng]);
+  var icon =  L.marker([sample.lat, sample.lng]);
+  if (sample.body) {
+    icon.bindPopup(sample.body);
+  }
+  return icon
 }
 
 function createMarkerCluster(samples, createMarkerFn) {
@@ -184,6 +188,12 @@ function renderMarkerCluster(samples, map) {
 
 function renderIndividualMarkers (samples, map) {
   createMarkerLayer(samples, createCircleMarker)
+  individualMarkerLayer.addTo(map)
+  return individualMarkerLayer
+}
+
+function renderIndividualIcons (samples, map) {
+  createMarkerLayer(samples, createIconMarker)
   individualMarkerLayer.addTo(map)
   return individualMarkerLayer
 }
@@ -479,6 +489,7 @@ export default {
   createCircleMarker,
   renderBasicIndividualMarkers,
   renderIndividualMarkers,
+  renderIndividualIcons,
   formatGBIFData,
   createIconMarker,
   addMapLayerModal,
