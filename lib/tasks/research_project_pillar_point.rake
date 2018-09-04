@@ -91,19 +91,19 @@ namespace :research_project_pillar_point do
 
     locations = {
       embankment_unprotected: {
-        file: 'PillarPoint_embankment_unprotected_GBIF_noCLO.txt',
+        file: 'PillarPoint_embankment_unprotected_GBIF_noCLO.csv',
         location: 'Pillar Point embankment unprotected'
       },
       exposed_unprotected: {
-        file: 'PillarPoint_exposed_unprotected_GBIFnoCLO.txt',
+        file: 'PillarPoint_exposed_unprotected_GBIFnoCLO.csv',
         location: 'Pillar Point exposed unprotected'
       },
       SMCA: {
-        file: 'PillarPointSMCA_GBIFnoCLO.txt',
+        file: 'PillarPointSMCA_GBIFnoCLO.csv',
         location: 'Pillar Point SMCA'
       },
       Montara_SMR: {
-        file: 'Montara_SMR_GBIFnoCLO.txt',
+        file: 'Montara_SMR_GBIFnoCLO.csv',
         location: 'Montara SMR'
       }
     }
