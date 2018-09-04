@@ -41,6 +41,9 @@ class ResearchProjectsController < ApplicationController
       @occurrences = occurrences
       @stats = project_service.stats
       @asvs_count = asvs_count
+    elsif params[:section] == 'common_taxa'
+      @taxon = params[:ncbi_id] ? NcbiNode.find(params[:ncbi_id]) : nil
+      @gbif_taxa_with_edna_map = project_service.common_taxa_map
     elsif params[:section] == 'edna_gbif_comparison'
       @gbif_taxa = project_service.gbif_taxa
       @gbif_taxa_with_edna = project_service.gbif_taxa_with_edna

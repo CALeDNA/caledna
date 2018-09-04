@@ -219,6 +219,31 @@ module ResearchProjectService
       GbifOccurrence.where(gbifid: ids)
     end
 
+    def gbif_occurrences_by_taxa
+      taxon = GbifOccTaxa.find_by(taxonkey: params[:gbif_id])
+      rank = taxon.taxonrank == 'class' ? 'classname' : taxon.taxonrank
+      name = taxon.send(rank.to_s)
+
+      sql = <<-SQL
+      SELECT gbifid
+      FROM research_project_sources
+      JOIN external.gbif_occurrences
+      ON research_project_sources.sourceable_id = external.gbif_occurrences.gbifid
+      WHERE sourceable_type = 'GbifOccurrence'
+      AND research_project_id = #{project.id}
+      AND metadata ->> 'location' != 'Montara SMR'
+      SQL
+
+      sql += if rank == 'order'
+               "AND \"order\" = #{conn.quote(name)};"
+             else
+               "AND #{rank} = #{conn.quote(name)};"
+             end
+
+      ids = conn.exec_query(sql).rows.flatten
+      GbifOccurrence.where(gbifid: ids)
+    end
+
     def taxon_rank_value
       conn.quote(taxon_rank)
     end
@@ -227,7 +252,7 @@ module ResearchProjectService
       taxon_rank == 'class' ? 'classname' : conn.quote_column_name(taxon_rank)
     end
 
-    def gbif_select_sql
+    def gbif_fields_sql
       <<-SQL
       SELECT count(*),
       gbif_taxa.taxonkey as gbif_id, external_resources.ncbi_id,
@@ -235,6 +260,11 @@ module ResearchProjectService
       gbif_taxa.kingdom, gbif_taxa.phylum, gbif_taxa.classname,
       gbif_taxa.order, gbif_taxa.family, gbif_taxa.genus, gbif_taxa.species,
       ncbi_nodes.lineage, ncbi_nodes.rank as ncbi_rank
+      SQL
+    end
+
+    def gbif_select_sql
+      <<-SQL
       FROM research_project_sources
       JOIN external.gbif_occurrences
         ON external.gbif_occurrences.gbifid =
@@ -273,30 +303,54 @@ module ResearchProjectService
 
     def gbif_taxa
       @gbif_taxa ||= begin
-        sql = gbif_select_sql
+        sql = gbif_fields_sql
+        sql += gbif_select_sql
         sql += gbif_group_sql
         conn.exec_query(sql)
       end
     end
 
+    def gbif_taxa_with_edna_sql
+      <<-SQL
+      WHERE ncbi_nodes.taxon_id IN (
+        SELECT distinct(unnest(ids))::TEXT::NUMERIC
+        FROM asvs
+        JOIN extractions
+          ON asvs.extraction_id = extractions.id
+        JOIN research_project_sources
+          ON research_project_sources.sourceable_id = asvs.extraction_id
+          AND research_project_id = #{project.id}
+          AND sourceable_type = 'Extraction'
+        JOIN ncbi_nodes
+          ON ncbi_nodes.taxon_id = asvs."taxonID"
+      )
+      SQL
+    end
+
     def gbif_taxa_with_edna
       @gbif_taxa_with_edna ||= begin
-        sql = gbif_select_sql
-        sql += <<-SQL
-        WHERE ncbi_nodes.taxon_id IN (
-          SELECT distinct(unnest(ids))::TEXT::NUMERIC
-          FROM asvs
-          JOIN extractions
-            ON asvs.extraction_id = extractions.id
-          JOIN research_project_sources
-            ON research_project_sources.sourceable_id = asvs.extraction_id
-            AND research_project_id = #{project.id}
-            AND sourceable_type = 'Extraction'
-          JOIN ncbi_nodes
-            ON ncbi_nodes.taxon_id = asvs."taxonID"
-        )
-        SQL
+        sql = gbif_fields_sql
+        sql += gbif_select_sql
+        sql += gbif_taxa_with_edna_sql
         sql += gbif_group_sql
+
+        conn.exec_query(sql)
+      end
+    end
+
+    def common_taxa_map
+      @common_taxa_map ||= begin
+        rank = taxon_rank == 'class' ? 'classname' : taxon_rank
+
+        sql = <<-SQL
+        SELECT
+        distinct gbif_taxa.taxonkey as gbif_id, external_resources.ncbi_id,
+        gbif_taxa.#{rank} as gbif_name,
+        ncbi_nodes.canonical_name as ncbi_name
+        SQL
+        sql += gbif_select_sql
+        sql += gbif_taxa_with_edna_sql
+        sql += 'ORDER BY ncbi_name'
 
         conn.exec_query(sql)
       end
