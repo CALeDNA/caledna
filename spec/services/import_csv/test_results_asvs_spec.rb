@@ -81,7 +81,6 @@ describe ImportCsv::TestResultsAsvs do
       end
     end
 
-
     it 'converts header without primers' do
       headers = [
         ['K1A1.S18.L001', 'K0001-LA-S1'],
