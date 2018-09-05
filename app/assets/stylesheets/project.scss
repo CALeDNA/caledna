@@ -1,0 +1,23 @@
+.interaction-list {
+  .lineage {
+    color: #777;
+    font-size: 90%;
+  }
+
+  @media (min-width: 768px) {
+    .panel {
+      min-height: 24rem;
+    }
+  }
+}
+
+.interaction-target {
+  h3 {
+    margin-top: 0;
+  }
+
+  .lineage {
+    color: #777;
+    font-size: 90%;
+  }
+}
