@@ -1,8 +1,17 @@
+<%= javascript_pack_tag 'pp_bar_charts' %>
+<style>
+  canvas {
+    margin-bottom: 2rem;
+  }
+</style>
+
 <div class="row">
   <div class="col-sm-6">
     <h2>CALeDNA</h2>
 
     <h3>Total ASVS</h3>
+    <canvas id="cal-total-chart" width="400" height="400"></canvas>
+
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
         occurrence_stats: PillarPointHelper.cal_counts(@division_counts[:cal]),
@@ -10,6 +19,8 @@
       } %>
 
     <h3>Unique Organism</h3>
+    <canvas id="cal-unique-chart" width="400" height="400"></canvas>
+
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
         occurrence_stats: PillarPointHelper.cal_counts(@division_counts_unique[:cal]),
@@ -21,6 +32,8 @@
     <h2>GBIF</h2>
 
     <h3>Total Occurrences</h3>
+    <canvas id="gbif-total-chart" width="400" height="400"></canvas>
+
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
         occurrence_stats: PillarPointHelper.gbif_counts(@division_counts[:gbif]),
@@ -28,6 +41,8 @@
       } %>
 
     <h3>Unique Species</h3>
+    <canvas id="gbif-unique-chart" width="400" height="400"></canvas>
+
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
         occurrence_stats: PillarPointHelper.gbif_counts(@division_counts_unique[:gbif]),
@@ -35,3 +50,16 @@
       } %>
   </div>
 </div>
+
+<script>
+(function(){
+
+  window.caledna = {
+    cal_division_total: <%= @division_counts[:cal].to_json.html_safe %>,
+    cal_division_unique: <%= @division_counts_unique[:cal].to_json.html_safe %>,
+    gbif_division_total: <%= @division_counts[:gbif].to_json.html_safe %>,
+    gbif_division_unique: <%= @division_counts_unique[:gbif].to_json.html_safe %>
+  }
+
+})(window)
+</script>

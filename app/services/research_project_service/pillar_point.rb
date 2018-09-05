@@ -67,6 +67,7 @@ module ResearchProjectService
       sql += <<-SQL
         AND (metadata ->> 'location' != 'Montara SMR')
         GROUP BY kingdom
+        ORDER BY kingdom
       SQL
 
       conn.exec_query(sql)
@@ -93,7 +94,8 @@ module ResearchProjectService
           AND (metadata ->> 'location' != 'Montara SMR')
           ORDER BY kingdom
         ) AS foo
-        GROUP BY kingdom;
+        GROUP BY kingdom
+        ORDER BY kingdom;
       SQL
 
       conn.exec_query(sql)
@@ -109,7 +111,8 @@ module ResearchProjectService
           AND external.gbif_occurrences.datasetkey = '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
           ORDER BY kingdom
         ) AS foo
-        GROUP BY kingdom;
+        GROUP BY kingdom
+        ORDER BY kingdom;
       SQL
       conn.exec_query(sql)
     end
