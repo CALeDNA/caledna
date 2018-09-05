@@ -81,13 +81,12 @@
       <% end %>
     </td>
     <td><%= taxon['count'] %></td>
-    <td><%= 'ncbi_match' if ncbi_id(taxon).present? %></td>
     <td>
-      <% if has_edna?(taxon) %>
-        dna_match
-      <% end %>
+      <%= sanitize PillarPointHelper.check_or_x(ncbi_id(taxon)) %>
     </td>
-
+    <td>
+      <%= sanitize PillarPointHelper.check_or_x( has_edna?(taxon)) %>
+    </td>
   </tr>
 <% end %>
 </table>
