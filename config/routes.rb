@@ -131,6 +131,7 @@ Rails.application.routes.draw do
   namespace :beta do
     get 'geojson_demo', to: 'geojson_demo'
     get 'map_v2', to: 'map_v2'
+    get 'ebbe_nielsen', to: 'ebbe_nielsen'
   end
 
   # get '/safety-training-quiz',

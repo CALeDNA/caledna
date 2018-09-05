@@ -1,0 +1,27 @@
+<p>Some questions we hope to answer.</p>
+
+<ol>
+<li>How does eDNA complement GBIF data?</li>
+<li>What is the spatial distribution of eDNA in relation to GBIF?</li>
+<li>Is there seasonal community variation in GBIF? And can we capture that variation with eDNA?</li>
+<li>What are the human impacts on the Pillar Point area? And can we track that via sequence data and/or GBIF?</li>
+</ol>
+
+<h2>Stats</h2>
+<table class="table">
+  <tr>
+    <th>Source</th>
+    <th>Occurrences</th>
+    <th>Unique Organisms Identified</th>
+  </tr>
+  <tr>
+    <td>CALeDNA</td>
+    <td><%= @stats[:cal_stats][:occurrences] %> samples</td>
+    <td><%= @stats[:cal_stats][:organisms] %></td>
+  </tr>
+  <tr>
+    <td>GBIF</td>
+    <td><%= @stats[:gbif_stats][:occurrences] %> observations</td>
+    <td><%= @stats[:gbif_stats][:organisms] %></td>
+  </tr>
+</table>

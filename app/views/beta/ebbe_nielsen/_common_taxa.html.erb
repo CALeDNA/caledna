@@ -1,0 +1,56 @@
+<%
+  options = @gbif_taxa_with_edna_map.map { |t| [t['ncbi_name'], t['ncbi_id']] }
+
+  taxon_rank = params[:taxon_rank] || 'phylum'
+  ncbi_id = params[:ncbi_id] || @gbif_taxa_with_edna_map.first['ncbi_id']
+  gbif_id = params[:gbif_id] || @gbif_taxa_with_edna_map.first['gbif_id']
+
+    def base_url
+    '/beta/ebbe_nielsen?section=common_taxa'
+  end
+%>
+
+<h2>Common Taxa between eDNA and GBIF</h2>
+<ul class="nav nav-pills">
+  <% ['phylum', 'class', 'order', 'family', 'genus', 'species'].each do |rank| %>
+    <li class=<%= 'active' if rank == taxon_rank %>><a href="<%= base_url %>&taxon_rank=<%= rank %>">
+      <%= rank %>
+    </a></li>
+  <% end %>
+</ul><br>
+
+<%#= simple_form_for(:common_taxa) do |f| %>
+  <%#= f.input :taxon, collection: options %>
+<%# end %>
+
+<div class="row">
+  <div class="col-sm-4">
+    <ol>
+      <% @gbif_taxa_with_edna_map.each do |taxon| %>
+      <li><%= link_to taxon['ncbi_name'],
+        "#{base_url}&taxon_rank=#{taxon_rank}&ncbi_id=#{taxon['ncbi_id']}&gbif_id=#{taxon['gbif_id']}"
+      %></li>
+      <% end %>
+    </ol>
+  </div>
+
+  <div class="col-sm-8">
+     <h2>Taxon: <%= @taxon.canonical_name if @taxon %> </h2>
+    <div id="mapid"></div>
+    Areas of interest
+    <ul>
+      <li>red: Pillar Point State Marine Conservation Area (SMCA)</li>
+      <li>blue: unprotected tidal pools</li>
+      <li>orange: unprotected embankment</li>
+    </ul>
+
+    Markers
+    <ul>
+      <li>pin icons: eDNA samples</li>
+      <li>circles: GBIF occurrences</li>
+    </ul>
+
+  </div>
+</div>
+
+<%= javascript_pack_tag 'ebbe_nielsen/pp_common_taxa_map' %>

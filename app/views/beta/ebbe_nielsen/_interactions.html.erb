@@ -1,0 +1,49 @@
+<h1>Biotic Interactions</h1>
+
+<% if @globi_target_taxon %>
+
+  <div class="row interaction-target">
+    <div class="col-sm-6 col-sm-offset-3">
+      <%= simple_form_for(:globi_request) do |f| %>
+        <%= f.input :globi_request, collection: @globi_requests, value_method: :id,
+          label_method: :taxon_name, label: false,
+          selected: params[:interaction_id] || @globi_target_taxon['id']  %>
+      <% end %>
+
+      <div class="panel panel-default">
+        <div class="panel-body globi-target-taxon">
+          <h3><%= @globi_target_taxon['taxon_name'] %></h3>
+          <p class="lineage"><%= @globi_target_taxon['taxon_path'].gsub(';', ', ') if @globi_target_taxon['taxon_path'] %></p>
+          eDNA match <%= sanitize EbbeNielsenHelper.check_or_x(@globi_target_taxon['edna_match']) %><br>
+          GBIF match  <%= sanitize EbbeNielsenHelper.check_or_x(@globi_target_taxon['gbif_match']) %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="interaction-list row">
+    <% @interactions.each do |interaction| %>
+      <div class="col-md-4 col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <p><%= interaction['interaction_type'] %> <%= interaction['target_taxon_name'] %></p>
+            <p class="lineage"><%= interaction['target_taxon_path'].gsub(' | ', ', ') if interaction['target_taxon_path'] %></p>
+            eDNA match <%= sanitize EbbeNielsenHelper.check_or_x(interaction['edna_match']) %><br>
+            GBIF match <%= sanitize EbbeNielsenHelper.check_or_x(interaction['gbif_match']) %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <script>
+    (function(){
+      var selectEl = document.querySelector('select')
+      selectEl.addEventListener('change', function(e) {
+        var location = window.location
+        window.location = location.origin + location.pathname + '?section=interactions&interaction_id=' + e.target.value
+      })
+    })()
+  </script>
+
+<% end %>
