@@ -43,6 +43,12 @@ namespace :ncbi do
     create_ids
   end
 
+  desc 'create hierarchy_names'
+  task hierarchy_names: :environment do
+    puts 'create hierarchy_names...'
+    create_hierarchy_names_info
+  end
+
   desc 'update cal_taxon'
   task update_cal_taxon: :environment do
     puts 'update cal_taxon...'

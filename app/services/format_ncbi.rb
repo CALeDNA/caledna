@@ -23,6 +23,19 @@ module FormatNcbi
     end
   end
 
+  def create_hierarchy_names_info
+    nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
+
+    nodes.each do |node|
+      if valid_rank?(node)
+        node.hierarchy_names = { "#{node.rank}": node.canonical_name }
+        node.save
+      end
+
+      create_hierarchy_names(node)
+    end
+  end
+
   def create_canonical_name
     NcbiNode.find_each do |node|
       name = NcbiName.find_by(taxon_id: node.id, name_class: 'scientific name')
@@ -136,6 +149,19 @@ module FormatNcbi
     end
   end
 
+  def create_hierarchy_names(parent_node)
+    child_nodes = NcbiNode.where(parent_taxon_id: parent_node.taxon_id)
+    return if child_nodes.blank?
+
+    child_nodes.each do |child|
+      hierarchy = format_hierarchy_names(parent_node, child)
+      child.hierarchy_names = hierarchy
+      child.save
+
+      create_hierarchy_names(child)
+    end
+  end
+
   def create_lineage(parent_node, child)
     lineage = []
     parent_node.lineage.each { |l| lineage << l }
@@ -147,6 +173,14 @@ module FormatNcbi
       parent_node.hierarchy.merge("#{child.rank}": child.taxon_id)
     else
       parent_node.hierarchy
+    end
+  end
+
+  def format_hierarchy_names(parent_node, child)
+    if valid_rank?(child)
+      parent_node.hierarchy_names.merge("#{child.rank}": child.canonical_name)
+    else
+      parent_node.hierarchy_names
     end
   end
 end

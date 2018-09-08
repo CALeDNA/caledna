@@ -205,6 +205,91 @@ describe FormatNcbi do
     end
   end
 
+  describe 'create_hierarchy_names_info' do
+    def subject
+      dummy_class.create_hierarchy_names_info
+    end
+    let!(:node1) do
+      create(:ncbi_node, rank: 'rank1', canonical_name: 'name1',
+                         parent_taxon_id: 1)
+    end
+    let!(:node2) do
+      create(:ncbi_node, rank: 'rank2', canonical_name: 'name2',
+                         parent_taxon_id: node1.taxon_id)
+    end
+    let!(:node3) do
+      create(:ncbi_node, rank: 'rank3', canonical_name: 'name3',
+                         parent_taxon_id: node2.taxon_id)
+    end
+    let!(:node10) do
+      create(:ncbi_node, rank: 'rank10', canonical_name: 'name10',
+                         parent_taxon_id: 1)
+    end
+    let!(:node11) do
+      create(:ncbi_node, rank: 'rank11', canonical_name: 'name11',
+                         parent_taxon_id: node10.taxon_id)
+    end
+
+    context 'when node is a non-root node' do
+      it 'adds hierarchy_names when rank is valid' do
+        subject
+
+        hierarchy1 = { 'rank1' => node1.canonical_name }
+        hierarchy2 = { 'rank2' => node2.canonical_name }
+        hierarchy3 = { 'rank3' => node3.canonical_name }
+        hierarchy10 = { 'rank10' => node10.canonical_name }
+        hierarchy11 = { 'rank11' => node11.canonical_name }
+
+        expect(node1.reload.hierarchy_names).to eq(hierarchy1)
+        expect(node2.reload.hierarchy_names)
+          .to eq(hierarchy1.merge(hierarchy2))
+        expect(node3.reload.hierarchy_names)
+          .to eq([hierarchy1, hierarchy2, hierarchy3].inject(&:merge))
+        expect(node10.reload.hierarchy_names).to eq(hierarchy10)
+        expect(node11.reload.hierarchy_names)
+          .to eq(hierarchy10.merge(hierarchy11))
+      end
+
+      it 'does not add hierarchy_names when rank is "no rank"' do
+        node = create(:ncbi_node, rank: 'no rank', canonical_name: 'name1',
+                                  parent_taxon_id: 1)
+        subject
+
+        expect(node.reload.hierarchy_names).to eq({})
+      end
+
+      it 'adds hierarchy_names but skips "no rank"' do
+        node1 = create(:ncbi_node, rank: 'rank1', canonical_name: 'name_a',
+                                   parent_taxon_id: 1)
+        node2 = create(:ncbi_node, rank: 'no rank', canonical_name: 'name_b',
+                                   parent_taxon_id: node1.taxon_id)
+        node3 = create(:ncbi_node, rank: 'rank3', canonical_name: 'name_c',
+                                   parent_taxon_id: node2.taxon_id)
+        subject
+
+        hierarchy1 = { 'rank1' => node1.canonical_name }
+        hierarchy3 = { 'rank3' => node3.canonical_name }
+
+        expect(node1.reload.hierarchy_names).to eq(hierarchy1)
+        expect(node2.reload.hierarchy_names).to eq(hierarchy1)
+        expect(node3.reload.hierarchy_names).to eq(hierarchy1.merge(hierarchy3))
+      end
+    end
+
+    context 'when node is a root node' do
+      let(:node) do
+        create(:ncbi_node, rank: 'rank1', canonical_name: 'name1',
+                           parent_taxon_id: 1, taxon_id: 1)
+      end
+
+      it 'does not add hierarchy_names' do
+        subject
+
+        expect(node.reload.hierarchy_names).to eq({})
+      end
+    end
+  end
+
   describe 'create_ids' do
     def subject
       dummy_class.create_ids
