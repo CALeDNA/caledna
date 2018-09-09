@@ -262,7 +262,7 @@ module ResearchProjectService
       asvs."taxonID" as asvs_taxon_id,
       gbif_taxa.kingdom, gbif_taxa.phylum, gbif_taxa.classname,
       gbif_taxa.order, gbif_taxa.family, gbif_taxa.genus, gbif_taxa.species,
-      ncbi_nodes.lineage, ncbi_nodes.rank as ncbi_rank
+      ncbi_nodes.hierarchy_names, ncbi_nodes.rank as ncbi_rank
       SQL
     end
 
@@ -299,7 +299,7 @@ module ResearchProjectService
       asvs."taxonID",
       gbif_taxa.kingdom, gbif_taxa.phylum, gbif_taxa.classname,
       gbif_taxa.order, gbif_taxa.family, gbif_taxa.genus, gbif_taxa.species,
-      ncbi_nodes.lineage, ncbi_nodes.rank
+      ncbi_nodes.hierarchy_names, ncbi_nodes.rank
       ORDER BY #{sort_fields};
       SQL
     end

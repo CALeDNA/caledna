@@ -18,12 +18,20 @@
   end
 
   def ncbi_taxon_string(taxon)
-    return if taxon['lineage'].nil?
+    return if taxon['hierarchy_names'].nil?
+    taxa = {}
+    taxon['hierarchy_names'][1..-2].gsub(/["]/, '').split('},{')
+      .map{ |n| n.gsub(/[{}]/, '') }.first
+      .split(', ')
+      .each do |n|
+        parts = n.split(': ')
+        taxa[parts.first] = parts.last
+      end
 
-    taxon['lineage'][1..-2].gsub(/["]/, '').split('},{')
-      .map{ |l| l.gsub(/[{}]/, '') }
-      .map { |l| l.split(',')[1] }
-      .join(', ')
+    [
+      taxa['kingdom'], taxa['phylum'], taxa['class'], taxa['order'],
+      taxa['family'], taxa['genus'], taxa['species']
+    ].compact.join(', ')
   end
 
   def with_ncbi_count
@@ -70,7 +78,7 @@
       <p><%= taxon_string(taxon) %></p>
       <p>GBIF ID: <%= link_to taxon['gbif_id'], "http://gbif.org/species/#{taxon['gbif_id']}" %></p>
 
-      <%  if taxon['lineage'] %>
+      <%  if taxon['hierarchy_names'] %>
         <b>NCBI</b>
         <p><%= ncbi_taxon_string(taxon) %></p>
         <p><%= "rank: #{taxon['ncbi_rank']}" %></p>
