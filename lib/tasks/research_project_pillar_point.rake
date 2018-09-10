@@ -42,7 +42,8 @@ namespace :research_project_pillar_point do
           median_tide_line: row['Median Tide Line'],
           location_in_harbor: row['Location in Harbor'],
           sand_type: row['Sand_type'],
-          note: row['Note']
+          note: row['Note'],
+          month: row['Month']
         }
       }
       sample = Sample.find_by(barcode: barcode)
