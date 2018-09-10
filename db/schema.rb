@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_07_065653) do
+ActiveRecord::Schema.define(version: 2018_09_10_061319) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -382,6 +382,7 @@ ActiveRecord::Schema.define(version: 2018_09_07_065653) do
     t.integer "sample_id"
     t.string "sourceable_type"
     t.jsonb "metadata", default: {}
+    t.index "((metadata ->> 'location'::text))", name: "idx_rps_metadata_location"
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
     t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
@@ -460,6 +461,8 @@ ActiveRecord::Schema.define(version: 2018_09_07_065653) do
     t.string "environmental_settings"
     t.boolean "missing_coordinates", default: false
     t.jsonb "metadata", default: {}
+    t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
+    t.index "((metadata ->> 'month'::text))", name: "samples_expr_idx"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
     t.index ["status_cd"], name: "index_samples_on_status_cd"
