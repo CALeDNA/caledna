@@ -373,7 +373,6 @@ module ResearchProjectService
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def globi_target_taxon
       return unless globi_id
 
@@ -411,7 +410,6 @@ module ResearchProjectService
       results = conn.exec_query(sql)
       results.to_hash.first
     end
-    # rubocop:enable Metrics/AbcSize
 
     def globi_interactions
       return [] unless globi_id
@@ -479,17 +477,6 @@ module ResearchProjectService
 
       if months
         filters = months.split('|')
-        # if filters.length == 1
-        #   month = filters.first
-        #   if month == 'february'
-        #     sql += " AND eventdate BETWEEN '2017-01-25T00:00Z' AND '2017-02-22T23:59Z'"
-        #   else
-        #     sql += " AND eventdate BETWEEN '2017-04-16T00:00Z' AND '2017-05-14T23:59Z'"
-        #   end
-        # elsif filters.length > 1
-        #   sql += " AND (eventdate BETWEEN '2017-01-25T00:00Z' AND '2017-02-22T23:59Z'"
-        #   sql += " OR eventdate BETWEEN '2017-04-16T00:00Z' AND '2017-05-14T23:59Z')"
-        # end
 
         if filters.length == 1
           month = filters.first
@@ -511,10 +498,6 @@ module ResearchProjectService
 
     def months
       params['months']
-    end
-
-    def sand_types
-      params['sand_types']
     end
 
     def area_diversity_cal_sql
@@ -542,11 +525,6 @@ module ResearchProjectService
           filters = taxa.split('|').join(', ')
           sql += " AND ncbi_nodes.cal_division_id in (#{filters})"
         end
-
-        # if sand_types
-        #   filters = sand_types.split('|')
-        #   sql += " AND samples.metadata ->> 'sand_type' in (#{filters.to_s[1..-2].gsub('"', "'")})"
-        # end
 
         if months
           filters = months.split('|').map(&:titlecase)

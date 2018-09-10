@@ -12,7 +12,7 @@ const location_names = {
   'Pillar Point SMCA': 'SMCA',
 };
 let diversityData;
-let filters = { taxon_groups: [], months: [], sand_types: [] };
+let filters = { taxon_groups: [], months: [] };
 const areaDiversityEndpoint = '/api/v1/pillar_point/area_diversity';
 const tableEdnaEl = document.querySelector('#table-edna')
 const tableGbifEl = document.querySelector('#table-gbif')
