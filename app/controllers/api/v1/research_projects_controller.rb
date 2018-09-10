@@ -11,7 +11,17 @@ module Api
         render json: response_json, status: :ok
       end
 
+      def pillar_point_area_diversity
+        render json: area_diversity_json, status: :ok
+      end
+
       private
+
+      def area_diversity_json
+        project = ResearchProject.find_by(name: 'Pillar Point')
+        pp = ResearchProjectService::PillarPoint.new(project, params)
+        pp.area_diversity_data
+      end
 
       def conn
         @conn ||= ActiveRecord::Base.connection
@@ -40,7 +50,8 @@ module Api
 
       def pillar_point_data
         pp = ResearchProjectService::PillarPoint.new(project, params)
-        occurrences = ncbi_id ? pp.gbif_occurrences_by_taxa : pp.gbif_occurrences
+        occurrences =
+          ncbi_id ? pp.gbif_occurrences_by_taxa : pp.gbif_occurrences
         {
           research_project_data: {
             gbif_occurrences: GbifOccurrenceSerializer.new(occurrences)
@@ -59,6 +70,7 @@ module Api
         Sample.approved.with_coordinates.order(:barcode).where(id: sample_ids)
       end
 
+      # rubocop:disable Metrics/MethodLength
       def sample_ids
         sql = 'SELECT research_project_sources.sample_id ' \
           'FROM research_project_sources ' \
@@ -80,6 +92,7 @@ module Api
         @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
                                           .pluck('sample_id')
       end
+      # rubocop:enable Metrics/MethodLength
 
       def query_string
         query = {}

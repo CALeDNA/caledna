@@ -18,6 +18,8 @@
       locals: { occurrences: @occurrences, asvs_count: @asvs_count }  %>
   <% elsif params[:section] == 'common_taxa' %>
     <%= render partial: "research_projects/pillar_point/common_taxa" %>
+  <% elsif params[:section] == 'area_diversity' %>
+    <%= render partial: "research_projects/pillar_point/area_diversity" %>
   <% elsif params[:section] == 'edna_gbif_comparison' %>
     <%= render partial: "research_projects/pillar_point/edna_gbif_comparison" %>
   <% else %>

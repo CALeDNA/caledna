@@ -1,0 +1,189 @@
+<style>
+.venntooltip {
+  position: absolute;
+  text-align: center;
+  width: 128px;
+  height: 26px;
+  background: #333;
+  color: #ddd;
+  padding: 2px;
+  border: 0px;
+  border-radius: 8px;
+  opacity: 0;
+}
+</style>
+
+
+<h2>Area Diversity</h2>
+<p>Unique taxa by location</p>
+<p>Hover over circles to see the number of unique taxa.</p>
+
+<div class="btn-group" role="group" >
+  <div class="btn btn-default js-graph-btn">
+    Graph
+  </div>
+  <div class="btn btn-default js-table-btn">
+    Table
+  </div>
+</div>
+<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+  <i class="fas fa-sliders-h"></i> Filters
+</button>
+
+<form class="area-diversity collapse" id="collapseFilters">
+  <div class="row">
+    <div class="col-sm-6">
+      <fieldset>
+        <legend>Taxa groups</legend>
+        <div class="checkbox">
+          <label for="all">
+            <input type="checkbox" name="taxon_groups" id="all" value="all" checked>
+            All
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="bacteria">
+            <input type="checkbox" name="taxon_groups" id="bacteria" value="bacteria">
+            Bacteria
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="animals">
+            <input type="checkbox" name="taxon_groups" id="animals" value="animals">
+            Animals
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="plants">
+            <input type="checkbox" name="taxon_groups" id="plants" value="plants">
+            Plants
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="fungi">
+            <input type="checkbox" name="taxon_groups" id="fungi" value="fungi">
+            Fungi
+          </label>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="col-sm-6">
+      <fieldset>
+        <legend>Collection period</legend>
+        <div class="checkbox">
+          <label for="all">
+            <input type="checkbox" name="months" id="all" value="all" checked>
+            All
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="february">
+            <input type="checkbox" name="months" id="february" value="february">
+            February
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="april">
+            <input type="checkbox" name="months" id="april" value="april">
+            April
+          </label>
+        </div>
+      </fieldset>
+    </div>
+
+    <%#<div class="col-md-4 col-sm-6">
+      <fieldset>
+        <legend>Habitat type (eDNA only)</legend>
+        <div class="checkbox">
+          <label for="Embayment_Shoreline_and_beach">
+            <input type="checkbox" name="filters" id="Embayment_Shoreline_and_beach" value="Embayment_Shoreline_and_beach">
+            Embayment Shoreline and beach
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="Embayment_intertidal">
+            <input type="checkbox" name="filters" id="Embayment_intertidal" value="Embayment_intertidal">
+            Embayment intertidal
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="Exposed_intertidal">
+            <input type="checkbox" name="filters" id="Exposed_intertidal" value="Exposed_intertidal">
+            Exposed intertidal
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="FullyTerrestrial">
+            <input type="checkbox" name="filters" id="FullyTerrestrial" value="FullyTerrestrial">
+            Fully Terrestrial
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Zone (eDNA only)</legend>
+        <div class="checkbox">
+          <label for="Marsh_runoff">
+            <input type="checkbox" name="filters" id="Marsh_runoff" value="Marsh_runoff">
+            Marsh runoff
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="Protected_outer_beach">
+            <input type="checkbox" name="filters" id="Protected_outer_beach" value="Protected_outer_beach">
+            Protected outer beach
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="Unprotected_inner_beach">
+            <input type="checkbox" name="filters" id="Unprotected_inner_beach" value="Unprotected_inner_beach">
+            Unprotected inner beach
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="Unprotected_tidepool">
+            <input type="checkbox" name="filters" id="Unprotected_tidepool" value="Unprotected_tidepool">
+            Unprotected tidepool
+          </label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="col-md-4 col-sm-6">
+      <fieldset>
+        <legend>Sand type (eDNA only)</legend>
+        <div class="checkbox">
+          <label for="silt">
+            <input type="checkbox" name="sand_types" id="silt" value="silt">
+            Silt
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="sand">
+            <input type="checkbox" name="sand_types" id="sand" value="sand">
+            Sand
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="organic_sand">
+            <input type="checkbox" name="sand_types" id="organic_sand" value="organic_sand">
+            organic sand
+          </label>
+        </div>
+      </fieldset>
+    </div>%>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Apply filters</button>
+  <button class="btn btn-primary js-reset-filters">Reset filters</button>
+</form>
+
+<h3>eDNA</h3>
+<div id="graph-edna"></div>
+<div id="table-edna"></div>
+
+<h3>GBIF</h3>
+<div id="graph-gbif"></div>
+<div id="table-gbif"></div>
+
+<%= javascript_pack_tag 'pp_area_diversity' %>

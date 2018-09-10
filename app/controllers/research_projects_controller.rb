@@ -27,6 +27,7 @@ class ResearchProjectsController < ApplicationController
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def researcher_view
     if params[:section] == 'occurrence_comparsion'
       @division_counts = project_service.division_counts
@@ -47,11 +48,13 @@ class ResearchProjectsController < ApplicationController
     elsif params[:section] == 'edna_gbif_comparison'
       @gbif_taxa = project_service.gbif_taxa
       @gbif_taxa_with_edna = project_service.gbif_taxa_with_edna
+    elsif params[:section] == 'area_diversity'
     else
       @stats = project_service.stats
     end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def project
     @project ||= begin

@@ -27,6 +27,8 @@ Rails.application.routes.draw do
         get '/home_page', to: 'stats#home_page'
       end
       resource :samples_search, only: %i[show]
+      get '/pillar_point/area_diversity',
+          to: 'research_projects#pillar_point_area_diversity'
     end
   end
 
