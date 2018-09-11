@@ -152,4 +152,28 @@ namespace :research_project_pillar_point do
       create_source(location, project_id)
     end
   end
+
+  task import_top_inat_species: :environment do
+    puts 'import top inat species'
+
+    require_relative '../../db/data/private/pillar_point_inat_species'
+    include PillarPointInatSpecies
+
+    project = ResearchProject.find_by(name: 'Pillar Point')
+
+    most_observed.each do |record|
+      puts record[:name]
+      request = GlobiRequest.create(
+        taxon_id: ["INAT_TAXON:#{record[:inat_id]}"],
+        taxon_name: record[:name]
+      )
+
+      ResearchProjectSource.create(
+        research_project_id: project.id,
+        sourceable_id: request.id,
+        sourceable_type: 'GlobiRequest',
+        metadata: record
+      )
+    end
+  end
 end

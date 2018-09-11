@@ -3,5 +3,5 @@
 class GlobiRequest < ApplicationRecord
   self.table_name = 'external.globi_requests'
 
-  has_many :globi_interactions
+  has_many :research_project_sources, as: :sourceable
 end
