@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import axios from 'axios';
 import * as  venn from '../vendor/venn';
+import { Spinner } from 'spin.js';
 
 // =============
 // config
@@ -26,6 +27,10 @@ const tableBtn = document.querySelector('.js-table-btn')
 // =============
 
 function initDiversity(endpoint) {
+  const opts = { color:'#333',  left: '50%', scale: 1.75 }
+  let spinner1 = new Spinner(opts).spin(tableEdnaEl);
+  let spinner2 = new Spinner(opts).spin(graphEdnaEl);
+
   axios.get(endpoint)
   .then((res) => {
     diversityData = res.data;
@@ -35,6 +40,8 @@ function initDiversity(endpoint) {
     drawVenn(ednaSets, '#graph-edna')
     drawTable(ednaSets, '#table-edna')
     drawTable(gbifSets, '#table-gbif')
+    spinner1.stop();
+    spinner2.stop();
   })
   .catch((err) => console.log(err))
 }
