@@ -1,15 +1,8 @@
 <h1>Biotic Interactions</h1>
 
-<% if @globi_target_taxon %>
-
+<% if @interactions %>
   <div class="row interaction-target">
     <div class="col-sm-6 col-sm-offset-3">
-      <%= simple_form_for(:globi_request) do |f| %>
-        <%= f.input :globi_request, collection: @globi_requests, value_method: :id,
-          label_method: :taxon_name, label: false,
-          selected: params[:interaction_id] || @globi_target_taxon['id']  %>
-      <% end %>
-
       <div class="panel panel-default">
         <div class="panel-body globi-target-taxon">
           <h3><%= @globi_target_taxon['taxon_name'] %></h3>
@@ -22,28 +15,64 @@
   </div>
 
   <div class="interaction-list row">
-    <% @interactions.each do |interaction| %>
+    <% @interactions.each.with_index do |interaction, i| %>
       <div class="col-md-4 col-sm-6">
         <div class="panel panel-default">
           <div class="panel-body">
-            <p><%= interaction['interaction_type'] %> <%= interaction['target_taxon_name'] %></p>
-            <p class="lineage"><%= interaction['target_taxon_path'].gsub(' | ', ', ') if interaction['target_taxon_path'] %></p>
-            eDNA match <%= sanitize PillarPointHelper.check_or_x(interaction['edna_match']) %><br>
-            GBIF match <%= sanitize PillarPointHelper.check_or_x(interaction['gbif_match']) %>
+            <% if interaction['is_source'] == 'false' %>
+              <p>
+                <%= interaction['interaction_type'].underscore.humanize.downcase %>
+                <a data-container="body"
+                  data-toggle="popover" data-placement="top"
+                  data-html="true"
+                  data-content="<p><%= PillarPointHelper.taxon_path(interaction['target_taxon_path']) %></p><p><%= PillarPointHelper.taxon_ids(interaction['target_taxon_ids']) %></p>"
+                ><%= interaction['target_taxon_name'] %></a>
+                <br>
+                <span class="lineage">rank: <%= interaction['target_taxon_rank'] %></span>
+              </p>
+              eDNA match <%= sanitize PillarPointHelper.check_or_x(interaction['edna_match']) %><br>
+              GBIF match <%= sanitize PillarPointHelper.check_or_x(interaction['gbif_match']) %>
+            <% else %>
+              <p>
+                <%= InteractionType::TYPES[interaction['interaction_type'].to_sym].underscore.humanize.downcase %>
+                <a data-container="body"
+                  data-toggle="popover" data-placement="top"
+                  data-html="true"
+                  data-content="<p><%= PillarPointHelper.taxon_path(interaction['source_taxon_path']) %></p><p><%= PillarPointHelper.taxon_ids(interaction['source_taxon_ids']) %></p>"
+                ><%= interaction['source_taxon_name'] %></a>
+                <br>
+                <span class="lineage">rank: <%= interaction['source_taxon_rank'] %></span>
+              </p>
+              eDNA match <%= sanitize PillarPointHelper.check_or_x(interaction['edna_match']) %><br>
+              GBIF match <%= sanitize PillarPointHelper.check_or_x(interaction['gbif_match']) %>
+            <% end %>
           </div>
         </div>
       </div>
     <% end %>
   </div>
 
-  <script>
-    (function(){
-      var selectEl = document.querySelector('select')
-      selectEl.addEventListener('change', function(e) {
-        var location = window.location
-        window.location = location.origin + location.pathname + '?section=interactions&interaction_id=' + e.target.value
-      })
-    })()
-  </script>
-
+<% else %>
+  <div class="interaction-index-list row">
+    <% @taxon_list.each do |taxon| %>
+      <div class="col-md-3 col-sm-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <a href="/research_projects/pillar-point?section=interactions&taxon=<%= taxon['taxon_name'].gsub(' ','+')%>">
+              <div class="grid-photo" style="background-image: url(<%= taxon['image']%>)"></div>
+              <div class="grid-meta">
+                <%= taxon['taxon_name'] %><br>
+                <span class="small"><%= taxon['count'] %> iNaturalist observations</span>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <%= paginate @taxon_list %>
 <% end %>
+<script>
+    $('[data-toggle="popover"]').popover();
+
+</script>

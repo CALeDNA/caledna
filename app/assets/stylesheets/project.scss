@@ -4,9 +4,56 @@
     font-size: 90%;
   }
 
+  @media (min-width: 480px) {
+    .panel {
+      min-height: 27rem;
+    }
+  }
+
   @media (min-width: 768px) {
     .panel {
-      min-height: 24rem;
+      min-height: 27rem;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .panel {
+      min-height: 28rem;
+    }
+  }
+}
+
+.interaction-index-list {
+  .grid-photo {
+    width: 100%;
+    min-height: 170px;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat no-repeat;
+  }
+
+  .grid-meta {
+    padding: .5rem;
+  }
+  .panel-body {
+    padding: 0;
+  }
+
+  @media (min-width: 480px) {
+    .panel {
+      min-height: 27rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .panel {
+      min-height: 27rem;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .panel {
+      min-height: 28rem;
     }
   }
 }

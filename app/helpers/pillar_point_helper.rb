@@ -13,6 +13,27 @@ module PillarPointHelper
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  def self.taxon_ids(ids)
+    filtered_ids = ids.split(' | ').select do |id|
+      id.starts_with?('NCBI') || id.starts_with?('GBIF')
+    end
+    filtered_ids.map do |id_string|
+      id = id_string.split(':').last
+      if id_string.starts_with?('NCBI')
+        "<a href='https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/" \
+        "wwwtax.cgi?mode=Info&id=#{id}&lvl=3'>NCBI: #{id}</a>"
+      else
+        "<a href='http://gbif.org/species/#{id}'>GBIF: #{id}</a>"
+      end
+    end.join('<br>')
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def self.taxon_path(path)
+    path&.gsub(' | ', ', ')
+  end
+
   def self.total(values)
     values.map(&:second).sum
   end

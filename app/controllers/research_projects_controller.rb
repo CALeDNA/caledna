@@ -35,9 +35,12 @@ class ResearchProjectsController < ApplicationController
     elsif params[:section] == 'gbif_breakdown'
       @gbif_breakdown = project_service.gbif_breakdown
     elsif params[:section] == 'interactions'
-      @interactions = project_service.globi_interactions
-      @globi_target_taxon = project_service.globi_target_taxon
-      @globi_requests = GlobiRequest.all
+      if params[:taxon]
+        @interactions = project_service.globi_interactions
+        @globi_target_taxon = project_service.globi_target_taxon
+      else
+        @taxon_list = project_service.globi_index
+      end
     elsif params[:view] == 'list'
       @occurrences = occurrences
       @stats = project_service.stats
