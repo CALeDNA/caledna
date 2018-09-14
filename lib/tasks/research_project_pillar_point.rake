@@ -176,4 +176,56 @@ namespace :research_project_pillar_point do
       )
     end
   end
+
+  task create_interaction_csv: :environment do
+    require 'csv'
+
+    project = ResearchProject.find_by(name: 'Pillar Point')
+    params = {}
+    pp = ResearchProjectService::PillarPoint.new(project, params)
+    sql = pp.globi_index_sql
+    raw_records = conn.exec_query(sql).to_a
+
+    CSV.open('pillar_pointinteractions.csv', 'wb', col_sep: "\t") do |csv|
+      csv << %w[
+        keyword
+        source_taxon_name
+        source_taxon_rank
+        source_taxon_path
+        interaction
+        target_taxon_name
+        target_taxon_rank
+        target_taxon_path
+        edna_match
+        gbif_match
+      ]
+
+      raw_records.each do |request|
+        taxon = request['taxon_name']
+        params = { taxon: taxon }
+
+        puts taxon
+
+        pp = ResearchProjectService::PillarPoint.new(project, params)
+        pp.globi_interactions.each do |interaction|
+          csv << [
+            taxon,
+            interaction['source_taxon_name'],
+            interaction['source_taxon_rank'],
+            interaction['source_taxon_path'],
+            interaction['interaction_type'],
+            interaction['target_taxon_name'],
+            interaction['target_taxon_rank'],
+            interaction['target_taxon_path'],
+            interaction['edna_match'],
+            interaction['gbif_match']
+          ]
+        end
+      end
+    end
+  end
+
+  def conn
+    @conn ||= ActiveRecord::Base.connection
+  end
 end
