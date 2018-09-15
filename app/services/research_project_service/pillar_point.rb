@@ -686,7 +686,7 @@ module ResearchProjectService
         if months
           filters = months.split('|').map(&:titlecase)
           sql += " AND samples.metadata ->> 'month' in"
-          sql + " (#{filters.to_s[1..-2].tr('"', "'")})"
+          sql += " (#{filters.to_s[1..-2].tr('"', "'")})"
         end
         sql
       end
@@ -695,13 +695,15 @@ module ResearchProjectService
     def area_diversity_cal_location(location)
       sql = area_diversity_cal_sql
       sql += " AND research_project_sources.metadata ->> 'location'"
-      sql + " = '#{location}'"
+      sql += " = '#{location}'"
+      sql
     end
 
     def area_diversity_gbif_location(location)
       sql = area_diversity_gbif_sql
       sql += " AND research_project_sources.metadata ->> 'location'"
-      sql + " = '#{location}'"
+      sql += " = '#{location}'"
+      sql
     end
 
     def query_results(sql_string)
