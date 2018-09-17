@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import App from '../app.vue';
+import App from 'components/app.vue';
 
 describe('App.vue', () => {
   const componentFactory = (values = {}) => {

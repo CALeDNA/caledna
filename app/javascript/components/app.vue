@@ -32,7 +32,7 @@
 
     <div>
       <ul class="form-errors">
-        <li v-for="error in errors">{{error}}</li>
+        <li v-for="error in errors" v-bind:key="error">{{error}}</li>
       </ul>
     </div>
 
