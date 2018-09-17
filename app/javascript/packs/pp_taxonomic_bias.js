@@ -16,7 +16,8 @@ const taxaGroups = {
   animals: ['Animals', 'Animalia'],
   plants: ['Plants', 'Plantae'],
   bacteria: ['Bacteria', 'Viruses', 'Archaea'],
-  chromista: ['Plants and Fungi', 'Chromista'],
+  chromista: ['Chromista'],
+  plants_and_fungi: ['Plants and Fungi'],
   fungi: ['Fungi']
 }
 

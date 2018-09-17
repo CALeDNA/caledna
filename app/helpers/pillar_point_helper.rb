@@ -41,7 +41,7 @@ module PillarPointHelper
   # rubocop:disable Metrics/MethodLength
   def self.cal_counts(counts)
     categories = [
-      'Animals', 'Archaea', 'Bacteria', '--', 'Environmental samples', 'Fungi',
+      'Animals', 'Archaea', 'Bacteria', 'Chromista', 'Environmental samples', 'Fungi',
       'Plants', 'Plants and Fungi'
     ]
 
