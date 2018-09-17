@@ -43,6 +43,87 @@ namespace :ncbi do
     create_ids
   end
 
+  desc 'update cal divisions for "Plants and Fungi"'
+  task update_cal_division_for_plants_fungi: :environment do
+    chromista = NcbiDivision.create(name: 'Chromista', comments: 'Added by CALeDNA')
+    protozoa = NcbiDivision.create(name: 'Protozoa', comments: 'Added by CALeDNA')
+    plants = NcbiDivision.find_by(name: 'Plants')
+
+    puts 'update phylums...'
+
+    phylums = %w[
+      Aurearenophyceae
+      Bacillariophyta
+      Bolidophyceae
+      Eustigmatophyceae
+      Phaeophyceae
+      Pinguiophyceae
+      Xanthophyceae
+    ]
+
+    phylums.each do |phylum|
+      NcbiNode.where("hierarchy_names ->> 'phylum' = '#{phylum}'")
+              .update(cal_division_id: chromista.id)
+    end
+
+    NcbiNode.where("hierarchy_names ->> 'phylum' = 'Euglenida'")
+            .update(cal_division_id: protozoa.id)
+
+    puts 'update classes...'
+
+    classnames = %w[
+      Chrysomerophyceae
+      Chrysophyceae
+      Cryptophyta
+      Dictyochophyceae
+      Dinophyceae
+      Labyrinthulomycetes
+      Oomycetes
+      Pelagophyceae
+      Phaeothamniophyceae
+      Placididea
+      Raphidophyceae
+      Synurophyceae
+    ]
+    classnames.each do |classname|
+      NcbiNode.where("hierarchy_names ->> 'class' = '#{classname}'")
+              .update(cal_division_id: chromista.id)
+    end
+
+    puts 'update plant classes...'
+
+    plants_classes = %w[
+      Bangiophyceae
+      Compsopogonophyceae
+      Florideophyceae
+      Rhodellophyceae
+      Stylonematophyceae
+    ]
+
+    plants_classes.each do |plant|
+      NcbiNode.where("hierarchy_names ->> 'class' = '#{plant}'")
+              .update(cal_division_id: plants.id)
+    end
+
+    puts 'update orders...'
+
+    orders = %w[
+      Coccolithales
+      Euglyphida
+      Isochrysidales
+      Pavlovales
+      Phaeoconchida
+      Phaeocystales
+      Phaeogymnocellida
+      Phaeosphaerida
+      Prymnesiales
+    ]
+    orders.each do |order|
+      NcbiNode.where("hierarchy_names ->> 'order' = '#{order}'")
+              .update(cal_division_id: chromista.id)
+    end
+  end
+
   desc 'create hierarchy_names'
   task hierarchy_names: :environment do
     puts 'create hierarchy_names...'
