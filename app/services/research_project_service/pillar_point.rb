@@ -63,13 +63,10 @@ module ResearchProjectService
         ON research_project_sources.sourceable_id =
           external.gbif_occurrences.gbifid
         WHERE (research_project_sources.sourceable_type = 'GbifOccurrence')
-      SQL
-
-      sql += 'AND (research_project_sources.research_project_id = ' \
-        "#{conn.quote(project.id)}) "
-
-      sql += <<-SQL
+        AND (research_project_sources.research_project_id =
+          #{conn.quote(project.id)})
         AND (metadata ->> 'location' != 'Montara SMR')
+        AND kingdom IS NOT NULL
         GROUP BY kingdom
         ORDER BY kingdom
       SQL
@@ -91,11 +88,11 @@ module ResearchProjectService
 
     def gbif_division_unique_stats
       sql = gbif_unique_sql
-      sql += 'AND (research_project_sources.research_project_id =  ' \
-        "#{conn.quote(project.id)}) "
-
       sql += <<-SQL
+          AND (research_project_sources.research_project_id =
+          #{conn.quote(project.id)})
           AND (metadata ->> 'location' != 'Montara SMR')
+          AND kingdom IS NOT NULL
           ORDER BY kingdom
         ) AS foo
         GROUP BY kingdom
@@ -107,10 +104,9 @@ module ResearchProjectService
 
     def inat_division_unique_stats
       sql = gbif_unique_sql
-      sql += 'AND (research_project_sources.research_project_id =  ' \
-        "#{conn.quote(project.id)}) "
-
       sql += <<-SQL
+          AND (research_project_sources.research_project_id =
+            #{conn.quote(project.id)})
           AND (metadata ->> 'location' != 'Montara SMR')
           AND external.gbif_occurrences.datasetkey =
             '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
@@ -124,10 +120,9 @@ module ResearchProjectService
 
     def exclude_inat_division_unique_stats
       sql = gbif_unique_sql
-      sql += 'AND (research_project_sources.research_project_id =  ' \
-        "#{conn.quote(project.id)}) "
-
       sql += <<-SQL
+          AND (research_project_sources.research_project_id =
+          #{conn.quote(project.id)})
           AND (metadata ->> 'location' != 'Montara SMR')
           AND external.gbif_occurrences.datasetkey !=
             '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
@@ -149,12 +144,11 @@ module ResearchProjectService
         JOIN research_project_sources
         ON sourceable_id = extraction_id
         WHERE (research_project_sources.sourceable_type = 'Extraction')
-      SQL
-
-      sql += 'AND (research_project_sources.research_project_id = ' \
-        "#{conn.quote(project.id)})"
-
-      sql += <<-SQL
+        AND (research_project_sources.research_project_id =
+          #{conn.quote(project.id)})
+        AND ncbi_divisions.name  != 'Environmental samples'
+        AND ncbi_divisions.name != 'Plants and Fungi'
+        AND ncbi_divisions.name != 'Protozoa'
         GROUP BY name
         ORDER BY name;
       SQL
@@ -172,11 +166,11 @@ module ResearchProjectService
         ON "ncbi_divisions"."id" = "ncbi_nodes"."cal_division_id"
         JOIN research_project_sources ON sourceable_id = extraction_id
         WHERE (research_project_sources.sourceable_type = 'Extraction')
-      SQL
-      sql += 'AND (research_project_sources.research_project_id = ' \
-        "#{conn.quote(project.id)})"
-
-      sql += <<-SQL
+        AND (research_project_sources.research_project_id =
+          #{conn.quote(project.id)})
+        AND ncbi_divisions.name  != 'Environmental samples'
+        AND ncbi_divisions.name != 'Plants and Fungi'
+        AND ncbi_divisions.name != 'Protozoa'
         ORDER BY name
         ) AS foo
         GROUP BY name;
