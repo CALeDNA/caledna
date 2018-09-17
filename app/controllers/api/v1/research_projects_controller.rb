@@ -15,6 +15,13 @@ module Api
         render json: area_diversity_json, status: :ok
       end
 
+      def pillar_point_biodiversity_bias
+        project = ResearchProject.find_by(name: 'Pillar Point')
+        pp = ResearchProjectService::PillarPoint.new(project, params)
+
+        render json: pp.biodiversity_bias, status: :ok
+      end
+
       private
 
       def area_diversity_json

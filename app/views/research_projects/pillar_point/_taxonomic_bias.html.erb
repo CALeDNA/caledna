@@ -1,0 +1,69 @@
+<h2>Taxonomic Bias</h2>
+
+<p>eDNA and GBIF occurrences grouped by class</p>
+
+<div class="btn-group" role="group" >
+  <div class="btn btn-default js-graph-btn">
+    Graph
+  </div>
+  <div class="btn btn-default js-table-btn">
+    Table
+  </div>
+</div>
+<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+  <i class="fas fa-sliders-h"></i> Filters
+</button>
+
+<form class="area-diversity collapse" id="collapseFilters">
+  <div class="row">
+    <div class="col-sm-6">
+      <fieldset>
+        <legend>Taxa groups</legend>
+        <div class="checkbox">
+          <label for="all">
+            <input type="checkbox" name="taxon_groups" id="all" value="all" checked>
+            All
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="bacteria">
+            <input type="checkbox" name="taxon_groups" id="bacteria" value="bacteria">
+            Bacteria
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="animals">
+            <input type="checkbox" name="taxon_groups" id="animals" value="animals">
+            Animals
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="plants">
+            <input type="checkbox" name="taxon_groups" id="plants" value="plants">
+            Plants
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="fungi">
+            <input type="checkbox" name="taxon_groups" id="fungi" value="fungi">
+            Fungi
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="chromista">
+            <input type="checkbox" name="taxon_groups" id="chromista" value="chromista">
+            Chromista
+          </label>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Apply filters</button>
+  <button class="btn btn-primary js-reset-filters">Reset filters</button>
+</form>
+
+<div id="taxonomic-diversity-chart"></div>
+<div id="taxonomic-diversity-table"></div>
+
+<%= javascript_pack_tag 'pp_taxonomic_bias' %>
