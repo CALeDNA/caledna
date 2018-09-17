@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_11_195111) do
+ActiveRecord::Schema.define(version: 2018_09_17_050517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -326,6 +326,9 @@ ActiveRecord::Schema.define(version: 2018_09_11_195111) do
     t.string "ids", default: [], array: true
     t.string "alt_names"
     t.jsonb "hierarchy_names", default: {}
+    t.index "((hierarchy_names -> 'class'::text))", name: "ncbi_nodes_expr_idx1"
+    t.index "((hierarchy_names -> 'order'::text))", name: "ncbi_nodes_expr_idx2"
+    t.index "((hierarchy_names -> 'phylum'::text))", name: "ncbi_nodes_expr_idx"
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "idx_taxa_search", using: :gin
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
