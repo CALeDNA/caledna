@@ -22,6 +22,16 @@ module Api
         render json: pp.biodiversity_bias, status: :ok
       end
 
+      def pillar_point_occurrences
+        project = ResearchProject.find_by(name: 'Pillar Point')
+        pp = ResearchProjectService::PillarPoint.new(project, params)
+
+        render json: {
+          occurrences: pp.division_counts,
+          unique_taxa: pp.division_counts_unique,
+        }, status: :ok
+      end
+
       private
 
       def area_diversity_json

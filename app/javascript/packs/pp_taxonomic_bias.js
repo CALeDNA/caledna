@@ -52,6 +52,21 @@ function initBias() {
   .catch(err => console.log(err))
 }
 
+function initStats() {
+  axios.get('/api/v1/pillar_point/pillar_point_occurrences')
+  .then((res) => {
+    let rawData = res.data
+    chartData = rawData.map((taxon) => {
+      return pp_utils.formatChartData(taxon, taxaGroups)
+    })
+    filteredData = pp_utils.sortData(chartData.slice(0, limit))
+
+    createChart(filteredData)
+    drawTable(filteredData.reverse(), "#taxonomic-diversity-table")
+  })
+  .catch(err => console.log(err))
+}
+
 function createColorScheme(data) {
   return data.map((taxon) => taxon.source === 'ncbi' ? '#5b9f72' : '#ccc').reverse()
 }
