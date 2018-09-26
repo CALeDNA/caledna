@@ -284,10 +284,10 @@ module ResearchProjectService
         AND gbif_taxa.taxonrank = #{taxon_rank_value}
       LEFT JOIN external_resources
         ON external_resources.gbif_id = gbif_taxa.taxonkey
-        AND ncbi_id IS NOT NULL
+        AND external_resources.ncbi_id IS NOT NULL
         AND source = 'globalnames'
       LEFT JOIN ncbi_nodes
-        ON ncbi_nodes.taxon_id = ncbi_id
+        ON ncbi_nodes.taxon_id = external_resources.ncbi_id
       LEFT JOIN asvs
         ON asvs.extraction_id = research_project_sources.sourceable_id
         AND research_project_id = #{project.id}
@@ -437,7 +437,7 @@ module ResearchProjectService
       SELECT research_project_sources.metadata ->> 'image' AS image,
         research_project_sources.metadata ->> 'inat_at_pillar_point_count' AS count,
         taxon_name, gbif_id,
-        inaturalist_id, ncbi_id
+        inaturalist_id, external_resources.ncbi_id
       FROM external.globi_requests
       JOIN research_project_sources
       ON research_project_sources.sourceable_id = external.globi_requests.id
