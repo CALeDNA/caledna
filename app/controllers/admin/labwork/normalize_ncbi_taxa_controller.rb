@@ -7,6 +7,7 @@ module Admin
         authorize 'Labwork::NormalizeTaxon'.to_sym, :index?
 
         @taxa = CalTaxon.where(normalized: false)
+                        .where(accepted: false)
                         .order(:taxonRank, :complete_taxonomy)
                         .page params[:page]
       end
@@ -24,6 +25,7 @@ module Admin
 
         cal_taxon.taxonID = update_existing_params[:taxon_id]
         cal_taxon.normalized = true
+        cal_taxon.accepted = true
 
         if cal_taxon.save(validate: false)
           redirect_to admin_labwork_normalize_ncbi_taxa_path
@@ -32,14 +34,33 @@ module Admin
         end
       end
 
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # NOTE: used when creating new taxon for test results
+      def update_create
+        authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
+        ActiveRecord::Base.transaction do
+          cal_taxon.update!(update_cal_taxon_params)
+          NcbiNode.create!(create_params.except(:cal_taxon_id))
+        end
+        render json: { status: :ok }
+      rescue ActiveRecord::RecordInvalid => exception
+        render json: {
+          status: :unprocessable_entity,
+          errors: exception.message.split('Validation failed: ').last
+                           .split(', ')
+        }
+      end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
       private
 
       def update_existing_params
-        params.require(:cal_taxon).permit(:taxon_id)
+        params.require(:normalize_ncbi_taxon).permit(:taxon_id)
       end
 
       def cal_taxon
-        id = params[:id] || params[:normalize_ncbi_taxon_id]
+        id = params[:id] || create_params[:cal_taxon_id] ||
+             params[:normalize_ncbi_taxon_id]
         @cal_taxon ||= CalTaxon.find(id)
       end
 
@@ -57,6 +78,33 @@ module Admin
           "lower(REPLACE(canonical_name, '''', '')) = '#{species}'"
         )
       end
+
+      def update_cal_taxon_params
+        {
+          normalized: true,
+          accepted: true,
+          exact_gbif_match: false,
+          taxonID: params[:taxon_id],
+          taxonRank: params[:rank]
+        }
+      end
+
+      # rubocop:disable Metrics/MethodLength
+      def create_params
+        params.require(:normalize_ncbi_taxon).permit(
+          :taxon_id,
+          :parent_taxon_id,
+          :rank,
+          :canonical_name,
+          :cal_taxon_id,
+          :division_id,
+          :cal_division_id,
+          hierarchy_names: {},
+          hierarchy: {},
+          ids: []
+        )
+      end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

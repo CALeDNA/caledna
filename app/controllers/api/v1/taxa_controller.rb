@@ -6,11 +6,10 @@ module Api
       include BatchData
 
       def index
-        taxa = ::Taxon.where('lower("canonicalName") like ?', "#{query}%")
-                      .limit(10)
+        taxa = ::NcbiNode.where('lower("canonical_name") like ?', "#{query}%")
+                         .limit(15)
 
-        options = {}
-        render json: ::TaxonSerializer.new(taxa, options).serialized_json
+        render json: NcbiNodeSerializer.new(taxa)
       end
 
       def show

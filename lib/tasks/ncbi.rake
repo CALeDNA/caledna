@@ -43,10 +43,18 @@ namespace :ncbi do
     create_ids
   end
 
+  desc 'add ncbi_id to ncbi_nodes to handle BOLD'
+  task add_ncbi_id_to_ncbi_nodes: :environment do
+    sql = 'UPDATE ncbi_nodes SET ncbi_id = taxon_id;'
+    ActiveRecord::Base.connection.exec_query(sql)
+  end
+
   desc 'update cal divisions for "Plants and Fungi"'
   task update_cal_division_for_plants_fungi: :environment do
-    chromista = NcbiDivision.create(name: 'Chromista', comments: 'Added by CALeDNA')
-    protozoa = NcbiDivision.create(name: 'Protozoa', comments: 'Added by CALeDNA')
+    chromista =
+      NcbiDivision.create(name: 'Chromista', comments: 'Added by CALeDNA')
+    protozoa =
+      NcbiDivision.create(name: 'Protozoa', comments: 'Added by CALeDNA')
     plants = NcbiDivision.find_by(name: 'Plants')
 
     puts 'update phylums...'

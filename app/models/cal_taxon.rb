@@ -1,22 +1,13 @@
 # frozen_string_literal: true
 
 class CalTaxon < ApplicationRecord
-  TAXON_RANK = %w[kingdom phylum class order family genus species].freeze
+  TAXON_RANK = %w[
+    superkingdom kingdom phylum class order family genus species
+  ].freeze
   TAXON_STATUS = ['accepted', 'doubtful', 'heterotypic synonym',
                   'homotypic synonym', 'synonym'].freeze
 
-  validates :kingdom, :taxonRank, :taxonomicStatus, :hierarchy,
-            presence: true, on: :update
-  validates :parentNameUsageID,
-            presence: { message: ': Must use search to find parent taxonomy' },
-            on: :update
-  validates :canonicalName,
-            presence: { message: ': Must select a taxon rank' },
-            on: :update
-  validate :at_least_one_taxa, on: :update
-  validates :taxonomicStatus, inclusion: { in: TAXON_STATUS }, on: :update
   validates :taxonRank, inclusion: { in: TAXON_RANK }
-  validates :canonicalName, uniqueness: { scope: :kingdom }, on: :update
 
   def name
     original_hierarchy[taxonRank.to_s]
@@ -78,14 +69,5 @@ class CalTaxon < ApplicationRecord
 
   def h_species
     original_hierarchy['species']
-  end
-
-  private
-
-  def at_least_one_taxa
-    fields = [phylum, className, order, family, genus, specificEpithet]
-    return if fields.any?(&:present?)
-    errors.add(:at_least_one_taxa,
-               ': At least one taxonomy field must be entered')
   end
 end

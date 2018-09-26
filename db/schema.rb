@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_17_050517) do
+ActiveRecord::Schema.define(version: 2018_09_25_043110) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 2018_09_17_050517) do
     t.boolean "exact_gbif_match"
     t.text "notes"
     t.string "original_taxonomy_superkingdom"
+    t.boolean "accepted", default: false
     t.index ["kingdom", "canonicalName"], name: "cal_taxa_kingdom_canonicalName_idx1", unique: true
     t.index ["original_taxonomy_phylum"], name: "index_cal_taxa_on_original_taxonomy_phylum"
   end
@@ -326,6 +327,7 @@ ActiveRecord::Schema.define(version: 2018_09_17_050517) do
     t.string "ids", default: [], array: true
     t.string "alt_names"
     t.jsonb "hierarchy_names", default: {}
+    t.integer "ncbi_id"
     t.index "((hierarchy_names -> 'class'::text))", name: "ncbi_nodes_expr_idx1"
     t.index "((hierarchy_names -> 'order'::text))", name: "ncbi_nodes_expr_idx2"
     t.index "((hierarchy_names -> 'phylum'::text))", name: "ncbi_nodes_expr_idx"
@@ -338,6 +340,7 @@ ActiveRecord::Schema.define(version: 2018_09_17_050517) do
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
     t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
     t.index ["lineage"], name: "idx_ncbi_nodes_lineage", using: :gin
+    t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
     t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx"

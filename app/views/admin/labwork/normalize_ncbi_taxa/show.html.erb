@@ -13,7 +13,7 @@
   <p>
     rank: <%= @cal_taxon.taxonRank %><br>
     taxon: <%= @cal_taxon.name %><br>
-    raw test result: <%= @cal_taxon.original_taxonomy %><br>
+    raw test result: <%= @cal_taxon.complete_taxonomy %><br>
   </p>
 
   <table class="no-auto-link">
@@ -43,8 +43,10 @@
     <% end %>
     <br>
     <%= link_to "Back", :back, class: 'button' %>
+        <div id="create-taxa-form" class="js"></div>
+
   <% else %>
-    <p>No matching taxa</p>
+    <div id="create-taxa-form" class="js"></div>
   <% end %>
 
 </section>

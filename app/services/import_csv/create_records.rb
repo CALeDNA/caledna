@@ -7,6 +7,8 @@ module ImportCsv
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_asv(cell, extraction, cal_taxon, count)
+      return if cell == 'SUM'
+
       attributes = {
         extraction_id: extraction.id, sample: extraction.sample,
         taxonID: cal_taxon.taxonID, count: count

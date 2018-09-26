@@ -5,27 +5,25 @@
     <autocomplete
       :url='getTaxaRoute'
       param='query'
-      anchor="canonicalName"
-      label="taxonRank"
+      anchor="canonical_name"
+      label="rank"
       name="autocomplete"
       :classes="{ input: 'form-control', wrapper: 'input-wrapper'}"
       :process="processJSON"
       :onSelect="handleSelect"
     >
     </autocomplete>
-    <ul v-if="selectedTaxon">
-      <li v-if="selectedTaxon.kingdom">kingdom: {{ selectedTaxon.kingdom }}</li>
-      <li v-if="selectedTaxon.phylum">phylum: {{ selectedTaxon.phylum }}</li>
-      <li v-if="selectedTaxon.className">class: {{ selectedTaxon.className }}</li>
-      <li v-if="selectedTaxon.order">order: {{ selectedTaxon.order }}</li>
-      <li v-if="selectedTaxon.family">family: {{ selectedTaxon.family }}</li>
-      <li v-if="selectedTaxon.genus">genus: {{ selectedTaxon.genus }}</li>
-      <li v-if="selectedTaxon.specificEpithet">species: {{ selectedTaxon.genus }} {{ selectedTaxon.specificEpithet }} </li>
-      <li v-if="selectedTaxon.scientificName">scientific name: {{ selectedTaxon.scientificName }}</li>
-      <li v-if="selectedTaxon.canonicalName">canonical name: {{ selectedTaxon.canonicalName }}</li>
-      <li v-if="selectedTaxon.taxonomicStatus">taxonomic status: {{ selectedTaxon.taxonomicStatus }}</li>
-      <li v-if="selectedTaxon.taxonRank">taxon rank: {{ selectedTaxon.taxonRank }}</li>
-      <li v-if="selectedTaxon.taxa_dataset.name">source: {{ selectedTaxon.taxa_dataset.name }}</li>
+    <ul v-if="selectedTaxon.hierarchy_names">
+      <li v-if="selectedTaxon.hierarchy_names.superkingdom">superkingdom: {{ selectedTaxon.hierarchy_names.superkingdom }}</li>
+      <li v-if="selectedTaxon.hierarchy_names.kingdom">kingdom: {{ selectedTaxon.hierarchy_names.kingdom }}</li>
+      <li v-if="selectedTaxon.hierarchy_names.phylum">phylum: {{ selectedTaxon.hierarchy_names.phylum }}</li>
+      <li v-if="selectedTaxon.hierarchy_names.class">class: {{ selectedTaxon.hierarchy_names.class }}</li>
+      <li v-if="selectedTaxon.hierarchy_names.order">order: {{ selectedTaxon.hierarchy_names.order }}</li>
+      <li v-if="selectedTaxon.hierarchy_names.family">family: {{ selectedTaxon.hierarchy_names.family }}</li>
+      <li v-if="selectedTaxon.hierarchy_names.genus">genus: {{ selectedTaxon.hierarchy_names.genus }}</li>
+      <li v-if="selectedTaxon.hierarchy_names.species">species: {{ selectedTaxon.hierarchy_names.genus }} {{ selectedTaxon.hierarchy_names.species }} </li>
+      <li v-if="selectedTaxon.canonical_name">canonical name: {{ selectedTaxon.canonical_name }}</li>
+      <li v-if="selectedTaxon.rank">taxon rank: {{ selectedTaxon.rank }}</li>
     </ul>
 
     <h2>Create New Taxon</h2>
@@ -37,6 +35,12 @@
     </div>
 
     <form  @submit="handleSubmit">
+      <TextField
+        v-bind:model="newTaxon"
+        v-bind:disabled="isSuperkingdom"
+        label="Super kingdom"
+        field="superkingdom"
+      />
       <TextField
         v-bind:model="newTaxon"
         v-bind:disabled="isKingdom"
@@ -53,7 +57,7 @@
         v-bind:model="newTaxon"
         v-bind:disabled="isClass"
         label="Class"
-        field="className"
+        field="class"
       />
       <TextField
         v-bind:model="newTaxon"
@@ -77,24 +81,20 @@
         v-bind:model="newTaxon"
         v-bind:disabled="isSpecies"
         label="Species"
-        field="specificEpithet"
+        field="species"
       />
-      <TextField
-        v-bind:model="newTaxon"
-        label="Scientific Name"
-        field="scientificName"
-      />
+
 
       <div class="field-unit">
         <div class="field-unit__label">
           <label>taxonomy rank</label>
         </div>
         <div class="field-unit__field">
-          <select v-model="newTaxon.taxonRank">
+          <select v-model="newTaxon.rank">
             <option disabled value="">Select Rank</option>
             <option
               v-bind:key="rank"
-              v-for="rank in taxonRanks"
+              v-for="rank in ranks"
             >
               {{ rank }}
             </option>
@@ -102,19 +102,6 @@
         </div>
       </div>
 
-      <div class="field-unit">
-        <div class="field-unit__label">
-          <label>taxonomic status</label>
-        </div>
-        <div class="field-unit__field">
-          <select v-model="newTaxon.taxonomicStatus">
-            <option disabled value="">Select Status</option>
-            <option v-bind:key="status" v-for="status in taxonomicStatuses">
-              {{ status }}
-            </option>
-          </select>
-        </div>
-      </div>
 
       <div class="field-unit">
         <div class="field-unit__label">
@@ -179,12 +166,8 @@
             datasetID: 'fab88965-e69d-4491-a04d-e3198b626e52'
           },
         ],
-        taxonomicStatuses: [
-          'accepted', 'doubtful', 'heterotypic synonym', 'homotypic synonym',
-          'synonym'
-        ],
-        taxonRanks: [
-          'kingdom', 'phylum', 'class', 'order', 'family', 'genus',
+        ranks: [
+          'superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus',
           'species'
         ],
         getTaxaRoute: api.routes.taxa,
@@ -199,19 +182,22 @@
 
       handleSelect(data) {
         this.selectedTaxon = data
-        this.newTaxon.kingdom = data.kingdom
-        this.newTaxon.phylum = data.phylum
-        this.newTaxon.className = data.className
-        this.newTaxon.order = data.order
-        this.newTaxon.family = data.family
-        this.newTaxon.genus = data.genus
+        this.newTaxon.superkingdom = data.hierarchy_names.superkingdom
+        this.newTaxon.kingdom = data.hierarchy_names.kingdom
+        this.newTaxon.phylum = data.hierarchy_names.phylum
+        this.newTaxon.class = data.hierarchy_names.class
+        this.newTaxon.order = data.hierarchy_names.order
+        this.newTaxon.family = data.hierarchy_names.family
+        this.newTaxon.genus = data.hierarchy_names.genus
         this.newTaxon.selectedTaxon = data.selectedTaxon
-        this.newTaxon.parentNameUsageID = data.taxonID
+        this.newTaxon.parent_taxon_id = data.taxon_id
+        this.newTaxon.division_id = data.division_id
+        this.newTaxon.cal_division_id = data.cal_division_id
       },
 
       processSpecies(newTaxon) {
-        if (newTaxon.specificEpithet === undefined) { return; }
-        let species = newTaxon.specificEpithet.trim();
+        if (newTaxon.species === undefined) { return; }
+        let species = newTaxon.species.trim();
         let parts = species.match(/^[A-Z]\w+ (.*?$)/);
 
         if (parts) {
@@ -220,25 +206,42 @@
         return species;
       },
 
-      processCanonicalName(newTaxon) {
-        let canonicalName;
+      processIds(selectedTaxon, id) {
+        const ids = []
+        const ranks = [
+          'superkingdom', 'kingdom', 'phylum', 'class', 'order',
+          'family', 'genus', 'species'
+        ]
 
-        if (newTaxon.taxonRank === 'species') {
-          if (!newTaxon.specificEpithet) { return; }
+        ranks.forEach((rank) => {
+           if (selectedTaxon.hierarchy[rank]) {
+            ids.push(selectedTaxon.hierarchy[rank])
+          }
+        })
+        ids.push(id)
+
+        return ids
+      },
+
+      processCanonicalName(newTaxon) {
+        let canonical_name;
+
+        if (newTaxon.rank === 'species') {
+          if (!newTaxon.species) { return; }
           if (!newTaxon.genus) { return; }
 
           const species = this.processSpecies(newTaxon);
-          canonicalName = `${newTaxon.genus.trim()} ${species}`
-        } else if (newTaxon.taxonRank === 'class') {
-          if (!newTaxon.className) { return; }
+          canonical_name = `${newTaxon.genus.trim()} ${species}`
+        } else if (newTaxon.rank === 'class') {
+          if (!newTaxon.class) { return; }
 
-          canonicalName = newTaxon.className.trim();
+          canonical_name = newTaxon.class.trim();
         } else {
-          if (!newTaxon[newTaxon.taxonRank]) { return; }
+          if (!newTaxon[newTaxon.rank]) { return; }
 
-          canonicalName = newTaxon[newTaxon.taxonRank].trim();
+          canonical_name = newTaxon[newTaxon.rank].trim();
         }
-        return canonicalName;
+        return canonical_name;
       },
 
       handleFormSuccess(res) {
@@ -267,27 +270,34 @@
         e.preventDefault();
 
         const species = this.processSpecies(this.newTaxon);
-        const canonicalName = this.processCanonicalName(this.newTaxon);
-        const id = Number(window.location.pathname.split('normalize_taxa/')[1]);
+        const canonical_name = this.processCanonicalName(this.newTaxon);
+        const id = Number(window.location.pathname.split('normalize_ncbi_taxa/')[1])
+        const taxon_id = id + 5000000;
+        const hierarchy = { ...this.selectedTaxon.hierarchy, [this.newTaxon.rank]: taxon_id }
+        const ids = this.processIds(this.selectedTaxon, taxon_id)
 
         const body = {
-          kingdom: this.newTaxon.kingdom,
-          phylum: this.newTaxon.phylum,
-          className: this.newTaxon.className,
-          order: this.newTaxon.order,
-          family: this.newTaxon.family,
-          genus: this.newTaxon.genus,
-          specificEpithet: species,
-          datasetID: this.newTaxon.datasetID,
-          taxonomicStatus: this.newTaxon.taxonomicStatus,
-          taxonRank: this.newTaxon.taxonRank,
-          parentNameUsageID: this.newTaxon.parentNameUsageID,
-          hierarchy: { ...this.selectedTaxon.hierarchy, [this.newTaxon.taxonRank]: id},
-          scientificName: this.newTaxon.scientificName,
-          canonicalName,
-          taxonID: id,
-          genericName: this.newTaxon.genus
+          rank: this.newTaxon.rank,
+          parent_taxon_id: this.newTaxon.parent_taxon_id,
+          hierarchy,
+          hierarchy_names: {
+            superkingdom: this.newTaxon.superkingdom,
+            kingdom: this.newTaxon.kingdom,
+            phylum: this.newTaxon.phylum,
+            class: this.newTaxon.class,
+            order: this.newTaxon.order,
+            family: this.newTaxon.family,
+            genus: this.newTaxon.genus,
+            species: species,
+          },
+          canonical_name,
+          taxon_id,
+          ids,
+          cal_taxon_id: id,
+          division_id: this.newTaxon.division_id,
+          cal_division_id: this.newTaxon.cal_division_id
         }
+        console.log(body)
 
         api.createUpdateTaxa(id, this.trimObject(body))
           .then(this.handleFormSuccess)
@@ -295,31 +305,34 @@
       },
 
       calculateRank(num) {
-        if (!this.selectedTaxon.taxonRank) { return; }
-        return this.taxonRanks.indexOf(this.selectedTaxon.taxonRank) >= num
+        if (!this.selectedTaxon.rank) { return; }
+        return this.ranks.indexOf(this.selectedTaxon.rank) >= num
       }
     },
     computed: {
-      isKingdom() {
+      isSuperkingdom() {
         return this.calculateRank(0)
       },
-      isPhylum() {
+      isKingdom() {
         return this.calculateRank(1)
       },
-      isClass() {
+      isPhylum() {
         return this.calculateRank(2)
       },
-      isOrder() {
+      isClass() {
         return this.calculateRank(3)
       },
-      isFamily() {
+      isOrder() {
         return this.calculateRank(4)
       },
-      isGenus() {
+      isFamily() {
         return this.calculateRank(5)
       },
-      isSpecies() {
+      isGenus() {
         return this.calculateRank(6)
+      },
+      isSpecies() {
+        return this.calculateRank(7)
       },
     }
   };

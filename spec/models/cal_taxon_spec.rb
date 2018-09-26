@@ -10,14 +10,6 @@ describe CalTaxon, type: :model do
       expect(taxon).to be_valid
     end
 
-    it 'requires hierarchy on update' do
-      taxon = create(:cal_taxon, hierarchy: nil)
-      taxon.update(phylum: 'phylum')
-
-      expect(taxon).to_not be_valid
-      expect(taxon.errors.messages).to eq(hierarchy: ["can't be blank"])
-    end
-
     it 'passes when at least one taxonomy field is present' do
       taxon = create(:cal_taxon)
       taxon.update(phylum: 'phylum', className: nil, order: nil,
@@ -25,16 +17,6 @@ describe CalTaxon, type: :model do
                    hierarchy: { phylum: 'phylum' })
 
       expect(taxon).to be_valid
-    end
-
-    it 'fails when at there are no taxonomy fields' do
-      taxon = create(:cal_taxon)
-      taxon.update(phylum: nil, className: nil, order: nil,
-                   family: nil, genus: nil, specificEpithet: nil,
-                   hierarchy: { kingdom: 'kingdom_1' })
-
-      expect(taxon).to_not be_valid
-      expect(taxon.errors.messages.keys).to eq([:at_least_one_taxa])
     end
 
     it 'passes when taxon rank is valid' do
@@ -53,17 +35,6 @@ describe CalTaxon, type: :model do
                    hierarchy: { kingdom: 'kingdom_1' })
 
       expect(taxon).to be_valid
-    end
-
-    it 'fails when kingdom and canonicalName are not unique' do
-      create(:cal_taxon, kingdom: 'kingdom_1', canonicalName: 'name_1')
-      taxon = create(:cal_taxon)
-      taxon.update(kingdom: 'kingdom_1', canonicalName: 'name_1',
-                   hierarchy: { kingdom: 'kingdom_1' })
-
-      expect(taxon).to be_invalid
-      expect(taxon.errors.messages)
-        .to eq(canonicalName: ['has already been taken'])
     end
   end
 end
