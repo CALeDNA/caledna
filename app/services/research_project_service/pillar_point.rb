@@ -804,6 +804,13 @@ module ResearchProjectService
     end
 
     def biodiversity_bias
+      {
+        cal: biodiversity_bias_cal,
+        gbif: biodiversity_bias_gbif
+      }
+    end
+
+    def biodiversity_bias_gbif
       sql = <<~SQL
         SELECT count(*) AS count, kingdom AS division,
         phylum, classname AS class, 'gbif' AS source
@@ -815,9 +822,13 @@ module ResearchProjectService
         AND classname IS NOT NULL
         AND (metadata ->> 'location' != 'Montara SMR')
         GROUP BY kingdom, phylum, classname
+      SQL
 
-        UNION
+      conn.exec_query(sql)
+    end
 
+    def biodiversity_bias_cal
+      sql = <<~SQL
         SELECT count(*) AS count, ncbi_divisions.name AS division,
         hierarchy_names ->> 'phylum' AS phylum,
         hierarchy_names ->> 'class' AS class, 'ncbi' AS source

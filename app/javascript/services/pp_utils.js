@@ -10,11 +10,7 @@ function formatLongTaxonString(taxon, taxaGroups) {
     }
   }
   const phylum = taxon.phylum === null ? 'N/A' : taxon.phylum;
-  const displayString = `${groupName}: ${phylum}, ${taxon.class}`;
-
-  // NOTE: need different names so that britechart will not
-  // lump NCBI and GBIF taxons together.
-  return taxon.source == 'ncbi' ? `${displayString} (eDNA)` : `${displayString} (GBIF)`;
+  return `${groupName}: ${phylum}, ${taxon.class}`;
 }
 
 function formatShortTaxonString(taxon, taxaGroups) {
@@ -25,11 +21,7 @@ function formatShortTaxonString(taxon, taxaGroups) {
     }
   }
   const phylum = taxon.phylum === null ? 'N/A' : taxon.phylum;
-  const displayString = `${groupName}: ${taxon.class}`;
-
-  // NOTE: need different names so that britechart will not
-  // lump NCBI and GBIF taxons together.
-  return taxon.source == 'ncbi' ? `${displayString} (eDNA)` : `${displayString} (GBIF)`;
+  return `${groupName}: ${taxon.class}`;
 }
 
 

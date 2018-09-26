@@ -21,17 +21,25 @@ const taxaGroups = {
   fungi: ['Fungi']
 }
 
-let chartData;
-let filteredData;
+let chartData = {};
+let filteredData = {};
 const endpoint = '/api/v1/pillar_point/pillar_point_biodiversity_bias';
-const barContainer = d3Selection.select('#taxonomic-diversity-chart');
-const chartEl = document.querySelector('#taxonomic-diversity-chart')
-const tableEl = document.querySelector('#taxonomic-diversity-table')
 const graphBtn = document.querySelector('.js-graph-btn')
 const tableBtn = document.querySelector('.js-table-btn')
-let barChart;
 const limit = 200000;
 const barHeight = 40;
+
+const barContainerCal = d3Selection.select('#taxonomic-diversity-chart-cal');
+const chartElCal = document.querySelector('#taxonomic-diversity-chart-cal')
+const tableElCal = document.querySelector('#taxonomic-diversity-table-cal')
+let barChartCal;
+
+const barContainerGbif = d3Selection.select('#taxonomic-diversity-chart-gbif');
+const chartElGbif = document.querySelector('#taxonomic-diversity-chart-gbif')
+const tableElGbif = document.querySelector('#taxonomic-diversity-table-gbif')
+let barChartGbif;
+
+
 
 // =============
 // misc
@@ -40,32 +48,40 @@ const barHeight = 40;
 function initBias() {
   axios.get(endpoint)
   .then((res) => {
-    let rawData = res.data
-    chartData = rawData.map((taxon) => {
+    let rawDataCal = res.data.cal
+    let rawDataGbif = res.data.gbif
+    chartData.cal = rawDataCal.map((taxon) => {
       return pp_utils.formatChartData(taxon, taxaGroups)
     })
-    filteredData = pp_utils.sortData(chartData.slice(0, limit))
+    chartData.gbif = rawDataGbif.map((taxon) => {
+      return pp_utils.formatChartData(taxon, taxaGroups)
+    })
 
-    createChart(filteredData)
-    drawTable(filteredData.reverse(), "#taxonomic-diversity-table")
+    filteredData.cal = pp_utils.sortData(chartData.cal.slice(0, limit))
+    filteredData.gbif = pp_utils.sortData(chartData.gbif.slice(0, limit))
+
+    barChartCal = createChart(filteredData.cal, barChartCal, barContainerCal)
+    barChartGbif = createChart(filteredData.gbif, barChartGbif, barContainerGbif)
+    drawTable(filteredData.cal.reverse(), "#taxonomic-diversity-table-cal")
+    drawTable(filteredData.gbif.reverse(), "#taxonomic-diversity-table-gbif")
   })
   .catch(err => console.log(err))
 }
 
-function initStats() {
-  axios.get('/api/v1/pillar_point/pillar_point_occurrences')
-  .then((res) => {
-    let rawData = res.data
-    chartData = rawData.map((taxon) => {
-      return pp_utils.formatChartData(taxon, taxaGroups)
-    })
-    filteredData = pp_utils.sortData(chartData.slice(0, limit))
+// function initStats() {
+//   axios.get('/api/v1/pillar_point/pillar_point_occurrences')
+//   .then((res) => {
+//     let rawData = res.data
+//     chartData = rawData.map((taxon) => {
+//       return pp_utils.formatChartData(taxon, taxaGroups)
+//     })
+//     filteredData = pp_utils.sortData(chartData.slice(0, limit))
 
-    createChart(filteredData)
-    drawTable(filteredData.reverse(), "#taxonomic-diversity-table")
-  })
-  .catch(err => console.log(err))
-}
+//     createChart(filteredData)
+//     drawTable(filteredData.reverse(), "#taxonomic-diversity-table")
+//   })
+//   .catch(err => console.log(err))
+// }
 
 function createColorScheme(data) {
   return data.map((taxon) => taxon.source === 'ncbi' ? '#5b9f72' : '#ccc').reverse()
@@ -76,7 +92,7 @@ function createColorScheme(data) {
 // draw charts
 // =============
 
-function createChart(dataset) {
+function createChart(dataset, barChart, barContainer) {
   barChart = bar();
   let containerWidth = barContainer.node() ? barContainer.node().getBoundingClientRect().width : false;
   let tooltipContainer;
@@ -102,7 +118,7 @@ function createChart(dataset) {
       .colorSchema(createColorScheme(dataset))
       .width(containerWidth)
       .yAxisPaddingBetweenChart(10)
-      .height(dataset.length * barHeight)
+      .height(dataset.length * barHeight + 50)
       .on('customMouseOver', tooltip.show)
       .on('customMouseMove', tooltip.update)
       .on('customMouseOut', tooltip.hide);
@@ -112,27 +128,31 @@ function createChart(dataset) {
     tooltipContainer.datum([]).call(tooltip);
   }
   transformXAxis()
+  return barChart
 }
 
 function transformXAxis() {
-  d3Selection.select('.x-axis-group.axis').attr('text-anchor', 'start').attr('transform', 'translate(0, -40)');
+  d3Selection.selectAll('.x-axis-group.axis').attr('text-anchor', 'start').attr('transform', 'translate(0, -40)');
 }
 
-function updateChart(data) {
-
+function updateChart(data, barChart, barContainer) {
   barChart.colorSchema(createColorScheme(data))
-    .height(data.length * barHeight)
+    .height(data.length * barHeight + 50)
 
   barContainer.datum(data).call(barChart);
   transformXAxis()
+
+  return barChart
 }
 
 function hideGraphs() {
-  chartEl.style.display = 'none'
+  chartElCal.style.display = 'none'
+  chartElGbif.style.display = 'none'
 }
 
 function showGraphs() {
-  chartEl.style.display = 'block'
+  chartElCal.style.display = 'block'
+  chartElGbif.style.display = 'block'
 }
 
 
@@ -180,18 +200,20 @@ function drawTable(data, selector) {
 
 // NOTE: need to remove existing table before redrawing table
 function removeTable(selector) {
-  const tableEl = document.querySelector(`${selector} table`)
-  if (tableEl) {
-    tableEl.remove()
+  const targetTableEl = document.querySelector(`${selector} table`)
+  if (targetTableEl) {
+    targetTableEl.remove()
   }
 }
 
 function hideTables() {
-  tableEl.style.display = 'none'
+  tableElCal.style.display = 'none'
+  tableElGbif.style.display = 'none'
 }
 
 function showTables() {
-  tableEl.style.display = 'block'
+  tableElCal.style.display = 'block'
+  tableElGbif.style.display = 'block'
 }
 
 // =============
@@ -247,11 +269,16 @@ document.querySelector('button[type=submit]')
 .addEventListener('click', (event) => {
   event.preventDefault();
 
-  const options = { data: chartData, limit, taxaGroups, filters }
-  filteredData = pp_utils.filterAndSortData(options)
+  const optionsCal = { data: chartData.cal, limit, taxaGroups, filters }
+  filteredData.cal = pp_utils.filterAndSortData(optionsCal)
 
-  updateChart(filteredData)
-  drawTable(filteredData.reverse(), "#taxonomic-diversity-table")
+  const optionsGbif = { data: chartData.gbif, limit, taxaGroups, filters }
+  filteredData.gbif = pp_utils.filterAndSortData(optionsGbif)
+
+  barChartCal = updateChart(filteredData.cal, barChartCal, barContainerCal)
+  barChartGbif = updateChart(filteredData.gbif, barChartGbif, barContainerGbif)
+  drawTable(filteredData.cal.reverse(), "#taxonomic-diversity-table-cal")
+  drawTable(filteredData.gbif.reverse(), "#taxonomic-diversity-table-gbif")
 });
 
 graphBtn.addEventListener('click', (event) => {
@@ -269,9 +296,13 @@ document.querySelector('.js-reset-filters')
 .addEventListener('click', (event) => {
   event.preventDefault();
 
-  let data = pp_utils.sortData(chartData.slice(0, limit))
-  updateChart(data)
-  drawTable(data.reverse(), "#taxonomic-diversity-table")
+  let dataCal = pp_utils.sortData(chartData.cal.slice(0, limit))
+  let dataGbif = pp_utils.sortData(chartData.cal.slice(0, limit))
+  barChartCal = updateChart(dataCal, barChartCal, barContainerCal)
+  barChartGbif = updateChart(dataGbif, barChartGbif, barContainerGbif)
+
+  drawTable(dataCal.reverse(), "#taxonomic-diversity-table-cal")
+  drawTable(dataGbif.reverse(), "#taxonomic-diversity-table-gbif")
 
   document.querySelectorAll('input').forEach((el) => {
     if (el.value === 'all') {
