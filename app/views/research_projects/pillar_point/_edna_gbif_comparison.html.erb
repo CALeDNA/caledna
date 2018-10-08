@@ -1,13 +1,8 @@
 <%
   taxon_rank = params[:taxon_rank] || 'phylum'
 
-  def ncbi_id(taxon)
-    res = @gbif_taxa.to_a.select { |t| t['gbif_id'] == taxon['gbif_id'] }.first
-    res['ncbi_id'] if res
-  end
-
   def has_edna?(taxon)
-    res = @gbif_taxa_with_edna.to_a.select { |t| t['gbif_id'] == taxon['gbif_id'] }.first
+    res = @gbif_taxa_with_edna.to_a.any? { |t| t['gbif_id'] == taxon['gbif_id'] }
   end
 
   def taxon_string(taxon)
@@ -83,14 +78,14 @@
         <p><%= ncbi_taxon_string(taxon) %></p>
         <p><%= "rank: #{taxon['ncbi_rank']}" %></p>
         <p>
-          NCBI ID: <%= link_to ncbi_id(taxon), "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{taxon['ncbi_id']}&lvl=3" %>,
+          NCBI ID: <%= link_to taxon['ncbi_id'], "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{taxon['ncbi_id']}&lvl=3" %>,
           <%= link_to 'CALeDNA page', taxon_path(id: taxon['ncbi_id'])%>
         </p>
       <% end %>
     </td>
     <td><%= taxon['count'] %></td>
     <td>
-      <%= sanitize PillarPointHelper.check_or_x(ncbi_id(taxon)) %>
+      <%= sanitize PillarPointHelper.check_or_x(taxon['ncbi_id']) %>
     </td>
     <td>
       <%= sanitize PillarPointHelper.check_or_x( has_edna?(taxon)) %>

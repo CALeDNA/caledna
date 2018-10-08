@@ -285,7 +285,7 @@ module ResearchProjectService
       LEFT JOIN external_resources
         ON external_resources.gbif_id = gbif_taxa.taxonkey
         AND external_resources.ncbi_id IS NOT NULL
-        AND source = 'globalnames'
+        AND source != 'wikidata'
       LEFT JOIN ncbi_nodes
         ON ncbi_nodes.taxon_id = external_resources.ncbi_id
       LEFT JOIN asvs
@@ -444,7 +444,7 @@ module ResearchProjectService
       LEFT JOIN external_resources
       ON  external_resources.inaturalist_id =
         (research_project_sources.metadata ->> 'inat_id')::integer
-      AND external_resources.source = 'globalnames'
+      AND external_resources.source != 'wikidata'
       WHERE research_project_id = #{project.id}
       AND sourceable_type = 'GlobiRequest'
       ORDER BY  (research_project_sources.metadata ->>
