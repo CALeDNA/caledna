@@ -10,7 +10,7 @@ module ImportGlobalNames
     api_results = results['data'].first['results']
 
     attributes = clean_data(api_results)
-    attributes[id_name] = taxon_id
+    attributes[id_name] = taxon_id if taxon_id
     attributes[:source] = 'globalnames'
     attributes[:payload] = results
     attributes[:low_score] = low_score(api_results)

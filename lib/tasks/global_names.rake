@@ -60,9 +60,9 @@ namespace :global_names do
     ON research_project_sources.sourceable_id = external.globi_requests.id
     LEFT JOIN external_resources
       ON external_resources.inaturalist_id = (research_project_sources.metadata ->> 'inat_id')::integer
-      AND external_resources.source = 'globalnames'
+      AND external_resources.source = 'globalnames',
     WHERE research_project_id = #{project.id}
-    AND sourceable_type = 'GlobiRequest'
+    AND sourceable_type = 'GlobiRequest',
     AND gbif_id IS NULL
     SQL
 
@@ -76,7 +76,7 @@ namespace :global_names do
 
       create_external_resource(
         results: results, taxon_id: record['inat_id'],
-        id_name: 'inaturalist_id'
+        id_name: 'inaturalist_id',
       )
     end
   end
