@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_25_043110) do
+ActiveRecord::Schema.define(version: 2018_10_09_231057) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 2018_09_25_043110) do
     t.boolean "low_score"
     t.string "vernaculars", default: [], array: true
     t.string "search_term"
+    t.string "notes"
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["source"], name: "index_external_resources_on_source"
@@ -328,10 +329,12 @@ ActiveRecord::Schema.define(version: 2018_09_25_043110) do
     t.string "alt_names"
     t.jsonb "hierarchy_names", default: {}
     t.integer "ncbi_id"
+    t.bigint "bold_id"
     t.index "((hierarchy_names -> 'class'::text))", name: "ncbi_nodes_expr_idx1"
     t.index "((hierarchy_names -> 'order'::text))", name: "ncbi_nodes_expr_idx2"
     t.index "((hierarchy_names -> 'phylum'::text))", name: "ncbi_nodes_expr_idx"
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "idx_taxa_search", using: :gin
+    t.index "lower((canonical_name)::text) text_pattern_ops", name: "canonicalname_prefix"
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
