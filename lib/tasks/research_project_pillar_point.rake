@@ -177,6 +177,28 @@ namespace :research_project_pillar_point do
     end
   end
 
+  task remove_duplicate_ncbi_taxa: :environment do
+    taxa = [
+      { taxon_id: 5043762, bold_id: 515404, ncbi_id: 1405418 },
+      { taxon_id: 5043358, bold_id: 23719, ncbi_id: 4783 }
+    ]
+
+    taxa.each do |taxon|
+      asvs = Asv.where(taxonID: taxon[:taxon_id])
+      asvs.each do |asv|
+        asv.update(taxonID: taxon[:ncbi_id])
+      end
+
+      cal_taxon = CalTaxon.where(taxonID: taxon[:taxon_id])
+      cal_taxon.update(taxonID: taxon[:ncbi_id], exact_gbif_match: true)
+
+      NcbiNode.where(taxon_id: taxon[:taxon_id]).destroy_all
+
+      node = NcbiNode.find_by(taxon_id: taxon[:ncbi_id])
+      node.bold_id = taxon[:bold_id]
+      node.save
+    end
+  end
   task create_interaction_csv: :environment do
     require 'csv'
 
