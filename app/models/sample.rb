@@ -3,13 +3,17 @@
 class Sample < ApplicationRecord
   include PgSearch
   include InsidePolygon
-  multisearchable against: %i[barcode status_cd cvmshcp_display
-                              field_data_project_name location_display]
+  multisearchable against: %i[
+    barcode status_cd location_display field_data_project_name
+    research_projects_names
+  ]
 
   belongs_to :field_data_project
   has_many :photos
   has_many :extractions
   has_many :asvs
+  has_many :research_project_sources, foreign_key: 'sample_id'
+  has_many :research_projects, through: :research_project_sources
 
   validate :unique_approved_barcodes
 
@@ -37,10 +41,6 @@ class Sample < ApplicationRecord
 
   def field_data_project_name
     field_data_project.name
-  end
-
-  def research_projects
-    extractions.map(&:research_projects).flatten
   end
 
   def inside_california?
@@ -175,6 +175,10 @@ class Sample < ApplicationRecord
     end
   end
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+
+  def research_projects_names
+    research_projects.pluck(:name)
+  end
 
   private
 

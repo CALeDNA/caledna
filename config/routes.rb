@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       resource :stats do
         get '/home_page', to: 'stats#home_page'
       end
+      resource :samples_search, only: %i[show]
     end
   end
 

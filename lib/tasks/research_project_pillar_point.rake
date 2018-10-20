@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/NumericLiterals
 namespace :research_project_pillar_point do
   require 'csv'
 
@@ -260,7 +261,7 @@ namespace :research_project_pillar_point do
       { taxon_id: 5043174, bold_id: 542515, ncbi_id: nil },
       { taxon_id: 5043680, bold_id: 85217, ncbi_id: nil },
       { taxon_id: 5043087, bold_id: 271367, ncbi_id: nil },
-      { taxon_id: 5043741, bold_id: 769336, ncbi_id: 2202239 },
+      { taxon_id: 5043741, bold_id: 769336, ncbi_id: 2202239 }
     ]
 
     taxa.each do |taxon|
@@ -321,3 +322,4 @@ namespace :research_project_pillar_point do
     @conn ||= ActiveRecord::Base.connection
   end
 end
+# rubocop:enable Style/NumericLiterals
