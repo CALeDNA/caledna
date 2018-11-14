@@ -11,6 +11,8 @@
 
   <%= form_tag admin_labwork_import_results_asvs_path, multipart: true do %>
     <%= select(:dna_results, :research_project_id, @projects, {include_blank: 'Select research project'}) %>
+    <%= select(:dna_results, :primer, Extraction::METABARCODING_PRIMERS, {include_blank: 'Select primer'}) %>
+
     <%#= select(:dna_results, :extraction_type_id, @extraction_types, {include_blank: 'Select extraction type'}) %>
     <%= hidden_field(:dna_results, :extraction_type_id, value: ExtractionType.first.id) %>
     <%= file_field_tag :file %>

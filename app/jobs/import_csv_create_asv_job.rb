@@ -5,7 +5,7 @@ class ImportCsvCreateAsvJob < ApplicationJob
 
   queue_as :default
 
-  def perform(cell, extraction, cal_taxon, count)
-    create_asv(cell, extraction, cal_taxon, count)
+  def perform(cell, extraction, cal_taxon, count, primer)
+    create_asv(cell, extraction, cal_taxon, count, primer)
   end
 end

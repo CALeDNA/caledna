@@ -164,22 +164,30 @@ describe ImportCsv::TestResultsAsvs do
   describe('#import_csv') do
     include ActiveJob::TestHelper
 
-    def subject(file, research_project_id, extraction_type_id)
-      dummy_class.import_csv(file, research_project_id, extraction_type_id)
+    def subject(file, research_project_id, extraction_type_id, primer)
+      dummy_class.import_csv(file, research_project_id, extraction_type_id,
+                             primer)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
     let(:extraction_type) { create(:extraction_type) }
     let(:research_project) { create(:research_project) }
+    let(:primer) { '12S' }
 
     it 'adds ImportAsvCsvJob to queue' do
-      expect { subject(file, research_project.id, extraction_type.id) }
+      expect do
+        subject(
+          file, research_project.id, extraction_type.id, primer
+        )
+      end
         .to have_enqueued_job(ImportAsvCsvJob)
     end
 
     it 'returns valid' do
-      expect(subject(file, research_project.id, extraction_type.id).valid?)
+      expect(
+        subject(file, research_project.id, extraction_type.id, primer).valid?
+      )
         .to eq(true)
     end
   end
@@ -192,20 +200,25 @@ describe ImportCsv::TestResultsAsvs do
       stub_const('FieldDataProject::DEFAULT_PROJECT', project)
     end
 
-    def subject(file, research_project_id, extraction_type_id)
+    def subject(file, research_project_id, extraction_type_id, primer)
       delimiter = "\t"
       dummy_class.import_asv_csv(file.path, research_project_id,
-                                 extraction_type_id, delimiter)
+                                 extraction_type_id, primer, delimiter)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
     let(:extraction_type) { create(:extraction_type) }
     let(:research_project) { create(:research_project) }
+    let(:primer) { '12S' }
 
     context 'when matching sample does not exists' do
       it 'creates sample & extraction' do
-        expect { subject(file, research_project.id, extraction_type.id) }
+        expect do
+          subject(
+            file, research_project.id, extraction_type.id, primer
+          )
+        end
           .to change { Sample.count }
           .by(1)
           .and change { Extraction.count }
@@ -218,7 +231,11 @@ describe ImportCsv::TestResultsAsvs do
         create(:sample, barcode: 'K0001-LA-S1')
         create(:sample, barcode: 'forest')
 
-        expect { subject(file, research_project.id, extraction_type.id) }
+        expect do
+          subject(
+            file, research_project.id, extraction_type.id, primer
+          )
+        end
           .to change { Sample.count }
           .by(0)
           .and change { Extraction.count }
@@ -233,7 +250,11 @@ describe ImportCsv::TestResultsAsvs do
         create(:extraction, sample: sample, extraction_type: extraction_type)
         create(:extraction, sample: sample2, extraction_type: extraction_type)
 
-        expect { subject(file, research_project.id, extraction_type.id) }
+        expect do
+          subject(
+            file, research_project.id, extraction_type.id, primer
+          )
+        end
           .to change { Sample.count }
           .by(0)
           .and change { Extraction.count }
@@ -252,7 +273,11 @@ describe ImportCsv::TestResultsAsvs do
       end
 
       it 'does not add ImportCsvCreateAsvJob to queue' do
-        expect { subject(file, research_project.id, extraction_type.id) }
+        expect do
+          subject(
+            file, research_project.id, extraction_type.id, primer
+          )
+        end
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
       end
     end
@@ -290,7 +315,11 @@ describe ImportCsv::TestResultsAsvs do
       end
 
       it 'adds ImportCsvCreateAsvJob to queue' do
-        expect { subject(file, research_project.id, extraction_type.id) }
+        expect do
+          subject(
+            file, research_project.id, extraction_type.id, primer
+          )
+        end
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
       end
     end

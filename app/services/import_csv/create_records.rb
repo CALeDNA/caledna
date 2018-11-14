@@ -6,14 +6,15 @@ module ImportCsv
     include CustomCounter
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def create_asv(cell, extraction, cal_taxon, count)
+    def create_asv(cell, extraction, cal_taxon, count, primer)
       return if cell == 'SUM'
 
       attributes = {
         extraction_id: extraction.id, sample: extraction.sample,
-        taxonID: cal_taxon.taxonID, count: count
+        taxonID: cal_taxon.taxonID
       }
       asv = Asv.find_by(attributes)
+
       if asv.nil?
         asv = Asv.create(attributes)
         update_asvs_count(cal_taxon.taxonID)
@@ -21,10 +22,9 @@ module ImportCsv
 
       raise ImportError, "ASV #{cell}: #{asv.errors}" unless asv.valid?
 
-      primer = convert_header_to_primer(cell)
-      return if primer.blank?
       return if asv.primers.include?(primer)
       asv.primers << primer
+      asv.counts[primer] = count
       asv.save
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

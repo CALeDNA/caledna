@@ -6,18 +6,19 @@ module ImportCsv
     include ProcessTestResults
     include CsvUtils
 
-    def import_csv(file, research_project_id, extraction_type_id)
+    def import_csv(file, research_project_id, extraction_type_id, primer)
       delimiter = delimiter_detector(file)
 
       ImportAsvCsvJob.perform_later(
-        file.path, research_project_id, extraction_type_id, delimiter
+        file.path, research_project_id, extraction_type_id, primer, delimiter
       )
 
       OpenStruct.new(valid?: true, errors: nil)
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def import_asv_csv(path, research_project_id, extraction_type_id, delimiter)
+    def import_asv_csv(path, research_project_id, extraction_type_id, primer,
+                       delimiter)
       data = CSV.read(path, headers: true, col_sep: delimiter)
 
       first_row = data.first
@@ -39,7 +40,7 @@ module ImportCsv
 
         cal_taxon = find_cal_taxon_from_string(string)
         next if cal_taxon.blank?
-        create_asvs(row, sample_cells, extractions, cal_taxon)
+        create_asvs(row, sample_cells, extractions, cal_taxon, primer)
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -137,13 +138,14 @@ module ImportCsv
     end
     # rubocop:enable Metrics/MethodLength
 
-    def create_asvs(row, sample_cells, extractions, cal_taxon)
+    def create_asvs(row, sample_cells, extractions, cal_taxon, primer)
       sample_cells.each do |cell|
         count = row[cell].to_i
         next if count < 1
 
         extraction = extractions[cell]
-        ImportCsvCreateAsvJob.perform_later(cell, extraction, cal_taxon, count)
+        ImportCsvCreateAsvJob.perform_later(cell, extraction, cal_taxon, count,
+                                            primer)
       end
     end
   end

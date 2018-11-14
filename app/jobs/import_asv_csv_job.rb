@@ -5,7 +5,8 @@ class ImportAsvCsvJob < ApplicationJob
 
   queue_as :default
 
-  def perform(path, research_project_id, extraction_type_id, delimiter)
-    import_asv_csv(path, research_project_id, extraction_type_id, delimiter)
+  def perform(path, research_project_id, extraction_type_id, primer, delimiter)
+    import_asv_csv(path, research_project_id, extraction_type_id, primer,
+                   delimiter)
   end
 end

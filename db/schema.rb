@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_09_231057) do
+ActiveRecord::Schema.define(version: 2018_11_16_134331) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 2018_10_09_231057) do
     t.text "primers", default: [], array: true
     t.integer "sample_id"
     t.integer "count", default: 0
+    t.jsonb "counts", default: {}
     t.index ["extraction_id"], name: "index_asvs_on_extraction_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
