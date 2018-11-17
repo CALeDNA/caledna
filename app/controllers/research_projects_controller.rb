@@ -15,7 +15,6 @@ class ResearchProjectsController < ApplicationController
   end
 
   def pillar_point
-    return unless current_researcher
     @project = project
     researcher_view
   end
