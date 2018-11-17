@@ -28,7 +28,7 @@ module Api
 
         render json: {
           occurrences: pp.division_counts,
-          unique_taxa: pp.division_counts_unique,
+          unique_taxa: pp.division_counts_unique
         }, status: :ok
       end
 

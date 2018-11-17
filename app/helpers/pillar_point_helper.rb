@@ -38,7 +38,6 @@ module PillarPointHelper
     values.map(&:second).sum
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.cal_counts(counts)
     categories = %w[
       Animals Archaea Bacteria Chromista Fungi Plants
@@ -80,5 +79,4 @@ module PillarPointHelper
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end

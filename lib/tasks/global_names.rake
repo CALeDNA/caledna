@@ -48,38 +48,36 @@ namespace :global_names do
   task create_external_resource2: :environment do
     include ImportGlobalNames
     global_names_api = ::GlobalNamesApi.new
-    conn = ActiveRecord::Base.connection
 
-    taxa = ['Dothideomycetes', 'Maxillopoda']
-    taxa = %w[Hydrophilidae Mycosphaerellaceae Cercyon]
-    taxa = [
-      'Hesperonoe',
-      'Paratrytone',
-      'Idarcturus',
-      'Integripelta',
-      'Rexithaerus',
-      'Glans',
-      'Platyodon',
-      'Chaceia',
-      'Zirfaea',
-      'Hespererato',
-      'Hainotis',
-      'Ophiodermella',
-      'Granulina',
-      'Atrimitra',
-      'Orienthella',
-      'Leostyletus',
-      'Flabellinopsis',
-      'Catriona',
-      'Cornu',
-      'Neostylidium',
-      'Kaburakia',
-      'Cylindrocarpus',
-      'Stephanocystis',
-    ]
+    # taxa = %w[Dothideomycetes Maxillopoda]
+    # taxa = %w[Hydrophilidae Mycosphaerellaceae Cercyon]
+    # taxa = %w[
+    #   Hesperonoe
+    #   Paratrytone
+    #   Idarcturus
+    #   Integripelta
+    #   Rexithaerus
+    #   Glans
+    #   Platyodon
+    #   Chaceia
+    #   Zirfaea
+    #   Hespererato
+    #   Hainotis
+    #   Ophiodermella
+    #   Granulina
+    #   Atrimitra
+    #   Orienthella
+    #   Leostyletus
+    #   Flabellinopsis
+    #   Catriona
+    #   Cornu
+    #   Neostylidium
+    #   Kaburakia
+    #   Cylindrocarpus
+    #   Stephanocystis
+    # ]
 
     taxa = ['Fratercula cirrhata']
-
 
     taxa.each do |record|
       puts record
@@ -130,7 +128,6 @@ namespace :global_names do
                                id_name: 'gbif_id')
     end
   end
-
 
   task create_external_resources3: :environment do
     include ImportGlobalNames
@@ -244,7 +241,7 @@ namespace :global_names do
 
       create_external_resource(
         results: results, taxon_id: record['inat_id'],
-        id_name: 'inaturalist_id',
+        id_name: 'inaturalist_id'
       )
     end
   end
