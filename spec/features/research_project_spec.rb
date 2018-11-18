@@ -9,18 +9,18 @@ describe 'Research Project' do
     end
 
     context 'when visitor is a guest' do
-      it 'shows blank page' do
+      it 'shows content for intro' do
         visit research_project_path(id: project.slug)
 
-        expect(page).to_not have_content project.name
+        expect(page).to have_content project.name
       end
     end
 
     context 'when vistor is logged-in user' do
-      it 'shows blank page' do
+      it 'shows content for intro' do
         visit research_project_path(id: project.slug)
 
-        expect(page).to_not have_content project.name
+        expect(page).to have_content project.name
       end
     end
 
