@@ -94,7 +94,16 @@ module ImportCsv
 
       # NOTE: K301B1
       # NOTE: X203C1
+      # NOTE: 203C1
       elsif /^[KX]?\d{1,4}[ABC][12]$/.match?(sample)
+        match = /(\d{1,4})([ABC])([12])/.match(parts.first)
+        kit = match[1].rjust(4, '0')
+        location_letter = match[2]
+        sample_number = match[3]
+        "K#{kit}-L#{location_letter}-S#{sample_number}"
+
+      # NOTE: PP301B1
+      elsif /^PP\d{1,4}[ABC][12]$/.match?(sample)
         match = /(\d{1,4})([ABC])([12])/.match(parts.first)
         kit = match[1].rjust(4, '0')
         location_letter = match[2]

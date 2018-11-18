@@ -133,6 +133,19 @@ describe ImportCsv::TestResultsAsvs do
       end
     end
 
+    it 'converts abbreviated PP_LS header' do
+      headers =  [
+        ['PP1B1', 'K0001-LB-S1'],
+        ['PP12B1', 'K0012-LB-S1'],
+        ['PP123B1', 'K0123-LB-S1'],
+        ['PP1234B1', 'K1234-LB-S1']
+      ]
+
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
+    end
+
     it 'returns nil for "blank" samples' do
       headers = [
         'K0401.blank.S135.L001', 'X16s_K0001Blank.S1.L001', 'forestpcrBLANK',
