@@ -1393,4 +1393,88 @@ describe ProcessTestResults do
       expect(subject(superkingdom_string)).to eq(phylum_string)
     end
   end
+
+  describe '#find_canonical_taxon_from_string' do
+    def subject(string)
+      dummy_class.find_canonical_taxon_from_string(string)
+    end
+
+    it 'returns species if it exists' do
+      string = 'superkingdom;phlyum;class;order;family;genus;species'
+
+      expect(subject(string)).to eq('species')
+    end
+
+    it 'returns genus if it exists' do
+      string = 'superkingdom;phlyum;class;order;family;genus;'
+
+      expect(subject(string)).to eq('genus')
+    end
+
+    it 'returns family if it exists' do
+      string = 'superkingdom;phlyum;class;order;family;;'
+
+      expect(subject(string)).to eq('family')
+    end
+
+    it 'returns order if it exists' do
+      string = 'superkingdom;phlyum;class;order;;;'
+
+      expect(subject(string)).to eq('order')
+    end
+
+    it 'returns class if it exists' do
+      string = 'superkingdom;phlyum;class;;;;'
+
+      expect(subject(string)).to eq('class')
+    end
+
+    it 'returns phlyum if it exists' do
+      string = 'superkingdom;phlyum;;;;;'
+
+      expect(subject(string)).to eq('phlyum')
+    end
+
+    it 'returns superkingdom if it exists' do
+      string = 'superkingdom;;;;;;'
+
+      expect(subject(string)).to eq('superkingdom')
+    end
+
+    it 'ignores species NA' do
+      string = 'superkingdom;phlyum;class;order;family;genus;NA'
+
+      expect(subject(string)).to eq('genus')
+    end
+
+    it 'ignores genus NA' do
+      string = 'superkingdom;phlyum;class;order;family;NA;NA'
+
+      expect(subject(string)).to eq('family')
+    end
+
+    it 'ignores family NA' do
+      string = 'superkingdom;phlyum;class;order;NA;NA;NA'
+
+      expect(subject(string)).to eq('order')
+    end
+
+    it 'ignores order NA' do
+      string = 'superkingdom;phlyum;class;NA;NA;NA;NA'
+
+      expect(subject(string)).to eq('class')
+    end
+
+    it 'ignores class NA' do
+      string = 'superkingdom;phlyum;NA;NA;NA;NA;NA'
+
+      expect(subject(string)).to eq('phlyum')
+    end
+
+    it 'ignores phylum NA' do
+      string = 'superkingdom;NA;NA;NA;NA;NA;NA'
+
+      expect(subject(string)).to eq('superkingdom')
+    end
+  end
 end

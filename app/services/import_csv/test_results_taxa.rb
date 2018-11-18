@@ -6,17 +6,29 @@ module ImportCsv
     include ProcessTestResults
     include CsvUtils
 
-    def import_csv(file)
+    # rubocop:disable Metrics/MethodLength
+    def import_csv(file, research_project_id, primer, notes)
       delimiter = delimiter_detector(file)
 
       CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
         taxonomy_string = row[row.headers.first]
         next if invalid_taxon?(taxonomy_string)
 
+        if taxon_has_results?(row)
+          ImportCsvCreateRawTaxonomyImportJob.perform_later(
+            taxonomy_string, research_project_id, primer, notes
+          )
+        end
+
         ImportCsvFindCalTaxonJob.perform_later(taxonomy_string)
       end
 
       OpenStruct.new(valid?: true, errors: nil)
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    def taxon_has_results?(row)
+      row.to_h.except('sum.taxonomy').values.uniq != ['0']
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity

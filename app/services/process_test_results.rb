@@ -289,6 +289,13 @@ module ProcessTestResults
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  def find_canonical_taxon_from_string(taxonomy_string)
+    new_string = taxonomy_string.dup
+    new_string.gsub!(/;NA;/, ';;') while new_string.include?(';NA;')
+    new_string.gsub!(/;NA$/, ';')
+    new_string.split(';').last
+  end
+
   private
 
   # NOTE: lineage is ["id", "name", "rank"]

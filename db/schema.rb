@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_16_134331) do
+ActiveRecord::Schema.define(version: 2018_11_18_143810) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -382,6 +382,15 @@ ActiveRecord::Schema.define(version: 2018_11_16_134331) do
     t.integer "height"
     t.integer "width"
     t.index ["sample_id"], name: "index_photos_on_sample_id"
+  end
+
+  create_table "raw_taxonomy_imports", force: :cascade do |t|
+    t.string "name"
+    t.string "taxonomy_string"
+    t.string "primer"
+    t.text "notes"
+    t.bigint "research_project_id"
+    t.index ["research_project_id"], name: "index_raw_taxonomy_imports_on_research_project_id"
   end
 
   create_table "research_project_sources", id: :serial, force: :cascade do |t|

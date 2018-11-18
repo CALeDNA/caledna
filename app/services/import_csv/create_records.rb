@@ -58,6 +58,21 @@ module ImportCsv
       update_count(taxon_id, count)
     end
 
+    def create_raw_taxonomy_import(taxonomy_string, research_project_id,
+                                   primer, notes)
+      attributes = {
+        taxonomy_string: taxonomy_string,
+        research_project_id: research_project_id,
+        primer: primer,
+        notes: notes
+      }
+      raw_taxon = RawTaxonomyImport.where(attributes)
+      return if raw_taxon.present?
+
+      attributes[:name] = find_canonical_taxon_from_string(taxonomy_string)
+      RawTaxonomyImport.create(attributes)
+    end
+
     private
 
     def convert_header_to_primer(cell)
