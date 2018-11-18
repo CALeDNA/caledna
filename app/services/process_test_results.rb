@@ -61,9 +61,15 @@ module ProcessTestResults
   end
 
   def find_cal_taxon_from_string(string)
+    rank = if phylum_taxonomy_string?(string)
+             get_taxon_rank_phylum(string)
+           else
+             get_taxon_rank_superkingdom(string)
+           end
     sql = 'original_taxonomy_phylum = ? OR ' \
       'original_taxonomy_superkingdom = ?'
     CalTaxon.where(sql, string, string)
+            .where(taxonRank: rank)
             .where(normalized: true).first
   end
 
