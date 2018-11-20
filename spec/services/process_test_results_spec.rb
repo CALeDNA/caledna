@@ -128,7 +128,7 @@ describe ProcessTestResults do
     it 'returns false otherwise' do
       strings = [
         'p;c;o;f;g;s', 'p;;;;;', ';;;;;s',
-        'sk;p;c;o;f;g;s', 'sk;;;;;;', ';;;;;;s'
+        'sk;p;c;o;f;g;s', 'sk;;;;;;', ';;;;;;s', 'sk;NA;;NA;;NA;'
       ]
 
       strings.each do |string|

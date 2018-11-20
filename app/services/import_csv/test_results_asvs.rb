@@ -30,15 +30,7 @@ module ImportCsv
         taxonomy_string = row[row.headers.first]
         next if invalid_taxon?(taxonomy_string)
 
-        # NOTE: always use phylum taxon string to match older cal_taxon
-        # than only have phylum_taxonomy_string
-        string = if phylum_taxonomy_string?(taxonomy_string)
-                   taxonomy_string
-                 else
-                   convert_superkingdom_taxonomy_string(taxonomy_string)
-                 end
-
-        cal_taxon = find_cal_taxon_from_string(string)
+        cal_taxon = find_cal_taxon_from_string(taxonomy_string)
         next if cal_taxon.blank?
         create_asvs(row, sample_cells, extractions, cal_taxon, primer)
       end
