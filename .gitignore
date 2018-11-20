@@ -31,3 +31,4 @@ db/data/tree/
 /storage/*
 db/data/private
 yarn-error.log
+data/*
