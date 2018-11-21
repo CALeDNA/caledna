@@ -65,18 +65,4 @@ module PillarPointHelper
       end
     end
   end
-
-  def self.only_gbif_counts(counts)
-    categories = %w[
-      Animalia Archaea Bacteria Chromista Fungi Plantae
-    ]
-
-    categories.map do |category|
-      if counts[category].nil?
-        [category, nil]
-      else
-        [category, counts[category]]
-      end
-    end
-  end
 end

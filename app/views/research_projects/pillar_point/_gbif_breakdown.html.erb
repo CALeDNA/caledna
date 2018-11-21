@@ -11,7 +11,7 @@
     <h3>All GBIF Occurrences</h3>
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.only_gbif_counts(@gbif_breakdown[:all]),
+        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:all]),
         total: PillarPointHelper.total(@gbif_breakdown[:all].values)
       } %>
   </div>
@@ -24,7 +24,7 @@
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.only_gbif_counts(@gbif_breakdown[:inat_only]),
+        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:inat_only]),
         total: PillarPointHelper.total(@gbif_breakdown[:inat_only].values)
       } %>
   </div>
@@ -35,7 +35,7 @@
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.only_gbif_counts(@gbif_breakdown[:exclude_inat]),
+        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:exclude_inat]),
         total: PillarPointHelper.total(@gbif_breakdown[:exclude_inat].values)
       } %>
   </div>
