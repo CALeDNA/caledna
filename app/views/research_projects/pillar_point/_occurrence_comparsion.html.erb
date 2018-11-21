@@ -14,7 +14,7 @@
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.cal_counts(@division_counts[:cal]),
+        occurrence_stats: PillarPointHelper.cal_counts(@division_counts[:cal], include_other=true),
         total:  PillarPointHelper.total(@division_counts[:cal].values)
       } %>
 
@@ -23,7 +23,7 @@
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.cal_counts(@division_counts_unique[:cal]),
+        occurrence_stats: PillarPointHelper.cal_counts(@division_counts_unique[:cal], include_other=true),
         total: PillarPointHelper.total(@division_counts_unique[:cal].values)
       } %>
   </div>
@@ -36,7 +36,7 @@
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts[:gbif]),
+        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts[:gbif], include_other=true),
         total: PillarPointHelper.total(@division_counts[:gbif].values)
       } %>
 
@@ -45,7 +45,7 @@
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts_unique[:gbif]),
+        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts_unique[:gbif], include_other=true),
         total: PillarPointHelper.total(@division_counts_unique[:gbif].values)
       } %>
   </div>
@@ -55,10 +55,10 @@
 (function(){
 
   window.caledna = {
-    cal_division_total: <%= @division_counts[:cal].to_json.html_safe %>,
-    cal_division_unique: <%= @division_counts_unique[:cal].to_json.html_safe %>,
-    gbif_division_total: <%= @division_counts[:gbif].to_json.html_safe %>,
-    gbif_division_unique: <%= @division_counts_unique[:gbif].to_json.html_safe %>
+    cal_division_total: <%= PillarPointHelper.cal_counts(@division_counts[:cal]).to_json.html_safe %>,
+    cal_division_unique: <%= PillarPointHelper.cal_counts(@division_counts_unique[:cal]).to_json.html_safe %>,
+    gbif_division_total: <%= PillarPointHelper.gbif_counts(@division_counts[:gbif]).to_json.html_safe %>,
+    gbif_division_unique: <%= PillarPointHelper.gbif_counts(@division_counts_unique[:gbif]).to_json.html_safe %>
   }
 
 })(window)

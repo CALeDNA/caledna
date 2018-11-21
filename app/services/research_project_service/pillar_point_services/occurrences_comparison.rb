@@ -33,9 +33,7 @@ module ResearchProjectService
           WHERE (research_project_sources.sourceable_type = 'Extraction')
           AND (research_project_sources.research_project_id =
             #{conn.quote(project.id)})
-          AND ncbi_divisions.name  != 'Environmental samples'
-          AND ncbi_divisions.name != 'Plants and Fungi'
-          AND ncbi_divisions.name != 'Protozoa'
+
           GROUP BY name
           ORDER BY name;
         SQL
@@ -55,9 +53,6 @@ module ResearchProjectService
           WHERE (research_project_sources.sourceable_type = 'Extraction')
           AND (research_project_sources.research_project_id =
             #{conn.quote(project.id)})
-          AND ncbi_divisions.name  != 'Environmental samples'
-          AND ncbi_divisions.name != 'Plants and Fungi'
-          AND ncbi_divisions.name != 'Protozoa'
           ORDER BY name
           ) AS foo
           GROUP BY name;

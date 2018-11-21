@@ -38,31 +38,40 @@ module PillarPointHelper
     values.map(&:second).sum
   end
 
-  def self.cal_counts(counts)
+  def self.cal_counts(counts, include_other=false)
     categories = %w[
       Animals Archaea Bacteria Chromista Fungi Plants
     ]
 
-    categories.map do |category|
-      if counts[category].nil?
-        ['--', nil]
-      else
-        [category, counts[category]]
-      end
+    other_count = counts['Environmental samples'] + counts['Plants and Fungi'] +
+                  counts['Protozoa']
+
+    normalized_counts = {}
+    categories.each do |category|
+      normalized_counts[category] = if counts[category].nil?
+                                      nil
+                                    else
+                                      counts[category]
+                                    end
     end
+    normalized_counts['Other'] = other_count if include_other
+    normalized_counts
   end
 
-  def self.gbif_counts(counts)
+  def self.gbif_counts(counts, include_other=false)
     categories = %w[
       Animalia Archaea Bacteria Chromista Fungi Plantae
     ]
 
-    categories.map do |category|
-      if counts[category].nil?
-        [category, nil]
-      else
-        [category, counts[category]]
-      end
+    normalized_counts = {}
+    categories.each do |category|
+      normalized_counts[category] = if counts[category].nil?
+                                      nil
+                                    else
+                                      counts[category]
+                                    end
     end
+    normalized_counts['Other'] = nil if include_other
+    normalized_counts
   end
 end
