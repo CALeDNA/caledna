@@ -126,6 +126,7 @@ Rails.application.routes.draw do
   end
   resources :uploads, only: %i[create destroy]
   resource :profile, only: [:show]
+  resources :pages, only: [:update]
 
   resources :surveys, only: %i[show] do
     resources :survey_responses, only: %i[create show]
@@ -134,7 +135,7 @@ Rails.application.routes.draw do
   get 'research_projects/pillar-point', to: 'research_projects#pillar_point',
                                         defaults: { id: 'pillar-point' }
 
-  resources :research_projects, only: %i[index show]
+  resources :research_projects, only: %i[index show edit]
 
   namespace :beta do
     get 'geojson_demo', to: 'geojson_demo'

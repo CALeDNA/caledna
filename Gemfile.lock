@@ -425,6 +425,8 @@ GEM
     title (0.0.7)
       i18n
       rails (>= 3.1)
+    trix-rails (2.0.0)
+      rails (> 4.1, < 6.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     uglifier (4.1.8)
@@ -511,6 +513,7 @@ DEPENDENCIES
   summernote-rails (~> 0.8.10.0)
   timecop (~> 0.9)
   title (~> 0.0.7)
+  trix-rails
   uglifier (~> 4.0)
   vcr (~> 4.0.0)
   webmock (~> 3.4.1)

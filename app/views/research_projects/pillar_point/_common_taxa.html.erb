@@ -10,7 +10,6 @@
   end
 %>
 
-<h2>Common Taxa between eDNA and GBIF</h2>
 <ul class="nav nav-pills">
   <% ['phylum', 'class', 'order', 'family', 'genus', 'species'].each do |rank| %>
     <li class=<%= 'active' if rank == taxon_rank %>><a href="<%= base_url %>&taxon_rank=<%= rank %>">

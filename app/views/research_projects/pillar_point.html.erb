@@ -1,9 +1,23 @@
 <% list_view = params[:view] == 'list' %>
 <% inat_source = params[:source] == 'inat' %>
+<style>
+.section-content {
+  margin-bottom: 2rem;
+}
+</style>
 
 <% if @project.present? %>
   <h1><%= @project.name %></h1>
   <%= render partial: "research_projects/pillar_point/submenu" %>
+
+  <h2>
+    <%= @page.title%>
+    <% if current_researcher %>
+      <a class="btn btn-primary" href="<%= "#{research_projects_pillar_point_path}/edit?section=#{params[:section] || 'intro'}" %>">Edit</a>
+    <% end %>
+  </h2>
+
+  <div class="section-content"><%= sanitize @page.body %></div>
 
   <% if params[:section] == 'occurrence_comparsion' %>
     <%= render partial: "research_projects/pillar_point/occurrence_comparsion" %>

@@ -39,6 +39,7 @@ gem 'simple_form', '~> 4.0.1'
 gem 'sparql', '~> 3.0', '>= 3.0.1'
 gem 'summernote-rails', '~> 0.8.10.0'
 gem 'title', '~> 0.0.7'
+gem 'trix-rails', require: 'trix'
 gem 'uglifier', '~> 4.0'
 gem 'webpacker', '~> 3.5.3'
 

@@ -15,11 +15,31 @@ class ResearchProjectsController < ApplicationController
   end
 
   def pillar_point
+    @page = page
     @project = project
     researcher_view
   end
 
+  def edit
+    redirect_to research_projects_path unless current_researcher
+
+    @page = page
+  end
+
   private
+
+  def page
+    id = params[:id]
+    section = params[:section] || 'intro'
+    page = Page.find_by(slug: "#{id}/#{section}")
+    if page.blank?
+      page = Page.create(
+        slug: "#{id}/#{section}", title: section.titleize,
+        body: "#{section.titleize} content"
+      )
+    end
+    page
+  end
 
   def conn
     @conn ||= ActiveRecord::Base.connection

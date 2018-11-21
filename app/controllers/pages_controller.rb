@@ -28,7 +28,27 @@ class PagesController < ApplicationController
     @page = Page.find_by(slug: params[:id])
   end
 
+  def update
+    page = Page.find(params[:id])
+    if current_researcher && page.update(update_params)
+      redirect_to research_projects_pillar_point_path(
+        section: raw_params[:section]
+      )
+    else
+      flash[:error] = 'Something went wrong. Changes not saved'
+      redirect_to request.referrer
+    end
+  end
+
   private
+
+  def update_params
+    raw_params.except(:section)
+  end
+
+  def raw_params
+    params.require(:page).permit(:body, :title, :section)
+  end
 
   def organism_count
     sql = 'SELECT COUNT(DISTINCT("taxonID")) from asvs'

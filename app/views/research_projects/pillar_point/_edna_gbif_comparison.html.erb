@@ -46,7 +46,6 @@
 
 
 
-<h2>Comparions of GBIF Occurences with eDNA Results</h2>
 <ul class="nav nav-pills">
   <% ['phylum', 'class', 'order', 'family', 'genus', 'species'].each do |rank| %>
     <li class=<%= 'active' if rank == taxon_rank %>><a href="<%= base_url %>&taxon_rank=<%= rank %>">
