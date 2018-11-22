@@ -361,4 +361,40 @@ namespace :combine_taxa do
       )
     end
   end
+
+  task update_taxon_rank: :environment do
+    sql = <<-SQL
+      UPDATE combine_taxa SET taxon_rank = 'superkingdom' WHERE superkingdom IS NOT NULL;
+      UPDATE combine_taxa SET taxon_rank = 'kingdom' WHERE kingdom IS NOT NULL;
+      UPDATE combine_taxa SET taxon_rank = 'phylum' WHERE phylum IS NOT NULL;
+      UPDATE combine_taxa SET taxon_rank = 'class' WHERE class_name IS NOT NULL;
+      UPDATE combine_taxa SET taxon_rank = 'order' WHERE "order" IS NOT NULL;
+      UPDATE combine_taxa SET taxon_rank = 'family' WHERE family IS NOT NULL;
+      UPDATE combine_taxa SET taxon_rank = 'genus' WHERE genus IS NOT NULL;
+      UPDATE combine_taxa SET taxon_rank = 'species' WHERE species IS NOT NULL;
+    SQL
+
+    ActiveRecord::Base.connection.exec_query(sql)
+  end
+
+  task update_taxon_division: :environment do
+    CombineTaxon.where(source: 'ncbi', cal_division_id: nil).each do |taxon|
+      ncbi = NcbiNode.find(taxon.taxon_id)
+      taxon.update(cal_division_id: ncbi.cal_division_id)
+    end
+
+    divisions = {
+      Plantae: 14,
+      Fungi: 13,
+      Animalia: 12,
+      Chromista: 17
+    }
+    CombineTaxon.where(source: 'gbif', cal_division_id: nil).each do |taxon|
+      puts taxon.taxon_id
+      gbif = GbifOccTaxa.find_by(taxonkey: taxon.taxon_id)
+      division_id = divisions[gbif.kingdom.to_sym]
+
+      taxon.update(cal_division_id: division_id)
+    end
+  end
 end
