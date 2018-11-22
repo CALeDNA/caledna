@@ -70,7 +70,7 @@ class ResearchProjectsController < ApplicationController
     elsif params[:section] == 'edna_gbif_comparison'
       @gbif_taxa = project_service.gbif_taxa
     elsif params[:section] == 'area_diversity'
-    elsif params[:section] == 'taxonomic_bias'
+    elsif params[:section] == 'taxonomic_frequency'
     else
       @stats = project_service.stats
     end
