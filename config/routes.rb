@@ -34,6 +34,8 @@ Rails.application.routes.draw do
           to: 'research_projects#pillar_point_biodiversity_bias'
       get '/pillar_point/pillar_point_occurrences',
           to: 'research_projects#pillar_point_occurrences'
+      get '/pillar_point/source_comparison_all',
+          to: 'research_projects#pillar_point_source_comparison_all'
     end
   end
 

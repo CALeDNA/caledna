@@ -12,6 +12,7 @@ module ResearchProjectService
     include ResearchProjectService::PillarPointServices::BioticInteractions
     include ResearchProjectService::PillarPointServices::AreaDiversity
     include ResearchProjectService::PillarPointServices::TaxaFrequency
+    include ResearchProjectService::PillarPointServices::SourceComparisonAll
 
     attr_reader :project, :taxon_rank, :sort_by, :params,
                 :globi_taxon

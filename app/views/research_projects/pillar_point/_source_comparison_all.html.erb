@@ -1,0 +1,94 @@
+<style>
+.venntooltip {
+  position: absolute;
+  text-align: center;
+  width: 128px;
+  height: 26px;
+  background: #333;
+  color: #ddd;
+  padding: 2px;
+  border: 0px;
+  border-radius: 8px;
+  opacity: 0;
+}
+</style>
+
+<div class="btn-group" role="group" >
+  <div class="btn btn-default js-graph-btn">
+    Graph
+  </div>
+  <div class="btn btn-default js-table-btn">
+    Table
+  </div>
+</div>
+<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+  <i class="fas fa-sliders-h"></i> Filters
+</button>
+
+<form class="area-diversity collapse" id="collapseFilters">
+  <div class="row">
+    <div class="col-sm-6">
+      <fieldset>
+        <legend>Taxa groups</legend>
+        <div class="checkbox">
+          <label for="all">
+            <input type="checkbox" name="taxon_groups" id="all" value="all" checked>
+            All
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="bacteria">
+            <input type="checkbox" name="taxon_groups" id="bacteria" value="bacteria">
+            Bacteria
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="animals">
+            <input type="checkbox" name="taxon_groups" id="animals" value="animals">
+            Animals
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="plants">
+            <input type="checkbox" name="taxon_groups" id="plants" value="plants">
+            Plants
+          </label>
+        </div>
+        <div class="checkbox">
+          <label for="fungi">
+            <input type="checkbox" name="taxon_groups" id="fungi" value="fungi">
+            Fungi
+          </label>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="col-sm-6">
+      <fieldset>
+        <legend>Taxa rank</legend>
+        <div class="radio">
+          <label for="phylum">
+            <input type="radio" name="taxon_ranks" id="phylum" value="phylum" checked>
+            phylum
+          </label>
+        </div>
+        <% ['class', 'order', 'family', 'genus', 'species'].each do |rank| %>
+          <div class="radio">
+            <label for="<%= rank %>">
+              <input type="radio" name="taxon_ranks" id="<%= rank %>" value="<%= rank %>">
+              <%= rank %>
+            </label>
+          </div>
+        <% end %>
+      </fieldset>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Apply filters</button>
+  <button class="btn btn-primary js-reset-filters">Reset filters</button>
+</form>
+
+<div id="graph-compare"></div>
+<div id="table-compare"></div>
+
+<%= javascript_pack_tag 'pp_source_comparison_all' %>

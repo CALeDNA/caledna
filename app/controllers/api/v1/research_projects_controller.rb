@@ -15,6 +15,10 @@ module Api
         render json: area_diversity_json, status: :ok
       end
 
+      def pillar_point_source_comparison_all
+        render json: source_comparison_all_json, status: :ok
+      end
+
       def pillar_point_biodiversity_bias
         project = ResearchProject.find_by(name: 'Pillar Point')
         pp = ResearchProjectService::PillarPoint.new(project, params)
@@ -33,6 +37,12 @@ module Api
       end
 
       private
+
+      def source_comparison_all_json
+        project = ResearchProject.find_by(name: 'Pillar Point')
+        pp = ResearchProjectService::PillarPoint.new(project, params)
+        pp.source_comparison_all_data
+      end
 
       def area_diversity_json
         project = ResearchProject.find_by(name: 'Pillar Point')

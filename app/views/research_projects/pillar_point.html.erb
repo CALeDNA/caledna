@@ -38,6 +38,8 @@
     <%= render partial: "research_projects/pillar_point/edna_gbif_comparison" %>
   <% elsif params[:section] == 'taxonomic_frequency' %>
     <%= render partial: "research_projects/pillar_point/taxonomic_frequency" %>
+  <% elsif params[:section] == 'source_comparison_all' %>
+    <%= render partial: "research_projects/pillar_point/source_comparison_all" %>
   <% else %>
     <%= render partial: "research_projects/pillar_point/intro" %>
     <%= render partial: "research_projects/pillar_point/samples_menu" %>
