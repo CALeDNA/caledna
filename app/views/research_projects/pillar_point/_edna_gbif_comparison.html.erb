@@ -1,42 +1,17 @@
 <%
   taxon_rank = params[:taxon_rank] || 'phylum'
 
-  def has_edna?(taxon)
-    res = @gbif_taxa_with_edna.to_a.any? { |t| t['gbif_id'] == taxon['gbif_id'] }
-  end
-
-  def taxon_string(taxon)
-    [
-      taxon['kingdom'], taxon['phylum'], taxon['classname'], taxon['order'],
-      taxon['family'], taxon['genus'], taxon['species']
-    ].compact.join(', ')
-  end
-
-  def ncbi_taxon_string(taxon)
-    return if taxon['hierarchy_names'].nil?
-    taxa = {}
-    taxon['hierarchy_names'][1..-2].gsub(/["]/, '').split('},{')
-      .map{ |n| n.gsub(/[{}]/, '') }.first
-      .split(', ')
-      .each do |n|
-        parts = n.split(': ')
-        taxa[parts.first] = parts.last
-      end
-
-    [
-      taxa['kingdom'], taxa['phylum'], taxa['class'], taxa['order'],
-      taxa['family'], taxa['genus'], taxa['species']
-    ].compact.join(', ')
-  end
 
   def with_ncbi_count
     @gbif_taxa.select do |taxon|
-      taxon['ncbi_id'].present?
+      taxon['ncbi_match'] == true
     end.count
   end
 
   def with_edna_count
-    @gbif_taxa_with_edna.count
+    @gbif_taxa.select do |taxon|
+      taxon['edna_match'] == true
+    end.count
   end
 
   def base_url
@@ -68,26 +43,32 @@
 <% @gbif_taxa.each do |taxon| %>
   <tr>
     <td>
-      <b>GBIF</b>
-      <p><%= taxon_string(taxon) %></p>
-      <p>GBIF ID: <%= link_to taxon['gbif_id'], "http://gbif.org/species/#{taxon['gbif_id']}" %></p>
+      <b>Normalized Taxa</b>
+      <p><%= PillarPointHelper.taxon_string(taxon) %></p>
 
-      <%  if taxon['hierarchy_names'] %>
+      <b>GBIF</b>
+      <% PillarPointHelper.convert_taxa_string(taxon['gbif_taxa']).each do |taxon| %>
+        <p><%= taxon[:taxonomy_string] %></p>
+        <p>GBIF ID: <%= link_to taxon[:id], "http://gbif.org/species/#{taxon[:id]}" %></p>
+      <% end %>
+
+      <%  if taxon['ncbi_taxa'] != '{NULL}' %>
         <b>NCBI</b>
-        <p><%= ncbi_taxon_string(taxon) %></p>
-        <p><%= "rank: #{taxon['ncbi_rank']}" %></p>
-        <p>
-          NCBI ID: <%= link_to taxon['ncbi_id'], "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{taxon['ncbi_id']}&lvl=3" %>,
-          <%= link_to 'CALeDNA page', taxon_path(id: taxon['ncbi_id'])%>
-        </p>
+        <% PillarPointHelper.convert_taxa_string(taxon['ncbi_taxa']).each do |taxon| %>
+          <p><%= taxon[:taxonomy_string] %></p>
+          <p>
+            NCBI ID: <%= link_to taxon[:id], "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{taxon[:id]}&lvl=3" %>,
+            <%= link_to 'CALeDNA page', taxon_path(id: taxon[:id])%>
+          </p>
+        <% end %>
       <% end %>
     </td>
     <td><%= taxon['count'] %></td>
     <td>
-      <%= sanitize PillarPointHelper.check_or_x(taxon['ncbi_id']) %>
+      <%= sanitize PillarPointHelper.check_or_x(taxon['ncbi_match']) %>
     </td>
     <td>
-      <%= sanitize PillarPointHelper.check_or_x( has_edna?(taxon)) %>
+      <%= sanitize PillarPointHelper.check_or_x(taxon['edna_match']) %>
     </td>
   </tr>
 <% end %>

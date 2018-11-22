@@ -1,113 +1,194 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
 module ResearchProjectService
   module PillarPointServices
     module GbifEdnaComparison
       def gbif_taxa
         @gbif_taxa ||= begin
-          sql = gbif_fields_sql
-          sql += gbif_select_sql
-          sql += gbif_group_sql
-          conn.exec_query(sql)
-        end
-      end
-
-      def gbif_taxa_with_edna
-        @gbif_taxa_with_edna ||= begin
-          sql = gbif_fields_sql
-          sql += gbif_select_sql
-          sql += gbif_taxa_with_edna_sql
-          sql += gbif_group_sql
-
+          sql = <<-SQL
+            #{fields_sql},
+            #{match_sql},
+            #{aggregate_sql}
+            #{join_sql}
+            WHERE combine_taxa.source = 'gbif'
+            GROUP BY #{group_fields}
+            ORDER BY #{sort_fields};
+          SQL
           conn.exec_query(sql)
         end
       end
 
       private
 
-      def taxon_rank_value
-        conn.quote(taxon_rank)
+      def fields_sql
+        fields = %w[
+          combine_taxa.phylum
+          combine_taxa.class_name
+          combine_taxa.order
+          combine_taxa.family
+          combine_taxa.genus
+          combine_taxa.species
+        ]
+        sql = 'SELECT combine_taxa.superkingdom, '
+        sql += case taxon_rank_field
+               when 'phylum' then fields[0]
+               when 'classname' then fields[0..1].join(', ')
+               when 'order' then fields[0..2].join(', ')
+               when 'family' then fields[0..3].join(', ')
+               when 'genus' then fields[0..4].join(', ')
+               when 'species' then fields[0..5].join(', ')
+               end
+        sql
       end
 
-      def taxon_rank_field
-        taxon_rank == 'class' ? 'classname' : conn.quote_column_name(taxon_rank)
+      def gbif_taxa_sql
+        fields = [
+          "coalesce(external.gbif_occ_taxa.phylum, '--')",
+          "coalesce(external.gbif_occ_taxa.classname, '--')",
+          "coalesce(external.gbif_occ_taxa.order, '--')",
+          "coalesce(external.gbif_occ_taxa.family, '--')",
+          "coalesce(external.gbif_occ_taxa.genus, '--')",
+          "coalesce(external.gbif_occ_taxa.species, '--')"
+        ]
+        sql = "external.gbif_occ_taxa.kingdom || '|' ||"
+        sql += case taxon_rank_field
+               when 'phylum' then fields[0]
+               when 'classname' then fields[0..1].join("|| '|' ||")
+               when 'order' then fields[0..2].join("|| '|' ||")
+               when 'family' then fields[0..3].join("|| '|' ||")
+               when 'genus' then fields[0..4].join("|| '|' ||")
+               when 'species' then fields[0..5].join("|| '|' ||")
+               end
+        sql
       end
 
-      def gbif_fields_sql
+      def ncbi_taxa_sql
+        fields = [
+          "coalesce(ncbi_nodes.hierarchy_names ->> 'phylum', '--')",
+          "coalesce(ncbi_nodes.hierarchy_names ->> 'class', '--')",
+          "coalesce(ncbi_nodes.hierarchy_names ->> 'order', '--')",
+          "coalesce(ncbi_nodes.hierarchy_names ->> 'family', '--')",
+          "coalesce(ncbi_nodes.hierarchy_names ->> 'genus', '--')",
+          "coalesce(ncbi_nodes.hierarchy_names ->> 'species', '--')"
+        ]
+        sql = "coalesce(ncbi_nodes.hierarchy_names ->> 'superkingdom', '--') " \
+          "|| '|' ||"
+        sql += case taxon_rank_field
+               when 'phylum' then fields[0]
+               when 'classname' then fields[0..1].join("|| '|' ||")
+               when 'order' then fields[0..2].join("|| '|' ||")
+               when 'family' then fields[0..3].join("|| '|' ||")
+               when 'genus' then fields[0..4].join("|| '|' ||")
+               when 'species' then fields[0..5].join("|| '|' ||")
+               end
+        sql
+      end
+
+      def edna_match_sql
         <<-SQL
-        SELECT count(*),
-        gbif_taxa.taxonkey as gbif_id, external_resources.ncbi_id,
-        asvs."taxonID" as asvs_taxon_id,
-        gbif_taxa.kingdom, gbif_taxa.phylum, gbif_taxa.classname,
-        gbif_taxa.order, gbif_taxa.family, gbif_taxa.genus, gbif_taxa.species,
-        ncbi_nodes.hierarchy_names, ncbi_nodes.rank as ncbi_rank
+          SELECT DISTINCT(unnest(ids))::TEXT::INTEGER
+            FROM asvs
+            JOIN extractions
+              ON asvs.extraction_id = extractions.id
+            JOIN research_project_sources
+              ON research_project_sources.sourceable_id = asvs.extraction_id
+              AND research_project_id = 4
+              AND sourceable_type = 'Extraction'
+            JOIN ncbi_nodes
+              ON ncbi_nodes.taxon_id = asvs."taxonID"
         SQL
       end
 
-      def gbif_select_sql
+      def match_sql
         <<-SQL
-        FROM research_project_sources
-        JOIN external.gbif_occurrences
-          ON external.gbif_occurrences.gbifid =
-          research_project_sources.sourceable_id
-          AND research_project_id = #{project.id}
-          AND sourceable_type = 'GbifOccurrence'
-          AND external.gbif_occurrences.#{taxon_rank_field} IS NOT NULL
-          AND metadata ->> 'location' != 'Montara SMR'
-        JOIN external.gbif_occ_taxa AS gbif_taxa
-          ON gbif_taxa.#{taxon_rank_field} =
-          external.gbif_occurrences.#{taxon_rank_field}
-          AND gbif_taxa.taxonrank = #{taxon_rank_value}
-        LEFT JOIN external_resources
-          ON external_resources.gbif_id = gbif_taxa.taxonkey
-          AND external_resources.ncbi_id IS NOT NULL
-          AND source != 'wikidata'
-        LEFT JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = external_resources.ncbi_id
-        LEFT JOIN asvs
-          ON asvs.extraction_id = research_project_sources.sourceable_id
-          AND research_project_id = #{project.id}
-          AND sourceable_type = 'Extraction'
+          ARRAY_AGG(DISTINCT(
+            ncbi_nodes.ncbi_id
+          )) != ARRAY[NULL]::integer[] AS ncbi_match,
+          ARRAY_AGG(DISTINCT(
+            ncbi_nodes.ncbi_id
+          )) && (
+            ARRAY(
+            #{edna_match_sql}
+          )) AS edna_match
         SQL
       end
 
-      def gbif_group_sql
+      def aggregate_sql
         <<-SQL
-        GROUP BY gbif_taxa.taxonkey, external_resources.ncbi_id,
-        asvs."taxonID",
-        gbif_taxa.kingdom, gbif_taxa.phylum, gbif_taxa.classname,
-        gbif_taxa.order, gbif_taxa.family, gbif_taxa.genus, gbif_taxa.species,
-        ncbi_nodes.hierarchy_names, ncbi_nodes.rank
-        ORDER BY #{sort_fields};
+          COUNT(*),
+          ARRAY_AGG(DISTINCT(
+            external.gbif_occ_taxa.taxonkey || '|' ||
+            #{gbif_taxa_sql}
+          )) AS  gbif_taxa,
+          ARRAY_AGG(DISTINCT(
+            ncbi_nodes.ncbi_id || '|' ||
+            #{ncbi_taxa_sql}
+          )) AS  ncbi_taxa
         SQL
       end
 
-      def gbif_taxa_with_edna_sql
+      def join_sql
         <<-SQL
-        WHERE ncbi_nodes.taxon_id IN (
-          SELECT distinct(unnest(ids))::TEXT::NUMERIC
-          FROM asvs
-          JOIN extractions
-            ON asvs.extraction_id = extractions.id
-          JOIN research_project_sources
-            ON research_project_sources.sourceable_id = asvs.extraction_id
-            AND research_project_id = #{project.id}
-            AND sourceable_type = 'Extraction'
-          JOIN ncbi_nodes
-            ON ncbi_nodes.taxon_id = asvs."taxonID"
-        )
+          FROM combine_taxa
+          JOIN external.gbif_occurrences
+            ON external.gbif_occurrences.taxonkey = combine_taxa.taxon_id
+          JOIN  research_project_sources
+            ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
+            AND research_project_id = 4
+            AND sourceable_type = 'GbifOccurrence'
+            AND external.gbif_occurrences.#{taxon_rank_field} IS NOT NULL
+            AND metadata ->> 'location' != 'Montara SMR'
+          JOIN external.gbif_occ_taxa
+            ON external.gbif_occ_taxa.#{taxon_rank_field} =
+            external.gbif_occurrences.#{taxon_rank_field}
+            AND external.gbif_occ_taxa.taxonrank = '#{taxon_rank}'
+          LEFT JOIN external_resources
+            ON external_resources.gbif_id = external.gbif_occ_taxa.taxonkey
+            AND external_resources.ncbi_id IS NOT NULL
+            AND external_resources.source != 'wikidata'
+          LEFT JOIN ncbi_nodes
+            ON ncbi_nodes.taxon_id = external_resources.ncbi_id
         SQL
+      end
+
+      def group_fields
+        fields = %w[
+          combine_taxa.phylum
+          combine_taxa.class_name
+          combine_taxa.order
+          combine_taxa.family
+          combine_taxa.genus
+          combine_taxa.species
+        ]
+        sql = 'combine_taxa.superkingdom, '
+        sql += case taxon_rank_field
+               when 'phylum' then fields[0]
+               when 'classname' then fields[0..1].join(', ')
+               when 'order' then fields[0..2].join(', ')
+               when 'family' then fields[0..3].join(', ')
+               when 'genus' then fields[0..4].join(', ')
+               when 'species' then fields[0..5].join(', ')
+               end
+        sql
       end
 
       def sort_fields
         if sort_by == 'count'
           'count(*) DESC'
         else
-          'gbif_taxa.kingdom, gbif_taxa.phylum, gbif_taxa.classname, ' \
-          'gbif_taxa.order, gbif_taxa.family, gbif_taxa.genus, ' \
-          'gbif_taxa.species'
+          group_fields
         end
+      end
+
+      def taxon_rank_value
+        conn.quote(taxon_rank)
+      end
+
+      def taxon_rank_field
+        taxon_rank == 'class' ? 'classname' : taxon_rank
       end
     end
   end
 end
+# rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity

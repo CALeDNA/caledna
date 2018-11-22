@@ -69,7 +69,6 @@ class ResearchProjectsController < ApplicationController
       @gbif_taxa_with_edna_map = project_service.common_taxa_map
     elsif params[:section] == 'edna_gbif_comparison'
       @gbif_taxa = project_service.gbif_taxa
-      @gbif_taxa_with_edna = project_service.gbif_taxa_with_edna
     elsif params[:section] == 'area_diversity'
     elsif params[:section] == 'taxonomic_bias'
     else

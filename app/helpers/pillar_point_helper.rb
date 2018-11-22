@@ -38,13 +38,15 @@ module PillarPointHelper
     values.map(&:second).sum
   end
 
-  def self.cal_counts(counts, include_other=false)
+  # rubocop:disable Metrics/MethodLength
+  def self.cal_counts(counts, include_other = false)
     categories = %w[
       Animals Archaea Bacteria Chromista Fungi Plants
     ]
 
-    other_count = counts['Environmental samples'] + counts['Plants and Fungi'] +
-                  counts['Protozoa']
+    other_count = (counts['Environmental samples'] || 0) +
+                  (counts['Plants and Fungi'] || 0) +
+                  (counts['Protozoa'] || 0)
 
     normalized_counts = {}
     categories.each do |category|
@@ -58,7 +60,7 @@ module PillarPointHelper
     normalized_counts
   end
 
-  def self.gbif_counts(counts, include_other=false)
+  def self.gbif_counts(counts, include_other = false)
     categories = %w[
       Animalia Archaea Bacteria Chromista Fungi Plantae
     ]
@@ -73,5 +75,26 @@ module PillarPointHelper
     end
     normalized_counts['Other'] = nil if include_other
     normalized_counts
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def self.taxon_string(taxon)
+    [
+      taxon['superkingdom'], taxon['phylum'], taxon['class_name'],
+      taxon['order'],
+      taxon['family'], taxon['genus'], taxon['species']
+    ].compact.join(', ')
+  end
+
+  def self.convert_taxa_string(string)
+    taxa_array =
+      string.delete('{"').delete('{').delete('"}').delete('}').split(',')
+    taxa_array.map do |taxon|
+      parts = taxon.split('|')
+      {
+        id: parts.first,
+        taxonomy_string: parts.drop(1).join(', ')
+      }
+    end
   end
 end
