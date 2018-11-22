@@ -97,4 +97,12 @@ module PillarPointHelper
       }
     end
   end
+
+  def self.convert_taxa_ids(string)
+    taxa_array =
+      string.delete('{"').delete('{').delete('"}').delete('}').split(',')
+    taxa_array.map do |taxon|
+      taxon.split('|').first
+    end.join('|')
+  end
 end

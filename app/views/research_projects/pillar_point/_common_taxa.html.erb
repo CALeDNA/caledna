@@ -26,8 +26,12 @@
   <div class="col-sm-4">
     <ol>
       <% @gbif_taxa_with_edna_map.each do |taxon| %>
-      <li><%= link_to taxon['ncbi_name'],
-        "#{base_url}&taxon_rank=#{taxon_rank}&ncbi_id=#{taxon['ncbi_id']}&gbif_id=#{taxon['gbif_id']}"
+
+<%=  %>
+      <li><%= link_to PillarPointHelper.taxon_string(taxon),
+        "#{base_url}&taxon_rank=#{taxon_rank}" \
+        "&ncbi_id=#{PillarPointHelper.convert_taxa_ids(taxon['ncbi_taxa'])}"  \
+        "&gbif_id=#{PillarPointHelper.convert_taxa_ids(taxon['gbif_taxa'])}"
       %></li>
       <% end %>
     </ol>
