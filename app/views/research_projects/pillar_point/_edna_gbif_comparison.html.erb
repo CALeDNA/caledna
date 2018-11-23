@@ -44,17 +44,17 @@
   <tr>
     <td>
       <b>Normalized Taxa</b>
-      <p><%= PillarPointHelper.taxon_string(taxon) %></p>
+      <p><%= CombineTaxonHelper.taxon_string(taxon) %></p>
 
       <b>GBIF</b>
-      <% PillarPointHelper.convert_taxa_string(taxon['gbif_taxa']).each do |taxon| %>
+      <% CombineTaxonHelper.convert_taxa_string(taxon['gbif_taxa']).each do |taxon| %>
         <p><%= taxon[:taxonomy_string] %></p>
         <p>GBIF ID: <%= link_to taxon[:id], "http://gbif.org/species/#{taxon[:id]}" %></p>
       <% end %>
 
       <%  if taxon['ncbi_taxa'] != '{NULL}' %>
         <b>NCBI</b>
-        <% PillarPointHelper.convert_taxa_string(taxon['ncbi_taxa']).each do |taxon| %>
+        <% CombineTaxonHelper.convert_taxa_string(taxon['ncbi_taxa']).each do |taxon| %>
           <p><%= taxon[:taxonomy_string] %></p>
           <p>
             NCBI ID: <%= link_to taxon[:id], "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{taxon[:id]}&lvl=3" %>,
