@@ -125,7 +125,9 @@ module ResearchProjectService
                    .gsub('plants', '14|4')
                    .gsub('animals', '12')
                    .gsub('fungi', '13')
-                   .gsub('bacteria', '0|9|16')
+                   .gsub('bacteria', '0|9')
+                   .gsub('archaea', '16')
+                   .gsub('chromista', '17')
 
             filters = taxa.split('|').join(', ')
             sql += " AND ncbi_nodes.cal_division_id in (#{filters})"
