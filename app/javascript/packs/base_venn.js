@@ -93,7 +93,7 @@ function showGraphs(graphEls) {
 // draw tables
 // =============
 
-function drawTable(data, selector) {
+function drawTable(data, columns, columnNames, selector) {
   removeTable(selector)
 
   let table = d3.select(selector)
@@ -101,13 +101,11 @@ function drawTable(data, selector) {
     .attr("class", "table")
   let thead = table.append('thead')
   let  tbody = table.append('tbody');
-  let columns = ['sets', 'size']
-  let column_names = ['location', 'taxa count']
 
   // append the header row
   thead.append('tr')
     .selectAll('th')
-    .data(column_names).enter()
+    .data(columnNames).enter()
     .append('th')
     .text((column) => column);
 
@@ -192,16 +190,19 @@ document.querySelector('button[type=submit]')
   initApp(url);
 });
 
-graphBtn.addEventListener('click', (event) => {
-  hideTables(tableEls)
-  showGraphs(graphEls)
-});
+if (graphBtn) {
+  graphBtn.addEventListener('click', (event) => {
+    hideTables(tableEls)
+    showGraphs(graphEls)
+  });
+}
 
-
-tableBtn.addEventListener('click', (event) => {
-  showTables(tableEls)
-  hideGraphs(graphEls)
-});
+if (tableBtn) {
+  tableBtn.addEventListener('click', (event) => {
+    showTables(tableEls)
+    hideGraphs(graphEls)
+  });
+}
 
 document.querySelector('.js-reset-filters')
 .addEventListener('click', (event) => {

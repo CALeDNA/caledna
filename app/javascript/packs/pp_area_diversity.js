@@ -37,10 +37,15 @@ function initDiversity(endpoint) {
     diversityData = res.data;
     const ednaSets = formatDatasets(diversityData.cal)
     const gbifSets = formatDatasets(diversityData.gbif)
+
     baseVenn.drawVenn(gbifSets, '#graph-gbif')
     baseVenn.drawVenn(ednaSets, '#graph-edna')
-    baseVenn.drawTable(ednaSets, '#table-edna')
-    baseVenn.drawTable(gbifSets, '#table-gbif')
+
+    let tableColumns = ['sets', 'size']
+    let tableColumnNames = ['location', 'taxa count']
+    baseVenn.drawTable(ednaSets, tableColumns,  tableColumnNames, '#table-edna')
+    baseVenn.drawTable(gbifSets, tableColumns,  tableColumnNames, '#table-gbif')
+
     spinner1.stop();
     spinner2.stop();
   })

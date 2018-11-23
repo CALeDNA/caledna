@@ -13,8 +13,11 @@ const source_names = {
 let taxaData;
 let filters = { taxon_groups: [], taxon_ranks: [] };
 const apiEndpoint = '/api/v1/pillar_point/source_comparison_all';
-const tableEls = document.querySelectorAll('#table-compare')
-const graphEls = document.querySelectorAll('#graph-compare')
+const tableEls = []
+const graphEls = [
+  document.querySelector('#graph-compare'),
+  document.querySelector('#table-compare')
+]
 
 // =============
 // misc
@@ -31,7 +34,11 @@ function initDiversity(endpoint) {
     const taxaSets = formatDatasets(taxaData)
 
     baseVenn.drawVenn(taxaSets, '#graph-compare')
-    baseVenn.drawTable(taxaSets, '#table-compare')
+
+    let tableColumns = ['sets', 'size']
+    let tableColumnNames = ['dataset', 'taxa count']
+    baseVenn.drawTable(taxaSets, tableColumns, tableColumnNames, '#table-compare')
+
     spinner1.stop();
     spinner2.stop();
   })
@@ -45,7 +52,6 @@ function formatDatasets(data) {
   })
 }
 
-
 // =============
 // init
 // =============
@@ -56,5 +62,4 @@ baseVenn.config({
   init: initDiversity,
   chartFilters: filters,
 })
-baseVenn.hideTables(tableEls)
 initDiversity(apiEndpoint);
