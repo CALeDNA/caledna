@@ -64,21 +64,15 @@ module ResearchProjectService
       def gbif_division_unique_stats
         sql = gbif_unique_sql
         sql += <<-SQL
-            AND (research_project_sources.research_project_id =
-            #{conn.quote(project.id)})
-            AND (metadata ->> 'location' != 'Montara SMR')
-            AND kingdom IS NOT NULL
-            ORDER BY kingdom
-          ) AS foo
           GROUP BY kingdom
-          ORDER BY kingdom;
+          ORDER BY kingdom
         SQL
 
         conn.exec_query(sql)
       end
 
-      def gbif_division_stats
-        sql = <<-SQL
+      def gbif_division_sql
+        <<-SQL
           SELECT  kingdom as category, count(kingdom)
           FROM external.gbif_occurrences
           JOIN research_project_sources
@@ -89,6 +83,12 @@ module ResearchProjectService
             #{conn.quote(project.id)})
           AND (metadata ->> 'location' != 'Montara SMR')
           AND kingdom IS NOT NULL
+        SQL
+      end
+
+      def gbif_division_stats
+        sql = <<-SQL
+          #{gbif_division_sql}
           GROUP BY kingdom
           ORDER BY kingdom
         SQL

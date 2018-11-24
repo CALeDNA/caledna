@@ -5,38 +5,50 @@
   }
 </style>
 
-
 <div class="row">
   <div class="col-sm-6">
-    <h3>All GBIF Occurrences</h3>
+    <h3>iNaturalist Occurrences</h3>
+    <canvas id="only-inat-occurrences-chart" width="400" height="400"></canvas>
+
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:all]),
-        total: PillarPointHelper.total(@gbif_breakdown[:all].values)
+        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:inat_only_occurrences]),
+        total: PillarPointHelper.total(@gbif_breakdown[:inat_only_occurrences].values)
+      } %>
+  </div>
+
+  <div class="col-sm-6">
+    <h3>Exclude iNaturalist Occurrences</h3>
+    <canvas id="exclude-inat-occurrences-chart" width="400" height="400"></canvas>
+
+    <%= render partial: "research_projects/pillar_point/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:exclude_inat_occurrences]),
+        total: PillarPointHelper.total(@gbif_breakdown[:exclude_inat_occurrences].values)
       } %>
   </div>
 </div>
 
 <div class="row">
   <div class="col-sm-6">
-    <h3>iNaturalist Observations</h3>
-    <canvas id="only-inat-chart" width="400" height="400"></canvas>
+    <h3>iNaturalist Unique Species</h3>
+    <canvas id="only-inat-unique-chart" width="400" height="400"></canvas>
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:inat_only]),
-        total: PillarPointHelper.total(@gbif_breakdown[:inat_only].values)
+        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:inat_only_unique]),
+        total: PillarPointHelper.total(@gbif_breakdown[:inat_only_unique].values)
       } %>
   </div>
 
   <div class="col-sm-6">
-    <h3>Exclude iNaturalist Observations</h3>
-    <canvas id="exclude-inat-chart" width="400" height="400"></canvas>
+    <h3>Exclude iNaturalist Unique Species</h3>
+    <canvas id="exclude-inat-unique-chart" width="400" height="400"></canvas>
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
       locals: {
-        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:exclude_inat]),
-        total: PillarPointHelper.total(@gbif_breakdown[:exclude_inat].values)
+        occurrence_stats: PillarPointHelper.gbif_counts(@gbif_breakdown[:exclude_inat_unique]),
+        total: PillarPointHelper.total(@gbif_breakdown[:exclude_inat_unique].values)
       } %>
   </div>
 </div>
@@ -45,8 +57,10 @@
 (function(){
 
   window.caledna = {
-    only_inat_data: <%= @gbif_breakdown[:inat_only].to_json.html_safe %>,
-    exclude_inat_data: <%= @gbif_breakdown[:exclude_inat].to_json.html_safe %>
+    only_inat_unique_data: <%= @gbif_breakdown[:inat_only_unique].to_json.html_safe %>,
+    exclude_inat_unique_data: <%= @gbif_breakdown[:exclude_inat_unique].to_json.html_safe %>,
+    only_inat_occurrences_data: <%= @gbif_breakdown[:inat_only_occurrences].to_json.html_safe %>,
+    exclude_inat_occurrences_data: <%= @gbif_breakdown[:exclude_inat_occurrences].to_json.html_safe %>,
   }
 
 })(window)

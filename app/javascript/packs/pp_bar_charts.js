@@ -49,7 +49,9 @@ $(function() {
   createChart ('gbif-total-chart', window.caledna.gbif_division_total)
   createChart ('gbif-unique-chart', window.caledna.gbif_division_unique)
 
-  createChart ('only-inat-chart', window.caledna.only_inat_data)
-  createChart ('exclude-inat-chart', window.caledna.exclude_inat_data)
+  createChart ('only-inat-unique-chart', window.caledna.only_inat_unique_data)
+  createChart ('exclude-inat-unique-chart', window.caledna.exclude_inat_unique_data)
+  createChart ('only-inat-occurrences-chart', window.caledna.only_inat_occurrences_data)
+  createChart ('exclude-inat-occurrences-chart', window.caledna.exclude_inat_occurrences_data)
 
 })

@@ -26,14 +26,11 @@ module ResearchProjectService
     end
 
     def gbif_occurrences
-      ids =
-        ResearchProjectSource
-        .gbif
-        .where(research_project: project)
+      GbifOccurrence
+        .joins(:research_project_sources)
+        .where('research_project_sources.research_project_id = ?', project.id)
         .where("metadata ->> 'location' != 'Montara SMR'")
-        .pluck(:sourceable_id)
-
-      GbifOccurrence.where(gbifid: ids)
+        .where('kingdom is not null')
     end
 
     def gbif_occurrences_by_taxa
@@ -78,15 +75,19 @@ module ResearchProjectService
 
     def gbif_unique_sql
       <<-SQL
-      SELECT kingdom as category, count(taxonkey) FROM (
-        SELECT DISTINCT(taxonkey), kingdom
+        SELECT COUNT(DISTINCT(taxonkey)), kingdom AS category
         FROM external.gbif_occurrences
         JOIN research_project_sources
         ON research_project_sources.sourceable_id =
           external.gbif_occurrences.gbifid
         WHERE (research_project_sources.sourceable_type = 'GbifOccurrence')
+        AND (research_project_sources.research_project_id =
+        #{conn.quote(project.id)})
+        AND (metadata ->> 'location' != 'Montara SMR')
+        AND kingdom IS NOT NULL
       SQL
     end
+
 
     def limit
       48
