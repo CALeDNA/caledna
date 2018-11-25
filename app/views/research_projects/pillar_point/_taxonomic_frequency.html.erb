@@ -1,14 +1,9 @@
-<div id="occurrences-chart"></div>
-<div id="unique-taxa-chart"></div>
+<style>
+#taxonomic-diversity-chart-cal, #taxonomic-diversity-chart-gbif {
+  margin-left: -340px;
+}
+</style>
 
-<div class="btn-group" role="group" >
-  <div class="btn btn-default js-graph-btn">
-    Graph
-  </div>
-  <div class="btn btn-default js-table-btn">
-    Table
-  </div>
-</div>
 <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
   <i class="fas fa-sliders-h"></i> Filters
 </button>
@@ -18,19 +13,44 @@
     <div class="col-sm-6">
       <%= render partial: "research_projects/pillar_point/filters_taxa_divisions" %>
     </div>
+
+    <div class="col-sm-6">
+      <fieldset>
+        <legend>Taxa rank</legend>
+        <div class="radio">
+          <label for="phylum">
+            <input type="radio" name="taxon_rank" id="phylum" value="phylum" checked>
+            phylum
+          </label>
+        </div>
+        <% ['class', 'order', 'family', 'genus', 'species'].each do |rank| %>
+          <div class="radio">
+            <label for="<%= rank %>">
+              <input type="radio" name="taxon_rank" id="<%= rank %>" value="<%= rank %>">
+              <%= rank %>
+            </label>
+          </div>
+        <% end %>
+      </fieldset>
+    </div>
   </div>
 
   <button type="submit" class="btn btn-primary">Apply filters</button>
   <button class="btn btn-primary js-reset-filters">Reset filters</button>
 </form>
 
-<h2>eDNA</h2>
-<div id="taxonomic-diversity-chart-cal"></div>
-<div id="taxonomic-diversity-table-cal"></div>
+<div class="row">
+  <div class="col-sm-6">
+    <h2>eDNA</h2>
+    <div id="taxonomic-diversity-chart-cal"></div>
+  </div>
+  <div class="col-sm-6">
+    <h2>Gbif</h2>
+    <div id="taxonomic-diversity-table-gbif"></div>
+    <div id="taxonomic-diversity-chart-gbif"></div>
+  </div>
+</div>
 
 
-<h2>Gbif</h2>
-<div id="taxonomic-diversity-table-gbif"></div>
-<div id="taxonomic-diversity-chart-gbif"></div>
 
 <%= javascript_pack_tag 'pp_taxonomic_frequency' %>

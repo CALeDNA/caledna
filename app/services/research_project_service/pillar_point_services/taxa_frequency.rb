@@ -14,25 +14,33 @@ module ResearchProjectService
       def biodiversity_bias_gbif
         sql = <<~SQL
           SELECT count(*) AS count, kingdom AS division,
-          phylum, classname AS class, 'gbif' AS source
+          phylum, "#{gbif_taxon_rank_field}" AS #{taxon_rank}, 'gbif' AS source
           FROM external.gbif_occurrences
           JOIN research_project_sources
           ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
           WHERE sourceable_type = 'GbifOccurrence'
-          AND research_project_id = 4
-          AND classname IS NOT NULL
+          AND research_project_id = #{project.id}
+          AND "#{gbif_taxon_rank_field}" IS NOT NULL
           AND (metadata ->> 'location' != 'Montara SMR')
-          GROUP BY kingdom, phylum, classname
+          #{kingdoms_sql}
+          GROUP BY kingdom, phylum, "#{gbif_taxon_rank_field}"
         SQL
 
         conn.exec_query(sql)
+      end
+
+      def kingdoms_sql
+        return if taxon_groups.blank?
+
+        kingdoms = selected_taxon_groups.to_s[1..-2].tr('"', "'")
+        "AND kingdom in (#{kingdoms})"
       end
 
       def biodiversity_bias_cal
         sql = <<~SQL
           SELECT count(*) AS count, ncbi_divisions.name AS division,
           hierarchy_names ->> 'phylum' AS phylum,
-          hierarchy_names ->> 'class' AS class, 'ncbi' AS source
+          hierarchy_names ->> '#{taxon_rank}' AS #{taxon_rank}, 'ncbi' AS source
           FROM asvs
           JOIN research_project_sources
           ON asvs.extraction_id = research_project_sources.sourceable_id
@@ -41,16 +49,23 @@ module ResearchProjectService
           JOIN ncbi_divisions
           on ncbi_nodes.cal_division_id = ncbi_divisions.id
           WHERE sourceable_type = 'Extraction'
-          AND research_project_id = 4
-          AND hierarchy_names ->> 'class' IS NOT NULL
+          AND research_project_id = #{project.id}
+          AND hierarchy_names ->> '#{taxon_rank}' IS NOT NULL
           AND ncbi_divisions.name != 'Environmental samples'
+          #{taxon_group_filters_sql2}
           GROUP BY ncbi_divisions.name,
           hierarchy_names ->> 'phylum',
-          hierarchy_names ->> 'class'
+          hierarchy_names ->> '#{taxon_rank}'
           ORDER BY count DESC
         SQL
 
         conn.exec_query(sql)
+      end
+
+      def taxon_group_filters_sql2
+        return if taxon_groups.blank?
+
+        " AND ncbi_nodes.cal_division_id in (#{selected_taxon_groups_ids})"
       end
     end
   end

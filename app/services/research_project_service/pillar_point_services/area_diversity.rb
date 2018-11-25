@@ -121,16 +121,7 @@ module ResearchProjectService
           SQL
 
           if taxon_groups
-            taxa = taxon_groups
-                   .gsub('plants', '14|4')
-                   .gsub('animals', '12')
-                   .gsub('fungi', '13')
-                   .gsub('bacteria', '0|9')
-                   .gsub('archaea', '16')
-                   .gsub('chromista', '17')
-
-            filters = taxa.split('|').join(', ')
-            sql += " AND ncbi_nodes.cal_division_id in (#{filters})"
+            sql += " AND ncbi_nodes.cal_division_id in (#{selected_taxon_groups_ids})"
           end
 
           if months
@@ -154,14 +145,8 @@ module ResearchProjectService
         SQL
 
         if taxon_groups
-          taxa = taxon_groups
-                 .gsub('plants', 'Plantae')
-                 .gsub('animals', 'Animalia')
-                 .gsub('fungi', 'Fungi')
-                 .gsub('bacteria', 'Bacteria')
-
-          filters = taxa.split('|')
-          sql += " AND kingdom in (#{filters.to_s[1..-2].tr('"', "'")})"
+          filters = selected_taxon_groups.to_s[1..-2].tr('"', "'")
+          sql += " AND kingdom in (#{filters})"
         end
 
         if months
@@ -193,10 +178,6 @@ module ResearchProjectService
         sql += " AND research_project_sources.metadata ->> 'location'"
         sql += " = '#{location}'"
         sql
-      end
-
-      def taxon_groups
-        params['taxon_groups']
       end
 
       def months

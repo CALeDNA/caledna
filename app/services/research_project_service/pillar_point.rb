@@ -61,6 +61,10 @@ module ResearchProjectService
 
     private
 
+    def gbif_taxon_rank_field
+      taxon_rank == 'class' ? 'classname' : taxon_rank
+    end
+
     def conn
       @conn ||= ActiveRecord::Base.connection
     end
@@ -88,6 +92,33 @@ module ResearchProjectService
       SQL
     end
 
+    def taxon_groups
+      params['taxon_groups']
+    end
+
+    def selected_taxon_groups_ids
+      taxa = taxon_groups
+             .gsub('plants', '14|4')
+             .gsub('animals', '12')
+             .gsub('fungi', '13')
+             .gsub('bacteria', '0|9')
+             .gsub('archaea', '16')
+             .gsub('chromista', '17')
+
+      taxa.split('|').join(', ')
+    end
+
+    def selected_taxon_groups
+      taxa = taxon_groups
+             .gsub('plants', 'Plantae')
+             .gsub('animals', 'Animalia')
+             .gsub('fungi', 'Fungi')
+             .gsub('bacteria', 'Bacteria')
+             .gsub('archaea', 'Archaea')
+             .gsub('chromista', 'Chromista')
+
+      taxa.split('|')
+    end
 
     def limit
       48

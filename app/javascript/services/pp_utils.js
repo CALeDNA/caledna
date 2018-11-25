@@ -9,8 +9,20 @@ function formatLongTaxonString(taxon, taxaGroups) {
       groupName = capitalizeFirstLetter(group)
     }
   }
-  const phylum = taxon.phylum === null ? 'N/A' : taxon.phylum;
-  return `${groupName}: ${phylum}, ${taxon.class}`;
+  let taxonRanks = [
+    taxon.phylum, taxon.class, taxon.order, taxon.family,
+    taxon.genus, taxon.species
+  ]
+  const phylum = taxon.phylum === null ? '--' : taxon.phylum;
+  const selectedRank = taxonRanks.filter(rank => rank != phylum)
+    .filter(rank => rank !== undefined)
+    .filter(rank => rank !== null)
+
+  let taxonString = `${groupName}: ${phylum}`;
+  if (selectedRank[0]) {
+    taxonString += `, ${selectedRank[0]}`
+  }
+  return taxonString
 }
 
 function formatShortTaxonString(taxon, taxaGroups) {

@@ -31,9 +31,9 @@ module ResearchProjectService
           combine_taxa.species
         ]
         sql = 'SELECT combine_taxa.superkingdom, '
-        sql += case taxon_rank_field
+        sql += case taxon_rank
                when 'phylum' then fields[0]
-               when 'classname' then fields[0..1].join(', ')
+               when 'class' then fields[0..1].join(', ')
                when 'order' then fields[0..2].join(', ')
                when 'family' then fields[0..3].join(', ')
                when 'genus' then fields[0..4].join(', ')
@@ -52,9 +52,9 @@ module ResearchProjectService
           "coalesce(external.gbif_occ_taxa.species, '--')"
         ]
         sql = "external.gbif_occ_taxa.kingdom || '|' ||"
-        sql += case taxon_rank_field
+        sql += case taxon_rank
                when 'phylum' then fields[0]
-               when 'classname' then fields[0..1].join("|| '|' ||")
+               when 'class' then fields[0..1].join("|| '|' ||")
                when 'order' then fields[0..2].join("|| '|' ||")
                when 'family' then fields[0..3].join("|| '|' ||")
                when 'genus' then fields[0..4].join("|| '|' ||")
@@ -74,9 +74,9 @@ module ResearchProjectService
         ]
         sql = "coalesce(ncbi_nodes.hierarchy_names ->> 'superkingdom', '--') " \
           "|| '|' ||"
-        sql += case taxon_rank_field
+        sql += case taxon_rank
                when 'phylum' then fields[0]
-               when 'classname' then fields[0..1].join("|| '|' ||")
+               when 'class' then fields[0..1].join("|| '|' ||")
                when 'order' then fields[0..2].join("|| '|' ||")
                when 'family' then fields[0..3].join("|| '|' ||")
                when 'genus' then fields[0..4].join("|| '|' ||")
@@ -137,11 +137,11 @@ module ResearchProjectService
             ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
             AND research_project_id = 4
             AND sourceable_type = 'GbifOccurrence'
-            AND external.gbif_occurrences.#{taxon_rank_field} IS NOT NULL
+            AND external.gbif_occurrences.#{gbif_taxon_rank_field} IS NOT NULL
             AND metadata ->> 'location' != 'Montara SMR'
           JOIN external.gbif_occ_taxa
-            ON external.gbif_occ_taxa.#{taxon_rank_field} =
-            external.gbif_occurrences.#{taxon_rank_field}
+            ON external.gbif_occ_taxa.#{gbif_taxon_rank_field} =
+            external.gbif_occurrences.#{gbif_taxon_rank_field}
             AND external.gbif_occ_taxa.taxonrank = '#{taxon_rank}'
           LEFT JOIN external_resources
             ON external_resources.gbif_id = external.gbif_occ_taxa.taxonkey
@@ -162,9 +162,9 @@ module ResearchProjectService
           combine_taxa.species
         ]
         sql = 'combine_taxa.superkingdom, '
-        sql += case taxon_rank_field
+        sql += case taxon_rank
                when 'phylum' then fields[0]
-               when 'classname' then fields[0..1].join(', ')
+               when 'class' then fields[0..1].join(', ')
                when 'order' then fields[0..2].join(', ')
                when 'family' then fields[0..3].join(', ')
                when 'genus' then fields[0..4].join(', ')
@@ -179,14 +179,6 @@ module ResearchProjectService
         else
           group_fields
         end
-      end
-
-      def taxon_rank_value
-        conn.quote(taxon_rank)
-      end
-
-      def taxon_rank_field
-        taxon_rank == 'class' ? 'classname' : taxon_rank
       end
     end
   end

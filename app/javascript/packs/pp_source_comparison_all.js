@@ -11,7 +11,7 @@ const source_names = {
   'gbif': 'GBIF'
 };
 let taxaData;
-let filters = { taxon_groups: [], taxon_ranks: [] };
+let filters = { taxon_groups: [], taxon_rank: [] };
 const apiEndpoint = '/api/v1/pillar_point/source_comparison_all';
 const tableEls = []
 const graphEls = [

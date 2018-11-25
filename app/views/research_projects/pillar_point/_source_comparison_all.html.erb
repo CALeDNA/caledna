@@ -28,14 +28,14 @@
         <legend>Taxa rank</legend>
         <div class="radio">
           <label for="phylum">
-            <input type="radio" name="taxon_ranks" id="phylum" value="phylum" checked>
+            <input type="radio" name="taxon_rank" id="phylum" value="phylum" checked>
             phylum
           </label>
         </div>
         <% ['class', 'order', 'family', 'genus', 'species'].each do |rank| %>
           <div class="radio">
             <label for="<%= rank %>">
-              <input type="radio" name="taxon_ranks" id="<%= rank %>" value="<%= rank %>">
+              <input type="radio" name="taxon_rank" id="<%= rank %>" value="<%= rank %>">
               <%= rank %>
             </label>
           </div>
