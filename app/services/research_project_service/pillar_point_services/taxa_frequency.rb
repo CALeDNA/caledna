@@ -13,49 +13,55 @@ module ResearchProjectService
 
       def biodiversity_bias_gbif
         sql = <<~SQL
-          SELECT count(*) AS count, kingdom AS division,
-          phylum, "#{gbif_taxon_rank_field}" AS #{taxon_rank}, 'gbif' AS source
-          FROM external.gbif_occurrences
+          SELECT count(*) AS count, ncbi_divisions.name AS division,
+          combine_taxa.phylum,
+          combine_taxa.#{combine_taxon_rank_field} AS #{taxon_rank},
+          'gbif' AS source
+          FROM combine_taxa
+          JOIN external.gbif_occurrences
+            ON combine_taxa.taxon_id = external.gbif_occurrences.taxonkey
+            AND combine_taxa.source = 'gbif'
           JOIN research_project_sources
-          ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
+            ON external.gbif_occurrences.gbifid =
+            research_project_sources.sourceable_id
+          JOIN ncbi_divisions
+            ON combine_taxa.cal_division_id = ncbi_divisions.id
           WHERE sourceable_type = 'GbifOccurrence'
           AND research_project_id = #{project.id}
-          AND "#{gbif_taxon_rank_field}" IS NOT NULL
+          AND combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
           AND (metadata ->> 'location' != 'Montara SMR')
-          #{kingdoms_sql}
-          GROUP BY kingdom, phylum, "#{gbif_taxon_rank_field}"
+          #{taxon_group_filters_sql2}
+          GROUP BY ncbi_divisions.name,
+          combine_taxa.phylum,
+          combine_taxa.#{combine_taxon_rank_field}
+          ORDER BY count DESC
         SQL
 
         conn.exec_query(sql)
       end
 
-      def kingdoms_sql
-        return if taxon_groups.blank?
-
-        kingdoms = selected_taxon_groups.to_s[1..-2].tr('"', "'")
-        "AND kingdom in (#{kingdoms})"
-      end
-
       def biodiversity_bias_cal
         sql = <<~SQL
           SELECT count(*) AS count, ncbi_divisions.name AS division,
-          hierarchy_names ->> 'phylum' AS phylum,
-          hierarchy_names ->> '#{taxon_rank}' AS #{taxon_rank}, 'ncbi' AS source
-          FROM asvs
+          combine_taxa.phylum,
+          combine_taxa.#{combine_taxon_rank_field} AS #{taxon_rank},
+          'ncbi' AS source
+          FROM combine_taxa
+          JOIN asvs
+            ON asvs."taxonID" = combine_taxa.taxon_id
+            AND combine_taxa.source = 'ncbi'
           JOIN research_project_sources
-          ON asvs.extraction_id = research_project_sources.sourceable_id
-          JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs."taxonID"
+            ON asvs.extraction_id = research_project_sources.sourceable_id
           JOIN ncbi_divisions
-          on ncbi_nodes.cal_division_id = ncbi_divisions.id
+            ON combine_taxa.cal_division_id = ncbi_divisions.id
           WHERE sourceable_type = 'Extraction'
           AND research_project_id = #{project.id}
-          AND hierarchy_names ->> '#{taxon_rank}' IS NOT NULL
+          AND combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
           AND ncbi_divisions.name != 'Environmental samples'
           #{taxon_group_filters_sql2}
           GROUP BY ncbi_divisions.name,
-          hierarchy_names ->> 'phylum',
-          hierarchy_names ->> '#{taxon_rank}'
+          combine_taxa.phylum,
+          combine_taxa.#{combine_taxon_rank_field}
           ORDER BY count DESC
         SQL
 
@@ -65,7 +71,7 @@ module ResearchProjectService
       def taxon_group_filters_sql2
         return if taxon_groups.blank?
 
-        " AND ncbi_nodes.cal_division_id in (#{selected_taxon_groups_ids})"
+        " AND combine_taxa.cal_division_id in (#{selected_taxon_groups_ids})"
       end
     end
   end

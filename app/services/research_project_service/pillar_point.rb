@@ -61,6 +61,10 @@ module ResearchProjectService
 
     private
 
+    def combine_taxon_rank_field
+      taxon_rank == 'class' ? 'class_name' : taxon_rank
+    end
+
     def gbif_taxon_rank_field
       taxon_rank == 'class' ? 'classname' : taxon_rank
     end

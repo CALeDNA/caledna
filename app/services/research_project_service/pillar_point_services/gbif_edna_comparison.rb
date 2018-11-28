@@ -133,6 +133,7 @@ module ResearchProjectService
           FROM combine_taxa
           JOIN external.gbif_occurrences
             ON external.gbif_occurrences.taxonkey = combine_taxa.taxon_id
+            AND combine_taxa.source = 'gbif'
           JOIN  research_project_sources
             ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
             AND research_project_id = 4
