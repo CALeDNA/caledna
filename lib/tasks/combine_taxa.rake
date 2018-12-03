@@ -2,15 +2,84 @@
 
 namespace :combine_taxa do
   require 'csv'
+  require_relative '../../app/services/import_combine_taxa'
+  include ImportCombineTaxa
 
-  #  bin/rake combine_taxa:import file=data/combined_taxa_complete.csv
-  task import: :environment do
-    path = "#{Rails.root}/#{ENV['file']}"
+  desc 'import taxa from Ruggiero paper csv'
+  task import_research_paper: :environment do
+    path =  ENV['file']
 
-    def create_taxonomy_string(row)
-      "#{row['superkingdom']};#{row['phylum']};#{row['class']};" \
-      "#{row['order']};#{row['family']};#{row['genus']};#{row['species']}"
+    ranks = %w[
+      superkingdom kingdom subkingdom infrakingdom superphylum phylum subphylum
+      infraphylum superclass class subclass infraclass superorder order
+    ]
+    taxa_data = {}
+    taxa_history = {}
+    column_with_taxon_index = 0
+
+    ranks.each do |rank|
+      taxa_history[rank] = nil
     end
+
+    CSV.foreach(path, headers: true, col_sep: ',') do |row|
+      puts row
+
+      ranks.each.with_index do |rank, index|
+        if row[rank].present?
+          taxa_data = parse_taxon(row[rank])
+          next if taxa_data.blank?
+
+          name = taxa_data[:name]
+          next if name.blank?
+
+          taxa_history[rank] = name
+
+          if column_with_taxon_index > index
+            [*(index + 1)..ranks.length].each do |num|
+              taxa_history[ranks[num]] = nil
+            end
+          end
+          column_with_taxon_index = index
+        end
+      end
+
+      next if taxa_data.blank?
+
+      hierarchy_names = taxa_history.reject { |_k, v| v.blank? }
+      full_taxonomy_string = taxa_history.values.join(';')
+
+      attributes = {
+        source: 'paper',
+        notes: taxa_data[:notes],
+        full_taxonomy_string: full_taxonomy_string
+      }
+
+      if taxa_data[:name].present?
+        attributes.merge!(
+          superkingdom: taxa_history['superkingdom'],
+          kingdom: taxa_history['kingdom'],
+          phylum: taxa_history['phylum'],
+          class_name: taxa_history['class'],
+          order: taxa_history['order'],
+          family: taxa_history['family'],
+          genus: taxa_history['genus'],
+          species: taxa_history['species'],
+          synonym: taxa_data[:synonym],
+          taxon_rank: taxa_data[:rank],
+          hierarchy_names: hierarchy_names,
+          short_taxonomy_string:
+            create_combine_taxa_taxonomy_string(taxa_history)
+        )
+      end
+
+      CombineTaxon.create(attributes)
+    end
+  end
+
+  #  bin/rake combine_taxa:import_unique_found_taxa file=xxx
+  desc 'import eDNA and gbif unique taxa from Pillar Point'
+  task import_unique_found_taxa: :environment do
+    path = ENV['file']
 
     CSV.foreach(path, headers: true) do |row|
       taxon =
@@ -23,16 +92,16 @@ namespace :combine_taxa do
         CombineTaxon.create(
           source: row['source'],
           taxon_id: row['taxon_id'],
-          superkingdom: row['superkingdom'],
-          kingdom: row['kingdom'],
-          phylum: row['phylum'],
-          class_name: row['class'],
-          order: row['order'],
-          family: row['family'],
-          genus: row['genus'],
-          species: row['species'],
-          caledna_taxonomy_string: create_taxonomy_string(row),
-          notes: row['notes']
+          source_superkingdom: row['superkingdom'],
+          source_kingdom: row['kingdom'],
+          source_phylum: row['phylum'],
+          source_class_name: row['class'],
+          source_order: row['order'],
+          source_family: row['family'],
+          source_genus: row['genus'],
+          source_species: row['species'],
+          cal_division_id: row['cal_division_id'],
+          taxon_rank: row['taxon_rank']
         )
       end
     end
@@ -40,21 +109,6 @@ namespace :combine_taxa do
 
   #  bin/rake combine_taxa:export_asv_results file=data/edna/xxx
   task export_asv_results: :environment do
-    def append_header(path, output_file)
-      content = CSV.read(path, headers: true, col_sep: "\t")
-      CSV.open(output_file, 'a+') do |csv|
-        csv << %w[source taxon_id caledna_taxonomy] + content.headers
-      end
-    end
-
-    def find_cal_taxon(original_taxonomy)
-      taxonomy = original_taxonomy.gsub(/^.*?;/, '')
-      sql = 'original_taxonomy_phylum = ? OR ' \
-        'original_taxonomy_superkingdom = ?'
-
-      CalTaxon.where(sql, taxonomy, taxonomy).first
-    end
-
     file = ENV['file']
     file_name = file.split('/').last
     path = "#{Rails.root}/#{file}"
@@ -77,7 +131,7 @@ namespace :combine_taxa do
 
           # rubocop:disable Style/ConditionalAssignment
           if combine_taxon.present?
-            csv << [source, taxon_id, combine_taxon.caledna_taxonomy_string] +
+            csv << [source, taxon_id, combine_taxon.short_taxonomy_string] +
                    row.to_h.values
           else
             csv << ['', '', 'no combine'] + row.to_h.values
