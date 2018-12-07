@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_02_222339) do
+ActiveRecord::Schema.define(version: 2018_12_05_072519) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 2018_12_02_222339) do
     t.jsonb "hierarchy_names"
     t.text "full_taxonomy_string"
     t.string "paper_match_type"
+    t.jsonb "global_names"
     t.index ["cal_division_id"], name: "index_combine_taxa_on_cal_division_id"
     t.index ["phylum"], name: "combine_taxa_phylum_idx"
     t.index ["taxon_id"], name: "index_combine_taxa_on_taxon_id"

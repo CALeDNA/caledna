@@ -107,6 +107,143 @@ namespace :combine_taxa do
     end
   end
 
+  task update_occurence_taxa_exact_order_match: :environment do
+    sql = <<-SQL
+      UPDATE  combine_taxa AS source
+      SET
+      superkingdom = paper.superkingdom,
+      kingdom = paper.kingdom,
+      phylum  = paper.phylum,
+      class_name = paper.class_name,
+      "order" = paper.order,
+      family = source.source_family,
+      genus = source.source_genus,
+      species = source.source_species,
+      paper_match_type = 'exact_order'
+      FROM combine_taxa AS paper
+      WHERE paper."order" = source.source_order
+      AND paper.source = 'paper'
+      AND (source.source = 'gbif' OR source.source = 'ncbi');
+    SQL
+
+    ActiveRecord::Base.connection.exec_query(sql)
+  end
+
+  task update_occurence_taxa_manual_order: :environment do
+    include ImportGlobalNames
+
+    output_file = 'data/combine_taxa/manual_order.csv'
+
+    CSV.open(output_file, 'a+') do |csv|
+      csv << %w[
+        id source source_kingdom source_phylum source_class_name
+        source_order source_family source_genus order gbif ncbi irmng
+        worms opol fungorum notes
+      ]
+    end
+
+    taxa = CombineTaxon.where('paper_match_type is null')
+                       .where("(source = 'gbif' or source = 'ncbi')")
+                       .where('source_order is not null')
+                       .order(:id)
+
+    puts "records count: #{taxa.count} ======"
+
+    taxon_history = {}
+
+    taxa.each do |taxon|
+      source_family = taxon.source_family
+      source_genus = taxon.source_genus
+      taxon_history_key = source_family || source_genus
+
+      gn = if taxon_history[taxon_history_key].present?
+             puts "cached: #{taxon_history_key}"
+             taxon_history[taxon_history_key]
+           elsif source_family.present?
+             puts source_family
+             taxon_history[source_family] = fetch_global_names(source_family)
+           elsif source_genus.present?
+             puts source_genus
+             taxon_history[source_genus] = fetch_global_names(source_genus)
+           else
+             {}
+           end
+
+      CSV.open(output_file, 'a+') do |csv|
+        csv << [
+          taxon.id,
+          taxon.source,
+          taxon.source_kingdom,
+          taxon.source_phylum,
+          taxon.source_class_name,
+          taxon.source_order,
+          source_family,
+          taxon.source_genus,
+          '',
+          gn[:gbif],
+          gn[:ncbi],
+          gn[:irmng],
+          gn[:worms],
+          gn[:opol],
+          gn[:fungorum],
+          taxon.notes
+        ]
+      end
+    end
+  end
+
+  task import_manual_orders: :environment do
+    path = ENV['file']
+
+    CSV.foreach(path, headers: true, col_sep: ',') do |row|
+      taxa = CombineTaxon.find(row['id'])
+
+      if row['order'].present?
+        taxa.update(
+          order: row['order'],
+          global_names: {
+            gbif: row['gbif'],
+            ncbi: row['ncbi'],
+            irmng: row['irmng'],
+            worms: row['worms'],
+            opol: row['opol']
+          },
+          paper_match_type: 'manually update order'
+        )
+      else
+        taxa.update(
+          global_names: {
+            gbif: row['gbif'],
+            ncbi: row['ncbi'],
+            irmng: row['irmng'],
+            worms: row['worms'],
+            opol: row['opol']
+          },
+          paper_match_type: 'manually update order'
+        )
+      end
+    end
+
+    sql = <<-SQL
+    UPDATE  combine_taxa AS source
+    SET
+    superkingdom = paper.superkingdom,
+    kingdom = paper.kingdom,
+    phylum  = paper.phylum,
+    class_name = paper.class_name,
+    "order" = paper.order,
+    family = source.source_family,
+    genus = source.source_genus,
+    species = source.source_species
+    FROM combine_taxa AS paper
+    WHERE paper."order" = source.order
+    AND paper.source = 'paper'
+    AND source.paper_match_type = 'manually update order'
+    SQL
+
+    ActiveRecord::Base.connection.exec_query(sql)
+  end
+
   #  bin/rake combine_taxa:export_asv_results file=data/edna/xxx
   task export_asv_results: :environment do
     file = ENV['file']
