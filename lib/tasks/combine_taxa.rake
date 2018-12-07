@@ -249,24 +249,30 @@ namespace :combine_taxa do
 
   #  bin/rake combine_taxa:export_asv_results file=data/edna/xxx
   task export_asv_results: :environment do
-    file = ENV['file']
-    file_name = file.split('/').last
-    path = "#{Rails.root}/#{file}"
-    output_file = "data/converted/converted_#{file_name}"
+    path = ENV['file']
+    parts = path.split('/')
+    file_name = parts.last
+    parts.pop
+
+    output_file = "#{parts.join('/')}/converted_#{file_name}"
 
     append_header(path, output_file)
 
     CSV.foreach(path, headers: true, col_sep: "\t") do |row|
       cal_taxon = find_cal_taxon(row['sum.taxonomy'])
+      puts cal_taxon&.taxonID || row['sum.taxonomy']
 
-      taxon = NcbiNode.find(cal_taxon.taxonID)
-      taxon_id = taxon.ncbi_id || taxon.bold_id
-      source = taxon.ncbi_id.present? ? 'ncbi' : 'bold'
+      if cal_taxon.present?
+        taxon = NcbiNode.find(cal_taxon.taxonID)
+        taxon_id = taxon.ncbi_id || taxon.bold_id
+        source = taxon.ncbi_id.present? ? 'ncbi' : 'bold'
+      end
 
       CSV.open(output_file, 'a+') do |csv|
         if cal_taxon.present?
           combine_taxon =
-            CombineTaxon.where(taxon_id: cal_taxon.taxonID, source: 'ncbi')
+            CombineTaxon.where(caledna_taxon_id: cal_taxon.taxonID)
+                        .where("source ='ncbi' or source='bold'")
                         .first
 
           # rubocop:disable Style/ConditionalAssignment
@@ -274,11 +280,12 @@ namespace :combine_taxa do
             csv << [source, taxon_id, combine_taxon.short_taxonomy_string] +
                    row.to_h.values
           else
-            csv << ['', '', 'no combine'] + row.to_h.values
+            csv << ['', '', "no Ruggerio conversion #{cal_taxon.taxonID}"] +
+                   row.to_h.values
           end
           # rubocop:enable Style/ConditionalAssignment
         else
-          csv << ['', '', 'no cal'] + row.to_h.values
+          csv << ['', '', 'no sum.taxonomy match'] + row.to_h.values
         end
       end
     end

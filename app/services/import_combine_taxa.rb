@@ -48,7 +48,8 @@ module ImportCombineTaxa
   end
 
   def find_cal_taxon(original_taxonomy)
-    taxonomy = original_taxonomy.gsub(/^.*?;/, '')
+    taxonomy = original_taxonomy
+
     sql = 'original_taxonomy_phylum = ? OR ' \
       'original_taxonomy_superkingdom = ?'
 
