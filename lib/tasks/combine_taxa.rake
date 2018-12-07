@@ -76,6 +76,49 @@ namespace :combine_taxa do
     end
   end
 
+  desc 'use this sql to create unique taxa csv in Postico'
+  task create_unique_found_taxa: :environment do
+    <<-SQL
+      SELECT
+      'gbif' AS source, taxonkey AS taxon_id, NULL AS cal_division_id,
+      NULL AS superkingdom, kingdom, phylum,
+      classname AS class, "order", family, genus, species,
+      lower(taxonrank) AS taxon_rank
+      FROM external.gbif_occurrences
+      JOIN research_project_sources
+      ON external.gbif_occurrences.gbifid =
+      research_project_sources.sourceable_id
+      AND research_project_id = 4
+      AND sourceable_type = 'GbifOccurrence'
+      AND metadata ->> 'location' != 'Montara SMR'
+      WHERE kingdom IS NOT NULL
+
+      UNION
+
+      SELECT
+      'ncbi' AS source, taxon_id,
+      cal_division_id,
+      hierarchy_names ->> 'superkingdom' AS superkingdom ,
+      hierarchy_names ->> 'kingdom' AS kingdom ,
+      hierarchy_names ->> 'phylum' AS phylum ,
+      hierarchy_names ->> 'class' AS class,
+      hierarchy_names ->> 'order'  AS order,
+      hierarchy_names ->> 'family' AS family,
+      hierarchy_names ->> 'genus' AS genus,
+      hierarchy_names ->> 'species' AS species,
+      rank AS taxon_rank
+      FROM asvs
+      JOIN research_project_sources
+      ON asvs.extraction_id = research_project_sources.sourceable_id
+      AND research_project_id = 4
+      AND sourceable_type = 'Extraction'
+      JOIN ncbi_nodes
+      ON ncbi_nodes.taxon_id = asvs."taxonID"
+      ORDER BY superkingdom, kingdom, phylum,
+      class,  "order",  family,  genus, species;
+    SQL
+  end
+
   #  bin/rake combine_taxa:import_unique_found_taxa file=xxx
   desc 'import eDNA and gbif unique taxa from Pillar Point'
   task import_unique_found_taxa: :environment do
