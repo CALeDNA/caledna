@@ -34,7 +34,7 @@ module Admin
         end
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
       # NOTE: used when creating new taxon for test results
       def update_create
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
@@ -50,7 +50,7 @@ module Admin
                            .split(', ')
         }
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
 
       private
 
@@ -86,7 +86,7 @@ module Admin
           exact_gbif_match: false,
           taxonID: raw_params[:taxon_id],
           taxonRank: raw_params[:rank],
-          datasetID: raw_params[:dataset_id],
+          datasetID: raw_params[:dataset_id]
         }
       end
 

@@ -107,6 +107,7 @@ namespace :combine_taxa do
     end
   end
 
+  desc 'update taxa occurrences that have exact order match with Ruggerio paper'
   task update_occurence_taxa_exact_order_match: :environment do
     sql = <<-SQL
       UPDATE  combine_taxa AS source
@@ -129,6 +130,7 @@ namespace :combine_taxa do
     ActiveRecord::Base.connection.exec_query(sql)
   end
 
+  desc 'create csv of taxa that do not have order match with Ruggerio paper'
   task update_occurence_taxa_manual_order: :environment do
     include ImportGlobalNames
 
@@ -192,6 +194,7 @@ namespace :combine_taxa do
     end
   end
 
+  desc 'import csv of taxa that have manually added orders from Ruggerio paper'
   task import_manual_orders: :environment do
     path = ENV['file']
 
@@ -278,6 +281,34 @@ namespace :combine_taxa do
           csv << ['', '', 'no cal'] + row.to_h.values
         end
       end
+    end
+  end
+
+  desc 'import Rachel approved csv of manually added orders from Ruggerio paper'
+  task import_finalized_manual_orders: :environment do
+    path = ENV['file']
+
+    CSV.foreach(path, headers: true, col_sep: ',') do |row|
+      taxa =
+        CombineTaxon.where(source: row['source'], taxon_id: row['taxon_id'])
+      puts "#{row['taxon_id']}, #{row['source']}"
+      raise if taxa.blank?
+      raise if taxa.length > 1
+
+      taxon = taxa.first
+
+      taxon.update(
+        superkingdom: row['superkingdom_v2'],
+        kingdom: row['kingdom_v2'],
+        phylum: row['phylum_v2'],
+        class_name: row['class_v2'],
+        order: row['order_v2'],
+        family: row['family_v2'],
+        genus: row['genus_v2'],
+        species: row['species_v2'],
+        paper_match_type: 'manually update',
+        approved: true
+      )
     end
   end
 end
