@@ -40,7 +40,7 @@ module Admin
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
         ActiveRecord::Base.transaction do
           cal_taxon.update!(update_cal_taxon_params)
-          NcbiNode.create!(create_params.except(:cal_taxon_id))
+          NcbiNode.create!(create_params)
         end
         render json: { status: :ok }
       rescue ActiveRecord::RecordInvalid => exception
@@ -59,7 +59,7 @@ module Admin
       end
 
       def cal_taxon
-        id = params[:id] || create_params[:cal_taxon_id] ||
+        id = params[:id] || raw_params[:cal_taxon_id] ||
              params[:normalize_ncbi_taxon_id]
         @cal_taxon ||= CalTaxon.find(id)
       end
@@ -84,13 +84,18 @@ module Admin
           normalized: true,
           accepted: true,
           exact_gbif_match: false,
-          taxonID: params[:taxon_id],
-          taxonRank: params[:rank]
+          taxonID: raw_params[:taxon_id],
+          taxonRank: raw_params[:rank],
+          datasetID: raw_params[:dataset_id],
         }
       end
 
-      # rubocop:disable Metrics/MethodLength
       def create_params
+        raw_params.except(:cal_taxon_id, :dataset_id)
+      end
+
+      # rubocop:disable Metrics/MethodLength
+      def raw_params
         params.require(:normalize_ncbi_taxon).permit(
           :taxon_id,
           :parent_taxon_id,
@@ -99,6 +104,7 @@ module Admin
           :cal_taxon_id,
           :division_id,
           :cal_division_id,
+          :dataset_id,
           hierarchy_names: {},
           hierarchy: {},
           ids: []

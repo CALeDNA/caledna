@@ -36,9 +36,6 @@
     <h2>Choose Existing Taxa</h2>
 
     <% @suggestions.each do |suggestion| %>
-      <% if suggestion.acceptedNameUsageID.present? %>
-        <%= render 'suggestion', suggestion: suggestion.accepted %>
-      <% end %>
       <%= render 'suggestion', suggestion: suggestion %>
     <% end %>
     <br>

@@ -1,8 +1,19 @@
+<% if suggestion.lineage.present? %>
 <ol>
-<% suggestion.lineage && suggestion.lineage.each do |lineage|%>
-  <li><%= lineage.third %>: <%= lineage.second  %></li>
-<% end %>
+  <% suggestion.lineage && suggestion.lineage.each do |lineage|%>
+    <li><%= lineage.third %>: <%= lineage.second  %></li>
+  <% end %>
 </ol>
+<% elsif suggestion.hierarchy_names.present? %>
+  phylum: <%= suggestion.hierarchy_names['phylum'] %><br>
+  class: <%= suggestion.hierarchy_names['class'] %><br>
+  order: <%= suggestion.hierarchy_names['order'] %><br>
+  family: <%= suggestion.hierarchy_names['family'] %><br>
+  genus: <%= suggestion.hierarchy_names['genus'] %><br>
+  species: <%= suggestion.hierarchy_names['species'] %><br>
+<% else %>
+  <%= suggestion.attributes %>
+<% end %>
 
 <%= simple_form_for :normalize_ncbi_taxon, url: admin_labwork_normalize_ncbi_taxon_update_existing_path(@cal_taxon), method: :put do |f| %>
   <%= f.hidden_field :taxon_id, value: suggestion.taxon_id  %>

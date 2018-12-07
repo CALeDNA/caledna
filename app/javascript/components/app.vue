@@ -151,19 +151,23 @@
         taxaDatasets: [
           {
             name: 'GBIF',
-            datasetID: 'd7dddbf4-2cf0-4f39-9b2a-bb099caae36c'
+            datasetID: 'GBIF'
           },
           {
             name: 'Catalogue of Life',
-            datasetID: '7ddf754f-d193-4cc9-b351-99906754a03b'
+            datasetID: 'CoL'
           },
           {
             name: 'Encyclopedia of Life',
-            datasetID: 'e632b198-5b2f-47ee-b7a6-6531ea435fa3'
+            datasetID: 'EoL'
           },
           {
             name: 'NCBI',
-            datasetID: 'fab88965-e69d-4491-a04d-e3198b626e52'
+            datasetID: 'NCBI'
+          },
+          {
+            name: 'BOLD',
+            datasetID: 'BOLD'
           },
         ],
         ranks: [
@@ -295,7 +299,8 @@
           ids,
           cal_taxon_id: id,
           division_id: this.newTaxon.division_id,
-          cal_division_id: this.newTaxon.cal_division_id
+          cal_division_id: this.newTaxon.cal_division_id,
+          dataset_id: this.newTaxon.datasetID,
         }
         console.log(body)
 
