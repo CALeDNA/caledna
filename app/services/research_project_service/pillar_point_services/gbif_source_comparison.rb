@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/MethodLength
 module ResearchProjectService
   module PillarPointServices
     module GbifSourceComparison
@@ -20,51 +19,50 @@ module ResearchProjectService
       private
 
       def inat_division_occurrences_stats
-        sql = gbif_division_sql
-        sql += <<-SQL
+        sql = <<-SQL
+          #{gbif_division_sql}
           AND external.gbif_occurrences.datasetkey =
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY kingdom
-          ORDER BY kingdom
+          GROUP BY combine_taxa.kingdom
+          ORDER BY combine_taxa.kingdom;
         SQL
 
         conn.exec_query(sql)
       end
 
       def exclude_inat_division_occurrences_stats
-        sql = gbif_division_sql
-        sql += <<-SQL
+        sql = <<-SQL
+          #{gbif_division_sql}
           AND external.gbif_occurrences.datasetkey !=
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY kingdom
-          ORDER BY kingdom
+          GROUP BY combine_taxa.kingdom
+          ORDER BY combine_taxa.kingdom;
         SQL
 
         conn.exec_query(sql)
       end
 
       def inat_division_unique_stats
-        sql = gbif_unique_sql
-        sql += <<-SQL
+        sql = <<-SQL
+          #{gbif_unique_sql}
           AND external.gbif_occurrences.datasetkey =
-              '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY kingdom
-          ORDER BY kingdom;
+          '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
+          GROUP BY combine_taxa.kingdom
+          ORDER BY combine_taxa.kingdom;
         SQL
         conn.exec_query(sql)
       end
 
       def exclude_inat_division_unique_stats
-        sql = gbif_unique_sql
-        sql += <<-SQL
+        sql = <<-SQL
+          #{gbif_unique_sql}
           AND external.gbif_occurrences.datasetkey !=
-            '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY kingdom
-          ORDER BY kingdom;
+          '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
+          GROUP BY combine_taxa.kingdom
+          ORDER BY combine_taxa.kingdom;
         SQL
         conn.exec_query(sql)
       end
     end
   end
 end
-# rubocop:enable Metrics/MethodLength

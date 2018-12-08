@@ -57,10 +57,10 @@
 (function(){
 
   window.caledna = {
-    only_inat_unique_data: <%= @gbif_breakdown[:inat_only_unique].to_json.html_safe %>,
-    exclude_inat_unique_data: <%= @gbif_breakdown[:exclude_inat_unique].to_json.html_safe %>,
-    only_inat_occurrences_data: <%= @gbif_breakdown[:inat_only_occurrences].to_json.html_safe %>,
-    exclude_inat_occurrences_data: <%= @gbif_breakdown[:exclude_inat_occurrences].to_json.html_safe %>,
+    only_inat_unique_data: <%= PillarPointHelper.gbif_counts(@gbif_breakdown[:inat_only_unique]).to_json.html_safe %>,
+    exclude_inat_unique_data: <%= PillarPointHelper.gbif_counts(@gbif_breakdown[:exclude_inat_unique]).to_json.html_safe %>,
+    only_inat_occurrences_data: <%= PillarPointHelper.gbif_counts(@gbif_breakdown[:inat_only_occurrences]).to_json.html_safe %>,
+    exclude_inat_occurrences_data: <%= PillarPointHelper.gbif_counts(@gbif_breakdown[:exclude_inat_occurrences]).to_json.html_safe %>,
   }
 
 })(window)

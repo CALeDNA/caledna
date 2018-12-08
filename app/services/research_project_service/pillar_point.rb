@@ -81,18 +81,35 @@ module ResearchProjectService
       counts
     end
 
+    def gbif_division_sql
+      <<-SQL
+        SELECT combine_taxa.kingdom as category, COUNT(*) as count
+        #{gbif_common_division_sql}
+      SQL
+    end
+
     def gbif_unique_sql
       <<-SQL
-        SELECT COUNT(DISTINCT(taxonkey)), kingdom AS category
+        SELECT combine_taxa.kingdom as category,
+        COUNT(DISTINCT(source_taxon_id))
+        #{gbif_common_division_sql}
+      SQL
+    end
+
+    def gbif_common_division_sql
+      <<-SQL
         FROM external.gbif_occurrences
+        JOIN combine_taxa
+          ON combine_taxa.source_taxon_id = external.gbif_occurrences.taxonkey
+          AND (source = 'gbif')
         JOIN research_project_sources
-        ON research_project_sources.sourceable_id =
+          ON research_project_sources.sourceable_id =
           external.gbif_occurrences.gbifid
-        WHERE (research_project_sources.sourceable_type = 'GbifOccurrence')
-        AND (research_project_sources.research_project_id =
-        #{conn.quote(project.id)})
-        AND (metadata ->> 'location' != 'Montara SMR')
-        AND kingdom IS NOT NULL
+          AND (research_project_sources.sourceable_type = 'GbifOccurrence')
+          AND (research_project_sources.research_project_id =
+          #{conn.quote(project.id)})
+          AND (metadata ->> 'location' != 'Montara SMR')
+        WHERE combine_taxa.kingdom IS NOT NULL
       SQL
     end
 

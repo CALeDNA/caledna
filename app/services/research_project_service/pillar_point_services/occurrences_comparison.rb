@@ -20,9 +20,8 @@ module ResearchProjectService
 
       private
 
-      def cal_division_stats
-        sql = <<-SQL
-          SELECT kingdom AS category, count(*) AS count
+      def cal_division_sql
+        <<-SQL
           FROM asvs
           JOIN research_project_sources
             ON sourceable_id = asvs.extraction_id
@@ -35,61 +34,41 @@ module ResearchProjectService
           GROUP BY kingdom
           ORDER BY kingdom;
         SQL
+      end
+
+      def cal_division_stats
+        sql = <<-SQL
+          SELECT kingdom AS category, count(*) AS count
+          #{cal_division_sql}
+        SQL
 
         conn.exec_query(sql)
       end
 
       def cal_division_unique_stats
         sql = <<-SQL
-          SELECT kingdom AS category, count("taxonID") FROM (
-            SELECT DISTINCT("taxonID"), kingdom
-            FROM asvs
-            JOIN research_project_sources
-              ON sourceable_id = asvs.extraction_id
-              AND (research_project_sources.sourceable_type = 'Extraction')
-              AND (research_project_sources.research_project_id = 4)
-            JOIN combine_taxa
-              ON asvs."taxonID" = combine_taxa.caledna_taxon_id
-              AND (source = 'ncbi'  OR source = 'bold')
-              GROUP BY "taxonID", kingdom
-          ) AS foo
-          GROUP BY kingdom
-          ORDER BY kingdom;
+          SELECT kingdom as category, COUNT(DISTINCT("taxonID"))
+          #{cal_division_sql}
+        SQL
+
+        conn.exec_query(sql)
+      end
+
+      def gbif_division_stats
+        sql = <<-SQL
+          #{gbif_division_sql}
+          GROUP BY combine_taxa.kingdom
+          ORDER BY combine_taxa.kingdom
         SQL
 
         conn.exec_query(sql)
       end
 
       def gbif_division_unique_stats
-        sql = gbif_unique_sql
-        sql += <<-SQL
-          GROUP BY kingdom
-          ORDER BY kingdom
-        SQL
-
-        conn.exec_query(sql)
-      end
-
-      def gbif_division_sql
-        <<-SQL
-          SELECT  kingdom as category, count(kingdom)
-          FROM external.gbif_occurrences
-          JOIN research_project_sources
-          ON research_project_sources.sourceable_id =
-            external.gbif_occurrences.gbifid
-          WHERE (research_project_sources.sourceable_type = 'GbifOccurrence')
-          AND (research_project_sources.research_project_id =
-            #{conn.quote(project.id)})
-          AND (metadata ->> 'location' != 'Montara SMR')
-          AND kingdom IS NOT NULL
-        SQL
-      end
-
-      def gbif_division_stats
         sql = <<-SQL
-          #{gbif_division_sql}
-          GROUP BY kingdom
-          ORDER BY kingdom
+          #{gbif_unique_sql}
+          GROUP BY combine_taxa.kingdom
+          ORDER BY combine_taxa.kingdom
         SQL
 
         conn.exec_query(sql)
