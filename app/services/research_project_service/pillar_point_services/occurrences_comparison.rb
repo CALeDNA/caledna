@@ -22,20 +22,18 @@ module ResearchProjectService
 
       def cal_division_stats
         sql = <<-SQL
-          SELECT "name" AS category, COUNT(name) AS count
-          FROM "asvs"
-          INNER JOIN "ncbi_nodes"
-          ON "ncbi_nodes"."taxon_id" = "asvs"."taxonID"
-          INNER JOIN "ncbi_divisions"
-          ON "ncbi_divisions"."id" = "ncbi_nodes"."cal_division_id"
+          SELECT kingdom AS category, count(*) AS count
+          FROM asvs
           JOIN research_project_sources
-          ON sourceable_id = extraction_id
-          WHERE (research_project_sources.sourceable_type = 'Extraction')
-          AND (research_project_sources.research_project_id =
+            ON sourceable_id = asvs.extraction_id
+            and (research_project_sources.sourceable_type = 'Extraction')
+            AND (research_project_sources.research_project_id =
             #{conn.quote(project.id)})
-
-          GROUP BY name
-          ORDER BY name;
+          JOIN combine_taxa
+            ON asvs."taxonID" = combine_taxa.caledna_taxon_id
+            AND (source = 'ncbi' OR source = 'bold')
+          GROUP BY kingdom
+          ORDER BY kingdom;
         SQL
 
         conn.exec_query(sql)
@@ -43,19 +41,20 @@ module ResearchProjectService
 
       def cal_division_unique_stats
         sql = <<-SQL
-          SELECT name as category, count("taxonID") FROM (
-          SELECT distinct("taxonID"), name
-          FROM "asvs"
-          JOIN "ncbi_nodes" ON "ncbi_nodes"."taxon_id" = "asvs"."taxonID"
-          JOIN "ncbi_divisions"
-          ON "ncbi_divisions"."id" = "ncbi_nodes"."cal_division_id"
-          JOIN research_project_sources ON sourceable_id = extraction_id
-          WHERE (research_project_sources.sourceable_type = 'Extraction')
-          AND (research_project_sources.research_project_id =
-            #{conn.quote(project.id)})
-          ORDER BY name
+          SELECT kingdom AS category, count("taxonID") FROM (
+            SELECT DISTINCT("taxonID"), kingdom
+            FROM asvs
+            JOIN research_project_sources
+              ON sourceable_id = asvs.extraction_id
+              AND (research_project_sources.sourceable_type = 'Extraction')
+              AND (research_project_sources.research_project_id = 4)
+            JOIN combine_taxa
+              ON asvs."taxonID" = combine_taxa.caledna_taxon_id
+              AND (source = 'ncbi'  OR source = 'bold')
+              GROUP BY "taxonID", kingdom
           ) AS foo
-          GROUP BY name;
+          GROUP BY kingdom
+          ORDER BY kingdom;
         SQL
 
         conn.exec_query(sql)

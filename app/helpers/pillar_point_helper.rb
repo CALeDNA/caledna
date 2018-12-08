@@ -41,12 +41,10 @@ module PillarPointHelper
   # rubocop:disable Metrics/MethodLength
   def self.cal_counts(counts, include_other = false)
     categories = %w[
-      Animals Archaea Bacteria Chromista Fungi Plants
+      Animalia Archaea Bacteria Chromista Fungi Plantae Protozoa
     ]
 
-    other_count = (counts['Environmental samples'] || 0) +
-                  (counts['Plants and Fungi'] || 0) +
-                  (counts['Protozoa'] || 0)
+    other_count = (counts[nil] || 0)
 
     normalized_counts = {}
     categories.each do |category|
@@ -62,7 +60,7 @@ module PillarPointHelper
 
   def self.gbif_counts(counts, include_other = false)
     categories = %w[
-      Animalia Archaea Bacteria Chromista Fungi Plantae
+      Animalia Archaea Bacteria Chromista Fungi Plantae Protozoa
     ]
 
     normalized_counts = {}
