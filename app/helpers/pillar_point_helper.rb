@@ -40,9 +40,7 @@ module PillarPointHelper
 
   # rubocop:disable Metrics/MethodLength
   def self.cal_counts(counts, include_other = false)
-    categories = %w[
-      Animalia Archaea Bacteria Chromista Fungi Plantae Protozoa
-    ]
+    categories = CombineTaxon::KINGDOMS
 
     other_count = (counts[nil] || 0)
 
@@ -59,9 +57,7 @@ module PillarPointHelper
   end
 
   def self.gbif_counts(counts, include_other = false)
-    categories = %w[
-      Animalia Archaea Bacteria Chromista Fungi Plantae Protozoa
-    ]
+    categories = CombineTaxon::KINGDOMS
 
     normalized_counts = {}
     categories.each do |category|

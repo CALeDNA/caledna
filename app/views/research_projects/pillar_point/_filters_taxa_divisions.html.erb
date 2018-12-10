@@ -6,40 +6,12 @@
       All
     </label>
   </div>
-  <div class="checkbox">
-    <label for="archaea">
-      <input type="checkbox" name="taxon_groups" id="archaea" value="archaea">
-      Archaea
-    </label>
-  </div>
-  <div class="checkbox">
-    <label for="animals">
-      <input type="checkbox" name="taxon_groups" id="animals" value="animals">
-      Animals
-    </label>
-  </div>
-  <div class="checkbox">
-    <label for="bacteria">
-      <input type="checkbox" name="taxon_groups" id="bacteria" value="bacteria">
-      Bacteria
-    </label>
-  </div>
-  <div class="checkbox">
-    <label for="chromista">
-      <input type="checkbox" name="taxon_groups" id="chromista" value="chromista">
-      Chromista
-    </label>
-  </div>
-  <div class="checkbox">
-    <label for="fungi">
-      <input type="checkbox" name="taxon_groups" id="fungi" value="fungi">
-      Fungi
-    </label>
-  </div>
-  <div class="checkbox">
-    <label for="plants">
-      <input type="checkbox" name="taxon_groups" id="plants" value="plants">
-      Plants
-    </label>
-  </div>
+  <% CombineTaxon::KINGDOMS.each do |kingdom| %>
+    <div class="checkbox">
+      <label for="<%= kingdom %>">
+        <input type="checkbox" name="taxon_groups" id="<%= kingdom %>" value="<%= kingdom %>">
+        <%= kingdom %>
+      </label>
+    </div>
+  <% end %>
 </fieldset>

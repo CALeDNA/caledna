@@ -117,28 +117,20 @@ module ResearchProjectService
       params['taxon_groups']
     end
 
-    def selected_taxon_groups_ids
-      taxa = taxon_groups
-             .gsub('plants', '14|4')
-             .gsub('animals', '12')
-             .gsub('fungi', '13')
-             .gsub('bacteria', '0|9')
-             .gsub('archaea', '16')
-             .gsub('chromista', '17')
+    # def selected_taxon_groups_ids
+    #   taxa = taxon_groups
+    #          .gsub('plants', '14|4')
+    #          .gsub('animals', '12')
+    #          .gsub('fungi', '13')
+    #          .gsub('bacteria', '0|9')
+    #          .gsub('archaea', '16')
+    #          .gsub('chromista', '17')
 
-      taxa.split('|').join(', ')
-    end
+    #   taxa.split('|').join(', ')
+    # end
 
     def selected_taxon_groups
-      taxa = taxon_groups
-             .gsub('plants', 'Plantae')
-             .gsub('animals', 'Animalia')
-             .gsub('fungi', 'Fungi')
-             .gsub('bacteria', 'Bacteria')
-             .gsub('archaea', 'Archaea')
-             .gsub('chromista', 'Chromista')
-
-      taxa.split('|')
+      taxon_groups.split('|').to_s[1..-2].tr('"', "'")
     end
 
     def limit

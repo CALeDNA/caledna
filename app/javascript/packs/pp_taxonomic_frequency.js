@@ -12,16 +12,6 @@ import * as d3 from 'd3';
 
 let filters = { taxon_groups: [], taxon_rank: [] };
 
-const taxaGroups = {
-  animals: ['Animals', 'Animalia'],
-  plants: ['Plants', 'Plantae'],
-  bacteria: ['Bacteria', 'Viruses', 'Archaea'],
-  chromista: ['Chromista'],
-  archaea: ['Archaea'],
-  plants_and_fungi: ['Plants and Fungi'],
-  fungi: ['Fungi']
-}
-
 let chartData = {};
 let filteredData = {};
 const endpoint = '/api/v1/pillar_point/pillar_point_biodiversity_bias';
@@ -41,10 +31,10 @@ function initApp(endpoint) {
     let rawDataCal = res.data.cal
     let rawDataGbif = res.data.gbif
     chartData.cal = rawDataCal.map((taxon) => {
-      return pp_utils.formatChartData(taxon, taxaGroups)
+      return pp_utils.formatChartData(taxon)
     })
     chartData.gbif = rawDataGbif.map((taxon) => {
-      return pp_utils.formatChartData(taxon, taxaGroups)
+      return pp_utils.formatChartData(taxon)
     })
 
     filteredData.cal = pp_utils.sortData(chartData.cal.slice(0, limit))
