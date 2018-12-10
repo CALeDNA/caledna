@@ -109,7 +109,10 @@ module ResearchProjectService
         @area_diversity_cal_sql = begin
           sql = <<-SQL
             SELECT asvs."taxonID"
-            FROM asvs
+            FROM combine_taxa
+            JOIN asvs
+              ON asvs."taxonID" = combine_taxa.caledna_taxon_id
+              AND (combine_taxa.source = 'ncbi' OR combine_taxa.source = 'bold')
             JOIN ncbi_nodes
             ON asvs."taxonID" = ncbi_nodes.taxon_id
             JOIN research_project_sources
@@ -121,7 +124,7 @@ module ResearchProjectService
           SQL
 
           if taxon_groups
-            sql += " AND ncbi_nodes.cal_division_id in (#{selected_taxon_groups_ids})"
+            sql += " AND combine_taxa.kingdom in (#{selected_taxon_groups})"
           end
 
           if months
@@ -136,7 +139,9 @@ module ResearchProjectService
       def area_diversity_gbif_sql
         sql = <<-SQL
           SELECT taxonkey
-          FROM external.gbif_occurrences
+          FROM combine_taxa
+          JOIN external.gbif_occurrences
+            ON external.gbif_occurrences.taxonkey = combine_taxa.source_taxon_id
           JOIN research_project_sources
           ON research_project_sources.sourceable_id =
             external.gbif_occurrences.gbifid
@@ -145,8 +150,7 @@ module ResearchProjectService
         SQL
 
         if taxon_groups
-          filters = selected_taxon_groups.to_s[1..-2].tr('"', "'")
-          sql += " AND kingdom in (#{filters})"
+          sql += " AND combine_taxa.kingdom in (#{selected_taxon_groups})"
         end
 
         if months
