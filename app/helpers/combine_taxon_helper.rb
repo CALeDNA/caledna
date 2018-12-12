@@ -21,6 +21,7 @@ module CombineTaxonHelper
   end
 
   def self.convert_raw_combine_taxon(string)
+    return [] if string.blank?
     string.delete('{"').delete('{').delete('"}').delete('}').split(',')
   end
 
