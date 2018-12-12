@@ -29,7 +29,8 @@ Rails.application.routes.draw do
       resource :samples_search, only: %i[show]
       get '/pillar_point/area_diversity',
           to: 'research_projects#pillar_point_area_diversity'
-
+      get '/pillar_point/pillar_point_common_taxa_map',
+          to: 'research_projects#pillar_point_common_taxa_map'
       get '/pillar_point/pillar_point_biodiversity_bias',
           to: 'research_projects#pillar_point_biodiversity_bias'
       get '/pillar_point/pillar_point_occurrences',

@@ -6,9 +6,14 @@ module Api
       before_action :add_cors_headers
       include PaginatedSamples
       include BatchData
+      include ResearchProjectService::PillarPointServices::CommonTaxaMap
 
       def show
         render json: response_json, status: :ok
+      end
+
+      def pillar_point_common_taxa_map
+        render json: common_taxa_json, status: :ok
       end
 
       def pillar_point_area_diversity
@@ -37,6 +42,41 @@ module Api
       end
 
       private
+
+      def common_taxa_json
+        {
+          research_project_data: {
+            gbif_occurrences: {
+              data: common_taxa_gbif.map do |record|
+                {
+                  id: record['id'],
+                  type: 'gbif_occurrence',
+                  attributes: record
+                }
+              end
+            }
+          },
+          asvs_count: [],
+          samples: {
+            data: common_taxa_edna.map do |record|
+              {
+                id: record['id'],
+                type: 'sample',
+                attributes: record
+              }
+            end
+          }
+        }
+      end
+
+      def taxon
+        params[:taxon]
+      end
+
+      def rank
+        return 'phylum' if params[:taxon_rank].blank?
+        params[:taxon_rank] == 'class' ? 'class_name' : params[:taxon_rank]
+      end
 
       def source_comparison_all_json
         project = ResearchProject.find_by(name: 'Pillar Point')
@@ -116,10 +156,10 @@ module Api
 
         sql += "AND  ids @> '{#{ncbi_id}}'" if ncbi_id.present?
 
-        @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
-                                          .pluck('sample_id')
+        @sample_ids ||= conn.execute(sql).pluck('sample_id')
       end
       # rubocop:enable Metrics/MethodLength
+
 
       def query_string
         query = {}

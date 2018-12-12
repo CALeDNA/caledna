@@ -18,9 +18,6 @@
   <% end %>
 </ul><br>
 
-<%#= simple_form_for(:common_taxa) do |f| %>
-  <%#= f.input :taxon, collection: options %>
-<%# end %>
 
 <div class="row">
   <div class="col-sm-4">
@@ -29,8 +26,7 @@
         <li>
           <%= link_to CombineTaxonHelper.taxon_string(taxon),
             "#{base_url}&taxon_rank=#{taxon_rank}" \
-            "&ncbi_id=#{CombineTaxonHelper.convert_taxa_ids(taxon['ncbi_taxa'])}"  \
-            "&gbif_id=#{CombineTaxonHelper.convert_taxa_ids(taxon['gbif_taxa'])}"
+            "&taxon=#{CombineTaxonHelper.target_taxon(taxon)}"
           %>
           <br><%= CombineTaxonHelper.vernaculars(taxon) %>
         </li>
@@ -39,7 +35,7 @@
   </div>
 
   <div class="col-sm-8">
-     <h2>Taxon: <%= @taxon.canonical_name if @taxon %> </h2>
+     <h2>Taxon: <%= @taxon if @taxon %> </h2>
     <div id="mapid"></div>
     Areas of interest
     <ul>

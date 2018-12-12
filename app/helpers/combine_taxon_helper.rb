@@ -42,4 +42,20 @@ module CombineTaxonHelper
       end
       names.present? ? "(#{names.join(', ')})" : ''
   end
+
+  def self.target_taxon(taxon)
+    if taxon['species']
+      taxon['species']
+    elsif taxon['genus']
+      taxon['genus']
+    elsif taxon['family']
+      taxon['family']
+    elsif taxon['order']
+      taxon['order']
+    elsif taxon['class_name']
+      taxon['class_name']
+    else
+      taxon['phylum']
+    end
+  end
 end

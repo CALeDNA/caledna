@@ -1,19 +1,15 @@
 import baseMap from './base_map.js';
 
-var ncbiIdMatches = /ncbi_id=(\d+)/.exec(window.location.search)
-var gbifIdMatches = /gbif_id=(\d+)/.exec(window.location.search)
+var taxonMatches = /taxon=(\w+)/.exec(window.location.search)
 var taxonRankMatches = /taxon_rank=(\w+)/.exec(window.location.search)
 
-var ncbiId = ncbiIdMatches ? ncbiIdMatches[1] : null;
-var gbifId = gbifIdMatches ? gbifIdMatches[1] : null;
+var taxon = taxonMatches ? taxonMatches[1] : null;
 var taxonRank = taxonRankMatches ? taxonRankMatches[1] : null;
 
 
-var apiEndpoint = `/api/v1/research_projects/pillar-point?&taxon_rank=${taxonRank}`
-if (ncbiId && gbifId) {
-  apiEndpoint += `&include_research=true&ncbi_id=${ncbiId}&gbif_id=${gbifId}`;
-} else {
-  apiEndpoint += `&include_research=false`
+var apiEndpoint = `/api/v1/pillar_point/pillar_point_common_taxa_map?taxon_rank=${taxonRank}`
+if (taxon) {
+  apiEndpoint += `&taxon=${taxon}`;
 }
 
 var map = baseMap.createMap(L.latLng(37.49547, -122.496478), 15)
