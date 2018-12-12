@@ -6,12 +6,13 @@ module ResearchProjectService
     module GbifEdnaComparison
       def gbif_taxa
         @gbif_taxa ||= begin
-          sql = <<-SQL
-            #{fields_sql},
-            #{match_sql},
+          sql = <<~SQL
+            #{fields_sql('gbif_ct')},
+            #{match_sql('edna_ct')},
             #{aggregate_sql}
             #{join_sql}
-            WHERE combine_taxa.source = 'gbif'
+            WHERE gbif_ct.source = 'gbif'
+            AND gbif_ct.#{combine_taxon_rank_field} IS NOT NULL
             GROUP BY #{group_fields}
             ORDER BY #{sort_fields};
           SQL
@@ -21,16 +22,16 @@ module ResearchProjectService
 
       private
 
-      def fields_sql
-        fields = %w[
-          combine_taxa.phylum
-          combine_taxa.class_name
-          combine_taxa.order
-          combine_taxa.family
-          combine_taxa.genus
-          combine_taxa.species
+      def fields_sql(table = 'combine_taxa')
+        fields = [
+          "#{table}.phylum",
+          "#{table}.class_name",
+          "#{table}.order",
+          "#{table}.family",
+          "#{table}.genus",
+          "#{table}.species"
         ]
-        sql = 'SELECT combine_taxa.superkingdom, '
+        sql = "SELECT #{table}.superkingdom, #{table}.kingdom, "
         sql += case taxon_rank
                when 'phylum' then fields[0]
                when 'class' then fields[0..1].join(', ')
@@ -42,16 +43,17 @@ module ResearchProjectService
         sql
       end
 
-      def gbif_taxa_sql
+      def ct_taxa_sql(table)
         fields = [
-          "coalesce(external.gbif_occ_taxa.phylum, '--')",
-          "coalesce(external.gbif_occ_taxa.classname, '--')",
-          "coalesce(external.gbif_occ_taxa.order, '--')",
-          "coalesce(external.gbif_occ_taxa.family, '--')",
-          "coalesce(external.gbif_occ_taxa.genus, '--')",
-          "coalesce(external.gbif_occ_taxa.species, '--')"
+          "coalesce(#{table}.source_phylum, '--')",
+          "coalesce(#{table}.source_class_name, '--')",
+          "coalesce(#{table}.source_order, '--')",
+          "coalesce(#{table}.source_family, '--')",
+          "coalesce(#{table}.source_genus, '--')",
+          "coalesce(#{table}.source_species, '--')"
         ]
-        sql = "external.gbif_occ_taxa.kingdom || '|' ||"
+        sql = "coalesce(#{table}.source_superkingdom, '--') || '|' ||"
+        sql += "coalesce(#{table}.source_kingdom, '--') || '|' ||"
         sql += case taxon_rank
                when 'phylum' then fields[0]
                when 'class' then fields[0..1].join("|| '|' ||")
@@ -62,6 +64,7 @@ module ResearchProjectService
                end
         sql
       end
+
 
       def ncbi_taxa_sql
         fields = [
@@ -72,8 +75,8 @@ module ResearchProjectService
           "coalesce(ncbi_nodes.hierarchy_names ->> 'genus', '--')",
           "coalesce(ncbi_nodes.hierarchy_names ->> 'species', '--')"
         ]
-        sql = "coalesce(ncbi_nodes.hierarchy_names ->> 'superkingdom', '--') " \
-          "|| '|' ||"
+        sql = "coalesce(ncbi_nodes.hierarchy_names ->> 'superkingdom', '--') || '|' ||"
+        sql += "coalesce(ncbi_nodes.hierarchy_names ->> 'kingdom', '--') || '|' ||"
         sql += case taxon_rank
                when 'phylum' then fields[0]
                when 'class' then fields[0..1].join("|| '|' ||")
@@ -85,98 +88,94 @@ module ResearchProjectService
         sql
       end
 
-      def edna_match_sql
-        <<-SQL
-          SELECT DISTINCT(unnest(ids))::TEXT::INTEGER
-            FROM asvs
-            JOIN extractions
-              ON asvs.extraction_id = extractions.id
-            JOIN research_project_sources
-              ON research_project_sources.sourceable_id = asvs.extraction_id
-              AND research_project_id = 4
-              AND sourceable_type = 'Extraction'
-            JOIN ncbi_nodes
-              ON ncbi_nodes.taxon_id = asvs."taxonID"
-        SQL
-      end
+      def match_sql(table)
+        ncbi_match_sql =
+          if %w[phylum class order].include?(taxon_rank)
+            'true'
+          else
+            <<~SQL
+              (
+              SELECT ncbi_names.taxon_id
+              FROM ncbi_names
+              WHERE LOWER(ncbi_names.name) =
+              LOWER(gbif_ct.#{combine_taxon_rank_field})
+              LIMIT 1
+              ) IS NOT NULL
+            SQL
+          end
 
-      def match_sql
-        <<-SQL
-          ARRAY_AGG(DISTINCT(
-            ncbi_nodes.ncbi_id
-          )) != ARRAY[NULL]::integer[] AS ncbi_match,
-          ARRAY_AGG(DISTINCT(
-            ncbi_nodes.ncbi_id
-          )) && (
-            ARRAY(
-            #{edna_match_sql}
-          )) AS edna_match
+
+        <<~SQL
+          ARRAY_AGG(DISTINCT(ncbi_names.taxon_id)) != ARRAY[NULL]::integer[]
+          AS ncbi_match,
+
+          #{table}.#{combine_taxon_rank_field} IS NOT NULL AS edna_match
         SQL
       end
 
       def aggregate_sql
-        <<-SQL
-          COUNT(*),
+        <<~SQL
+          COUNT(distinct (gbifid)),
+
           ARRAY_AGG(DISTINCT(
-            external.gbif_occ_taxa.taxonkey || '|' ||
-            #{gbif_taxa_sql}
-          )) AS  gbif_taxa,
-          ARRAY_AGG(DISTINCT(
-            ncbi_nodes.ncbi_id || '|' ||
-            #{ncbi_taxa_sql}
-          )) AS  ncbi_taxa
+            g_taxa.taxonkey || '|' || #{ct_taxa_sql('gbif_ct')}
+          )) AS gbif_taxa,
+
+          (SELECT ARRAY_AGG(taxon_id || '|' ||  #{ncbi_taxa_sql})
+          FROM ncbi_nodes
+          WHERE taxon_id =  (ARRAY_AGG(ncbi_names.taxon_id))[1]
+          LIMIT 1) AS ncbi_taxa
         SQL
       end
 
       def join_sql
-        <<-SQL
-          FROM combine_taxa
+        <<~SQL
+          FROM combine_taxa as gbif_ct
           JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey = combine_taxa.taxon_id
-            AND combine_taxa.source = 'gbif'
+            ON external.gbif_occurrences.taxonkey = gbif_ct.source_taxon_id
+            AND gbif_ct.source = 'gbif'
           JOIN  research_project_sources
             ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
             AND research_project_id = 4
             AND sourceable_type = 'GbifOccurrence'
-            AND external.gbif_occurrences.#{gbif_taxon_rank_field} IS NOT NULL
             AND metadata ->> 'location' != 'Montara SMR'
-          JOIN external.gbif_occ_taxa
-            ON external.gbif_occ_taxa.#{gbif_taxon_rank_field} =
-            external.gbif_occurrences.#{gbif_taxon_rank_field}
-            AND external.gbif_occ_taxa.taxonrank = '#{taxon_rank}'
-          LEFT JOIN external_resources
-            ON external_resources.gbif_id = external.gbif_occ_taxa.taxonkey
-            AND external_resources.ncbi_id IS NOT NULL
-            AND external_resources.source != 'wikidata'
-          LEFT JOIN ncbi_nodes
-            ON ncbi_nodes.taxon_id = external_resources.ncbi_id
+          LEFT JOIN combine_taxa AS edna_ct
+            ON edna_ct.#{combine_taxon_rank_field} = gbif_ct.#{combine_taxon_rank_field}
+            AND (edna_ct.source = 'ncbi' OR edna_ct.source = 'bold')
+          LEFT JOIN external.gbif_occ_taxa as g_taxa
+            ON gbif_ct.source_#{combine_taxon_rank_field} = g_taxa.#{gbif_taxon_rank_field}
+            AND g_taxa.taxonrank = '#{taxon_rank}'
+          LEFT JOIN ncbi_names
+            ON LOWER(gbif_ct.#{combine_taxon_rank_field}) = lower(ncbi_names.name)
+
         SQL
       end
 
       def group_fields
         fields = %w[
-          combine_taxa.phylum
-          combine_taxa.class_name
-          combine_taxa.order
-          combine_taxa.family
-          combine_taxa.genus
-          combine_taxa.species
+          gbif_ct.phylum
+          gbif_ct.class_name
+          gbif_ct.order
+          gbif_ct.family
+          gbif_ct.genus
+          gbif_ct.species
         ]
-        sql = 'combine_taxa.superkingdom, '
+        other_fields = ["edna_ct.#{combine_taxon_rank_field}"]
+        sql = 'gbif_ct.superkingdom, gbif_ct.kingdom, '
         sql += case taxon_rank
-               when 'phylum' then fields[0]
-               when 'class' then fields[0..1].join(', ')
-               when 'order' then fields[0..2].join(', ')
-               when 'family' then fields[0..3].join(', ')
-               when 'genus' then fields[0..4].join(', ')
-               when 'species' then fields[0..5].join(', ')
+               when 'phylum' then (fields[0..0] + other_fields).join(', ')
+               when 'class' then (fields[0..1] + other_fields).join(', ')
+               when 'order' then (fields[0..2] + other_fields).join(', ')
+               when 'family' then (fields[0..3] + other_fields).join(', ')
+               when 'genus' then (fields[0..4] + other_fields).join(', ')
+               when 'species' then (fields[0..5] + other_fields).join(', ')
                end
         sql
       end
 
       def sort_fields
         if sort_by == 'count'
-          'count(*) DESC'
+          "count DESC"
         else
           group_fields
         end
