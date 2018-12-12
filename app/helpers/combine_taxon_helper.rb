@@ -3,8 +3,8 @@
 module CombineTaxonHelper
   def self.taxon_string(taxon)
     [
-      taxon['superkingdom'], taxon['phylum'], taxon['class_name'],
-      taxon['order'],
+      taxon['superkingdom'], taxon['kingdom'], taxon['phylum'],
+      taxon['class_name'], taxon['order'],
       taxon['family'], taxon['genus'], taxon['species']
     ].compact.join(', ')
   end
@@ -15,7 +15,7 @@ module CombineTaxonHelper
       parts = taxon.split('|')
       {
         id: parts.first,
-        taxonomy_string: parts.drop(1).join(', ')
+        taxonomy_string: parts.drop(1).join(', ').gsub(/^--, /, '')
       }
     end
   end

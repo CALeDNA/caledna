@@ -93,22 +93,13 @@ module ResearchProjectService
           if %w[phylum class order].include?(taxon_rank)
             'true'
           else
-            <<~SQL
-              (
-              SELECT ncbi_names.taxon_id
-              FROM ncbi_names
-              WHERE LOWER(ncbi_names.name) =
-              LOWER(gbif_ct.#{combine_taxon_rank_field})
-              LIMIT 1
-              ) IS NOT NULL
-            SQL
+            '(SELECT count(*) ' \
+            'FROM ncbi_names ' \
+            "WHERE lower(ncbi_names.name) = lower(gbif_ct.#{combine_taxon_rank_field})) != 0 "
           end
 
-
         <<~SQL
-          ARRAY_AGG(DISTINCT(ncbi_names.taxon_id)) != ARRAY[NULL]::integer[]
-          AS ncbi_match,
-
+          #{ncbi_match_sql} AS ncbi_match,
           #{table}.#{combine_taxon_rank_field} IS NOT NULL AS edna_match
         SQL
       end
@@ -121,10 +112,14 @@ module ResearchProjectService
             g_taxa.taxonkey || '|' || #{ct_taxa_sql('gbif_ct')}
           )) AS gbif_taxa,
 
-          (SELECT ARRAY_AGG(taxon_id || '|' ||  #{ncbi_taxa_sql})
+
+          (SELECT ARRAY_AGG(ncbi_nodes.taxon_id || '|' ||  #{ncbi_taxa_sql})
           FROM ncbi_nodes
-          WHERE taxon_id =  (ARRAY_AGG(ncbi_names.taxon_id))[1]
-          LIMIT 1) AS ncbi_taxa
+          JOIN ncbi_names
+            ON ncbi_nodes.taxon_id = ncbi_names.taxon_id
+          WHERE lower(ncbi_names.name) =
+            lower(gbif_ct.#{combine_taxon_rank_field})
+          ) AS ncbi_taxa
         SQL
       end
 
@@ -145,9 +140,6 @@ module ResearchProjectService
           LEFT JOIN external.gbif_occ_taxa as g_taxa
             ON gbif_ct.source_#{combine_taxon_rank_field} = g_taxa.#{gbif_taxon_rank_field}
             AND g_taxa.taxonrank = '#{taxon_rank}'
-          LEFT JOIN ncbi_names
-            ON LOWER(gbif_ct.#{combine_taxon_rank_field}) = lower(ncbi_names.name)
-
         SQL
       end
 
