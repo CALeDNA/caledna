@@ -34,6 +34,8 @@ module CombineTaxonHelper
 
   def self.vernaculars(taxon)
     ncbi = taxon['ncbi_taxa']
+    return if ncbi.blank?
+
     taxa_array =
       ncbi.delete('{"').delete('{').delete('"}').delete('}').split(',')
 
