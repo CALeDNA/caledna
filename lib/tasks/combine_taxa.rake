@@ -340,7 +340,7 @@ namespace :combine_taxa do
 
     CSV.foreach(path, headers: true, col_sep: ',') do |row|
       taxa =
-        CombineTaxon.where(source: row['source'], taxon_id: row['taxon_id'])
+        CombineTaxon.where(source: row['source'], source_taxon_id: row['taxon_id'])
       puts "#{row['taxon_id']}, #{row['source']}"
       raise if taxa.blank?
       raise if taxa.length > 1
@@ -359,6 +359,14 @@ namespace :combine_taxa do
         paper_match_type: 'manually update',
         approved: true
       )
+    end
+  end
+
+  task update_bold_id: :environment do
+    combine_taxa = CombineTaxon.where(source: 'bold')
+    combine_taxa.each do |combine_taxon|
+      ncbi = NcbiNode.find_by(taxon_id: combine_taxon.caledna_taxon_id)
+      combine_taxon.update(source_taxon_id: ncbi.bold_id)
     end
   end
 
