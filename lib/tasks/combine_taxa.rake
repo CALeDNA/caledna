@@ -405,4 +405,60 @@ namespace :combine_taxa do
       taxon.update(cal_division_id: division_id)
     end
   end
+
+  task check_non_ruggerio_taxa: :environment do
+    include ImportGlobalNames
+    global_names_api = ::GlobalNamesApi.new
+    rank = ENV['rank']
+
+
+    CSV.open("data/lookup_#{rank}_bg_genus.csv", 'a+') do |csv|
+      csv << ['source', 'ct_genus', "gn_#{rank}", 'gn_names' ]
+    end
+
+    sql = <<-SQL
+    select distinct genus
+    from combine_taxa
+    where "#{rank}" not in (
+      select distinct("#{rank}") from combine_taxa
+      where source = 'paper' and "#{rank}" is not null
+    )
+    and (source = 'gbif' or source = 'ncbi')
+    and genus is not null
+    order by genus;
+    SQL
+
+
+    query_results = ActiveRecord::Base.connection.exec_query(sql)
+
+    query_results.rows.flatten.each do |genus|
+      next if genus.include?(' ')
+      puts genus
+
+      gn_request = global_names_api.names(genus)
+      gn_results = gn_request['data'].first['results']
+      next if gn_results.nil?
+
+      gn_results.each do |row|
+        ranks = row['classification_path_ranks'].split('|')
+        rank_index = ranks.index(rank)
+        next if rank_index.nil?
+
+        names = row['classification_path'].split('|')
+        rank_name = names[rank_index]
+
+        source = row['data_source_title']
+
+        ruggerio = CombineTaxon.where(source: 'paper', rank => rank_name)
+
+        next if ruggerio.blank?
+
+        CSV.open('data/lookup_order_bg_genus.csv', 'a+') do |csv|
+          csv << [
+            source, genus, rank_name, names.compact.join(', ')
+          ]
+        end
+      end
+    end
+  end
 end
