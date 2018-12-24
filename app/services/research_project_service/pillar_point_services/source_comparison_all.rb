@@ -20,7 +20,7 @@ module ResearchProjectService
 
       def taxa_total_edna
         sql_string = <<-SQL
-          SELECT COUNT(DISTINCT("#{combine_taxon_rank_field}")) FROM (
+          SELECT COUNT(DISTINCT(kingdom, "#{combine_taxon_rank_field}")) FROM (
             #{taxa_total_edna_sql}
           ) AS foo;
         SQL
@@ -30,7 +30,7 @@ module ResearchProjectService
 
       def taxa_total_gbif
         sql_string = <<-SQL
-          SELECT COUNT(DISTINCT("#{combine_taxon_rank_field}")) FROM (
+          SELECT COUNT(DISTINCT(kingdom, "#{combine_taxon_rank_field}")) FROM (
             #{taxa_total_gbif_sql}
           ) AS foo;
         SQL
@@ -40,7 +40,7 @@ module ResearchProjectService
 
       def taxa_total_common
         sql_string = <<-SQL
-          SELECT COUNT(DISTINCT("#{combine_taxon_rank_field}")) FROM (
+          SELECT COUNT(DISTINCT(kingdom, "#{combine_taxon_rank_field}")) FROM (
             #{taxa_total_edna_sql}
             INTERSECT
             #{taxa_total_gbif_sql}
@@ -52,7 +52,7 @@ module ResearchProjectService
 
       def taxa_total_edna_sql
         <<-SQL
-          SELECT combine_taxa.#{combine_taxon_rank_field}
+          SELECT combine_taxa.kingdom, combine_taxa.#{combine_taxon_rank_field}
           FROM combine_taxa
           LEFT JOIN asvs
             ON asvs."taxonID" = combine_taxa.caledna_taxon_id
@@ -68,7 +68,7 @@ module ResearchProjectService
 
       def taxa_total_gbif_sql
         <<-SQL
-          SELECT  combine_taxa.#{combine_taxon_rank_field}
+          SELECT combine_taxa.kingdom, combine_taxa.#{combine_taxon_rank_field}
           FROM combine_taxa
           JOIN external.gbif_occurrences
             ON external.gbif_occurrences.taxonkey = combine_taxa.source_taxon_id
