@@ -12,7 +12,7 @@ module ResearchProjectService
           inat_only_occurrences:
             convert_counts(inat_division_occurrences_stats),
           exclude_inat_occurrences:
-            convert_counts(exclude_inat_division_occurrences_stats),
+            convert_counts(exclude_inat_division_occurrences_stats)
         }
       end
 

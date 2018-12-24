@@ -43,6 +43,7 @@ module Api
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def common_taxa_json
         {
           research_project_data: {
@@ -68,6 +69,7 @@ module Api
           }
         }
       end
+      # rubocop:enable Metrics/MethodLength
 
       def taxon
         params[:taxon]
@@ -159,7 +161,6 @@ module Api
         @sample_ids ||= conn.execute(sql).pluck('sample_id')
       end
       # rubocop:enable Metrics/MethodLength
-
 
       def query_string
         query = {}

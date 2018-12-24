@@ -339,8 +339,9 @@ namespace :combine_taxa do
     path = ENV['file']
 
     CSV.foreach(path, headers: true, col_sep: ',') do |row|
-      taxa =
-        CombineTaxon.where(source: row['source'], source_taxon_id: row['taxon_id'])
+      taxa = CombineTaxon.where(
+        source: row['source'], source_taxon_id: row['taxon_id']
+      )
       puts "#{row['taxon_id']}, #{row['source']}"
       raise if taxa.blank?
       raise if taxa.length > 1
@@ -411,23 +412,21 @@ namespace :combine_taxa do
     global_names_api = ::GlobalNamesApi.new
     rank = ENV['rank']
 
-
     CSV.open("data/lookup_#{rank}_bg_genus.csv", 'a+') do |csv|
-      csv << ['source', 'ct_genus', "gn_#{rank}", 'gn_names' ]
+      csv << ['source', 'ct_genus', "gn_#{rank}", 'gn_names']
     end
 
     sql = <<-SQL
-    select distinct genus
-    from combine_taxa
-    where "#{rank}" not in (
-      select distinct("#{rank}") from combine_taxa
-      where source = 'paper' and "#{rank}" is not null
+    SELECT DISTINCT genus
+    FROM combine_taxa
+    WHERE "#{rank}" NOT IN (
+      SELECT DISTINCT("#{rank}") FROM combine_taxa
+      WHERE source = 'paper' AND "#{rank}" IS NOT NULL
     )
-    and (source = 'gbif' or source = 'ncbi')
-    and genus is not null
-    order by genus;
+    AND (source = 'gbif' OR source = 'ncbi')
+    AND genus IS NOT NULL
+    ORDER BY genus;
     SQL
-
 
     query_results = ActiveRecord::Base.connection.exec_query(sql)
 

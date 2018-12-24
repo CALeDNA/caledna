@@ -32,6 +32,7 @@ module CombineTaxonHelper
     end.join('|')
   end
 
+  # rubocop:disable Metrics/AbcSize
   def self.vernaculars(taxon)
     ncbi = taxon['ncbi_taxa']
     return if ncbi.blank?
@@ -39,13 +40,15 @@ module CombineTaxonHelper
     taxa_array =
       ncbi.delete('{"').delete('{').delete('"}').delete('}').split(',')
 
-      names = taxa_array.flat_map do |taxon|
-        id = taxon.split('|').first
-        NcbiNode.find(id).vernaculars.map(&:name)
-      end
-      names.present? ? "(#{names.join(', ')})" : ''
+    names = taxa_array.flat_map do |t|
+      id = t.split('|').first
+      NcbiNode.find(id).vernaculars.map(&:name)
+    end
+    names.present? ? "(#{names.join(', ')})" : ''
   end
+  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/MethodLength
   def self.target_taxon(taxon)
     if taxon['species']
       taxon['species']
@@ -61,4 +64,5 @@ module CombineTaxonHelper
       taxon['phylum']
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

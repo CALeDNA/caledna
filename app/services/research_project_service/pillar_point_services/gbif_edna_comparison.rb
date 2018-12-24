@@ -65,7 +65,7 @@ module ResearchProjectService
         sql
       end
 
-
+      # rubocop:disable Metrics/AbcSize
       def ncbi_taxa_sql
         fields = [
           "coalesce(ncbi_nodes.hierarchy_names ->> 'phylum', '--')",
@@ -75,8 +75,10 @@ module ResearchProjectService
           "coalesce(ncbi_nodes.hierarchy_names ->> 'genus', '--')",
           "coalesce(ncbi_nodes.hierarchy_names ->> 'species', '--')"
         ]
-        sql = "coalesce(ncbi_nodes.hierarchy_names ->> 'superkingdom', '--') || '|' ||"
-        sql += "coalesce(ncbi_nodes.hierarchy_names ->> 'kingdom', '--') || '|' ||"
+        sql = "coalesce(ncbi_nodes.hierarchy_names ->> 'superkingdom', '--') "
+        sql += "|| '|' ||"
+        sql += "coalesce(ncbi_nodes.hierarchy_names ->> 'kingdom', '--') "
+        sql += "|| '|' ||"
         sql += case taxon_rank
                when 'phylum' then fields[0]
                when 'class' then fields[0..1].join("|| '|' ||")
@@ -87,6 +89,7 @@ module ResearchProjectService
                end
         sql
       end
+      # rubocop:enable Metrics/AbcSize
 
       def match_sql(table)
         ncbi_match_sql =
@@ -95,7 +98,8 @@ module ResearchProjectService
           else
             '(SELECT count(*) ' \
             'FROM ncbi_names ' \
-            "WHERE lower(ncbi_names.name) = lower(gbif_ct.#{combine_taxon_rank_field})) != 0 "
+            'WHERE lower(ncbi_names.name) = ' \
+            "lower(gbif_ct.#{combine_taxon_rank_field})) != 0 "
           end
 
         <<~SQL
@@ -143,6 +147,7 @@ module ResearchProjectService
         SQL
       end
 
+      # rubocop:disable Metrics/AbcSize
       def group_fields
         fields = %w[
           gbif_ct.phylum
@@ -164,10 +169,11 @@ module ResearchProjectService
                end
         sql
       end
+      # rubocop:enable Metrics/AbcSize
 
       def sort_fields
         if sort_by == 'count'
-          "count DESC"
+          'count DESC'
         else
           group_fields
         end
