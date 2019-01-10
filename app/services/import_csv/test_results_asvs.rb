@@ -145,6 +145,8 @@ module ImportCsv
         next if count < 1
 
         extraction = extractions[cell]
+        next if extraction.blank?
+
         ImportCsvCreateAsvJob.perform_later(cell, extraction, cal_taxon, count,
                                             primer)
       end
