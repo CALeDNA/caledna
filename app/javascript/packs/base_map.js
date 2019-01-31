@@ -85,7 +85,7 @@ function formatSamplesData(rawSample, asvsCount) {
     var status = sample.status;
     var asvsCount = asvsCount || '--';
     var body =
-      '<b>Sample:</b> ' + sampleLink + '<br>' +
+      '<b>Site:</b> ' + sampleLink + '<br>' +
       '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
       '<b>Status</b>: ' + status + '<br>' +
       '<b>Organism count</b>: ' + asvsCount + '<br>';
@@ -126,7 +126,7 @@ function formatGBIFData(rawSample) {
     var id = sample.id;
     var sampleLink = "<a href='https://www.gbif.org/occurrence/" + sample.id + "'>" + sample.id + "</a>";
     body =
-      '<b>Sample:</b> ' + sampleLink + '<br>' +
+      '<b>Site:</b> ' + sampleLink + '<br>' +
       '<b>Lat/Long</b>: ' + lat + ', ' + lng + '<br>' +
       '<b>Kingdom</b>: ' + sample.kingdom + '<br>' +
       '<b>Species</b>: ' + sample.species

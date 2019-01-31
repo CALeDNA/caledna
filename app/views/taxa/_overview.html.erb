@@ -52,12 +52,12 @@
 </div>
 
 <% if taxon.threatened? && samples.present? %>
-  <h2 id="samples" class="title">Samples</h2>
+  <h2 id="samples" class="title">Sites</h2>
 
   <% if samples.present? %>
     <div class="panel panel-default">
       <p class="panel-body">
-        NOTE: In order to protect threatened species, we do not show sample or
+        NOTE: In order to protect threatened species, we do not show site or
         location info for species listed as 'Extinct', 'Extinct in the Wild',
         'Critically Endangered', 'Endangered', 'Vulnerable', or 'Near Threatened'
         by IUCN.
@@ -66,12 +66,12 @@
   <% else %>
     <div class="panel panel-default">
       <div class="panel-body">
-        No CALeDNA samples match <%= taxon.canonicalName %>
+        No CALeDNA sites match <%= taxon.canonicalName %>
       </div>
     </div>
   <% end %>
 <% else %>
-  <h2 id="samples" class="title"><%= pluralize(samples.total_records, 'Sample') %></h2>
+  <h2 id="samples" class="title"><%= pluralize(samples.total_records, 'Site') %></h2>
 
   <% if samples.present? %>
     <div class="samples-menu">
@@ -93,14 +93,14 @@
           <input type="checkbox" checked value="asvs" class="js-taxa-markers">
           <svg height="30">
             <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
-            <text x="30" y="20">samples with <%= taxon.canonicalName %> (<%= taxon.common_names(false) %>)</text>
+            <text x="30" y="20">sites with <%= taxon.canonicalName %> (<%= taxon.common_names(false) %>)</text>
           </svg>
         </div>
         <div>
           <input type="checkbox" value="presence" class="js-taxa-markers">
           <svg height="30">
             <circle cx="15" cy="15" r="7" stroke="#777" stroke-width="2" fill="#ddd" />
-            <text x="30" y="20">samples with results</text>
+            <text x="30" y="20">sites with results</text>
           </svg>
         </div>
       </div>

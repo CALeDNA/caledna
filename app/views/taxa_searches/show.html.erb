@@ -20,7 +20,7 @@
         <% end %>
         <%= match.rank %>: <%= link_to match.canonical_name, taxon_path(id: match.taxon_id) %><br>
         <%= "(#{match.alt_names.split(' | ').join(', ')})" if match.alt_names %><br>
-        <%= pluralize(match.asvs_count, 'sample') %>
+        <%= pluralize(match.asvs_count, 'site') %>
       </td>
     </tr>
   <% end %>
