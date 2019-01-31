@@ -1,4 +1,8 @@
 {
+  "engines": {
+    "node": "9.x",
+    "yarn": "1.x"
+  },
   "scripts": {
     "test": "jest"
   },
