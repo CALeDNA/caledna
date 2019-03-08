@@ -56,7 +56,7 @@ namespace :research_project_pillar_point do
     include InsidePolygon
     locations = [
       {
-        polygon: InsidePolygon::PILLAR_POINT_UNPROTECTED_EMBANKMENT,
+        polygon: InsidePolygon::PILLAR_POINT_UNPROTECTED_EMBAYMENT,
         location: 'Pillar Point embayment unprotected'
       },
       {
