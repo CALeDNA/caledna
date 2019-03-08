@@ -3,7 +3,7 @@
 # rubocop:disable Metrics/MethodLength
 module ResearchProjectService
   module PillarPointServices
-    module TaxaFrequency
+    module DetectionFrequency
       def biodiversity_bias
         {
           cal: biodiversity_bias_cal,
