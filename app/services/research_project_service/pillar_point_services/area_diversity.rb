@@ -8,7 +8,7 @@ module ResearchProjectService
       def area_diversity_data
         smca = 'Pillar Point SMCA'
         exposed = 'Pillar Point exposed unprotected'
-        embankment = 'Pillar Point embankment unprotected'
+        embayment = 'Pillar Point embayment unprotected'
 
         {
           cal: {
@@ -16,19 +16,19 @@ module ResearchProjectService
             locations: [
               { names: [smca], count: cal_location(smca) },
               { names: [exposed], count: cal_location(exposed) },
-              { names: [embankment], count: cal_location(embankment) },
+              { names: [embayment], count: cal_location(embayment) },
               { names: [smca, exposed], count: cal_location(smca, exposed) },
               {
-                names: [embankment, exposed],
-                count: cal_location(embankment, exposed)
+                names: [embayment, exposed],
+                count: cal_location(embayment, exposed)
               },
               {
-                names: [smca, embankment],
-                count: cal_location(smca, embankment)
+                names: [smca, embayment],
+                count: cal_location(smca, embayment)
               },
               {
-                names: [smca, embankment, exposed],
-                count: cal_location(smca, embankment, exposed)
+                names: [smca, embayment, exposed],
+                count: cal_location(smca, embayment, exposed)
               }
             ]
           },
@@ -37,19 +37,19 @@ module ResearchProjectService
             locations: [
               { names: [smca], count: gbif_location(smca) },
               { names: [exposed], count: gbif_location(exposed) },
-              { names: [embankment], count: gbif_location(embankment) },
+              { names: [embayment], count: gbif_location(embayment) },
               { names: [smca, exposed], count: gbif_location(smca, exposed) },
               {
-                names: [embankment, exposed],
-                count: gbif_location(embankment, exposed)
+                names: [embayment, exposed],
+                count: gbif_location(embayment, exposed)
               },
               {
-                names: [smca, embankment],
-                count: gbif_location(smca, embankment)
+                names: [smca, embayment],
+                count: gbif_location(smca, embayment)
               },
               {
-                names: [smca, embankment, exposed],
-                count: gbif_location(smca, embankment, exposed)
+                names: [smca, embayment, exposed],
+                count: gbif_location(smca, embayment, exposed)
               }
             ]
           }

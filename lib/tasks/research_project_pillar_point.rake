@@ -57,7 +57,7 @@ namespace :research_project_pillar_point do
     locations = [
       {
         polygon: InsidePolygon::PILLAR_POINT_UNPROTECTED_EMBANKMENT,
-        location: 'Pillar Point embankment unprotected'
+        location: 'Pillar Point embayment unprotected'
       },
       {
         polygon: InsidePolygon::PILLAR_POINT_UNPROTECTED_EXPOSED,
@@ -93,9 +93,9 @@ namespace :research_project_pillar_point do
     project_id = ResearchProject.find_by(name: 'Pillar Point').id
 
     locations = {
-      embankment_unprotected: {
-        file: 'PillarPoint_embankment_unprotected_GBIF_noCLO.csv',
-        location: 'Pillar Point embankment unprotected'
+      embayment_unprotected: {
+        file: 'PillarPoint_embayment_unprotected_GBIF_noCLO.csv',
+        location: 'Pillar Point embayment unprotected'
       },
       exposed_unprotected: {
         file: 'PillarPoint_exposed_unprotected_GBIFnoCLO.csv',

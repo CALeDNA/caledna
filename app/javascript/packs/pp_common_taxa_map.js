@@ -65,7 +65,7 @@ var PP_non_protected_exposed = [
   [37.49603, -122.49531]
 ]
 
-var PP_non_protected_embankment = [
+var PP_non_protected_embayment = [
   [37.50194, -122.49346], [37.50199, -122.49489], [37.4999, -122.49625],
   [37.49818, -122.4968], [37.49683, -122.49627], [37.49647, -122.49558],
   [37.49635, -122.49536], [37.49582, -122.49506], [37.49303, -122.49348],
@@ -78,4 +78,4 @@ var PP_non_protected_embankment = [
 
 L.polygon(PP_SMCA, {color: 'red'}).addTo(map);
 L.polygon(PP_non_protected_exposed, {color: 'blue'}).addTo(map);
-L.polygon(PP_non_protected_embankment, {color: 'orange'}).addTo(map);
+L.polygon(PP_non_protected_embayment, {color: 'orange'}).addTo(map);

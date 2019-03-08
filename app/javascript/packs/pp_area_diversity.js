@@ -7,7 +7,7 @@ import  baseVenn from './base_venn.js';
 // =============
 
 const location_names = {
-  'Pillar Point embankment unprotected': 'unprotected embankment',
+  'Pillar Point embayment unprotected': 'unprotected embayment',
   'Pillar Point exposed unprotected': 'unprotected tidal pools',
   'Pillar Point SMCA': 'SMCA',
 };
