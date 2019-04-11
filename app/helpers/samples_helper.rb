@@ -44,6 +44,8 @@ module SamplesHelper
   end
 
   def self.rank_info(lineage, rank)
+    # lineage is blank for BOLD taxa
+    return if lineage.blank?
     lineage.select { |l| l.third == rank }.first
   end
 
