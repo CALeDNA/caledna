@@ -72,6 +72,7 @@ class ResearchProjectsController < ApplicationController
     elsif params[:section] == 'area_diversity'
     elsif params[:section] == 'detection_frequency'
     elsif params[:section] == 'source_comparison_all'
+    elsif params[:section] == 'networks'
     else
       @stats = project_service.stats
     end
