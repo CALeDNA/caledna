@@ -72,7 +72,7 @@ module Api
       # rubocop:enable Metrics/MethodLength
 
       def taxon
-        params[:taxon]
+        params[:taxon].tr('_', ' ')
       end
 
       def rank
