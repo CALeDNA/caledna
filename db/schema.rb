@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_14_141941) do
+ActiveRecord::Schema.define(version: 2019_10_14_210516) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -503,10 +503,12 @@ ActiveRecord::Schema.define(version: 2019_10_14_141941) do
     t.string "environmental_settings"
     t.boolean "missing_coordinates", default: false
     t.jsonb "metadata", default: {}
+    t.string "primers", default: [], array: true
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_data_project_id"], name: "index_samples_on_field_data_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
     t.index ["metadata"], name: "samples_metadata_idx", using: :gin
+    t.index ["primers"], name: "index_samples_on_primer", using: :gin
     t.index ["status_cd"], name: "index_samples_on_status_cd"
   end
 
