@@ -6,6 +6,12 @@
     var data;
     data = new FormData;
     data.append('upload[image]', file);
+
+    $.ajaxSetup({
+      headers:
+      { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+    });
+
     return $.ajax({
       data: data,
       type: 'POST',
