@@ -510,13 +510,14 @@ function addEventListener(map, samplesData) {
 // misc
 // =============
 
+// NOTE: not using font awesome spinner because dynamically adding spinner
+// causes page to scroll to the top
+// https://stackoverflow.com/questions/55738409/adding-font-awesome-icon-dynamically-causes-page-to-scroll-to-top
 function addSpinner(map) {
   return L.marker([initialLat, initialLng], {
     icon: L.divIcon({
-      html:
-        '<div class="fa-5x"><i class="fas fa-circle-notch fa-spin"></i></div>',
-      iconSize: [20, 20],
-      className: "mySpinner"
+      html: '<div class="spinner"></div>',
+      iconSize: [0, 0]
     })
   }).addTo(map);
 }
