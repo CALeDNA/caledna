@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 ruby '2.4.0'
 gem 'rails', '~> 5.2'
 
-gem 'administrate', '~> 0.10.0'
+gem 'administrate', '~> 0.11.0'
 gem 'administrate-field-image'
 gem 'administrate-field-json', git: 'https://github.com/eddietejeda/administrate-field-json.git'
 gem 'administrate-field-nested_has_many', '~> 1.0.0'

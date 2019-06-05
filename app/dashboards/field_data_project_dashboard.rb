@@ -19,7 +19,6 @@ class FieldDataProjectDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :name,
     :samples,
-    :date_range,
     :last_import_date,
   ].freeze
 
@@ -27,7 +26,6 @@ class FieldDataProjectDashboard < Administrate::BaseDashboard
     :name,
     :description,
     :kobo_id,
-    :date_range,
     :created_at,
     :updated_at,
     :last_import_date,
@@ -38,7 +36,6 @@ class FieldDataProjectDashboard < Administrate::BaseDashboard
     :name,
     :description,
     :kobo_id,
-    :date_range,
   ].freeze
 
   def display_resource(project)
