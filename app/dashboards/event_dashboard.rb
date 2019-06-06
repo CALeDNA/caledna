@@ -13,6 +13,7 @@ class EventDashboard < Administrate::BaseDashboard
     contact: Field::Text,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    event_registrations: Field::HasMany,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -31,6 +32,7 @@ class EventDashboard < Administrate::BaseDashboard
     :flyer,
     :created_at,
     :updated_at,
+    :event_registrations
   ].freeze
 
 

@@ -57,6 +57,9 @@ Rails.application.routes.draw do
     resources :surveys
     resources :survey_responses
 
+    get 'events/:id/download_csv', to: 'events#download_csv',
+                                   as: 'event_download_csv'
+
     namespace :labwork do
       get '/' => 'home#index'
 
