@@ -83,12 +83,23 @@ module KoboApi
       ]
     end
 
+    def format_barcode(data)
+      kit_number = clean_kit_number(data.What_is_your_kit_number_e_g_K0021)
+      if data.Which_location_lette_codes_LA_LB_or_LC.present?
+        location_letter =
+          data.Which_location_lette_codes_LA_LB_or_LC.try(:upcase)
+        site_number = data.You_re_at_your_first_r_barcodes_S1_or_S2.try(:upcase)
+        barcode = "#{kit_number}-#{location_letter}-#{site_number}"
+      else
+        e_data = data.Select_the_match_for_e_dash_on_your_tubes.try(:upcase)
+        barcode = "#{kit_number}-#{e_data}"
+      end
+      barcode
+    end
+
     def process_single_sample_v1(field_data_project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
-      kit_number = clean_kit_number(data.What_is_your_kit_number_e_g_K0021)
-      location_letter = data.Which_location_lette_codes_LA_LB_or_LC.try(:upcase)
-      site_number = data.You_re_at_your_first_r_barcodes_S1_or_S2.try(:upcase)
-      data.barcode = "#{kit_number}-#{location_letter}-#{site_number}"
+      data.barcode = format_barcode(data)
       data.gps = data.Get_the_GPS_Location_e_this_more_accurate
       data.substrate = data.What_type_of_substrate_did_you
       data.field_notes = [
@@ -107,10 +118,7 @@ module KoboApi
 
     def process_single_sample_v2(field_data_project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
-      kit_number = clean_kit_number(data.What_is_your_kit_number_e_g_K0021)
-      location_letter = data.Which_location_lette_codes_LA_LB_or_LC.try(:upcase)
-      site_number = data.You_re_at_your_first_r_barcodes_S1_or_S2.try(:upcase)
-      data.barcode = "#{kit_number}-#{location_letter}-#{site_number}"
+      data.barcode = format_barcode(data)
       data.gps = data.Get_the_GPS_Location_e_this_more_accurate
       data.substrate = data.What_type_of_substrate_did_you
       data.field_notes = data._Optional_Regarding_rns_to_share_with_us

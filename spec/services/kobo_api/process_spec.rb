@@ -217,6 +217,26 @@ describe KoboApi::Process do
       end
     end
 
+    context 'when incoming data has two part kit number' do
+      let(:kobo_id) { 1 }
+      let(:data) do
+        {
+          'What_is_your_kit_number_e_g_K0021' => 'K1',
+          'Select_the_match_for_e_dash_on_your_tubes' => 'A1',
+          'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
+          '_attachments' => []
+        }
+      end
+
+      it 'creates a sample with incoming data' do
+        expect { subject(project_id, kobo_id, data) }
+          .to change { Sample.count }.by(1)
+
+        sample = Sample.first
+        expect(sample.barcode).to eq('K1-A1')
+      end
+    end
+
     context 'when incoming data has multiple samples' do
       let(:kobo_id) { FieldDataProject::MULTI_SAMPLE_PROJECTS.first }
 
