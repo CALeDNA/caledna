@@ -7,6 +7,8 @@ module Admin
 
     # NOTE: include index so I can use custom pagination params 'page_num'
     # Adminstrate uses 'page' for pagination, which breaks when using Page model
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def index
       search_term = params[:search].to_s.strip
       resources = Administrate::Search.new(scoped_resource,
@@ -21,9 +23,10 @@ module Admin
         resources: resources,
         search_term: search_term,
         page: page,
-        show_search_bar: show_search_bar?,
+        show_search_bar: show_search_bar?
       }
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def create
       super

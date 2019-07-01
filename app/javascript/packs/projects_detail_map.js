@@ -1,6 +1,8 @@
 import baseMap from './base_map.js';
 
-var apiEndpoint = `/api/v1${window.location.pathname}${window.location.search}`;
+var path = window.location.pathname.replace(/pages\/.*?$/, '');
+var apiEndpoint = `/api/v1${path}${window.location.search}`;
+
 var map = baseMap.createMap()
 baseMap.fetchSamples(apiEndpoint, map, function(data) {
   var markerClusterLayer =

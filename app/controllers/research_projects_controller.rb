@@ -9,36 +9,57 @@ class ResearchProjectsController < ApplicationController
   end
 
   def show
-    @samples = project.present? ? paginated_samples : []
-    @project = project
-    @asvs_count = project.present? ? asvs_count : []
-  end
+    redirect_show if project.show_pages?
 
-  def pillar_point
-    @page = page
     @project = project
-    researcher_view
+    project_samples
   end
 
   def edit
     redirect_to research_projects_path unless current_researcher
 
-    @page = page
+    @page = page_with_section
+  end
+
+  def show_project_page
+    @project = project
+    @page = project_page
+    project_samples if project_page.show_project_map?
+  end
+
+  def pillar_point
+    @page = page_with_section
+    @project = project
+    pillar_point_view
   end
 
   private
 
-  def page
-    id = params[:id]
-    section = params[:section] || 'intro'
-    page = Page.find_by(slug: "#{id}/#{section}")
-    if page.blank?
-      page = Page.create(
-        slug: "#{id}/#{section}", title: section.titleize,
-        body: "#{section.titleize} content"
-      )
+  def project_samples
+    return [] unless params[:view] == 'list'
+    @samples = project.present? ? paginated_samples : []
+    @asvs_count = project.present? ? asvs_count : []
+  end
+
+  def redirect_show
+    redirect_to research_project_page_url(
+      research_project_id: project.slug, id: project.default_page.slug
+    )
+  end
+
+  def page_with_section
+    @page_with_section ||= begin
+      id = params[:id]
+      section = params[:section] || 'intro'
+      Page.find_by(slug: "#{id}/#{section}")
     end
-    page
+  end
+
+  def project_page
+    @project_page ||= begin
+      page_page = params[:id]
+      Page.where(research_project: project, slug: page_page).first
+    end
   end
 
   def conn
@@ -47,7 +68,7 @@ class ResearchProjectsController < ApplicationController
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def researcher_view
+  def pillar_point_view
     if params[:section] == 'occurrence_comparison'
       @division_counts = project_service.division_counts
       @division_counts_unique = project_service.division_counts_unique
@@ -81,51 +102,60 @@ class ResearchProjectsController < ApplicationController
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def project
-    @project ||= begin
-      where_sql = params[:id].to_i.zero? ? 'slug = ?' : 'id = ?'
-      ResearchProject.where(where_sql, params[:id]).first
+    @project ||= ResearchProject.find_by(slug: project_slug)
+  end
+
+  def project_slug
+    if params[:research_project_id]
+      params[:research_project_id]
+    else
+      params[:id]
     end
   end
 
   # rubocop:disable Metrics/MethodLength
   def projects
     # NOTE: this query provides the samples count per project
-    sql = 'SELECT research_projects.id, research_projects.name, ' \
-    'COUNT(DISTINCT(samples.id)) ' \
-    'FROM research_projects ' \
-    'JOIN research_project_sources ' \
-    'ON research_projects.id = ' \
-    'research_project_sources.research_project_id ' \
-    'JOIN samples ' \
-    'ON research_project_sources.sample_id = samples.id ' \
-    "WHERE samples.status_cd != 'processed_invalid_sample' " \
-    'AND latitude IS NOT NULL AND longitude IS NOT NULL ' \
-    'GROUP BY research_projects.id ' \
-    'ORDER BY research_projects.name;'
+    @projects ||= begin
+      sql = 'SELECT research_projects.id, research_projects.name, ' \
+      'research_projects.slug, ' \
+      'COUNT(DISTINCT(samples.id)) ' \
+      'FROM research_projects ' \
+      'JOIN research_project_sources ' \
+      'ON research_projects.id = ' \
+      'research_project_sources.research_project_id ' \
+      'JOIN samples ' \
+      'ON research_project_sources.sample_id = samples.id ' \
+      "WHERE samples.status_cd != 'processed_invalid_sample' " \
+      'AND latitude IS NOT NULL AND longitude IS NOT NULL ' \
+      'GROUP BY research_projects.id ' \
+      'ORDER BY research_projects.name;'
 
-    @projects ||= ActiveRecord::Base.connection.execute(sql)
+      ActiveRecord::Base.connection.execute(sql)
+    end
   end
   # rubocop:enable Metrics/MethodLength
 
   def samples
-    Sample.approved.with_coordinates.order(:barcode)
-          .where(id: sample_ids)
+    @samples ||= Sample.approved.with_coordinates.order(:barcode)
+                       .where(id: sample_ids)
   end
 
   def sample_ids
-    sql = 'SELECT sample_id ' \
-      'FROM research_project_sources ' \
-      'JOIN samples ' \
-      'ON samples.id = research_project_sources.sample_id ' \
-      'WHERE latitude IS NOT NULL AND longitude IS NOT NULL ' \
-      "AND research_project_sources.research_project_id = #{project.id};"
+    @sample_ids ||= begin
+      sql = 'SELECT sample_id ' \
+        'FROM research_project_sources ' \
+        'JOIN samples ' \
+        'ON samples.id = research_project_sources.sample_id ' \
+        'WHERE latitude IS NOT NULL AND longitude IS NOT NULL ' \
+        "AND research_project_sources.research_project_id = #{project.id};"
 
-    @sample_ids ||= ActiveRecord::Base.connection.execute(sql)
-                                      .pluck('sample_id')
+      ActiveRecord::Base.connection.execute(sql).pluck('sample_id')
+    end
   end
 
   def paginated_samples
-    samples.page(params[:page])
+    @paginated_samples ||= samples.page(params[:page])
   end
 
   def extraction_ids
@@ -138,10 +168,12 @@ class ResearchProjectsController < ApplicationController
   end
 
   def occurrences
-    if params[:source] == 'gbif'
-      project_service.gbif_occurrences.page(params[:page])
-    else
-      samples.page(params[:page])
+    @occurrences ||= begin
+      if params[:source] == 'gbif'
+        project_service.gbif_occurrences.page(params[:page])
+      else
+        samples.page(params[:page])
+      end
     end
   end
 

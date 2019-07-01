@@ -20,8 +20,8 @@ describe 'Research Projects' do
 
   describe 'projects show page' do
     it 'returns OK for valid id' do
-      project = create(:research_project)
-      get research_project_path(id: project.id)
+      project = create(:research_project, slug: 'slug')
+      get research_project_path(id: project.slug)
 
       expect(response.status).to eq(200)
     end

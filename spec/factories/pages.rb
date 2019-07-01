@@ -4,6 +4,6 @@ FactoryBot.define do
   factory :page do
     title 'MyString'
     body 'MyText'
-    draft false
+    published false
   end
 end

@@ -2,6 +2,7 @@
 
 <% if @project.present? %>
   <h1><%= @project.name %></h1>
+  <%= render partial: "research_projects/submenu" %>
 
   <p><%= @project.description %></p>
 

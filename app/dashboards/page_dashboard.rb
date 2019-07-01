@@ -9,35 +9,40 @@ class PageDashboard < Administrate::BaseDashboard
     menu_cd: EnumField,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
-    order: Field::Number,
-    slug: Field::String
+    display_order: Field::Number,
+    slug: Field::String,
+    research_project: Field::BelongsTo,
+    menu_text: Field::String,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
     :title,
-    :menu_cd,
-    :order,
-    :published
+    :published,
+    :research_project,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :title,
-    :body,
     :published,
     :menu_cd,
-    :order,
+    :menu_text,
     :slug,
+    :display_order,
+    :research_project,
+    :body,
     :created_at,
     :updated_at
   ].freeze
 
   FORM_ATTRIBUTES = [
     :title,
-    :body,
     :published,
     :menu_cd,
-    :order,
-    :slug
+    :menu_text,
+    :display_order,
+    :slug,
+    :research_project,
+    :body,
   ].freeze
 
   def display_resource(page)

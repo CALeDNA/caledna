@@ -10,7 +10,7 @@
   </tr>
 
   <% @projects.each do |project| %>
-    <tr class="clickable_row" data-path='<%=  research_project_path(id: project['id'])%>' >
+    <tr class="clickable_row" data-path='<%=  research_project_path(id: project['slug'])%>' >
       <td><%= project['name'] %></td>
       <td><%= project['count'] %></td>
     </tr>

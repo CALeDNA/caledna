@@ -6,7 +6,7 @@
 }
 </style>
 
-<% if @project.present? %>
+<% if @project.present? && @page.present? %>
   <h1><%= @project.name %></h1>
   <%= render partial: "research_projects/pillar_point/submenu" %>
 

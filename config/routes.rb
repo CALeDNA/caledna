@@ -141,7 +141,10 @@ Rails.application.routes.draw do
   get 'research_projects/pillar-point', to: 'research_projects#pillar_point',
                                         defaults: { id: 'pillar-point' }
 
-  resources :research_projects, only: %i[index show edit]
+  resources :research_projects, only: %i[index show edit] do
+    resources :pages, only: %i[show], controller: 'research_projects',
+                      action: 'show_project_page'
+  end
 
   namespace :beta do
     get 'geojson_demo', to: 'geojson_demo'

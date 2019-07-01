@@ -1,0 +1,7 @@
+<% if @project.show_pages? %>
+  <ul class="submenu">
+    <% @project.project_pages.each do |page| %>
+      <li><%= link_to page.menu_display, research_project_page_path(research_project_id: @project.slug, id: page.slug) %></li>
+    <% end %>
+  </ul>
+<% end %>
