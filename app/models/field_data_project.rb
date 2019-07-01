@@ -10,6 +10,8 @@ class FieldDataProject < ApplicationRecord
   has_many :samples, dependent: :destroy
   has_many :events
 
+  scope :published, -> { where(published: true) }
+
   def multi_sample_form?
     MULTI_SAMPLE_PROJECTS.include?(kobo_id)
   end

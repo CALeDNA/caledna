@@ -8,7 +8,7 @@ module Admin
       def import_kobo
         authorize 'Labwork::Kobo'.to_sym, :import_kobo?
 
-        @projects = ::FieldDataProject.all.where.not(kobo_id: nil)
+        @projects = ::FieldDataProject.published.where.not(kobo_id: nil)
       end
 
       def import_projects

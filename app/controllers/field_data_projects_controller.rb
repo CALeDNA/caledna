@@ -6,7 +6,7 @@ class FieldDataProjectsController < ApplicationController
 
   def index
     @projects =
-      FieldDataProject
+      FieldDataProject.published
       .where('id IN (SELECT DISTINCT(field_data_project_id) from samples)')
       .order(:name).page params[:page]
   end

@@ -14,12 +14,14 @@ class FieldDataProjectDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     last_import_date: Field::DateTime,
+    published: Field::Boolean,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
     :name,
     :samples,
     :last_import_date,
+    :published,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
@@ -30,12 +32,14 @@ class FieldDataProjectDashboard < Administrate::BaseDashboard
     :updated_at,
     :last_import_date,
     :kobo_payload,
+    :published,
   ].freeze
 
   FORM_ATTRIBUTES = [
     :name,
     :description,
     :kobo_id,
+    :published,
   ].freeze
 
   def display_resource(project)
