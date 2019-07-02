@@ -48,7 +48,7 @@ class ResearchProjectsController < ApplicationController
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def researcher_view
-    if params[:section] == 'occurrence_comparsion'
+    if params[:section] == 'occurrence_comparison'
       @division_counts = project_service.division_counts
       @division_counts_unique = project_service.division_counts_unique
     elsif params[:section] == 'gbif_breakdown'

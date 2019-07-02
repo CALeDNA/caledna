@@ -19,8 +19,8 @@
 
   <div class="section-content"><%= sanitize @page.body %></div>
 
-  <% if params[:section] == 'occurrence_comparsion' %>
-    <%= render partial: "research_projects/pillar_point/occurrence_comparsion" %>
+  <% if params[:section] == 'occurrence_comparison' %>
+    <%= render partial: "research_projects/pillar_point/occurrence_comparison" %>
   <% elsif params[:section] == 'gbif_breakdown' %>
     <%= render partial: "research_projects/pillar_point/gbif_breakdown" %>
   <% elsif params[:section] == 'interactions' %>
