@@ -3,6 +3,37 @@
 require 'rails_helper'
 
 describe ResearchProject do
+  describe 'validations' do
+    it 'returns true if slug is unique' do
+      create(:research_project, slug: 'slug1')
+      project = build(:research_project, slug: 'slug2')
+
+      expect(project.valid?).to eq(true)
+    end
+
+    it 'returns false if slug is not unique' do
+      create(:research_project, slug: 'slug')
+      project = build(:research_project, slug: 'slug')
+
+      expect(project.valid?).to eq(false)
+      expect(project.errors.messages[:slug]).to eq(['has already been taken'])
+    end
+  end
+
+  describe 'before save: set_slug' do
+    it 'adds a slug using the project name if no slug is given' do
+      project = create(:research_project, name: 'My Project', slug: nil)
+
+      expect(project.slug).to eq('my-project')
+    end
+
+    it 'does nothing is slug is given' do
+      project = create(:research_project, name: 'Project Name', slug: 'my-slug')
+
+      expect(project.slug).to eq('my-slug')
+    end
+  end
+
   describe '#show_pages?' do
     it 'returns true if research project has any published pages' do
       project = create(:research_project)

@@ -5,6 +5,8 @@ class ResearchProject < ApplicationRecord
   has_many :pages
   before_save :set_slug
 
+  validates :slug, uniqueness: true
+
   scope :published, -> { where(published: true) }
 
   def extractions
@@ -26,7 +28,7 @@ class ResearchProject < ApplicationRecord
   private
 
   def set_slug
-    return if try(:slug).nil?
+    return if try(:slug).present?
     self.slug = name.parameterize.truncate(80, omission: '')
   end
 end

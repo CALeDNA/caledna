@@ -3,6 +3,78 @@
 require 'rails_helper'
 
 describe Page do
+  describe 'validations' do
+    describe '#unique_slugs' do
+      context 'when there are research project and normal pages' do
+        it 'returns true if research page slug is unique' do
+          project = create(:research_project)
+          create(:page, slug: 'slug')
+          page = build(:page, slug: 'slug', research_project: project)
+
+          expect(page.valid?).to eq(true)
+        end
+
+        it 'returns true if page slug is unique' do
+          project = create(:research_project)
+          create(:page, slug: 'slug', research_project: project)
+          page = build(:page, slug: 'slug')
+
+          expect(page.valid?).to eq(true)
+        end
+      end
+
+      context 'when page is for research project' do
+        it 'returns true if slug is unique for the research project' do
+          project = create(:research_project)
+          create(:page, slug: 'slug1', research_project: project)
+          page = build(:page, slug: 'slug2', research_project: project)
+
+          expect(page.valid?).to eq(true)
+        end
+
+        it 'returns false if slug is not unique for the research project' do
+          project = create(:research_project)
+          create(:page, slug: 'slug', research_project: project)
+          page = build(:page, slug: 'slug', research_project: project)
+
+          expect(page.valid?).to eq(false)
+          expect(page.errors.messages[:slug]).to eq(['has already been taken'])
+        end
+      end
+
+      context 'when page is not for research project' do
+        it 'returns true if slug is unique' do
+          create(:page, slug: 'slug1')
+          page = build(:page, slug: 'slug2')
+
+          expect(page.valid?).to eq(true)
+        end
+
+        it 'returns false if slug is not unique' do
+          create(:page, slug: 'slug')
+          page = build(:page, slug: 'slug')
+
+          expect(page.valid?).to eq(false)
+          expect(page.errors.messages[:slug]).to eq(['has already been taken'])
+        end
+      end
+    end
+  end
+
+  describe 'before save: set_slug' do
+    it 'adds a slug using the page title if no slug is given' do
+      page = create(:page, title: 'My Page', slug: nil)
+
+      expect(page.slug).to eq('my-page')
+    end
+
+    it 'does nothing is slug is given' do
+      page = create(:page, title: 'My Page', slug: 'my-slug')
+
+      expect(page.slug).to eq('my-slug')
+    end
+  end
+
   describe '#menu_display' do
     context 'menu_text is available' do
       it 'returns menu_text' do
@@ -13,16 +85,11 @@ describe Page do
     end
 
     context 'menu_text is not available' do
-      it 'return slug' do
-        page = create(:page, menu_text: nil, slug: 'Slug')
+      it 'returns title' do
+        page = create(:page, menu_text: nil, title: 'Page Title')
 
-        expect(page.menu_display).to eq('Slug')
-      end
-
-      it 'returns titleized slug' do
-        page = create(:page, menu_text: nil, slug: 'SlUg')
-
-        expect(page.menu_display).to eq('Slug')
+        expect(page.menu_text).to eq(nil)
+        expect(page.menu_display).to eq('Page Title')
       end
     end
   end
