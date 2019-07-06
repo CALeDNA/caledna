@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_04_000420) do
+ActiveRecord::Schema.define(version: 2019_07_04_151630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -432,6 +432,16 @@ ActiveRecord::Schema.define(version: 2019_07_04_000420) do
     t.index ["research_project_id"], name: "index_raw_taxonomy_imports_on_research_project_id"
   end
 
+  create_table "research_project_authors", force: :cascade do |t|
+    t.bigint "research_project_id"
+    t.string "authorable_type"
+    t.integer "authorable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["authorable_id"], name: "index_research_project_authors_on_authorable_id"
+    t.index ["research_project_id"], name: "index_research_project_authors_on_research_project_id"
+  end
+
   create_table "research_project_sources", id: :serial, force: :cascade do |t|
     t.integer "research_project_id"
     t.integer "sourceable_id"
@@ -639,6 +649,7 @@ ActiveRecord::Schema.define(version: 2019_07_04_000420) do
   add_foreign_key "extractions", "samples"
   add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
   add_foreign_key "photos", "samples"
+  add_foreign_key "research_project_authors", "research_projects"
   add_foreign_key "research_project_sources", "research_projects"
   add_foreign_key "samples", "field_data_projects"
 end

@@ -156,4 +156,28 @@ describe ResearchProject do
       expect(project.project_pages).to eq([page1, page2, page3])
     end
   end
+
+  describe '#researcher_authors' do
+    it 'returns researchers who are authors for a research project' do
+      project1 = create(:research_project)
+      researcher1 = create(:researcher)
+      create(:researcher)
+      create(:research_project_author, research_project: project1,
+                                       authorable: researcher1)
+
+      expect(project1.researcher_authors).to eq([researcher1])
+    end
+  end
+
+  describe '#user_authors' do
+    it 'returns users who are authors for a research project' do
+      project1 = create(:research_project)
+      user1 = create(:user)
+      create(:user)
+      create(:research_project_author, research_project: project1,
+                                       authorable: user1)
+
+      expect(project1.user_authors).to eq([user1])
+    end
+  end
 end
