@@ -1,0 +1,8 @@
+<div class="field-unit__label">
+  <%= f.label field.attribute %>
+</div>
+<div class="field-unit__field">
+  <%= f.select field.attribute,
+  options_for_select(field.select_field_values, selected: field.selected_ids),
+    {}, { multiple: true, size: 5 }  %>
+</div>

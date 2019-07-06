@@ -14,7 +14,7 @@
 
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
     <%
-      non_model_dashboards = []
+      non_model_dashboards = ['user_author', 'researcher_author']
       next if non_model_dashboards.include?(resource.resource)
       next if resource.resource.starts_with?('labwork')
 

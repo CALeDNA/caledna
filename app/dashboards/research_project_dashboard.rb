@@ -10,6 +10,8 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     published: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    researcher_authors: ProjectAuthorField,
+    user_authors: ProjectAuthorField,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -23,6 +25,8 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     :name,
     :description,
     :published,
+    :researcher_authors,
+    :user_authors,
     :created_at,
     :updated_at,
   ].freeze
@@ -31,6 +35,8 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     :name,
     :published,
     :description,
+    :researcher_authors,
+    :user_authors,
   ].freeze
 
 
