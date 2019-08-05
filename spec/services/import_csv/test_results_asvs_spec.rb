@@ -29,6 +29,28 @@ describe ImportCsv::TestResultsAsvs do
       end
     end
 
+    it 'converts X12S_K0723_A1.10.S10.L001' do
+      headers = [
+        ['X12S_K0001_A1.01.S01.L001', 'K0001-A1'],
+        ['K0001_A1.01.S01.L001', 'K0001-A1']
+      ]
+
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
+    end
+
+    it 'converts water samples' do
+      headers = [
+        ['X12S_MWWS_A0.01.S01.L001', 'MWWS-A0'],
+        ['ASWS_A0.01.S01.L001', 'ASWS-A0']
+      ]
+
+      headers.each do |header|
+        expect(subject(header.first)).to eq(header.second)
+      end
+    end
+
     it 'converts K_S_L_ header' do
       headers = [
         ['X16S_K1S1LA.S18.L001', 'K0001-LA-S1'],
