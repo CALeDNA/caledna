@@ -107,9 +107,9 @@ module ImportCsv
       elsif /(neg)|(blank)/i.match?(sample)
         nil
 
-      # NOTE: X12S_MWWS_H0.54.S54.L001 or X12S_K0723_A1.10.S10.L001
-      elsif /^.*?\.\d{2}\.S\d{2}\.L\d{3}$/.match?(cell)
-        match = /(.*?)\.\d{2}\.S\d{2}\.L\d{3}/.match(cell)
+        # NOTE: X12S_MWWS_H0.54.S54.L001 or X12S_K0723_A1.10.S10.L001
+      elsif /^.*?\.\d+\.S\d+\.L\d{3}$/.match?(cell)
+        match = /(.*?)\.\d+\.S\d+\.L\d{3}/.match(cell)
         parts = match[1].split('_')
         if parts.length == 3
           "#{parts[1]}-#{parts[2]}"
