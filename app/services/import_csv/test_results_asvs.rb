@@ -6,36 +6,37 @@ module ImportCsv
     include ProcessTestResults
     include CsvUtils
 
+    # rubocop:disable Metrics/MethodLength
     def import_csv(file, research_project_id, extraction_type_id, primer)
       delimiter = delimiter_detector(file)
-
-      ImportAsvCsvJob.perform_later(
-        file.path, research_project_id, extraction_type_id, primer, delimiter
-      )
-
-      OpenStruct.new(valid?: true, errors: nil)
-    end
-
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def import_asv_csv(path, research_project_id, extraction_type_id, primer,
-                       delimiter)
-      data = CSV.read(path, headers: true, col_sep: delimiter)
+      data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
       first_row = data.first
       sample_cells = first_row.headers[1..first_row.headers.size]
       extractions = get_extractions_from_headers(
         sample_cells, research_project_id, extraction_type_id
       )
-      data.each do |row|
-        taxonomy_string = row[row.headers.first]
+
+      ImportCsvQueueAsvJob.perform_later(
+        data.to_json, sample_cells, extractions, primer
+      )
+
+      OpenStruct.new(valid?: true, errors: nil)
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    def queue_asv_job(data, sample_cells, extractions, primer)
+      JSON.parse(data).each do |row|
+        next if row.first == 'sum.taxonomy'
+        taxonomy_string = row.first
         next if invalid_taxon?(taxonomy_string)
 
         cal_taxon = find_cal_taxon_from_string(taxonomy_string)
         next if cal_taxon.blank?
+
         create_asvs(row, sample_cells, extractions, cal_taxon, primer)
       end
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
@@ -123,8 +124,6 @@ module ImportCsv
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
     # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
-    private
-
     # rubocop:disable Metrics/MethodLength
     def get_extractions_from_headers(
       sample_cells, research_project_id, extraction_type_id
@@ -149,9 +148,12 @@ module ImportCsv
     end
     # rubocop:enable Metrics/MethodLength
 
+    private
+
     def create_asvs(row, sample_cells, extractions, cal_taxon, primer)
       sample_cells.each do |cell|
-        count = row[cell].to_i
+        index = sample_cells.index(cell)
+        count = row[index + 1].to_i
         next if count < 1
 
         extraction = extractions[cell]

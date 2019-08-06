@@ -199,6 +199,11 @@ describe ImportCsv::TestResultsAsvs do
   describe('#import_csv') do
     include ActiveJob::TestHelper
 
+    before(:each) do
+      project = create(:field_data_project, name: 'unknown')
+      stub_const('FieldDataProject::DEFAULT_PROJECT', project)
+    end
+
     def subject(file, research_project_id, extraction_type_id, primer)
       dummy_class.import_csv(file, research_project_id, extraction_type_id,
                              primer)
@@ -210,13 +215,35 @@ describe ImportCsv::TestResultsAsvs do
     let(:research_project) { create(:research_project) }
     let(:primer) { '12S' }
 
-    it 'adds ImportAsvCsvJob to queue' do
+    it 'adds ImportCsvQueueAsvJob to queue' do
       expect do
         subject(
           file, research_project.id, extraction_type.id, primer
         )
       end
-        .to have_enqueued_job(ImportAsvCsvJob)
+        .to have_enqueued_job(ImportCsvQueueAsvJob)
+    end
+
+    it 'adds pass correct agruments to ImportCsvQueueAsvJob' do
+      delimiter = "\t"
+      data = CSV.read(file.path, headers: true, col_sep: delimiter)
+      research_project_id = research_project.id
+      extraction_type = create(:extraction_type)
+      extraction_type_id = extraction_type.id
+
+      first_row = data.first
+      sample_cells = first_row.headers[1..first_row.headers.size]
+      extractions = dummy_class.get_extractions_from_headers(
+        sample_cells, research_project_id, extraction_type_id
+      )
+
+      expect do
+        subject(
+          file, research_project.id, extraction_type.id, primer
+        )
+      end
+        .to have_enqueued_job.with(data.to_json, sample_cells, extractions,
+                                   primer)
     end
 
     it 'returns valid' do
@@ -227,7 +254,7 @@ describe ImportCsv::TestResultsAsvs do
     end
   end
 
-  describe('#import_asv_csv') do
+  describe('#queue_asv_job') do
     include ActiveJob::TestHelper
 
     before(:each) do
@@ -235,10 +262,8 @@ describe ImportCsv::TestResultsAsvs do
       stub_const('FieldDataProject::DEFAULT_PROJECT', project)
     end
 
-    def subject(file, research_project_id, extraction_type_id, primer)
-      delimiter = "\t"
-      dummy_class.import_asv_csv(file.path, research_project_id,
-                                 extraction_type_id, primer, delimiter)
+    def subject(data, sample_cells, extractions, primer)
+      dummy_class.queue_asv_job(data, sample_cells, extractions, primer)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
@@ -246,12 +271,23 @@ describe ImportCsv::TestResultsAsvs do
     let(:extraction_type) { create(:extraction_type) }
     let(:research_project) { create(:research_project) }
     let(:primer) { '12S' }
+    let(:delimiter) { "\t" }
+    let(:data) { CSV.read(file.path, headers: true, col_sep: delimiter) }
+    let(:sample_cells) do
+      first_row = data.first
+      first_row.headers[1..first_row.headers.size]
+    end
+    let(:extractions) do
+      dummy_class.get_extractions_from_headers(
+        sample_cells, research_project.id, extraction_type.id
+      )
+    end
 
     context 'when matching sample does not exists' do
       it 'creates sample & extraction' do
         expect do
           subject(
-            file, research_project.id, extraction_type.id, primer
+            data.to_json, sample_cells, extractions, primer
           )
         end
           .to change { Sample.count }
@@ -268,7 +304,7 @@ describe ImportCsv::TestResultsAsvs do
 
         expect do
           subject(
-            file, research_project.id, extraction_type.id, primer
+            data.to_json, sample_cells, extractions, primer
           )
         end
           .to change { Sample.count }
@@ -287,7 +323,7 @@ describe ImportCsv::TestResultsAsvs do
 
         expect do
           subject(
-            file, research_project.id, extraction_type.id, primer
+            data.to_json, sample_cells, extractions, primer
           )
         end
           .to change { Sample.count }
@@ -300,62 +336,60 @@ describe ImportCsv::TestResultsAsvs do
     context 'when matching taxon does not exist' do
       before(:each) do
         create(
-          :ncbi_node,
-          canonical_name: 'Phylum',
-          rank: 'phylum',
-          lineage: [[3, 'Phylum', 'phylum']]
+          :cal_taxon,
+          original_taxonomy_phylum: 'Foo',
+          taxonRank: 'phylum',
+          normalized: true
         )
       end
 
       it 'does not add ImportCsvCreateAsvJob to queue' do
         expect do
           subject(
-            file, research_project.id, extraction_type.id, primer
+            data.to_json, sample_cells, extractions, primer
           )
         end
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
       end
     end
 
-    context 'when matching taxon does exist' do
+    context 'when matching taxon does exist with no reads' do
       before(:each) do
-        taxon = create(
-          :ncbi_node,
-          canonical_name: 'Genus',
-          rank: 'genus',
-          lineage: [
-            [3, 'Phylum', 'phylum'],
-            [4, 'Class', 'class'],
-            [5, 'Order', 'order'],
-            [6, 'Family', 'family'],
-            [7, 'Genus', 'genus']
-          ]
+        create(
+          :cal_taxon,
+          original_taxonomy_phylum: data[0]['sum.taxonomy'],
+          taxonRank: 'family',
+          normalized: true
         )
-        create(:ncbi_name, name: 'Genus', taxon_id: taxon.id)
+      end
 
-        taxon = create(
-          :ncbi_node,
-          canonical_name: 'Genus species',
-          rank: 'species',
-          lineage: [
-            [3, 'Phylum', 'phylum'],
-            [4, 'Class', 'class'],
-            [5, 'Order', 'order'],
-            [6, 'Family', 'family'],
-            [7, 'Genus', 'genus'],
-            [8, 'Genius species', 'species']
-          ]
+      it 'does not add ImportCsvCreateAsvJob to queue' do
+        expect do
+          subject(
+            data.to_json, sample_cells, extractions, primer
+          )
+        end
+          .to_not have_enqueued_job(ImportCsvCreateAsvJob)
+      end
+    end
+
+    context 'when matching taxon does exist with reads' do
+      before(:each) do
+        create(
+          :cal_taxon,
+          original_taxonomy_phylum: data[1]['sum.taxonomy'],
+          taxonRank: 'genus',
+          normalized: true
         )
-        create(:ncbi_name, name: 'Genus species', taxon_id: taxon.id)
       end
 
       it 'adds ImportCsvCreateAsvJob to queue' do
         expect do
           subject(
-            file, research_project.id, extraction_type.id, primer
+            data.to_json, sample_cells, extractions, primer
           )
         end
-          .to_not have_enqueued_job(ImportCsvCreateAsvJob)
+          .to have_enqueued_job(ImportCsvCreateAsvJob)
       end
     end
   end

@@ -212,27 +212,28 @@ module ProcessTestResults
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def find_sample_from_barcode(barcode, status)
-    samples = Sample.includes(:extractions).where(barcode: barcode)
+    samples = Sample.where(barcode: barcode)
 
-    if samples.count.zero?
+    if samples.length.zero?
       sample = Sample.create(
         barcode: barcode,
         status_cd: status,
         missing_coordinates: true,
         field_data_project: FieldDataProject::DEFAULT_PROJECT
       )
+
       raise TaxaError, "Sample #{barcode} not created" unless sample.valid?
 
     elsif samples.all?(&:rejected?) || samples.all?(&:duplicate_barcode?)
       raise TaxaError, "Sample #{barcode} was previously rejected"
-    elsif samples.count == 1
+    elsif samples.length == 1
       sample = samples.take
       sample.update(status_cd: status)
     else
       valid_samples =
         samples.reject { |s| s.duplicate_barcode? || s.rejected? }
 
-      if valid_samples.count > 1
+      if valid_samples.length > 1
         raise TaxaError, "multiple samples with barcode #{barcode}"
       end
 

@@ -32,7 +32,9 @@ module ImportCsv
         sourceable: sourceable,
         research_project_id: research_project_id
       }
-      attributes[:sample] = sourceable.sample if sourceable.is_a?(Extraction)
+      if sourceable.is_a?(Extraction)
+        attributes[:sample_id] = sourceable.sample.id
+      end
 
       project = ResearchProjectSource.where(attributes).first_or_create
 
