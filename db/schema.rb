@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_07_034802) do
+ActiveRecord::Schema.define(version: 2019_08_07_154619) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -602,6 +602,12 @@ ActiveRecord::Schema.define(version: 2019_08_07_034802) do
     t.string "canonical_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "asvs_count_5", default: 0
+    t.integer "asvs_count_la_river", default: 0
+    t.integer "asvs_count_la_river_5", default: 0
+    t.integer "sample_ids_5", default: [], array: true
+    t.integer "sample_ids_la_river", default: [], array: true
+    t.integer "sample_ids_la_river_5", default: [], array: true
   end
 
   create_table "uploads", force: :cascade do |t|
