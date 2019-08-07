@@ -17,6 +17,9 @@ class Sample < ApplicationRecord
 
   validate :unique_approved_barcodes
 
+  scope :la_river, (lambda do
+    where(field_data_project_id: FieldDataProject::LA_RIVER.try(:id))
+  end)
   scope :processing_sample, -> { where(status_cd: :processing_sample) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do

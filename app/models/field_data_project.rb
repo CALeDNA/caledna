@@ -4,6 +4,7 @@ class FieldDataProject < ApplicationRecord
   DEFAULT_PROJECT = FieldDataProject.find_by(name: 'unknown')
   MULTI_SAMPLE_PROJECTS = [95_481, 87_534, 95_664, 83_937].freeze
   SINGLE_SAMPLE_PROJECTS_V1 = [136_577, 130_560, 138_676, 170_620].freeze
+  LA_RIVER = FieldDataProject.find_by(name: 'Los Angeles River')
 
   validates :kobo_id, uniqueness: true
 
