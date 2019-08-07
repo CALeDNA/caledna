@@ -20,6 +20,10 @@ class TaxaController < ApplicationController
 
   private
 
+  #================
+  # index
+  #================
+
   def batch_vernaculars
     return [] if taxon_ids.blank?
 
@@ -37,93 +41,70 @@ class TaxaController < ApplicationController
       top_animal_taxa.pluck('taxon_id')
   end
 
-  def asvs_count
-    sql = 'SELECT sample_id, COUNT(*) ' \
-          'FROM asvs ' \
-          "WHERE \"taxonID\" = #{params[:id]} " \
-          'GROUP BY sample_id '
-    @asvs_count ||= ActiveRecord::Base.connection.execute(sql)
-  end
-
   def top_taxa
-    @top_taxa ||= ordered_taxa.sort_by { |t| sort_taxa_fields(t) }
+    @top_taxa ||= ordered_taxa
   end
 
   def top_plant_taxa
-    division = NcbiDivision.find_by(name: 'Plants')
-    return [] if division.blank?
-    @top_plant_taxa ||= ordered_taxa.where(cal_division_id: division.id)
-                                    .sort_by { |t| sort_taxa_fields(t) }
+    @top_plant_taxa ||= begin
+      division = NcbiDivision.find_by(name: 'Plants')
+      return [] if division.blank?
+
+      ordered_taxa.where(cal_division_id: division.id)
+                  .where("hierarchy_names ->> 'phylum' = 'Streptophyta'")
+    end
   end
 
   def top_animal_taxa
-    division = NcbiDivision.find_by(name: 'Animals')
-    return [] if division.blank?
-    @top_animal_taxa ||= ordered_taxa.where(cal_division_id: division.id)
-                                     .sort_by { |t| sort_taxa_fields(t) }
+    @top_animal_taxa ||= begin
+      division = NcbiDivision.find_by(name: 'Animals')
+      return [] if division.blank?
+
+      ordered_taxa.where(cal_division_id: division.id)
+                  .where("hierarchy_names ->> 'kingdom' = 'Metazoa'")
+    end
   end
+
+  def ordered_taxa
+    @ordered_taxa ||= begin
+      NcbiNode.order(asvs_count: :desc)
+              .limit(10)
+              .where(rank: :species)
+              .where('taxon_id IN (SELECT asvs."taxonID" FROM asvs)')
+    end
+  end
+
+  #================
+  # show
+  #================
 
   def taxon
     @taxon ||= NcbiNode.includes(:ncbi_names, :ncbi_division).find(params[:id])
   end
 
-  def ordered_taxa
-    @ordered_taxa ||= NcbiNode.includes(:ncbi_names)
-                              .where('asvs_count > 0')
-                              .order(asvs_count: :desc)
-                              .limit(10)
-  end
-
-  def sort_taxa_fields(taxon)
-    [
-      -taxon.asvs_count,
-      taxon.kingdom, taxon.phylum, taxon.className, taxon.order, taxon.family,
-      taxon.genus, taxon.species
-    ].compact
-  end
-
   def samples
     if params[:view]
-      cached_taxa_search.present? ? cached_samples : paginated_samples
+      paginated_samples
     else
       OpenStruct.new(total_records: total_records)
     end
   end
 
-  def cached_taxa_search
-    @cached_taxa_search ||= TaxaSearchCache.find_by(taxon_id: id)
-  end
-
   def select_sql
     <<-SQL
-      SELECT DISTINCT samples.id, samples.barcode, status_cd AS status,
+      SELECT samples.id, samples.barcode, status_cd AS status,
       samples.latitude, samples.longitude,
       array_agg(ncbi_nodes.canonical_name || ' | ' || ncbi_nodes.taxon_id)
       AS taxa
       FROM asvs
       JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
       JOIN samples ON samples.id = asvs.sample_id
-      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
     SQL
-  end
-
-  def cached_samples
-    sql = select_sql
-    sql += " AND samples.id in (#{cached_taxa_search.sample_ids.join(', ')}) " \
-      " AND ids @> '{#{conn.quote(id)}}' " \
-      'GROUP BY samples.id ' \
-      "LIMIT #{limit} OFFSET #{offset};"
-
-    raw_records = conn.exec_query(sql)
-    records = raw_records.map { |r| OpenStruct.new(r) }
-
-    add_pagination_methods(records)
-    records
   end
 
   def paginated_samples
     sql = select_sql
-    sql += " AND ids @> '{#{conn.quote(id)}}' " \
+    sql += " WHERE ids @> '{#{conn.quote(id)}}' " \
       'GROUP BY samples.id ' \
       "LIMIT #{limit} OFFSET #{offset};"
 
@@ -136,25 +117,8 @@ class TaxaController < ApplicationController
 
   def total_records
     @total_records ||= begin
-      if cached_taxa_search.present?
-        cached_taxa_search.asvs_count
-      else
-        res = conn.execute(count_sql)
-        res.getvalue(0, 0)
-      end
+      NcbiNode.find_by(taxon_id: id).asvs_count
     end
-  end
-
-  def count_sql
-    sql = <<-SQL
-      SELECT count(DISTINCT(samples.id))
-      FROM asvs
-      JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
-      JOIN samples ON samples.id = asvs.sample_id
-      WHERE latitude IS NOT NULL AND longitude IS NOT NULL
-    SQL
-    sql += "AND ids @> '{#{conn.quote(id)}}'"
-    sql
   end
 
   def conn

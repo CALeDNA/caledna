@@ -32,7 +32,7 @@ module Api
 
       def select_sql
         <<-SQL
-          SELECT DISTINCT samples.id, samples.barcode, status_cd AS status,
+          SELECT samples.id, samples.barcode, status_cd AS status,
           samples.latitude, samples.longitude
           FROM asvs
           JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
@@ -43,7 +43,8 @@ module Api
 
       def raw_samples
         sql = select_sql
-        sql += " AND ids @> '{#{conn.quote(params[:id].to_i)}}' "
+        sql += " AND ids @> '{#{conn.quote(params[:id].to_i)}}' " \
+          'GROUP BY samples.id '
 
         raw_records = conn.exec_query(sql)
         raw_records.map { |r| OpenStruct.new(r) }
