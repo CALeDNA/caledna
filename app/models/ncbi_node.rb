@@ -195,6 +195,10 @@ class NcbiNode < ApplicationRecord
   def acceptedNameUsageID; end
   # rubocop:enable Naming/MethodName
 
+  def asvs_count_display
+    asvs_count
+  end
+
   private
 
   def wikidata_api
