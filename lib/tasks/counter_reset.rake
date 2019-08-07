@@ -6,6 +6,10 @@ namespace :counter_reset do
 
   desc 'reset ncbi_nodes asvs_count'
   task asvs_count: :environment do
-    update_asvs_counts
+    update_asvs_count
+  end
+
+  task asvs_count_la_river: :environment do
+    update_asvs_count_la_river
   end
 end
