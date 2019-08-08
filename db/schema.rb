@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_08_031025) do
+ActiveRecord::Schema.define(version: 2019_08_08_124841) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -309,6 +309,11 @@ ActiveRecord::Schema.define(version: 2019_08_08_031025) do
     t.string "license", limit: 255
     t.string "rights", limit: 255
     t.string "rightsHolder", limit: 255
+    t.string "species"
+    t.string "commonName"
+    t.integer "positionalAccuracy"
+    t.string "url"
+    t.string "imageUrl"
     t.index "lower((\"scientificName\")::text)", name: "observations_scientificname_idx"
     t.index ["kingdom", "phylum", "className", "order", "family", "genus"], name: "observations_taxa_idx"
     t.index ["taxonID"], name: "observations_taxonid_idx"
@@ -325,6 +330,7 @@ ActiveRecord::Schema.define(version: 2019_08_08_031025) do
     t.string "order", limit: 255
     t.string "family", limit: 255
     t.string "genus", limit: 255
+    t.string "species"
     t.index "lower((\"scientificName\")::text)", name: "taxa_scientificname_idx"
     t.index ["kingdom", "phylum", "className", "order", "family", "genus"], name: "taxa_taxa_idx"
     t.index ["taxonID"], name: "taxa_taxonid_idx"
