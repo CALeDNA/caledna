@@ -72,7 +72,7 @@ class Sample < ApplicationRecord
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def light_display
-    case kobo_data['light']
+    case kobo_data['light'] || kobo_data['Light']
     when 'low' then 'Low-'
     when 'low_1' then 'Low'
     when 'low_2' then 'Low+'
@@ -86,7 +86,8 @@ class Sample < ApplicationRecord
   end
 
   def habitat_display
-    case habitat
+    case kobo_data['habitat'] ||
+      kobo_data['_optional_Describe_ou_are_sampling_from']
     when 'terrestrial' then 'Terrestrial habitat, not submerged'
     when 'wetland' then 'Rarely submerged or wetland or arroyo'
     when 'freq_submerged' then 'Frequently submerged or intertidal or marsh'
@@ -95,7 +96,8 @@ class Sample < ApplicationRecord
   end
 
   def depth_display
-    case depth
+    case kobo_data['depth_your_samples'] ||
+      kobo_data['_optional_What_dept_re_your_samples_from']
     when 'Top' then 'Top layer (top 3cm) soil or sediment'
     when 'Below' then 'Below top 3cm soil or sediment'
     when 'Sub_3_to_30_cm' then 'Submerged 3-30cm '
@@ -146,7 +148,8 @@ class Sample < ApplicationRecord
   # rubocop:enable Metrics/AbcSize
 
   def environmental_features_display
-    case environmental_features
+    case kobo_data['environment_feature'] ||
+      kobo_data['Choose_from_common_environment']
     when 'closed_water' then 'Enclosed water'
     when 'estuary' then 'Estuary (partially enclosed)'
     when 'open_water' then 'Open water'
@@ -165,7 +168,7 @@ class Sample < ApplicationRecord
   end
 
   def environmental_settings_display
-    case environmental_settings
+    case kobo_data['Describe_the_environ_tions_from_this_list']
     when 'road' then 'On roadside'
     when 'trail' then 'On trail'
     when 'near_road' then 'Near (<5m) road or trail'
@@ -181,6 +184,50 @@ class Sample < ApplicationRecord
 
   def research_projects_names
     research_projects.pluck(:name)
+  end
+
+  def kobo_data_display
+    kobo_data.except(
+      '_id',
+      '_tags',
+      '_uuid',
+      '_notes',
+      '_status',
+      '__version__',
+      '_attachments',
+      '_geolocation',
+      '_submitted_by',
+      'formhub/uuid',
+      'meta/instanceID',
+      '_submission_time',
+      '_xform_id_string',
+      '_bamboo_dataset_id',
+      '_validation_status',
+      'Confirm_that_the_bar_barcodes_in_whirlpak',
+      'What_type_of_substrate_did_you',
+      'Enter_the_sampling_date_and_time',
+      'What_is_your_kit_number_e_g_K0021',
+      '_1_Plan_and_pack_app_dy_7_Leave_no_trace',
+      '_Optional_Regarding_rns_to_share_with_us',
+      'Get_the_GPS_Location_e_this_more_accurate',
+      'Select_the_match_for_e_dash_on_your_tubes',
+      '_Optional_Take_a_ph_ironment_you_sampled',
+      'Where_are_you_A_UC_serve_or_in_Yosemite',
+      'environment_feature',
+      'habitat',
+      'depth_your_samples',
+      'Do_you_have_a_green_soil_three',
+      'Describe_the_environ_tions_from_this_list',
+      'Choose_from_common_environment',
+      'Which_location_lette_codes_LA_LB_or_LC',
+      '_optional_Describe_ou_are_sampling_from',
+      'You_re_at_your_first_r_barcodes_S1_or_S2',
+      '_optional_What_dept_re_your_samples_from',
+      'Light',
+      'Moisture',
+      'Temperature_Celsius',
+      'pH'
+    )
   end
 
   private
