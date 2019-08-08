@@ -47,7 +47,7 @@ class TaxaController < ApplicationController
 
   def top_plant_taxa
     @top_plant_taxa ||= begin
-      division = NcbiDivision.find_by(name: 'Plants')
+      division = NcbiDivision.find_by(name: 'Plantae')
       return [] if division.blank?
 
       ordered_taxa.where(cal_division_id: division.id)
@@ -57,7 +57,7 @@ class TaxaController < ApplicationController
 
   def top_animal_taxa
     @top_animal_taxa ||= begin
-      division = NcbiDivision.find_by(name: 'Animals')
+      division = NcbiDivision.find_by(name: 'Animalia')
       return [] if division.blank?
 
       ordered_taxa.where(cal_division_id: division.id)

@@ -2,7 +2,7 @@
 
 module SamplesHelper
   def self.kingdom_count(asvs)
-    kingdoms = %w[Archaea Animals Bacteria Fungi Plants Viruses]
+    kingdoms = %w[Archaea Animalia Bacteria Fungi Plantae]
     results = {}
     kingdoms.each do |kingdom|
       results[kingdom] =
