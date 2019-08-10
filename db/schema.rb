@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_08_124841) do
+ActiveRecord::Schema.define(version: 2019_08_10_182520) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -297,7 +297,7 @@ ActiveRecord::Schema.define(version: 2019_08_08_124841) do
     t.string "identificationID", limit: 255
     t.string "dateIdentified", limit: 255
     t.text "identificationRemarks"
-    t.string "taxonID", limit: 255
+    t.integer "taxonID"
     t.string "scientificName", limit: 255
     t.string "taxonRank", limit: 255
     t.string "kingdom", limit: 255
@@ -395,6 +395,7 @@ ActiveRecord::Schema.define(version: 2019_08_08_124841) do
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
+    t.index ["hierarchy_names"], name: "ncbi_nodes_hierarchy_names_idx", using: :gin
     t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
     t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
