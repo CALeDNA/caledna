@@ -186,6 +186,7 @@ class Sample < ApplicationRecord
     research_projects.pluck(:name)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def kobo_data_display
     kobo_data.except(
       '_id',
@@ -229,6 +230,7 @@ class Sample < ApplicationRecord
       'pH'
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 

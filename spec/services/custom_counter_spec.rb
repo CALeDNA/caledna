@@ -5,9 +5,9 @@ require 'rails_helper'
 describe 'CustomCounter' do
   let(:dummy_class) { Class.new { extend CustomCounter } }
 
-  describe '#update_asvs_counts' do
+  describe '#update_asvs_count' do
     def subject
-      dummy_class.update_asvs_counts
+      dummy_class.update_asvs_count
     end
     let(:ncbi_node1) do
       create(:ncbi_node, taxon_id: 1, ids: [1])

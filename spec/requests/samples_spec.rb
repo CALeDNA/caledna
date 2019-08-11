@@ -13,7 +13,8 @@ describe 'Samples' do
 
   describe 'samples show page' do
     it 'returns OK when sample is approved' do
-      sample = create(:sample, status_cd: :approved, latitude: 1, longitude: 1)
+      sample = create(:sample, status_cd: :approved, latitude: 1, longitude: 1,
+                               kobo_data: {})
       get sample_path(id: sample.id)
 
       expect(response.status).to eq(200)
