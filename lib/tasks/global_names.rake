@@ -245,4 +245,30 @@ namespace :global_names do
       )
     end
   end
+
+  task create_external_resource_for_inat: :environment do
+    desc 'create ExternalResource for InatObservations species'
+
+    include ImportGlobalNames
+    global_names_api = ::GlobalNamesApi.new
+    source_ids = ExternalResource::GLOBAL_NAMES_SOURCE_IDS.join('|')
+
+    join_sql = <<-SQL
+      LEFT JOIN external_resources ON inat_observations."taxonID" =
+      external_resources.inaturalist_id
+    SQL
+    inat_obs =
+      InatObservation.select('DISTINCT inat_observations."taxonID", species')
+                     .joins(join_sql)
+                     .where('external_resources.id IS NULL')
+
+    inat_obs.each do |inat_ob|
+      results = global_names_api.names(inat_ob.species, source_ids)
+
+      create_external_resource(
+        results: results, taxon_id: inat_ob.taxonID,
+        id_name: 'inaturalist_id'
+      )
+    end
+  end
 end
