@@ -5,18 +5,12 @@ module ImportCsv
     include ProcessingExtractions
     include CustomCounter
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_asv(cell, extraction, cal_taxon, count, primer)
       attributes = {
         extraction_id: extraction.id, sample: extraction.sample,
         taxonID: cal_taxon.taxonID
       }
-      asv = Asv.find_by(attributes)
-
-      if asv.nil?
-        asv = Asv.create(attributes)
-        update_asvs_count(cal_taxon.taxonID)
-      end
+      asv = Asv.where(attributes).first_or_create
 
       raise ImportError, "ASV #{cell}: #{asv.errors}" unless asv.valid?
 
@@ -25,7 +19,6 @@ module ImportCsv
       asv.counts[primer] = count
       asv.save
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def create_research_project_source(sourceable, research_project_id)
       attributes = {
@@ -51,11 +44,6 @@ module ImportCsv
 
     def create_cal_taxon(data)
       CalTaxon.create(data)
-    end
-
-    def update_asvs_count(taxon_id)
-      count = get_count(taxon_id)
-      update_count(taxon_id, count)
     end
 
     def create_raw_taxonomy_import(taxonomy_string, research_project_id,
