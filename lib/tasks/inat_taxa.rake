@@ -37,7 +37,6 @@ namespace :inat_taxa do
           iconic_taxon_name: record['iconic_taxon_name'],
           common_name: record['preferred_common_name']
         }
-
         if taxon.rank != 'species'
           attributes = attributes.merge(taxon_id: record['id'])
         end
@@ -104,4 +103,4 @@ namespace :inat_taxa do
       end
     end
   end
-
+end
