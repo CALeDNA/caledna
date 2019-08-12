@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       resources :samples, only: %i[index show]
       resources :research_projects, only: %i[show]
       resources :field_data_projects, only: %i[show]
+      resources :inat_observations, only: %i[index]
       resource :stats do
         get '/home_page', to: 'stats#home_page'
       end
