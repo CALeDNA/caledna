@@ -13,12 +13,26 @@ module Api
       private
 
       def observations
-        if params[:taxon_id]
-          resource = ExternalResource.find_by(ncbi_id: params[:taxon_id])
-          InatObservation.where(taxon_id: resource.try(:inaturalist_id))
+        if ncbi_id
+          observations_by_taxon_id
         else
           InatObservation.all
         end
+      end
+
+      def ncbi_id
+        params[:taxon_id]
+      end
+
+      def observations_by_taxon_id
+        resource = ExternalResource.find_by(ncbi_id: ncbi_id)
+        inat_id = resource.try(:inaturalist_id)
+        return [] if inat_id.blank?
+
+        InatObservation
+          .joins('JOIN external.inat_taxa on external.inat_taxa.taxon_id = ' \
+          'external.inat_observations.taxon_id')
+          .where("ids @> '{?}'", inat_id)
       end
     end
   end
