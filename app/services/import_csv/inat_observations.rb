@@ -64,6 +64,7 @@ module ImportCsv
     def create_inat_observation(row)
       record = InatObservation.find_by(observation_id: row['id'])
       return if record.present?
+      puts row['id']
 
       attributes = {
         observation_id: row['id'],
@@ -84,7 +85,8 @@ module ImportCsv
         longitude: row['longitude'],
         positional_accuracy: row['positional_accuracy'],
         coordinates_obscured: row['coordinates_obscured'],
-        taxon_id: row['taxon_id']
+        taxon_id: row['taxon_id'],
+        canonical_name: find_canonical_name(row)
       }
 
       obs = InatObservation.create(attributes)
