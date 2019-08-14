@@ -194,6 +194,16 @@ namespace :external_resources do
     ncbi_taxa.each do |ncbi_taxon|
       sleep(0.5)
       connect_inat_api(ncbi_taxon)
+  task fill_in_missing_search_term: :environment do
+    resources =
+      ExternalResource
+      .where('search_term IS NULL')
+      .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = external_resources.ncbi_id')
+      .select('external_resources.*, ncbi_nodes.canonical_name')
+
+    resources.each do |resource|
+      puts resource.canonical_name
+      resource.update(search_term: resource.canonical_name)
     end
   end
 
