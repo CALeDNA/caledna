@@ -104,4 +104,26 @@ namespace :inat_taxa do
       end
     end
   end
+
+  task add_source: :environment do
+    sql = <<-SQL
+      UPDATE external.inat_taxa
+      SET source = 'iNaturalist Observation'
+      where rank = 'species';
+    SQL
+    conn.exec_query(sql)
+
+    sql = <<-SQL
+      UPDATE external.inat_taxa
+      SET source = 'generated higher taxa'
+      where rank != 'species';
+    SQL
+    conn.exec_query(sql)
+  end
+
+  private
+
+  def conn
+    @conn ||= ActiveRecord::Base.connection
+  end
 end
