@@ -169,4 +169,11 @@ namespace :ncbi do
       taxon.save(validate: false)
     end
   end
+
+  task delete_bad_imported_taxa: :environment do
+    NcbiNode.where('ncbi_id is null')
+            .where('bold_id is null')
+            .where('taxon_id > 3000000')
+            .delete_all
+  end
 end
