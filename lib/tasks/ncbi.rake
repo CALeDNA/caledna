@@ -45,7 +45,14 @@ namespace :ncbi do
 
   desc 'add ncbi_id to ncbi_nodes to handle BOLD'
   task add_ncbi_id_to_ncbi_nodes: :environment do
-    sql = 'UPDATE ncbi_nodes SET ncbi_id = taxon_id;'
+    sql = <<-SQL
+      UPDATE ncbi_nodes
+      SET ncbi_id = taxon_id
+      WHERE bold_id IS NULL
+      AND ncbi_id IS NULL
+      AND taxon_id < 3000000;
+    SQL
+
     ActiveRecord::Base.connection.exec_query(sql)
   end
 
