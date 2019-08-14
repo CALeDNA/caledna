@@ -78,7 +78,8 @@ namespace :external_resources do
     resources.each do |resource|
       puts resource['inat_id']
 
-      update_external_resource_inat_id(resource['inat_id'], resource['ncbi_id'])
+      update_external_resource_inat_id(inat_id: resource['inat_id'],
+                                       ncbi_id: resource['ncbi_id'])
     end
   end
 
@@ -139,8 +140,7 @@ namespace :external_resources do
     WHERE inaturalist_id = 559244;
     SQL
 
-    queries = [sql1, sql2, sql3, sql4, sql5]
-    queries = [sql6, sql7, sql8, sql9]
+    queries = [sql1, sql2, sql3, sql4, sql5, sql6, sql7, sql8, sql9]
 
     queries.each do |sql|
       conn.exec_query(sql)
@@ -151,19 +151,18 @@ namespace :external_resources do
     taxa = [
       { name: 'Acmispon', rank: 'genus' },
       { name: 'Cornu', rank: 'genus' },
-      { name: 'Malosma laurina', rank: 'species' },
+      { name: 'Malosma laurina', rank: 'species' }
     ]
 
     taxa.each do |taxon|
-      response = api.taxa(taxon[:name], taxon[:rank])
-      if response.success?
+      name = taxon[:name]
+      rank = taxon[:rank]
 
-        json = JSON.parse(response.body)
-        record = json['results'].select do |item|
-          item['name'] == taxon[:name] && item['rank'] == taxon[:rank]
+      api.get_taxa(name: name, rank: rank) do |results|
+        record = results.select do |item|
+          item['name'] == name && item['rank'] == rank
         end.first
         next if record.blank?
-        puts record['name']
 
         InatTaxon.update(
           photo: record['default_photo'],
@@ -173,8 +172,6 @@ namespace :external_resources do
           common_name: record['preferred_common_name'],
           taxon_id: record['id']
         ).where(canonical_name: taxon[:name])
-      else
-        puts "API error for #{taxon[:name]}"
       end
     end
   end
@@ -206,31 +203,7 @@ namespace :external_resources do
     @conn ||= ActiveRecord::Base.connection
   end
 
-  def connect_inat_api(resource)
-    ncbi_id = resource['taxon_id']
-    rank = resource['rank'] == 'phylum' ? nil : resource['rank']
-    response = api.taxa(resource['canonical_name'], rank)
-
-    if response.success?
-      puts "#{resource['canonical_name']}, #{ncbi_id}"
-
-      json = JSON.parse(response.body)
-      record = json['results'].select do |item|
-        item['name'] == resource['canonical_name'] && item['rank'] == rank
-      end.first
-      return if record.blank?
-
-      inat_id = record['id']
-      puts inat_id
-      update_external_resource_inat_id(inat_id, ncbi_id)
-    else
-      puts "API error for #{resource['canonical_name']}"
-    end
-  end
-
-  def update_external_resource_inat_id(inat_id, ncbi_id, note = nil)
-    puts inat_id
-
+  def update_external_resource_inat_id(inat_id:, ncbi_id:, note: nil)
     sql = <<-SQL
     UPDATE external_resources
     SET inaturalist_id = #{inat_id},
