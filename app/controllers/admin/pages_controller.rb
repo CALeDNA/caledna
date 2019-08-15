@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# NOTE: When page is created, a new route is also created.
+# use Rails.application.reload_routes! so that app knows about the new routes.
+
 module Admin
   class PagesController < Admin::ApplicationController
     require_relative './services/admin_text_editor'
@@ -28,10 +31,27 @@ module Admin
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+    # rubocop:disable Metrics/MethodLength
     def create
-      super
+      create_params = resource_params.merge(website: Website::DEFAULT_SITE)
+
+      resource = resource_class.new(create_params)
+      authorize_resource(resource)
+
+      if resource.save
+        redirect_to(
+          [namespace, resource],
+          notice: translate_with_resource('create.success')
+        )
+      else
+        render :new, locals: {
+          page: Administrate::Page::Form.new(dashboard, resource)
+        }
+      end
+
       Rails.application.reload_routes!
     end
+    # rubocop:enable Metrics/MethodLength
 
     def update
       super
