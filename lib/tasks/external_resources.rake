@@ -176,29 +176,137 @@ namespace :external_resources do
     end
   end
 
-  task add_inat_id_to_ncbi_taxa: :environment do
+  # step 1: add inat_id to higher ncbi taxa
+  desc 'add inat api data to ncbi taxa'
+  task add_inat_api_data_to_ncbi_taxa: :environment do
+    # select higher taxa Eukaryota ncbi_nodes that do not have inat id
     sql = <<-SQL
-    SELECT ncbi_nodes.rank, ncbi_nodes.canonical_name, ncbi_nodes.taxon_id
-    FROM external_resources
-    JOIN ncbi_nodes on ncbi_nodes.taxon_id = external_resources.ncbi_id
-    WHERE external_resources.ncbi_id IS NOT NULL
-    AND external_resources.inaturalist_id IS NULL
-    AND ncbi_nodes.rank IN ('phylum', 'class', 'order', 'family')
+    SELECT ncbi_nodes.rank, ncbi_nodes.canonical_name, ncbi_nodes.taxon_id ,
+    external_resources.ncbi_id, external_resources.inaturalist_id
+    FROM ncbi_nodes
+    LEFT JOIN external_resources
+      ON ncbi_nodes.taxon_id = external_resources.ncbi_id
+    WHERE external_resources.inaturalist_id IS NULL
+    AND ncbi_nodes.rank
+      IN ('superkingdom', 'kingdom', 'phylum', 'class', 'order')
     AND (
       (ncbi_nodes.hierarchy_names ->> 'superkingdom')::Text = 'Eukaryota'
     )
-    GROUP BY ncbi_nodes.rank, ncbi_nodes.canonical_name, ncbi_nodes.taxon_id;
+    AND ncbi_nodes.taxon_id NOT IN (
+      SELECT ncbi_id FROM external_resources WHERE inaturalist_id IS NOT NULL
+    )
+    GROUP BY ncbi_nodes.rank, ncbi_nodes.canonical_name, ncbi_nodes.taxon_id,
+    external_resources.ncbi_id, external_resources.inaturalist_id
+    ;
     SQL
 
     ncbi_taxa = conn.exec_query(sql)
     ncbi_taxa.each do |ncbi_taxon|
       sleep(0.5)
-      connect_inat_api(ncbi_taxon)
+      name = ncbi_taxon['canonical_name']
+
+      api.get_taxa(name: name, rank: nil) do |results|
+        records = results.select do |item|
+          item['name'] == name ||
+            (!item['name'].start_with?(name) && !item['name'].include?(' '))
+        end
+        next if records.blank?
+        puts name
+
+        payload = records.map do |record|
+          {
+            id: record['id'],
+            name: record['name'],
+            rank: record['rank'],
+            ancestry: record['ancestor_ids']
+          }
+        end
+
+        payload = payload.first if payload.length == 1
+
+        # update existing ExternalResource
+        if ncbi_taxon['nbci_id'].present?
+          ExternalResource
+            .where(ncbi_id: ncbi_taxon['taxon_id'])
+            .update(
+              inat_payload: payload
+            )
+        # create new ExternalResource
+        else
+          ExternalResource.create(
+            source: 'ncbi higher ranks',
+            search_term: name,
+            ncbi_id: ncbi_taxon['taxon_id'],
+            inat_payload: payload
+          )
+        end
+      end
+    end
+  end
+
+  # step 2: add inat_id to higher ncbi taxa
+  # - manually edit the api data when there are multiple records
+
+  # step 3: add inat_id to higher ncbi taxa
+  desc 'set inaturalist_id using inat api data'
+  task use_inat_api_data_to_set_inat_id: :environment do
+    sql = <<-SQL
+    UPDATE external_resources
+    SET inaturalist_id = ( inat_payload ->> 'id')::INTEGER
+    WHERE inaturalist_id IS NULL
+    AND inat_payload != '{}';
+    SQL
+
+    conn.exec_query(sql)
+  end
+
+  # step 4: add inat_id to higher ncbi taxa
+  desc 'for ncbi_id that appear multiple times, grab inat_id from one of the ' \
+  'records to fill in the inat_id for the other records'
+  task fill_in_missing_inat_id_for_dup_ncbi_taxa: :environment do
+    sql = <<-SQL
+    UPDATE external_resources
+    SET inaturalist_id = foo.inaturalist_id
+    FROM (
+      SELECT inaturalist_id, ncbi_id
+      FROM external_resources
+      WHERE inaturalist_id IS NOT NULL
+      AND source  = 'ncbi higher ranks'
+      AND ncbi_id IN (
+        SELECT ncbi_id FROM external_resources WHERE inaturalist_id IS NULL
+      )
+    ) AS foo
+    WHERE external_resources.ncbi_id = foo.ncbi_id
+    AND external_resources.inaturalist_id
+    ;
+    SQL
+
+    conn.exec_query(sql)
+  end
+
+  task delete_duplicate_ncbi_higher_ranks: :environment do
+    sql = <<-SQL
+    DELETE FROM external_resources
+    WHERE id IN (
+      SELECT (array_agg(id))[1]
+      FROM external_resources
+      WHERE (inat_payload != '{}')
+      AND source = 'ncbi higher ranks'
+      AND inaturalist_id IS NOT NULL
+      GROUP BY ncbi_id, inat_payload
+      HAVING count(*) > 1
+    );
+    SQL
+
+    conn.exec_query(sql)
+  end
+
   task fill_in_missing_search_term: :environment do
     resources =
       ExternalResource
       .where('search_term IS NULL')
-      .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = external_resources.ncbi_id')
+      .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = ' \
+        'external_resources.ncbi_id')
       .select('external_resources.*, ncbi_nodes.canonical_name')
 
     resources.each do |resource|

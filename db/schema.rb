@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_13_031931) do
+ActiveRecord::Schema.define(version: 2019_08_14_161107) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -174,6 +174,7 @@ ActiveRecord::Schema.define(version: 2019_08_13_031931) do
     t.string "vernaculars", default: [], array: true
     t.string "search_term"
     t.string "notes"
+    t.jsonb "inat_payload", default: {}
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["source"], name: "index_external_resources_on_source"

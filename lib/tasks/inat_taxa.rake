@@ -121,9 +121,106 @@ namespace :inat_taxa do
     conn.exec_query(sql)
   end
 
+  # step 5: add inat_id to higher ncbi taxa
+  desc 'create inat taxa for the inat ids generated in exteral_resources'
+  task create_inat_taxa_for_ncbi_higher_ranks: :environment do
+    sql = <<-SQL
+    SELECT inaturalist_id
+    FROM external_resources
+    JOIN ncbi_nodes
+      ON ncbi_nodes.taxon_id = external_resources.ncbi_id
+    WHERE ncbi_nodes.rank
+      IN ('superkingdom', 'kingdom', 'phylum', 'class', 'order')
+    AND (
+      (ncbi_nodes.hierarchy_names ->> 'superkingdom')::Text = 'Eukaryota'
+    )
+    AND inaturalist_id NOT IN (SELECT taxon_id FROM external.inat_taxa)
+    AND inaturalist_id IS NOT NULL;
+    SQL
+    resources = conn.exec_query(sql)
+
+    resources.each do |resource|
+      sleep(1.5)
+      inat_taxa = resource['inaturalist_id']
+
+      api.get_taxon(inat_taxa) do |result|
+        record = result.first
+        puts "#{record['id']}: #{record['name']}"
+
+        attributes = format_inat_taxon_attributes(record, inat_taxa)
+        InatTaxon.create(attributes)
+      end
+    end
+  end
+
+  # step 6: add inat_id to higher ncbi taxa
+  desc 'create taxa for all the ids that dont have inat taxa records'
+  task create_inat_taxa_for_ids: :environment do
+    sql = <<-SQL
+    SELECT (unnest(ids))::BIGINT as inaturalist_id
+    FROM external.inat_taxa
+    EXCEPT
+    SELECT taxon_id
+    FROM external.inat_taxa;
+    SQL
+    resources = conn.exec_query(sql)
+
+    resources.each do |resource|
+      sleep(1.5)
+      inat_taxa = resource['inaturalist_id']
+
+      api.get_taxon(inat_taxa) do |result|
+        record = result.first
+        puts "#{record['id']}: #{record['name']}"
+
+        attributes = format_inat_taxon_attributes(record, inat_taxa)
+        InatTaxon.create(attributes)
+      end
+    end
+  end
+
   private
 
   def conn
     @conn ||= ActiveRecord::Base.connection
   end
+
+  def create_taxonomy_hierarchy(ancestors, rank, name)
+    hierarchy = {}
+    return hierarchy if ancestors.blank?
+
+    ancestors.each do |ancestor|
+      hierarchy[ancestor['rank']] = ancestor['name']
+    end
+    hierarchy[rank] = name
+
+    hierarchy
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def format_inat_taxon_attributes(record, inat_id)
+    hierarchy = create_taxonomy_hierarchy(
+      record['ancestors'], record['rank'], record['name']
+    )
+
+    {
+      taxon_id: inat_id,
+      photo: record['default_photo'],
+      wikipedia_url: record['wikipedia_url'],
+      ids: record['ancestor_ids'] << record['id'],
+      iconic_taxon_name: record['iconic_taxon_name'],
+      common_name: record['preferred_common_name'],
+      canonical_name: record['name'],
+      rank: record['rank'],
+      kingdom: hierarchy['kingdom'],
+      phylum: hierarchy['phylum'],
+      class_name: hierarchy['class'],
+      order: hierarchy['order'],
+      family: hierarchy['family'],
+      genus: hierarchy['genus'],
+      species: hierarchy['species'],
+      source: 'ncbi higher ranks'
+    }
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end

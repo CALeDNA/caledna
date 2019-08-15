@@ -23,4 +23,17 @@ class InatApi
       puts "API error for #{name}"
     end
   end
+
+  def taxon_by_id(id)
+    self.class.get("/taxa/#{id}")
+  end
+
+  def get_taxon(id)
+    response = taxon_by_id(id)
+    if response.success?
+      yield JSON.parse(response.body)['results']
+    else
+      puts "API error for #{id}"
+    end
+  end
 end
