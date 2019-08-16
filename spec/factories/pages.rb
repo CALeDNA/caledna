@@ -6,5 +6,6 @@ FactoryBot.define do
     body 'MyText'
     published false
     slug { "#{Faker::Team.creature}#{Faker::Number.number(5)}" }
+    website
   end
 end
