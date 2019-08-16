@@ -57,8 +57,8 @@ class ResearchProjectsController < ApplicationController
 
   def project_page
     @project_page ||= begin
-      page_page = params[:id]
-      Page.where(research_project: project, slug: page_page).first
+      page_id = params[:id]
+      Page.where(research_project: project, slug: page_id).first
     end
   end
 

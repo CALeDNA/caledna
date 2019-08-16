@@ -20,11 +20,12 @@ class ResearchProject < ApplicationRecord
   end
 
   def project_pages
-    pages.published.order('display_order ASC NULLS LAST') || []
+    @project_pages ||= pages.published
+                            .order('display_order ASC NULLS LAST') || []
   end
 
   def default_page
-    project_pages.first
+    @default_page ||= project_pages.first
   end
 
   def show_pages?
