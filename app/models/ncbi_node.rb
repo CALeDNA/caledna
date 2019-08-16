@@ -50,37 +50,35 @@ class NcbiNode < ApplicationRecord
   end
 
   def superkingdom
-    rank_name('superkingdom')
+    hierarchy_names['superkingdom']
   end
 
   def kingdom
-    rank_name('kingdom')
+    hierarchy_names['kingdom']
   end
 
-  # rubocop:disable Naming/MethodName
-  def className
-    rank_name('class')
+  def class_name
+    hierarchy_names['class']
   end
-  # rubocop:enable Naming/MethodName
 
   def order
-    rank_name('order')
+    hierarchy_names['order']
   end
 
   def family
-    rank_name('family')
+    hierarchy_names['family']
   end
 
   def genus
-    rank_name('genus')
+    hierarchy_names['genus']
   end
 
   def species
-    rank_name('species')
+    hierarchy_names['species']
   end
 
   def phylum
-    rank_name('phylum')
+    hierarchy_names['phylum']
   end
 
   # rubocop:disable Naming/MethodName
@@ -95,7 +93,7 @@ class NcbiNode < ApplicationRecord
 
   def taxonomy_string
     [
-      superkingdom, kingdom, phylum, className, order, family, genus, species
+      superkingdom, kingdom, phylum, class_name, order, family, genus, species
     ].compact.join(', ')
   end
 
@@ -130,7 +128,7 @@ class NcbiNode < ApplicationRecord
     tree.push(name: :superkingdom, value: superkingdom, id: hierarchy['superkingdom']) if superkingdom.present?
     tree.push(name: :kingdom, value: kingdom, id: hierarchy['kingdom']) if kingdom.present?
     tree.push(name: :phylum, value: phylum, id: hierarchy['phylum']) if phylum.present?
-    tree.push(name: :class, value: className, id: hierarchy['class']) if className.present?
+    tree.push(name: :class, value: class_name, id: hierarchy['class']) if class_name.present?
     tree.push(name: :order, value: order, id: hierarchy['order']) if order.present?
     tree.push(name: :family, value: family, id: hierarchy['family']) if family.present?
     tree.push(name: :genus, value: genus, id: hierarchy['genus']) if genus.present?
@@ -272,14 +270,6 @@ class NcbiNode < ApplicationRecord
 
   def wikidata_data
     @wikidata_data ||= Wikidata.new(taxon_id, external_resource)
-  end
-
-  def rank_info(rank)
-    lineage.select { |l| l.third == rank }.first
-  end
-
-  def rank_name(rank)
-    rank_info(rank).try(:second)
   end
 
   def common_names_string(names)

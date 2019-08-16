@@ -23,34 +23,11 @@ module SamplesHelper
     statuses.include?(iucn_status)
   end
 
-  def self.taxonomy_string(lineage)
-    [
-      rank_name(lineage, 'superkingdom'),
-      rank_name(lineage, 'kingdom'),
-      rank_name(lineage, 'phylum'),
-      rank_name(lineage, 'class'),
-      rank_name(lineage, 'order'),
-      rank_name(lineage, 'family'),
-      rank_name(lineage, 'genus'),
-      rank_name(lineage, 'species')
-    ].compact.join(', ')
-  end
-
   def self.sorted_taxa(organisms)
     taxa = organisms.map do |o|
       o.attributes.merge(taxonomy_string: taxonomy_string(o.lineage))
     end
     taxa.sort_by { |a| a[:taxonomy_string] }
-  end
-
-  def self.rank_info(lineage, rank)
-    # lineage is blank for BOLD taxa
-    return if lineage.blank?
-    lineage.select { |l| l.third == rank }.first
-  end
-
-  def self.rank_name(lineage, rank)
-    rank_info(lineage, rank).try(:second)
   end
 
   def self.batch_common_names(vernaculars, taxon_id, parenthesis = true)

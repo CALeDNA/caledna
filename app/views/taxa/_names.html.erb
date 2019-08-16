@@ -1,6 +1,6 @@
 <h3>Classification</h3>
 <table class="table table-condensed taxonomy-tree">
-  <% taxon.lineage.each do |lineage|%>
+  <% taxon.lineage && taxon.lineage.each do |lineage|%>
     <tr>
     <td>
       <%= lineage.third %>
