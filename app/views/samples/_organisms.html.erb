@@ -1,21 +1,15 @@
-<% organisms_groups.each do |group| %>
+<h2><%= organisms.length %> Organisms from ASVs</h2>
 
-  <h2><%= group[:organisms].length %> Organisms from ASVs</h2>
-  <% if organisms_groups.length > 1%>
-    <h3><%= group[:extraction_name] %></h3>
-  <% end %>
-
-  <ul>
-  <% SamplesHelper.sorted_taxa(group[:organisms]).each do |organism| %>
-    <li>
-      <%= organism['rank']  %>:
-      <% if SamplesHelper.threatened?(organism['iucn_status']) %>
-        (Name not shown because this species is <%= organism['iucn_status'] %>)
-      <% else %>
-        <%= link_to organism[:taxonomy_string], taxon_path(organism['taxon_id']) %>
-        <%= SamplesHelper.batch_common_names(batch_vernaculars, organism['taxon_id']) %>
-      <% end %>
-    </li>
-  <% end %>
-  </ul>
+<ul>
+<% SamplesHelper.sorted_taxa(organisms).each do |organism| %>
+  <li>
+    <%= organism['rank']  %>:
+    <% if SamplesHelper.threatened?(organism['iucn_status']) %>
+      (Name not shown because this species is <%= organism['iucn_status'] %>)
+    <% else %>
+      <%= link_to organism[:taxonomy_string], taxon_path(organism['taxon_id']) %>
+      <%= SamplesHelper.batch_common_names(batch_vernaculars, organism['taxon_id']) %>
+    <% end %>
+  </li>
 <% end %>
+</ul>

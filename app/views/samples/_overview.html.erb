@@ -41,16 +41,6 @@
   </tr>
 
   <% sample.extractions.each do |extraction| %>
-    <% if sample.extractions.length > 1%>
-      <tr>
-        <td><b><%= extraction.extraction_type.name %></b></td>
-        <td></td>
-      </tr>
-    <% end %>
-    <tr>
-      <td>Analysis Date</td>
-      <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
-    </tr>
     <tr>
       <td>DNA Results Completed Date</td>
       <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
@@ -61,11 +51,8 @@
 <div class="row">
   <div class="col col-md-6">
     <% if division_counts.present? %>
-      <h3><%= SamplesHelper.asvs_count(asvs_count, sample) %> Organisms from ASVs</h3>
-
-      <% sample.extractions.each do |extraction| %>
-        <canvas id="kingdom-chart-<%= extraction.id %>" width="400" height="400"></canvas>
-      <% end %>
+      <h3><%= organisms.length %> Organisms from ASVs</h3>
+      <canvas id="kingdom-chart" width="400" height="400"></canvas>
     <% end %>
   </div>
   <div class="col col-md-6">

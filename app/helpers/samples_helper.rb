@@ -23,9 +23,23 @@ module SamplesHelper
     statuses.include?(iucn_status)
   end
 
+  # rubocop:disable Metrics/AbcSize
+  def self.taxonomy_string(organism)
+    [
+      organism.hierarchy_names['superkingdom'],
+      organism.hierarchy_names['kingdom'],
+      organism.hierarchy_names['class'],
+      organism.hierarchy_names['order'],
+      organism.hierarchy_names['family'],
+      organism.hierarchy_names['genus'],
+      organism.hierarchy_names['species']
+    ].compact.join(', ')
+  end
+  # rubocop:enable Metrics/AbcSize
+
   def self.sorted_taxa(organisms)
     taxa = organisms.map do |o|
-      o.attributes.merge(taxonomy_string: taxonomy_string(o.lineage))
+      o.attributes.merge(taxonomy_string: taxonomy_string(o))
     end
     taxa.sort_by { |a| a[:taxonomy_string] }
   end

@@ -13,48 +13,31 @@ class SamplesController < ApplicationController
   def show
     @division_counts = division_counts
     @sample = sample
-    @organisms_groups = organisms_groups
+    @organisms = organisms
     @batch_vernaculars = batch_vernaculars
   end
 
   private
 
-  def organisms_groups
-    @organisms_groups ||= begin
-      sample.extractions.map do |e|
-        {
-          extraction_name: e.extraction_type.name,
-          organisms: organisms_by_extraction(e.id)
-        }
-      end
+  def organisms
+    @organisms ||= begin
+      Asv.joins(ncbi_node: :ncbi_division)
+         .joins('LEFT JOIN external_resources ON ' \
+           'external_resources.ncbi_id = ncbi_nodes.taxon_id')
+         .select('DISTINCT hierarchy_names, ncbi_nodes.taxon_id, ' \
+           '"taxonID", iucn_status, name, rank')
+         .where(sample: sample)
     end
-  end
-
-  def organisms_by_extraction(extraction_id)
-    Asv.joins(ncbi_node: :ncbi_division)
-       .joins('LEFT JOIN external_resources ON ' \
-         'external_resources.ncbi_id = ncbi_nodes.taxon_id')
-       .select('lineage, ncbi_nodes.taxon_id, iucn_status, name, rank')
-       .where(extraction_id: extraction_id)
   end
 
   def division_counts
     @division_counts ||= begin
-      sample.extractions.map do |e|
-        {
-          id: e.id,
-          counts: division_counts_by_extraction(e.id)
-        }
-      end
+      Asv.joins(ncbi_node: :ncbi_division)
+         .select(:name)
+         .where(sample: sample)
+         .group(:name)
+         .count
     end
-  end
-
-  def division_counts_by_extraction(extraction_id)
-    Asv.joins(ncbi_node: :ncbi_division)
-       .select(:name)
-       .where(extraction_id: extraction_id)
-       .group(:name)
-       .count
   end
 
   def sample

@@ -18,7 +18,7 @@
     <%= render partial: "overview",
       locals: {
         sample: @sample, division_counts: @division_counts,
-        asvs_count: @asvs_count
+        organisms: @organisms
       }
     %>
   </div>
@@ -34,9 +34,9 @@
     <div role="tabpanel" class="tab-pane" id="organisms">
       <%= render partial: "organisms",
         locals: {
-          sample: @sample, asvs_count: @asvs_count,
+          sample: @sample,
           batch_vernaculars: @batch_vernaculars,
-          organisms_groups: @organisms_groups
+          organisms: @organisms
         }
       %>
     </div>
