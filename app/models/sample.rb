@@ -188,6 +188,8 @@ class Sample < ApplicationRecord
 
   # rubocop:disable Metrics/MethodLength
   def kobo_data_display
+    return {} if kobo_data == '{}'
+
     kobo_data.except(
       '_id',
       '_tags',

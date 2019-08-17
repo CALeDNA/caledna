@@ -67,4 +67,16 @@ describe Sample do
       expect(sample.valid?).to eq(true)
     end
   end
+
+  describe '#kobo_data_display' do
+    it 'returns empty hash when kobo_data is {}' do
+      sample = create(:sample, kobo_data: '{}')
+      expect(sample.kobo_data_display).to eq({})
+    end
+
+    it 'returns empty hash when kobo_data is {}' do
+      sample = create(:sample, kobo_data: { '_id' => 1, 'latitude' => 90 })
+      expect(sample.kobo_data_display).to eq('latitude' => 90)
+    end
+  end
 end
