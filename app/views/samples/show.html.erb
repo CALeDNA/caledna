@@ -1,3 +1,22 @@
+<style>
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+</style>
 <h1><%= @sample.barcode %></h1>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -64,4 +83,4 @@
 </script>
 
 <%= javascript_pack_tag 'samples_detail_charts' %>
-<%= javascript_pack_tag 'tree_map' %>
+<%= javascript_pack_tag 'tree_2' %>
