@@ -3,6 +3,7 @@
 class SamplesController < ApplicationController
   include PaginatedSamples
   include BatchData
+  include VegaFormatter
 
   def index
     @samples = paginated_samples
@@ -15,6 +16,8 @@ class SamplesController < ApplicationController
     @sample = sample
     @organisms = organisms
     @batch_vernaculars = batch_vernaculars
+    @asv_tree = asv_tree
+    @asv_tree_count = asv_tree_taxa.length
   end
 
   private
@@ -51,6 +54,22 @@ class SamplesController < ApplicationController
     elsif params[:sample_id]
       Sample.select(:barcode).find(params[:sample_id]).barcode
     end
+  end
+
+  def asv_tree_taxa
+    @asv_tree_taxa ||= begin
+      NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
+              .where('asvs.sample_id = ?', sample.id)
+    end
+  end
+
+  def asv_tree
+    tree = asv_tree_taxa.map do |taxon|
+      taxon_object = create_taxon_object(taxon)
+      create_tree_objects(taxon_object, taxon.rank)
+    end.flatten
+    tree << { 'name': 'root', 'id': 'root' }
+    tree.uniq! { |i| i[:id] }
   end
 
   def query_string
