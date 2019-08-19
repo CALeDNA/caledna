@@ -26,4 +26,6 @@
   <% end %>
 </table>
 
+<% if @matches.present? %>
 <%= paginate @matches %>
+<% end %>
