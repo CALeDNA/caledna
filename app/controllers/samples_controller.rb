@@ -3,7 +3,7 @@
 class SamplesController < ApplicationController
   include PaginatedSamples
   include BatchData
-  include VegaFormatter
+  include SampleAsvFormatter
 
   def index
     @samples = paginated_samples
@@ -59,7 +59,12 @@ class SamplesController < ApplicationController
   def asv_tree_taxa
     @asv_tree_taxa ||= begin
       NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
+              .includes(:ncbi_division)
+              .joins(:ncbi_division)
               .where('asvs.sample_id = ?', sample.id)
+              .where('cal_division_id IS NOT NULL')
+              .where("ncbi_divisions.name != 'Environmental samples'")
+              .select('ncbi_divisions.name as domain')
     end
   end
 
@@ -68,7 +73,7 @@ class SamplesController < ApplicationController
       taxon_object = create_taxon_object(taxon)
       create_tree_objects(taxon_object, taxon.rank)
     end.flatten
-    tree << { 'name': 'root', 'id': 'root' }
+    tree << { 'name': 'Life', 'id': 'Life' }
     tree.uniq! { |i| i[:id] }
   end
 

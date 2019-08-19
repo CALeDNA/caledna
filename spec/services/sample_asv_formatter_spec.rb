@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-describe VegaFormatter do
-  let(:dummy_class) { Class.new { extend VegaFormatter } }
+describe SampleAsvFormatter do
+  let(:dummy_class) { Class.new { extend SampleAsvFormatter } }
 
   describe '#create_tree_objects' do
     def subject(taxon_object, rank)
@@ -29,8 +29,7 @@ describe VegaFormatter do
         { name: 'o', parent: 4, id: 5 },
         { name: 'c', parent: 3, id: 4 },
         { name: 'p', parent: 2, id: 3 },
-        { name: 'k', parent: 1, id: 2 },
-        { name: 'su', parent: 'root', id: 1 }
+        { name: 'k', parent: 'Life', id: 2 }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -44,8 +43,7 @@ describe VegaFormatter do
         { name: 'o', parent: 4, id: 5 },
         { name: 'c', parent: 3, id: 4 },
         { name: 'p', parent: 2, id: 3 },
-        { name: 'k', parent: 1, id: 2 },
-        { name: 'su', parent: 'root', id: 1 }
+        { name: 'k', parent: 'Life', id: 2 }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -58,8 +56,7 @@ describe VegaFormatter do
         { name: 'o', parent: 4, id: 5 },
         { name: 'c', parent: 3, id: 4 },
         { name: 'p', parent: 2, id: 3 },
-        { name: 'k', parent: 1, id: 2 },
-        { name: 'su', parent: 'root', id: 1 }
+        { name: 'k', parent: 'Life', id: 2 }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -71,8 +68,7 @@ describe VegaFormatter do
         { name: 'o', parent: 4, id: 5 },
         { name: 'c', parent: 3, id: 4 },
         { name: 'p', parent: 2, id: 3 },
-        { name: 'k', parent: 1, id: 2 },
-        { name: 'su', parent: 'root', id: 1 }
+        { name: 'k', parent: 'Life', id: 2 }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -83,8 +79,7 @@ describe VegaFormatter do
       expected = [
         { name: 'c', parent: 3, id: 4 },
         { name: 'p', parent: 2, id: 3 },
-        { name: 'k', parent: 1, id: 2 },
-        { name: 'su', parent: 'root', id: 1 }
+        { name: 'k', parent: 'Life', id: 2 }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -94,8 +89,7 @@ describe VegaFormatter do
       taxon_object[:rank] = rank
       expected = [
         { name: 'p', parent: 2, id: 3 },
-        { name: 'k', parent: 1, id: 2 },
-        { name: 'su', parent: 'root', id: 1 }
+        { name: 'k', parent: 'Life', id: 2 }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -104,18 +98,15 @@ describe VegaFormatter do
       rank = 'kingdom'
       taxon_object[:rank] = rank
       expected = [
-        { name: 'k', parent: 1, id: 2 },
-        { name: 'su', parent: 'root', id: 1 }
+        { name: 'k', parent: 'Life', id: 2 }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
 
-    it 'creates tree objects for superkingdom' do
+    it 'returns [] for superkingdom' do
       rank = 'superkingdom'
       taxon_object[:rank] = rank
-      expected = [
-        { name: 'su', parent: 'root', id: 1 }
-      ]
+      expected = []
       expect(subject(taxon_object, rank)).to eq(expected)
     end
   end
@@ -139,6 +130,8 @@ describe VegaFormatter do
       }
     end
 
+    let(:division) { create(:ncbi_division, id: 100, name: 'division') }
+
     def remove_keys(keys)
       keys.each do |key|
         names.delete(key)
@@ -149,13 +142,14 @@ describe VegaFormatter do
     it 'converts taxons that are species' do
       rank = 'species'
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
+        kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'f', genus: 'g', species: 'sp',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4,
+        kingdom_id: 100, phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6, genus_id: 7, species_id: 8
       }
+      # debugger
 
       expect(subject(taxon)).to eq(expected)
     end
@@ -165,11 +159,11 @@ describe VegaFormatter do
       remove_keys([:species])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
+        kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'f', genus: 'g',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4,
+        kingdom_id: 100, phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6, genus_id: 7
       }
 
@@ -181,11 +175,11 @@ describe VegaFormatter do
       remove_keys(%i[species genus])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
+        kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'f',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4,
+        kingdom_id: 100, phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6
       }
 
@@ -197,10 +191,10 @@ describe VegaFormatter do
       remove_keys(%i[species genus family])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4,
+        kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
+        kingdom_id: 100, phylum_id: 3, class_id: 4,
         order_id: 5
       }
 
@@ -212,10 +206,10 @@ describe VegaFormatter do
       remove_keys(%i[species genus family order])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p', class: 'c',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4
+        kingdom: 'division', phylum: 'p', class: 'c',
+        kingdom_id: 100, phylum_id: 3, class_id: 4
       }
 
       expect(subject(taxon)).to eq(expected)
@@ -226,10 +220,10 @@ describe VegaFormatter do
       remove_keys(%i[species genus family order class])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3
+        kingdom: 'division', phylum: 'p',
+        kingdom_id: 100, phylum_id: 3
       }
 
       expect(subject(taxon)).to eq(expected)
@@ -240,25 +234,22 @@ describe VegaFormatter do
       remove_keys(%i[species genus family order class phylum])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k',
-        superkingdom_id: 1, kingdom_id: 2
+        kingdom: 'division',
+        kingdom_id: 100
       }
 
       expect(subject(taxon)).to eq(expected)
     end
 
-    it 'converts taxons that are superkingdom' do
+    it 'returns {} for superkingdom' do
       rank = 'superkingdom'
       remove_keys(%i[species genus family order class phylum kingdom])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
-      expected = {
-        superkingdom: 'su',
-        superkingdom_id: 1
-      }
+                                 rank: rank, cal_division_id: division.id)
+      expected = {}
 
       expect(subject(taxon)).to eq(expected)
     end
@@ -269,11 +260,16 @@ describe VegaFormatter do
       ids = { species: 8 }
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
+        kingdom: 'division',
+        phylum: 'phylum for sp',
+        class: 'class for sp',
+        order: 'order for sp',
+        family: 'family for sp',
+        genus: 'genus for sp',
         species: 'sp',
-        superkingdom_id: 'su_k_p_c_o_f_g_8',
-        kingdom_id: 'k_p_c_o_f_g_8',
+        kingdom_id: 100,
         phylum_id: 'p_c_o_f_g_8',
         class_id: 'c_o_f_g_8',
         order_id: 'o_f_g_8',
@@ -290,11 +286,11 @@ describe VegaFormatter do
       remove_keys(%i[genus])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
-        family: 'f', species: 'sp',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4,
+        kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
+        family: 'f', genus: 'genus for sp', species: 'sp',
+        kingdom_id: 100, phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6, genus_id: 'g_8', species_id: 8
       }
 
@@ -306,11 +302,11 @@ describe VegaFormatter do
       remove_keys(%i[genus family])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
-        species: 'sp',
-        superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4,
+        kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
+        family: 'family for sp', genus: 'genus for sp', species: 'sp',
+        kingdom_id: 100, phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 'f_g_8', genus_id: 'g_8', species_id: 8
       }
 
@@ -322,11 +318,12 @@ describe VegaFormatter do
       remove_keys(%i[genus family phylum kingdom])
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
-                                 rank: rank)
+                                 rank: rank, cal_division_id: division.id)
       expected = {
-        superkingdom: 'su', class: 'c',
-        order: 'o', species: 'sp',
-        superkingdom_id: 1, kingdom_id: 'k_p_4', phylum_id: 'p_4', class_id: 4,
+        kingdom: 'division', phylum: 'phylum for c', class: 'c',
+        order: 'o', family: 'family for sp', genus: 'genus for sp',
+        species: 'sp',
+        kingdom_id: 100, phylum_id: 'p_4', class_id: 4,
         order_id: 5, family_id: 'f_g_8', genus_id: 'g_8', species_id: 8
       }
 
