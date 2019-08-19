@@ -27,11 +27,13 @@ const svg = d3
   .attr("width", viewerWidth)
   .attr("height", viewerHeight)
   .call(
-    // set up zoom and pan
-    // https://coderwall.com/p/psogia/simplest-way-to-add-zoom-pan-on-d3-js
-    d3.zoom().on("zoom", function() {
-      svg.attr("transform", d3.event.transform);
-    })
+    d3
+      .zoom()
+      .filter(function() {
+        // disable double click
+        return !d3.event.button && d3.event.type != "dblclick";
+      })
+      .on("zoom", zoom)
   )
   .call(responsivefy)
   .append("g");
@@ -73,7 +75,7 @@ function update(source, rootNode = root) {
 
   // Set widths between levels based on maxLabelLength.
   nodes.forEach(function(d) {
-    d.y = d.depth * (maxLabelLength * 7); //maxLabelLength * <x>px
+    d.y = d.depth * (maxLabelLength * 10); //maxLabelLength * <x>px
     // alternatively to keep a fixed scale one can set a fixed depth per level
     // d.y = (d.depth * 500); //500px per level.
   });
@@ -315,4 +317,8 @@ function expand(d) {
     d.children.forEach(expand);
     d._children = null;
   }
+}
+
+function zoom() {
+  svg.attr("transform", d3.event.transform);
 }
