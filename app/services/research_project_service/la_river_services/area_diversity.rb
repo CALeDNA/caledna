@@ -55,6 +55,8 @@ module ResearchProjectService
             ON asvs."taxonID" = ncbi_nodes.taxon_id
             JOIN research_project_sources
             ON research_project_sources.sourceable_id = asvs.extraction_id
+            JOIN ncbi_divisions
+            ON ncbi_divisions.id = ncbi_nodes.cal_division_id
             JOIN samples
             ON asvs.sample_id = samples.id
             WHERE sourceable_type = 'Extraction'
