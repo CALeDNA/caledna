@@ -38,6 +38,10 @@ Rails.application.routes.draw do
           to: 'research_projects#pillar_point_occurrences'
       get '/pillar_point/source_comparison_all',
           to: 'research_projects#pillar_point_source_comparison_all'
+      get '/la_river/area_diversity',
+          to: 'la_river#area_diversity'
+      get '/la_river/detection_frequency',
+          to: 'la_river#detection_frequency'
     end
   end
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ResearchProject < ApplicationRecord
+  LA_RIVER = ResearchProject.find_by(name: 'Los Angeles River')
+
   has_many :research_project_sources
   has_many :research_project_authors
   has_many :pages

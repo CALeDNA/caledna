@@ -4,19 +4,24 @@ function capitalizeFirstLetter(string) {
 
 function formatLongTaxonString(taxon) {
   let taxonRanks = [
-    taxon.phylum, taxon.class, taxon.order, taxon.family,
-    taxon.genus, taxon.species
-  ]
-  const phylum = taxon.phylum === null ? '--' : taxon.phylum;
-  const selectedRank = taxonRanks.filter(rank => rank != phylum)
+    taxon.phylum,
+    taxon.class,
+    taxon.order,
+    taxon.family,
+    taxon.genus,
+    taxon.species
+  ];
+  const phylum = taxon.phylum === null ? "--" : taxon.phylum;
+  const selectedRank = taxonRanks
+    .filter(rank => rank != phylum)
     .filter(rank => rank !== undefined)
-    .filter(rank => rank !== null)
+    .filter(rank => rank !== null);
 
   let taxonString = `${taxon.kingdom}: ${phylum}`;
   if (selectedRank[0]) {
-    taxonString += `, ${selectedRank[0]}`
+    taxonString += `, ${selectedRank[0]}`;
   }
-  return taxonString
+  return taxonString;
 }
 
 function formatShortTaxonString(taxon) {
@@ -24,14 +29,14 @@ function formatShortTaxonString(taxon) {
 }
 
 function formatChartData(taxon) {
-  const longString = formatLongTaxonString(taxon)
+  const longString = formatLongTaxonString(taxon);
   return {
     name: longString,
     value: taxon.count,
     source: taxon.source,
     division: taxon.division,
-    tooltip_name: longString,
-  }
+    tooltip_name: longString
+  };
 }
 
 function sortData(dataArray) {
@@ -42,5 +47,5 @@ export {
   capitalizeFirstLetter,
   formatLongTaxonString,
   formatChartData,
-  sortData,
+  sortData
 };

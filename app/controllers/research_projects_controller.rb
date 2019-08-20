@@ -25,6 +25,7 @@ class ResearchProjectsController < ApplicationController
     @project = project
     @page = project_page
     project_samples if project_page.show_project_map?
+    la_river_view if project.name == 'Los Angeles River'
   end
 
   def pillar_point
@@ -34,6 +35,17 @@ class ResearchProjectsController < ApplicationController
   end
 
   private
+
+  def la_river_view
+    @la_river_view ||= begin
+      if params[:id] == 'overview'
+        @division_counts = la_river_service.division_counts
+        @division_counts_unique = la_river_service.division_counts_unique
+      end
+
+      render 'research_projects/la_river'
+    end
+  end
 
   def project_samples
     return [] unless params[:view] == 'list'
@@ -70,32 +82,32 @@ class ResearchProjectsController < ApplicationController
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def pillar_point_view
     if params[:section] == 'occurrence_comparison'
-      @division_counts = project_service.division_counts
-      @division_counts_unique = project_service.division_counts_unique
+      @division_counts = pillar_point_service.division_counts
+      @division_counts_unique = pillar_point_service.division_counts_unique
     elsif params[:section] == 'gbif_breakdown'
-      @gbif_breakdown = project_service.gbif_breakdown
+      @gbif_breakdown = pillar_point_service.gbif_breakdown
     elsif params[:section] == 'interactions'
       if params[:taxon]
-        @interactions = project_service.globi_interactions
-        @globi_target_taxon = project_service.globi_target_taxon
+        @interactions = pillar_point_service.globi_interactions
+        @globi_target_taxon = pillar_point_service.globi_target_taxon
       else
-        @taxon_list = project_service.globi_index
+        @taxon_list = pillar_point_service.globi_index
       end
     elsif params[:view] == 'list'
       @occurrences = occurrences
-      @stats = project_service.stats
+      @stats = pillar_point_service.stats
       @asvs_count = asvs_count
     elsif params[:section] == 'common_taxa'
       @taxon = params[:taxon]
-      @gbif_taxa_with_edna_map = project_service.common_taxa_map
+      @gbif_taxa_with_edna_map = pillar_point_service.common_taxa_map
     elsif params[:section] == 'edna_gbif_comparison'
-      @gbif_taxa = project_service.gbif_taxa
+      @gbif_taxa = pillar_point_service.gbif_taxa
     elsif params[:section] == 'area_diversity'
     elsif params[:section] == 'detection_frequency'
     elsif params[:section] == 'source_comparison_all'
     elsif params[:section] == 'networks'
     else
-      @stats = project_service.stats
+      @stats = pillar_point_service.stats
     end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
@@ -170,16 +182,22 @@ class ResearchProjectsController < ApplicationController
   def occurrences
     @occurrences ||= begin
       if params[:source] == 'gbif'
-        project_service.gbif_occurrences.page(params[:page])
+        pillar_point_service.gbif_occurrences.page(params[:page])
       else
         samples.page(params[:page])
       end
     end
   end
 
-  def project_service
-    @project_service ||= begin
+  def pillar_point_service
+    @pillar_point_service ||= begin
       ResearchProjectService::PillarPoint.new(project, params)
+    end
+  end
+
+  def la_river_service
+    @la_river_service ||= begin
+      ResearchProjectService::LaRiver.new(project, params)
     end
   end
 

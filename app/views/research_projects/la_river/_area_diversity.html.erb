@@ -1,0 +1,39 @@
+<style>
+.venntooltip {
+  position: absolute;
+  text-align: center;
+  width: 128px;
+  height: 26px;
+  background: #333;
+  color: #ddd;
+  padding: 2px;
+  border: 0px;
+  border-radius: 8px;
+  opacity: 0;
+}
+</style>
+
+<button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+  <i class="fas fa-sliders-h"></i> Filters
+</button>
+
+<form class="area-diversity collapse" id="collapseFilters">
+  <div class="row">
+    <div class="col-sm-6">
+      <%= render partial: "research_projects/la_river/filters_taxa_divisions" %>
+
+    </div>
+
+    <div class="col-sm-6">
+
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Apply filters</button>
+  <button class="btn btn-primary js-reset-filters">Reset filters</button>
+</form>
+
+<div id="graph-edna"></div>
+<div id="table-edna"></div>
+
+<%= javascript_pack_tag 'la_river_area_diversity' %>

@@ -1,0 +1,17 @@
+<fieldset>
+  <legend>Taxa groups</legend>
+  <div class="checkbox">
+    <label for="all">
+      <input type="checkbox" name="taxon_groups" id="all" value="all" checked>
+      All
+    </label>
+  </div>
+  <% CombineTaxon::KINGDOMS.each do |kingdom| %>
+    <div class="checkbox">
+      <label for="<%= kingdom %>">
+        <input type="checkbox" name="taxon_groups" id="<%= kingdom %>" value="<%= kingdom %>">
+        <%= kingdom %>
+      </label>
+    </div>
+  <% end %>
+</fieldset>

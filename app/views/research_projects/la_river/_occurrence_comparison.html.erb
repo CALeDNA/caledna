@@ -1,0 +1,63 @@
+<%= javascript_pack_tag 'pp_bar_charts' %>
+<style>
+  canvas {
+    margin-bottom: 2rem;
+  }
+</style>
+
+<div class="row">
+  <div class="col-sm-6">
+    <h2>eDNA</h2>
+    <h3>Total Occurrences of a Taxon</h3>
+    <canvas id="cal-total-chart" width="400" height="400"></canvas>
+
+    <%= render partial: "research_projects/la_river/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.cal_counts(@division_counts[:cal], include_other=true),
+        total:  PillarPointHelper.total(@division_counts[:cal].values)
+      } %>
+
+    <h3>Unique Taxa</h3>
+    <canvas id="cal-unique-chart" width="400" height="400"></canvas>
+
+    <%= render partial: "research_projects/la_river/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.cal_counts(@division_counts_unique[:cal], include_other=true),
+        total: PillarPointHelper.total(@division_counts_unique[:cal].values)
+      } %>
+  </div>
+
+  <div class="col-sm-6">
+    <h2>iNaturalist</h2>
+    <h3>Total Occurrences</h3>
+    <canvas id="inat-total-chart" width="400" height="400"></canvas>
+
+    <%= render partial: "research_projects/la_river/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts[:inat], include_other=true),
+        total:  PillarPointHelper.total(@division_counts[:inat].values)
+      } %>
+
+    <h3>Unique TaxSpecies</h3>
+    <canvas id="inat-unique-chart" width="400" height="400"></canvas>
+
+    <%= render partial: "research_projects/la_river/occurrence_table",
+      locals: {
+        occurrence_stats: PillarPointHelper.gbif_counts(@division_counts_unique[:inat], include_other=true),
+        total: PillarPointHelper.total(@division_counts_unique[:inat].values)
+      } %>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  window.caledna = {
+    cal_division_total: <%= PillarPointHelper.cal_counts(@division_counts[:cal]).to_json.html_safe %>,
+    cal_division_unique: <%= PillarPointHelper.cal_counts(@division_counts_unique[:cal]).to_json.html_safe %>,
+    inat_division_total: <%= PillarPointHelper.gbif_counts(@division_counts[:inat]).to_json.html_safe %>,
+    inat_division_unique: <%= PillarPointHelper.gbif_counts(@division_counts_unique[:inat]).to_json.html_safe %>
+  }
+
+})(window)
+</script>
