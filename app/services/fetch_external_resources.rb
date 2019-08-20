@@ -33,10 +33,14 @@ class FetchExternalResources
   end
 
   def image
-    wikidata_image || inaturalist_image || eol_image
+    wikidata_image || inaturalist_image || eol_image || temp_image
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def temp_image
+    target_taxon = NcbiNode.find(taxon_id)
+    target_taxon.temp_image.url
+  end
+
   def eol_image
     return if eol_image_id.blank?
 
@@ -46,15 +50,8 @@ class FetchExternalResources
     media = media_results['dataObjects'].first
     return if media['eolMediaURL'].blank?
 
-    OpenStruct.new(
-      url: media['eolMediaURL'],
-      attribution: media['agents'].first['full_name'],
-      source: 'Encyclopedia of Life.',
-      taxa_url: eol_link.url
-    )
     media['eolMediaURL']
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def inaturalist_taxa
     return if inaturalist_link.blank?
@@ -71,13 +68,6 @@ class FetchExternalResources
 
     default_photo = inaturalist_taxa['default_photo']
     return if default_photo.blank?
-
-    OpenStruct.new(
-      url: default_photo['medium_url'],
-      attribution: default_photo['attribution'],
-      source: 'iNaturalist',
-      taxa_url: inaturalist_link.url
-    )
 
     default_photo['medium_url']
   end

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 module ResearchProjectService
   class LaRiver
     include CustomPagination
@@ -18,7 +17,6 @@ module ResearchProjectService
       @params = params
       @globi_taxon = params[:taxon]&.tr('+', ' ')
     end
-
 
     private
 
@@ -71,4 +69,3 @@ module ResearchProjectService
     end
   end
 end
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize

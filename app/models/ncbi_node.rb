@@ -154,7 +154,7 @@ class NcbiNode < ApplicationRecord
   end
 
   def image
-    wikidata_image || inaturalist_image || eol_image
+    wikidata_image || inaturalist_image || eol_image || temp_image
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -196,6 +196,23 @@ class NcbiNode < ApplicationRecord
   def asvs_count_display
     asvs_count
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def temp_image
+    @temp_image ||= begin
+      resources = external_resources.where('temp_image IS NOT NULL').limit(1)
+      return if resources.blank?
+
+      resource = resources.first
+      OpenStruct.new(
+        url: resource.temp_image,
+        attribution: resource.temp_image_source,
+        source: resource.temp_image_source,
+        taxa_url: resource.temp_image
+      )
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
 
   private
 

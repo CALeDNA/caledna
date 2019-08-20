@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-# rubocop:disable Metrics/PerceivedComplexity
+# rubocop:disable Metrics/MethodLength
 module ResearchProjectService
   module LaRiverServices
     module AreaDiversity
@@ -15,14 +14,14 @@ module ResearchProjectService
             locations: [
               { names: [hahamongna], count: cal_location(hahamongna) },
               { names: [maywood], count: cal_location(maywood) },
-              { names: [hahamongna, maywood], count: cal_location(hahamongna, maywood) },
+              { names: [hahamongna, maywood],
+                count: cal_location(hahamongna, maywood) }
             ]
           }
         }
       end
 
       private
-
 
       def cal_total
         sql_string = area_diversity_cal_sql
@@ -83,5 +82,4 @@ module ResearchProjectService
     end
   end
 end
-# rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-# rubocop:enable Metrics/PerceivedComplexity
+# rubocop:enable Metrics/MethodLength

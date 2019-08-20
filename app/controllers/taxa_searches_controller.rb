@@ -27,17 +27,19 @@ class TaxaSearchesController < ApplicationController
   def result_sql
     <<-SQL
     SELECT taxon_id, canonical_name, rank, alt_names, inaturalist_id, eol_id,
-    wikidata_image, asvs_count
+    wikidata_image, temp_image, asvs_count
     FROM (
       SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
       ncbi_nodes.alt_names, inaturalist_id, eol_id, wikidata_image, asvs_count,
+      temp_image,
       to_tsvector('simple', canonical_name) ||
       to_tsvector('english', coalesce(alt_names, '')) AS doc
       FROM ncbi_nodes
       LEFT JOIN external_resources
       ON external_resources.ncbi_id = ncbi_nodes.taxon_id
       GROUP BY  ncbi_nodes.taxon_id, external_resources.inaturalist_id,
-      external_resources.eol_id, external_resources.wikidata_image
+      external_resources.eol_id, external_resources.wikidata_image,
+      external_resources.temp_image
     ) as search
     WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})
     OR search.doc @@ plainto_tsquery('english', #{conn.quote(query)})
