@@ -21,9 +21,22 @@
       next unless policy(resource.name.to_s.singularize.to_sym).index?
     %>
 
+    <%
+      # adminstrate can't handle modes with nonstandard inflictions
+      # https://github.com/thoughtbot/administrate/issues/400
+      def resource_path(resource)
+        nonstandard_inflections = [:site_news]
+
+        if nonstandard_inflections.include?(resource.name)
+          ActiveModel::Naming.route_key(resource.to_s.classify.constantize)
+        else
+          resource.path
+        end
+      end
+    %>
     <%= link_to(
       display_resource_name(resource),
-      [namespace, resource.path],
+      [namespace, resource_path(resource)],
       class: "navigation__link navigation__link--#{nav_link_state(resource)}"
     ) %>
   <% end %>

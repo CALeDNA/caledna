@@ -54,6 +54,7 @@ Rails.application.routes.draw do
     resources :pages
     resources :events
     resources :event_registrations
+    resources :site_news
     resources :users
     resources :surveys
     resources :survey_responses
