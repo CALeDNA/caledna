@@ -3,10 +3,10 @@
   // height: 100%;
   // height: 50%;
 
-  background: url('home/yosemite.jpg');
+  background: url("home/yosemite.jpg");
   background-size: cover;
 
-  .swiper-slide  {
+  .swiper-slide {
     text-align: center;
   }
 
@@ -16,8 +16,7 @@
 
   .swiper-pagination-bullet {
     background: #eee;
-    opacity: .7;
-
+    opacity: 0.7;
   }
 
   .swiper-pagination-bullet-active {
@@ -33,7 +32,6 @@
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23ffffff'%2F%3E%3C%2Fsvg%3E") !important;
   }
 }
-
 
 .hero-summary {
   z-index: 2;
@@ -57,16 +55,14 @@
   p {
     font-size: 2rem;
   }
-
 }
-
 
 @media (min-width: 768px) {
   .hero-summary {
     position: absolute;
     top: 200px;
     right: 4rem;
-    background: rgba(0, 0, 0, .4);
+    background: rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -78,7 +74,6 @@
   h2 {
     font-size: 24px;
   }
-
 
   #main-wrapper {
     padding-bottom: 31rem;
@@ -96,12 +91,10 @@
     }
   }
 
-
   .alert {
     margin-bottom: 0;
   }
 }
-
 
 #home {
   section {
@@ -111,7 +104,6 @@
   .section-grey {
     background: #f2f2f2;
   }
-
 }
 
 #home .site-stats {
@@ -120,7 +112,7 @@
   padding-bottom: 2rem;
 
   .stats-box {
-    padding: .5rem 0em;
+    padding: 0.5rem 0em;
     font-size: 1.75rem;
 
     img {
@@ -140,14 +132,11 @@
   display: block;
 
   .stats-box {
-    border: 1px solid #ddd ;
-    margin: .5em 0;
+    border: 1px solid #ddd;
+    margin: 0.5em 0;
     border-radius: 5px;
-
   }
 }
-
-
 
 #home .activities {
   img {
@@ -157,10 +146,10 @@
   .panel-body {
     min-height: 7rem;
 
-    h3{
+    h3 {
       margin: 0;
       font-size: 1.75rem;
-      color: #333;
+      color: $main-text;
     }
   }
 }

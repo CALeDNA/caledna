@@ -1,3 +1,5 @@
+@import "variables";
+
 // ================
 // buttons
 // ================
@@ -8,7 +10,6 @@ header .button {
 
 .button {
   padding: 0.75em 1em;
-
 }
 
 .btn {
@@ -24,19 +25,20 @@ header .button {
 }
 
 .btn-default {
-  color: #333;
+  color: $main-text;
   background-color: #fff;
   border-color: #ccc;
   font-weight: 700;
 }
 
 input[type="submit"].btn-default {
-  color: #333;
+  color: $main-text;
   background-color: #fff;
   border: 1px solid #ccc;
 }
 
-.btn-group, .btn-group-vertical {
+.btn-group,
+.btn-group-vertical {
   position: relative;
   display: inline-block;
   vertical-align: middle;
@@ -51,7 +53,6 @@ input[type="submit"].btn-default {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
 }
-
 
 // ================
 // specific styles
@@ -104,12 +105,30 @@ td img {
   background: rgb(255, 230, 230);
 }
 
-h1 { font-size: 2em; margin: .67em 0 }
-h2 { font-size: 1.5em; margin: .75em 0 }
-h3 { font-size: 1.17em; margin: .83em 0 }
-h3 { font-size: 1.0em; margin: 1.0em 0 }
-h5 { font-size: .83em; margin: 1.5em 0 }
-h6 { font-size: .75em; margin: 1.67em 0 }
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+h2 {
+  font-size: 1.5em;
+  margin: 0.75em 0;
+}
+h3 {
+  font-size: 1.17em;
+  margin: 0.83em 0;
+}
+h3 {
+  font-size: 1em;
+  margin: 1em 0;
+}
+h5 {
+  font-size: 0.83em;
+  margin: 1.5em 0;
+}
+h6 {
+  font-size: 0.75em;
+  margin: 1.67em 0;
+}
 
 .main-content__page-title {
   font-size: 2em;
@@ -136,12 +155,9 @@ h6 { font-size: .75em; margin: 1.67em 0 }
     list-style: decimal;
   }
 
-
-
   li {
     padding-left: 1em;
   }
-
 
   .correct-answer {
     border: 1px solid #ccc;

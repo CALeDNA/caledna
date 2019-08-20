@@ -1,4 +1,6 @@
-$brand-primary: darken(#cbe2d3, 35%) !default;
+@import "variables";
+
+$brand-primary: darken($theme-base-color, 35%) !default;
 
 @import "photoswipe/photoswipe";
 @import "photoswipe/default-skin/default-skin";
@@ -46,12 +48,9 @@ $brand-primary: darken(#cbe2d3, 35%) !default;
 }
 */
 
-
 // =============
 // layout
 // =============
-
-
 
 .main-container {
   padding-top: 4rem;
@@ -112,21 +111,32 @@ body {
   // font-size: calc(16px + .25vw);
 }
 
-blockquote, dl, dt, figcaption, li, p, textarea {
+blockquote,
+dl,
+dt,
+figcaption,
+li,
+p,
+textarea {
   line-height: 1.5em;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   line-height: 1.2em;
 }
 
 h1:first-of-type {
   margin-top: 0;
-  margin-bottom: .75rem;
+  margin-bottom: 0.75rem;
 }
 
-h1, h2, h3, h4 {
-  margin: 1em 0 .75em;
+h1,
+h2,
+h3,
+h4 {
+  margin: 1em 0 0.75em;
 }
 
 h1 {
@@ -180,27 +190,26 @@ h1.border {
 }
 
 fieldset.border {
-  border: solid 1px #DDD !important;
+  border: solid 1px #ddd !important;
   padding: 0 15px 15px 15px;
   border-bottom: none;
   margin: 20px 0;
 }
 
 legend.border {
-  width:inherit; /* Or auto */
-  padding:0 10px; /* To give a bit of padding on the left and right */
-  border-bottom:none;
+  width: inherit; /* Or auto */
+  padding: 0 10px; /* To give a bit of padding on the left and right */
+  border-bottom: none;
 }
 
 .clickable_row:hover {
-  background:#eee;
+  background: #eee;
   cursor: pointer;
 }
 
 #mapid {
   height: 80vh;
 }
-
 
 .samples-menu {
   margin-bottom: 1em;
@@ -211,11 +220,12 @@ legend.border {
 }
 
 .samples-links a {
-  margin-left: .5em;
+  margin-left: 0.5em;
 }
 
 @keyframes spinner-line-fade-more {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0; /* minimum opacity */
   }
   1% {
@@ -224,7 +234,9 @@ legend.border {
 }
 
 @keyframes spinner-line-fade-quick {
-  0%, 39%, 100% {
+  0%,
+  39%,
+  100% {
     opacity: 0.25; /* minimum opacity */
   }
   40% {
@@ -233,7 +245,8 @@ legend.border {
 }
 
 @keyframes spinner-line-fade-default {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.22; /* minimum opacity */
   }
   1% {
@@ -241,14 +254,13 @@ legend.border {
   }
 }
 
-
 // =============
 // nav
 // =============
 
 .navbar {
   margin-bottom: 0;
-  background-color: #cbe2d3;
+  background-color: $theme-base-color;
 
   li {
     line-height: 0;
@@ -273,9 +285,10 @@ legend.border {
   height: 100px;
 }
 
-
-.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-  background: lighten(#cbe2d3, 10%);
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+  background: lighten($theme-base-color, 10%);
 }
 
 .navbar-default {
@@ -288,11 +301,11 @@ legend.border {
     border-color: #888;
 
     &:hover {
-      background-color: #cbe2d3;
+      background-color: $theme-base-color;
     }
 
     &:focus {
-      background-color: #cbe2d3;
+      background-color: $theme-base-color;
     }
   }
 
@@ -322,19 +335,20 @@ legend.border {
   }
 }
 
-ul.nav li.dropdown > ul.dropdown-menu  {
-  background-color: #cbe2d3;
+ul.nav li.dropdown > ul.dropdown-menu {
+  background-color: $theme-base-color;
 }
 
-.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
-  background-color: lighten(#cbe2d3, 10%);
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  background-color: lighten($theme-base-color, 10%);
 }
 
 .navbar-default .navbar-nav > .open > a {
-  background-color: lighten(#cbe2d3, 10%);
+  background-color: lighten($theme-base-color, 10%);
 
   &:focus {
-    background-color: lighten(#cbe2d3, 10%);
+    background-color: lighten($theme-base-color, 10%);
   }
 }
 
@@ -342,9 +356,8 @@ ul.nav li.dropdown > ul.dropdown-menu  {
 // footer
 // =============
 
-
 footer {
-  background-color: #cbe2d3;
+  background-color: $theme-base-color;
   padding: 1.5rem 0;
 
   ul {
@@ -353,18 +366,18 @@ footer {
   }
 
   li {
-    padding: .4rem 0;
+    padding: 0.4rem 0;
   }
 
   .social-media a:link {
-    padding-right: .6rem;
+    padding-right: 0.6rem;
   }
 
   a {
-    color: #333;
+    color: $main-text;
   }
 
   a:hover {
-    color: #333;
+    color: $main-text;
   }
 }
