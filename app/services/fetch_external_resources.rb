@@ -38,7 +38,7 @@ class FetchExternalResources
 
   def temp_image
     target_taxon = NcbiNode.find(taxon_id)
-    target_taxon.temp_image.url
+    target_taxon.temp_image.try(:url)
   end
 
   def eol_image
