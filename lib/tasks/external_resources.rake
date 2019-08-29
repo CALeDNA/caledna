@@ -332,6 +332,32 @@ namespace :external_resources do
     ActiveRecord::Base.connection.execute(sql)
   end
 
+  task :add_eol_images, %i[path] => :environment do |_t, args|
+    path = args[:path]
+
+    CSV.foreach(path, headers: true, col_sep: ',') do |row|
+      puts row['ncbi_id']
+      resources = ExternalResource.where(ncbi_id: row['ncbi_id'])
+
+      if resources.blank?
+        attributes = {
+          ncbi_id: row['ncbi_id'],
+          search_term: row['canonical_name'],
+          eol_image: row['eol_image'],
+          eol_image_attribution: row['eol_image_source'],
+          source: 'eol'
+        }
+        ExternalResource.create(attributes)
+      else
+        attributes = {
+          eol_image: row['eol_image'],
+          eol_image_attribution: row['eol_image_source']
+        }
+        resources.update(attributes)
+      end
+    end
+  end
+
   private
 
   def conn
