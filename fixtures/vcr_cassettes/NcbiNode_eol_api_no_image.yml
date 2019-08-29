@@ -1,0 +1,92 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://eol.org/api/pages/1.0.json?id=1151354&images_per_page=1&sounds_per_page=0&taxonomy=false&texts_per_page=0&videos_per_page=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Date:
+      - Thu, 29 Aug 2019 14:40:45 GMT
+      Server:
+      - Varnish
+      X-Varnish:
+      - '81380838'
+      Location:
+      - https://eol.org/api/pages/1.0.json?taxonomy=false&id=1151354&images_per_page=1&texts_per_page=0&sounds_per_page=0&videos_per_page=0
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Thu, 29 Aug 2019 14:40:45 GMT
+- request:
+    method: get
+    uri: https://eol.org/api/pages/1.0.json?id=1151354&images_per_page=1&sounds_per_page=0&taxonomy=false&texts_per_page=0&videos_per_page=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 29 Aug 2019 14:40:45 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      X-Frame-Options:
+      - ALLOWALL
+      X-Robots-Tag:
+      - noindex
+      Etag:
+      - W/"9d8a825dd41bc5f8a194e505c2a51f2f"
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      X-Request-Id:
+      - 49c5eb03-bde8-4bd8-9e91-67206aad00c5
+      X-Runtime:
+      - '0.037676'
+      Vary:
+      - Origin
+      Age:
+      - '0'
+      X-Cache:
+      - MISS
+      X-Cache-Hits:
+      - '0'
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"taxonConcept":{"identifier":1151354,"scientificName":"Quercus poilanei
+        Hickel \u0026 A.Camus","richness_score":null}}'
+    http_version: 
+  recorded_at: Thu, 29 Aug 2019 14:40:45 GMT
+recorded_with: VCR 4.0.0

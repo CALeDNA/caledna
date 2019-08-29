@@ -1,30 +1,53 @@
 # frozen_string_literal: true
 
-class Wikidata
+class FormatExternalResources
   require 'sparql/client'
 
-  attr_reader :taxon_id, :external_resource
+  attr_reader :taxon_id, :external_resources
 
   URL = 'https://query.wikidata.org/sparql'
 
-  def initialize(taxon_id, external_resource)
+  def initialize(taxon_id, external_resources)
     @taxon_id = taxon_id
-    @external_resource = external_resource
+    @external_resources = external_resources.order(:created_at)
+  end
+
+  def eol_image
+    image = resource_value_for(:eol_image)
+    return if image.blank?
+    OpenStruct.new(
+      url: image,
+      attribution: resource_value_for(:eol_image_attribution),
+      source: 'Encyclopedia of Life'
+    )
+  end
+
+  def inat_image
+    image = resource_value_for(:inat_image)
+    return if image.blank?
+    OpenStruct.new(
+      url: image,
+      attribution: resource_value_for(:inat_image_attribution),
+      source: 'iNaturalist'
+    )
   end
 
   def wikidata_image
-    image = external_resource&.wikidata_image
+    image = resource_value_for(:wikidata_image)
     return if image.blank?
     OpenStruct.new(
       url: image,
       attribution: 'commons.wikimedia.org',
-      source: 'wikimedia',
-      taxa_url: image
+      source: 'wikimedia'
     )
   end
 
+  def conservation_status
+    @conservation_status ||= resource_value_for(:iucn_status)
+  end
+
   def bold_link
-    id = external_resource&.bold_id
+    id = resource_value_for(:bold_id)
     return if id.blank?
     url = 'http://www.boldsystems.org/index.php/TaxBrowser_TaxonPage?taxid='
     OpenStruct.new(
@@ -35,7 +58,7 @@ class Wikidata
   end
 
   def calflora_link
-    id = external_resource&.calflora_id
+    id = resource_value_for(:calflora_id)
     return if id.blank?
     url = 'http://www.calflora.org/cgi-bin/species_query.cgi?where-calrecnum='
     OpenStruct.new(
@@ -46,7 +69,7 @@ class Wikidata
   end
 
   def cites_link
-    id = external_resource&.cites_id
+    id = resource_value_for(:cites_id)
     return if id.blank?
     url = 'http://speciesplus.net/#/taxon_concepts/'
     OpenStruct.new(
@@ -57,7 +80,7 @@ class Wikidata
   end
 
   def cnps_link
-    id = external_resource&.cnps_id
+    id = resource_value_for(:cnps_id)
     return if id.blank?
     url = 'http://www.rareplants.cnps.org/detail/'
     OpenStruct.new(
@@ -68,7 +91,7 @@ class Wikidata
   end
 
   def eol_link
-    id = external_resource&.eol_id
+    id = resource_value_for(:eol_id)
     return if id.blank?
     url = 'http://eol.org/pages/'
     OpenStruct.new(
@@ -79,7 +102,7 @@ class Wikidata
   end
 
   def gbif_link
-    id = external_resource&.gbif_id
+    id = resource_value_for(:gbif_id)
     return if id.blank?
     url = 'https://www.gbif.org/species/'
     OpenStruct.new(
@@ -90,7 +113,7 @@ class Wikidata
   end
 
   def inaturalist_link
-    id = external_resource&.inaturalist_id
+    id = resource_value_for(:inaturalist_id)
     return if id.blank?
     url = 'https://www.inaturalist.org/taxa/'
     OpenStruct.new(
@@ -101,7 +124,7 @@ class Wikidata
   end
 
   def itis_link
-    id = external_resource&.itis_id
+    id = resource_value_for(:itis_id)
     return if id.blank?
     url = 'https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value='
     OpenStruct.new(
@@ -112,7 +135,7 @@ class Wikidata
   end
 
   def iucn_link
-    id = external_resource&.iucn_id
+    id = resource_value_for(:iucn_id)
     return if id.blank?
 
     url = 'http://www.iucnredlist.org/details/'
@@ -124,7 +147,7 @@ class Wikidata
   end
 
   def msw_link
-    id = external_resource&.msw_id
+    id = resource_value_for(:msw_id)
     return if id.blank?
     url = 'http://www.departments.bucknell.edu/biology/resources/msw3/browse.asp?s=y&id='
     OpenStruct.new(
@@ -135,7 +158,7 @@ class Wikidata
   end
 
   def ncbi_link
-    id = external_resource&.ncbi_id || taxon_id
+    id = resource_value_for(:ncbi_id) || taxon_id
     return if id.blank?
     url = 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id='
     OpenStruct.new(
@@ -146,11 +169,11 @@ class Wikidata
   end
 
   def wikidata_entity
-    external_resource&.wikidata_entity
+    resource_value_for(:wikidata_entity)
   end
 
   def wikidata_link
-    id = external_resource&.wikidata_entity
+    id = resource_value_for(:wikidata_entity)
     return if id.blank?
     url = 'https://www.wikidata.org/wiki/'
     OpenStruct.new(
@@ -163,7 +186,7 @@ class Wikidata
   def wikipedia_link; end
 
   def worms_link
-    id = external_resource&.worms_id
+    id = resource_value_for(:worms_id)
     return if id.blank?
     url = 'http://www.marinespecies.org/aphia.php?p=taxdetails&id='
     OpenStruct.new(
@@ -174,6 +197,10 @@ class Wikidata
   end
 
   private
+
+  def resource_value_for(field)
+    external_resources.map { |r| r.send(field) }.compact.last
+  end
 
   def client
     @client ||= SPARQL::Client.new(URL, method: :get)

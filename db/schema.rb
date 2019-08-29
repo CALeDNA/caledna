@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_28_185702) do
+ActiveRecord::Schema.define(version: 2019_08_29_122240) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -175,10 +175,10 @@ ActiveRecord::Schema.define(version: 2019_08_28_185702) do
     t.string "search_term"
     t.string "notes"
     t.jsonb "inat_payload", default: {}
-    t.string "temp_image"
-    t.string "temp_image_source"
+    t.string "eol_image"
+    t.string "eol_image_attribution"
     t.string "inat_image"
-    t.string "inat_image_source"
+    t.string "inat_image_attribution"
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["source"], name: "index_external_resources_on_source"

@@ -25,9 +25,10 @@ class NcbiNode < ApplicationRecord
   has_many :external_resources, foreign_key: 'ncbi_id'
 
   # rubocop:disable Lint/AmbiguousOperator
-  delegate *LINKS, to: :wikidata_data
+  delegate *LINKS, to: :format_resources
   # rubocop:enable Lint/AmbiguousOperator
-  delegate :wikidata_entity, :wikidata_image, to: :wikidata_data
+  delegate :wikidata_entity, :wikidata_image, :eol_image, :inat_image,
+           :conservation_status, to: :format_resources
 
   def self.taxa_dataset
     OpenStruct.new(
@@ -35,10 +36,6 @@ class NcbiNode < ApplicationRecord
       url: 'https://www.ncbi.nlm.nih.gov/taxonomy',
       citation: 'NCBI Taxonomy database. November 2017.'
     )
-  end
-
-  def external_resource
-    external_resources.order(created_at: :asc).first
   end
 
   def taxa_dataset
@@ -138,10 +135,6 @@ class NcbiNode < ApplicationRecord
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/LineLength
 
-  def conservation_status
-    external_resource&.iucn_status
-  end
-
   def conservation_status?
     conservation_status.present?
   end
@@ -150,11 +143,14 @@ class NcbiNode < ApplicationRecord
     return false if conservation_status.blank?
     statuses = IucnStatus::THREATENED.values
 
-    statuses.include?(external_resource.iucn_status)
+    statuses.include?(conservation_status)
   end
 
   def image
-    wikidata_image || inaturalist_image || eol_image || temp_image
+    @image ||= begin
+      wikidata_image || inat_image || eol_image ||
+        inaturalist_api_image || eol_api_image
+    end
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -197,23 +193,6 @@ class NcbiNode < ApplicationRecord
     asvs_count
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def temp_image
-    @temp_image ||= begin
-      resources = external_resources.where('temp_image IS NOT NULL').limit(1)
-      return if resources.blank?
-
-      resource = resources.first
-      OpenStruct.new(
-        url: resource.temp_image,
-        attribution: resource.temp_image_source,
-        source: resource.temp_image_source,
-        taxa_url: resource.temp_image
-      )
-    end
-  end
-  # rubocop:enable Metrics/MethodLength
-
   private
 
   def wikidata_api
@@ -229,64 +208,66 @@ class NcbiNode < ApplicationRecord
   end
 
   def inaturalist_taxa
-    return if inaturalist_link.blank?
-
-    id = inaturalist_link.id
     @inaturalist_taxa ||= begin
+      return if inaturalist_link.blank?
+
+      id = inaturalist_link.id
       results = inaturalist_api.fetch_taxa(id)
       JSON.parse(results.body)['results'].first
     end
   end
 
-  def inaturalist_image
-    return if inaturalist_taxa.blank?
+  def inaturalist_api_image
+    @inaturalist_api_image ||= begin
+      return if inaturalist_taxa.blank?
 
-    default_photo = inaturalist_taxa['default_photo']
-    return if default_photo.blank?
+      default_photo = inaturalist_taxa['default_photo']
+      return if default_photo.blank?
 
-    OpenStruct.new(
-      url: default_photo['medium_url'],
-      attribution: default_photo['attribution'],
-      source: 'iNaturalist',
-      taxa_url: inaturalist_link.url
-    )
+      OpenStruct.new(
+        url: default_photo['medium_url'],
+        attribution: default_photo['attribution'],
+        source: 'iNaturalist'
+      )
+    end
   end
 
   def eol_api
     @eol_api ||= ::EolApi.new
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def eol_image
-    return if eol_image_id.blank?
+  def eol_api_image
+    @eol_api_image ||= begin
+      return if eol_image_obj.blank?
 
-    media_results = eol_api.fetch_media(eol_image_id)
-    return if media_results.response.class == 'Net::HTTPNotFound'
-
-    media = media_results['dataObjects'].first
-    return if media['eolMediaURL'].blank?
-
-    OpenStruct.new(
-      url: media['eolMediaURL'],
-      attribution: media['agents'].first['full_name'],
-      source: 'Encyclopedia of Life.',
-      taxa_url: eol_link.url
-    )
-  end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
-
-  def eol_image_id
-    return if eol_link.blank?
-
-    page_results = eol_api.fetch_page(eol_link.id)
-    return if page_results.response.class == 'Net::HTTPNotFound'
-    return if page_results['dataObjects'].blank?
-
-    page_results['dataObjects'].first['identifier']
+      OpenStruct.new(
+        url: eol_image_obj['eolMediaURL'],
+        attribution: eol_image_obj['rightsHolder'],
+        source: 'Encyclopedia of Life'
+      )
+    end
   end
 
-  def wikidata_data
-    @wikidata_data ||= Wikidata.new(taxon_id, external_resource)
+  # rubocop:disable Metrics/AbcSize
+  def eol_image_obj
+    @eol_image_obj ||= begin
+      return if eol_link.blank?
+
+      page_results = eol_api.fetch_page(eol_link.id)
+      return if page_results.response.class == 'Net::HTTPNotFound'
+      response = page_results.parsed_response
+      return if response.blank?
+      return if response['taxonConcept'].blank?
+      return if response['taxonConcept']['dataObjects'].blank?
+
+      response['taxonConcept']['dataObjects'].first
+    end
+  end
+  # rubocop:enable Metrics/AbcSize
+
+  def format_resources
+    @format_resources ||=
+      FormatExternalResources.new(taxon_id, external_resources)
   end
 
   def common_names_string(names)
