@@ -315,6 +315,23 @@ namespace :external_resources do
     end
   end
 
+  task fill_in_inat_images: :environment do
+    sql = <<-SQL
+      UPDATE external_resources
+      SET inat_image = subquery.url, inat_image_attribution = subquery.source
+      FROM (
+        SELECT inat_taxa.photo ->> 'medium_url' AS url, inat_taxa.taxon_id,
+        inat_taxa.photo ->> 'attribution' AS source
+        FROM external.inat_taxa AS inat_taxa
+        WHERE inat_taxa.photo ->> 'medium_url' IS NOT NULL
+      ) AS subquery
+      WHERE external_resources.inaturalist_id = subquery.taxon_id
+      AND external_resources.inat_image IS NULL;
+    SQL
+
+    ActiveRecord::Base.connection.execute(sql)
+  end
+
   private
 
   def conn
