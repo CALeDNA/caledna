@@ -2,9 +2,7 @@
 
 module TaxaSearchHelper
   def self.image(record)
-    resource = FetchExternalResources.new(record.taxon_id)
-
-    record.wikidata_image || resource.inaturalist_image || resource.eol_image ||
-      resource.temp_image
+    search_result = FormatTaxaSearchResult.new(record)
+    search_result.image.try(:url)
   end
 end
