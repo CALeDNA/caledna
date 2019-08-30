@@ -1,0 +1,41 @@
+<% list_view = params[:view] == 'list' %>
+
+<div class="samples-menu">
+  <div class="btn-group" role="group" >
+    <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id]) %>"
+      class="<%= pill_menu_classes(!list_view) %>">
+      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+    </a>
+    <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id], view: :list) %>"
+      class="<%= pill_menu_classes(list_view) %>">
+      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+    </a>
+  </div>
+</div>
+
+<% if params[:view] == 'list' %>
+  <%= render partial: "samples/list",
+    locals: { samples: @samples, asvs_count: @asvs_count }  %>
+<% else %>
+  <div class="taxa-markers">
+    <div>
+      <input type="checkbox" checked value="asvs" class="js-taxa-markers">
+      <svg height="30"  width="100%">
+        <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
+        <text x="30" y="20">eDNA sites </text>
+      </svg>
+    </div>
+    <div>
+      <input type="checkbox" checked value="inat" class="js-taxa-markers">
+      <svg height="30" width="100%">
+        <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="orange" />
+        <text x="30" y="20">iNaturalist observations</text>
+      </svg>
+    </div>
+  </div>
+
+  <div id='mapid'></div>
+  <%= render partial: 'shared/map_layer_modal' %>
+
+  <%= javascript_pack_tag 'la_river_map' %>
+<% end %>

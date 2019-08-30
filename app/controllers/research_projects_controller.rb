@@ -24,7 +24,6 @@ class ResearchProjectsController < ApplicationController
   def show_project_page
     @project = project
     @page = project_page
-    project_samples if project_page.show_project_map?
     la_river_view if project.name == 'Los Angeles River'
   end
 
@@ -41,6 +40,8 @@ class ResearchProjectsController < ApplicationController
       if params[:id] == 'overview'
         @division_counts = la_river_service.division_counts
         @division_counts_unique = la_river_service.division_counts_unique
+      elsif params[:id] == 'sites'
+        project_samples
       end
 
       render 'research_projects/la_river'

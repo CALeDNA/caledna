@@ -42,6 +42,8 @@ Rails.application.routes.draw do
           to: 'la_river#area_diversity'
       get '/la_river/detection_frequency',
           to: 'la_river#detection_frequency'
+      get '/la_river/sites',
+          to: 'la_river#sites'
     end
   end
 

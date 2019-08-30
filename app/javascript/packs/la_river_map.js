@@ -7,7 +7,11 @@ var baseSamplesData;
 var inatData;
 var showAsvs = true;
 
-var map = baseMap.createMap();
+var initialLat = (34.20406 + 33.988999) / 2;
+var initialLng = -118.166609;
+var initialZoom = 11;
+
+var map = baseMap.createMap(L.latLng(initialLat, initialLng), initialZoom);
 
 var inatApiEndpoint = `/api/v1/inat_observations`;
 $.get(inatApiEndpoint, function(data) {
@@ -18,7 +22,7 @@ $.get(inatApiEndpoint, function(data) {
   inatLayer = createMarkerLayer(inatData, inatLayer, map);
 });
 
-var apiEndpoint = "/api/v1/samples";
+var apiEndpoint = "/api/v1/la_river/sites";
 $.get(apiEndpoint, function(data) {
   console.log(data);
   samplesData = data.samples.data.map(function(sample) {

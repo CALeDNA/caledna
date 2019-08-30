@@ -1,5 +1,3 @@
-<% list_view = params[:view] == 'list' %>
-
 <h1><%= @project.name %></h1>
 <%= render partial: "research_projects/submenu" %>
 
@@ -18,27 +16,10 @@
   <%= render partial: "research_projects/la_river/occurrence_comparison" %>
 
 <% elsif params[:id] == 'intro' %>
-  <h3>Sites</h3>
-  <div class="samples-menu">
-    <div class="btn-group" role="group" >
-      <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id]) %>"
-        class="<%= pill_menu_classes(!list_view) %>">
-        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
-      </a>
-      <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id], view: :list) %>"
-        class="<%= pill_menu_classes(list_view) %>">
-        <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
-      </a>
-    </div>
-  </div>
 
-  <% if params[:view] == 'list' %>
-    <%= render partial: "samples/list",
-      locals: { samples: @samples, asvs_count: @asvs_count }  %>
-  <% else %>
-    <%= render partial: "samples/map" %>
-    <%= javascript_pack_tag 'projects_detail_map' %>
-  <% end %>
+<% elsif params[:id] == 'sites' %>
+  <%= render partial: "research_projects/la_river/sites_map" %>
+
 <% end %>
 
 
