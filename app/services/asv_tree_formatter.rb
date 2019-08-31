@@ -136,22 +136,31 @@ module AsvTreeFormatter
   end
 
   # rubocop:disable Metrics/MethodLength
-  def fetch_asv_tree_taxa
-    NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
-            .joins('join research_project_sources ON ' \
-              'research_project_sources.sample_id = asvs.sample_id')
-            .joins(:ncbi_division)
-            .joins(ncbi_names_sql)
-            .where('research_project_sources.research_project_id = ?',
-                   ResearchProject::LA_RIVER.id)
-            .where('cal_division_id IS NOT NULL')
-            .where("ncbi_divisions.name != 'Environmental samples'")
-            .select('ncbi_divisions.name as domain')
-            .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
-            .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
-            .select('ncbi_names.name as common_name')
+  def fetch_asv_tree
+    @fetch_asv_tree ||= begin
+      NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
+              .joins(:ncbi_division)
+              .joins(ncbi_names_sql)
+              .where('cal_division_id IS NOT NULL')
+              .where("ncbi_divisions.name != 'Environmental samples'")
+              .select('ncbi_divisions.name as domain')
+              .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
+              .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
+              .select('ncbi_names.name as common_name')
+    end
   end
   # rubocop:enable Metrics/MethodLength
+
+  def fetch_asv_tree_for_sample(sample_id)
+    fetch_asv_tree.where('asvs.sample_id = ?', sample_id)
+  end
+
+  def fetch_asv_tree_for_research_project(project_id)
+    fetch_asv_tree.joins('join research_project_sources ON ' \
+                         'research_project_sources.sample_id = asvs.sample_id')
+                  .where('research_project_sources.research_project_id = ?',
+                         project_id)
+  end
 
   private
 

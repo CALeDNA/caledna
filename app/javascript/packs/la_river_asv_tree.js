@@ -1,9 +1,12 @@
 import * as d3 from "d3";
+import { Spinner } from "spin.js";
 import convertFlatJsonToFlareJson from "../utils/flare_json";
 import baseTree from "./base_tree.js";
 
 // Set the dimensions and margins of the diagram
 let viewerWidth = baseTree.viewerWidth;
+let longestLabelFactor = 10;
+let nodeHeightFactor = 45;
 
 const initOptions = {
   myCircleRadius: 14,
@@ -12,7 +15,10 @@ const initOptions = {
 };
 baseTree.init(initOptions);
 
-let enpoint = `/api/v1/la_river/tree_of_life`;
+const opts = { color: "#333", left: "50%", scale: 1.75 };
+let spinner = new Spinner(opts).spin(document.querySelector("#asv-tree"));
+
+let enpoint = `/api/v1/la_river/asv_tree`;
 $.get(enpoint, function(data) {
   let flareData = convertFlatJsonToFlareJson(data, "id");
 
@@ -23,7 +29,7 @@ $.get(enpoint, function(data) {
   let tree = d3.tree();
   const root = baseTree.createRoot(flareData);
   const longestLabelLength = baseTree.calculateLongestLabelLength(data);
-  const maxLabelLength = longestLabelLength * 10;
+  const maxLabelLength = longestLabelLength * longestLabelFactor;
 
   // Collapse after the second level
   root.children.forEach(baseTree.collapse);
@@ -31,12 +37,14 @@ $.get(enpoint, function(data) {
   update(root, root);
   baseTree.centerNode(root, svg);
 
+  spinner.stop();
+
   function update(source, rootNode) {
     // tree, viewerWidth, longestLabelLength, svg, toggleChildren
     let nodesPerLevel = [1];
     baseTree.updateNodeCount(0, rootNode, nodesPerLevel);
 
-    let newHeight = d3.max(nodesPerLevel) * 40; // xx pixels per line
+    let newHeight = d3.max(nodesPerLevel) * nodeHeightFactor;
     tree = tree.size([newHeight, viewerWidth]);
 
     // Assigns the x and y position for the nodes

@@ -24,8 +24,8 @@ module Api
         render json: project_service.detection_frequency, status: :ok
       end
 
-      def tree_of_life
-        render json: asv_tree, status: :ok
+      def asv_tree
+        render json: asv_tree_data, status: :ok
       end
 
       private
@@ -44,8 +44,12 @@ module Api
         end
       end
 
-      def asv_tree
-        asv_tree_taxa = fetch_asv_tree_taxa
+      def asv_tree_taxa
+        @asv_tree_taxa ||=
+          fetch_asv_tree_for_research_project(ResearchProject::LA_RIVER.id)
+      end
+
+      def asv_tree_data
         tree = asv_tree_taxa.map do |taxon|
           taxon_object = create_taxon_object(taxon)
           create_tree_objects(taxon_object, taxon.rank)

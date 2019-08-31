@@ -16,7 +16,7 @@ class SamplesController < ApplicationController
     @sample = sample
     @organisms = organisms
     @batch_vernaculars = batch_vernaculars
-    @asv_tree = asv_tree
+    @asv_tree = asv_tree_data
     @asv_tree_count = asv_tree_taxa.length
   end
 
@@ -57,23 +57,15 @@ class SamplesController < ApplicationController
   end
 
   def asv_tree_taxa
-    @asv_tree_taxa ||= begin
-      NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
-              .includes(:ncbi_division)
-              .joins(:ncbi_division)
-              .where('asvs.sample_id = ?', sample.id)
-              .where('cal_division_id IS NOT NULL')
-              .where("ncbi_divisions.name != 'Environmental samples'")
-              .select('ncbi_divisions.name as domain')
-    end
+    @asv_tree_taxa ||= fetch_asv_tree_for_sample(sample.id)
   end
 
-  def asv_tree
+  def asv_tree_data
     tree = asv_tree_taxa.map do |taxon|
       taxon_object = create_taxon_object(taxon)
       create_tree_objects(taxon_object, taxon.rank)
     end.flatten
-    tree << { 'name': 'Life', 'id': 'Life' }
+    tree << { 'name': 'Life', 'id': 'Life', 'common_name': nil }
     tree.uniq! { |i| i[:id] }
   end
 
