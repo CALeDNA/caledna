@@ -336,6 +336,7 @@ namespace :external_resources do
     path = args[:path]
 
     CSV.foreach(path, headers: true, col_sep: ',') do |row|
+      next if row['eol_image'].blank?
       puts row['ncbi_id']
       resources = ExternalResource.where(ncbi_id: row['ncbi_id'])
 
@@ -344,14 +345,41 @@ namespace :external_resources do
           ncbi_id: row['ncbi_id'],
           search_term: row['canonical_name'],
           eol_image: row['eol_image'],
-          eol_image_attribution: row['eol_image_source'],
+          eol_image_attribution: row['eol_image_attribution'],
           source: 'eol'
         }
         ExternalResource.create(attributes)
       else
         attributes = {
           eol_image: row['eol_image'],
-          eol_image_attribution: row['eol_image_source']
+          eol_image_attribution: row['eol_image_attribution']
+        }
+        resources.update(attributes)
+      end
+    end
+  end
+
+  task :add_inat_images, %i[path] => :environment do |_t, args|
+    path = args[:path]
+
+    CSV.foreach(path, headers: true, col_sep: ',') do |row|
+      next if row['inat_image'].blank?
+      puts row['ncbi_id']
+      resources = ExternalResource.where(ncbi_id: row['ncbi_id'])
+
+      if resources.blank?
+        attributes = {
+          ncbi_id: row['inat_image'],
+          search_term: row['canonical_name'],
+          inat_image: row['inat_image'],
+          inat_image_attribution: row['inat_image_attribution'],
+          source: 'inat'
+        }
+        ExternalResource.create(attributes)
+      else
+        attributes = {
+          inat_image: row['inat_image'],
+          inat_image_attribution: row['inat_image_attribution']
         }
         resources.update(attributes)
       end
