@@ -111,8 +111,8 @@ class NcbiNode < ApplicationRecord
     parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
   end
 
-  def common_names(parenthesis = true)
-    names = vernaculars.pluck(:name).map(&:titleize).uniq
+  def common_names_display(parenthesis = true)
+    names = common_names.compact
     return if names.blank?
 
     parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)

@@ -4,13 +4,8 @@ class TaxaController < ApplicationController
   include CustomPagination
 
   def index
-    # TODO: r-enable highlights
-    # @highlights = Highlight.asv
-    @highlights = []
-    @top_taxa = top_taxa
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
-    @batch_vernaculars = batch_vernaculars
   end
 
   def show
@@ -23,23 +18,6 @@ class TaxaController < ApplicationController
   #================
   # index
   #================
-
-  def batch_vernaculars
-    return [] if taxon_ids.blank?
-
-    sql = 'SELECT ncbi_names.taxon_id, ncbi_names.name ' \
-    'FROM ncbi_names ' \
-    "WHERE taxon_id IN (#{taxon_ids.to_s[1..-2]}) " \
-    "AND (name_class = 'common name' OR name_class = 'genbank common name')"
-
-    @batch_vernaculars ||= ActiveRecord::Base.connection.execute(sql)
-  end
-
-  def taxon_ids
-    top_taxa.pluck('taxon_id') +
-      top_plant_taxa.pluck('taxon_id') +
-      top_animal_taxa.pluck('taxon_id')
-  end
 
   def top_taxa
     @top_taxa ||= ordered_taxa
@@ -65,14 +43,26 @@ class TaxaController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ordered_taxa
     @ordered_taxa ||= begin
       NcbiNode.order(asvs_count: :desc)
-              .limit(10)
+              .limit(12)
               .where(rank: :species)
-              .where('taxon_id IN (SELECT asvs."taxonID" FROM asvs)')
+              .where('asvs_count > 0')
+              .joins('LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ' \
+                'ncbi_nodes.taxon_id ' \
+                'AND ncbi_names.name_class IN ' \
+                "('common name', 'genbank common name')")
+              .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
+              .select('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
+              .select('ncbi_nodes.asvs_count, ncbi_nodes.rank')
+              .select('ncbi_nodes.hierarchy_names')
+              .group('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
+              .group('ncbi_nodes.asvs_count')
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   #================
   # show

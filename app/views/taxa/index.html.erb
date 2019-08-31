@@ -8,49 +8,16 @@
   <%= render partial: "taxa_searches/form" %>
 </div>
 
-<% if @highlights.present? %>
-<h1>Featured</h1>
-  <ul>
-  <% @highlights.each do |highlight| %>
-    <li>
-      <%= highlight.highlightable.taxon.taxonRank %>: <%= link_to highlight.highlightable.taxon.canonicalName, taxon_path(highlight.highlightable.taxon) %>
-      <%= highlight.highlightable.taxon.common_names %>
-      <br>Project: <%= link_to highlight.project.name, field_data_project_path(highlight.project) %>
-      , Site: <%= link_to highlight.sample.barcode, sample_path(highlight.sample) %>
-    </li>
-  <% end %>
-  </ul>
-<% end %>
-
-<h1>Most Commonly Found</h1>
-<ul>
-<% @top_taxa.each do |taxon| %>
- <li>
-  <%= taxon.taxonRank %>:
-  <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-  <%= taxon.batch_common_names(@batch_vernaculars) %> (<%= pluralize taxon.asvs_count_display, 'site' %>)
-  </li>
-<% end %>
-</ul>
-
-<h1>Most Commonly Found Plants</h1>
-<ul>
-<% @top_plant_taxa.each do |taxon| %>
- <li>
-  <%= taxon.taxonRank %>:
-  <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-  <%= taxon.batch_common_names(@batch_vernaculars) %> (<%= pluralize taxon.asvs_count_display, 'site' %>)
-  </li>
-<% end %>
-</ul>
-
-<h1>Most Commonly Found Animals</h1>
-<ul>
+<h1>Most Commonly Found Animal Species</h1>
+<div class="taxa-image-gallery">
 <% @top_animal_taxa.each do |taxon| %>
- <li>
-  <%= taxon.taxonRank %>:
-  <%= link_to taxon.taxonomy_string, taxon_path(taxon) %>
-  <%= taxon.batch_common_names(@batch_vernaculars) %> (<%= pluralize taxon.asvs_count_display, 'site' %>)
-  </li>
+  <%= render partial: 'taxa_gallery_item', locals: { taxon: taxon } %>
 <% end %>
-</ul>
+</div>
+
+<h1>Most Commonly Found Plant Species</h1>
+<div class="taxa-image-gallery">
+<% @top_plant_taxa.each do |taxon| %>
+  <%= render partial: 'taxa_gallery_item', locals: { taxon: taxon } %>
+<% end %>
+</div>

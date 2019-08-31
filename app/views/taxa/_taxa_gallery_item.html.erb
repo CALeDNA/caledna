@@ -1,0 +1,20 @@
+<div class="item">
+  <%
+    image = taxon.image
+    if image.present?
+  %>
+    <%= link_to image_tag(image.url, class: 'img-responsive'), taxon_path(taxon) %>
+  <% else %>
+    <%= link_to image_tag('blank_photo.svg'), taxon_path(taxon) %>
+  <% end %>
+  <p>
+    <%= link_to taxon.canonical_name, taxon_path(taxon) %><br>
+    <%
+      common_names = taxon.common_names_display
+      if common_names.present?
+    %>
+      <%= common_names %><br>
+    <% end %>
+    <%= pluralize taxon.asvs_count_display, 'site' %>
+  </p>
+</div>
