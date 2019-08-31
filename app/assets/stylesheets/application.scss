@@ -19,9 +19,9 @@ $brand-primary: darken($theme-base-color, 35%) !default;
 @import "auth";
 @import "surveys";
 @import "map";
-@import "project";
 @import "text_editor";
 @import "tree-chart";
+@import "research_projects";
 
 // =============
 // custom up to 320px

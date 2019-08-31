@@ -3,10 +3,10 @@
 class FormatTaxaSearchResult
   include SqlParser
 
-  attr_reader :search_result
+  attr_reader :records
 
-  def initialize(search_result)
-    @search_result = search_result
+  def initialize(records)
+    @records = records
   end
 
   def image
@@ -14,30 +14,36 @@ class FormatTaxaSearchResult
       inaturalist_api_image || eol_api_image
   end
 
+  def common_names
+    converted_names = parse_string_arrays(records.common_names).compact
+    return if converted_names.blank?
+    converted_names
+  end
+
   private
 
   def eol_image
-    image = value_for(search_result.eol_images)
+    image = value_for(records.eol_images)
     return if image.blank?
     OpenStruct.new(
       url: image,
-      attribution: value_for(search_result.eol_image_attributions),
+      attribution: value_for(records.eol_image_attributions),
       source: 'Encyclopedia of Life'
     )
   end
 
   def inaturalist_image
-    image = value_for(search_result.inat_images)
+    image = value_for(records.inat_images)
     return if image.blank?
     OpenStruct.new(
       url: image,
-      attribution: value_for(search_result.inat_image_attributions),
+      attribution: value_for(records.inat_image_attributions),
       source: 'iNaturalist'
     )
   end
 
   def wikidata_image
-    image = value_for(search_result.wikidata_images)
+    image = value_for(records.wikidata_images)
     return if image.blank?
     OpenStruct.new(
       url: image,
@@ -52,7 +58,7 @@ class FormatTaxaSearchResult
 
   def inaturalist_taxa
     @inaturalist_taxa ||= begin
-      inat_id = value_for(search_result.inat_ids)
+      inat_id = value_for(records.inat_ids)
       return if inat_id.blank?
 
       results = inaturalist_api.fetch_taxa(inat_id)
@@ -82,7 +88,7 @@ class FormatTaxaSearchResult
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def eol_image_obj
     @eol_image_obj ||= begin
-      eol_id = value_for(search_result.eol_ids)
+      eol_id = value_for(records.eol_ids)
       return if eol_id.blank?
 
       page_results = eol_api.fetch_page(eol_id)
@@ -110,6 +116,7 @@ class FormatTaxaSearchResult
   end
 
   def value_for(values)
+    return if values.blank?
     parse_string_arrays(values).compact.last
   end
 end

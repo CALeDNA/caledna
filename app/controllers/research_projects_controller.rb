@@ -35,19 +35,6 @@ class ResearchProjectsController < ApplicationController
 
   private
 
-  def la_river_view
-    @la_river_view ||= begin
-      if params[:id] == 'overview'
-        @division_counts = la_river_service.division_counts
-        @division_counts_unique = la_river_service.division_counts_unique
-      elsif params[:id] == 'sites'
-        project_samples
-      end
-
-      render 'research_projects/la_river'
-    end
-  end
-
   def project_samples
     return [] unless params[:view] == 'list'
     @samples = project.present? ? paginated_samples : []
@@ -78,6 +65,24 @@ class ResearchProjectsController < ApplicationController
   def conn
     @conn ||= ActiveRecord::Base.connection
   end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def la_river_view
+    @la_river_view ||= begin
+      if params[:id] == 'overview'
+        @division_counts = la_river_service.division_counts
+        @division_counts_unique = la_river_service.division_counts_unique
+      elsif params[:id] == 'sites'
+        project_samples
+      elsif params[:id] == 'identified-species'
+        @identified_species_by_location =
+          la_river_service.identified_species_by_location
+      end
+
+      render 'research_projects/la_river'
+    end
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity

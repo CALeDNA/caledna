@@ -1,0 +1,44 @@
+<%
+hahamongna = @identified_species_by_location['{Hahamongna}']
+both = @identified_species_by_location['{Hahamongna,"Maywood Park"}']
+maywood = @identified_species_by_location['{"Maywood Park"}']
+locations = [
+  { title: 'Hahamongna', species: hahamongna || [] },
+  { title: 'Maywood Park', species: maywood || [] },
+  { title: 'Hahamongna & Maywood Park', species: both || []}
+]
+%>
+
+<% locations.each do |location| %>
+  <h3><%= location[:title] %>: <%= location[:species].length %> species</h3>
+
+  <div class="taxa-image-gallery">
+    <% location[:species].each do |species| %>
+      <div class="item">
+        <%
+          image = TaxaSearchHelper.image(species)
+          if image.present?
+        %>
+          <%= link_to(image_tag(image, class: 'img-responsive'),
+            taxon_path(id: species.taxon_id)) %>
+        <% else %>
+          <%= link_to(image_tag('blank_photo'),
+            taxon_path(id: species.taxon_id)) %>
+        <% end %>
+        <p>
+          <%= link_to species.canonical_name, taxon_path(id: species.taxon_id ) %><br>
+          <%
+            common_names = TaxaSearchHelper.common_names(species)
+            if common_names.present?
+          %>
+            <%= common_names %><br>
+          <% end %>
+          <%= pluralize(species.asvs_count_la_river, 'site') %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+<% end %>
+
+

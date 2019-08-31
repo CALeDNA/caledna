@@ -3,6 +3,44 @@
 require 'rails_helper'
 
 describe FormatTaxaSearchResult do
+  describe '#common_names' do
+    def subject(search_result)
+      FormatTaxaSearchResult.new(search_result).common_names
+    end
+
+    it 'returns array of common names if multiple names exists' do
+      record = OpenStruct.new(
+        common_names: '{name1,name2}'
+      )
+
+      expect(subject(record)).to eq(%w[name1 name2])
+    end
+
+    it 'returns array of common names if one name exists' do
+      record = OpenStruct.new(
+        common_names: '{name1}'
+      )
+
+      expect(subject(record)).to eq(%w[name1])
+    end
+
+    it 'returns empty array if NULL' do
+      record = OpenStruct.new(
+        common_names: '{NULL}'
+      )
+
+      expect(subject(record)).to eq(nil)
+    end
+
+    it 'handles a mixture of valid names and NULL' do
+      record = OpenStruct.new(
+        common_names: '{name1,NULL,name2,NULL}'
+      )
+
+      expect(subject(record)).to eq(%w[name1 name2])
+    end
+  end
+
   describe '#image' do
     def subject(search_result)
       FormatTaxaSearchResult.new(search_result).image

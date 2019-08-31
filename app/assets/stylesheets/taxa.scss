@@ -1,4 +1,4 @@
-.taxonomy-tree  {
+.taxonomy-tree {
   width: auto !important;
 
   td {
@@ -11,8 +11,6 @@
   }
 }
 
-
-
 .data-source {
   color: #777;
   font-size: 90%;
@@ -23,5 +21,48 @@
   div {
     display: flex;
     align-items: center;
+  }
+}
+
+.taxa-image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  .item {
+    margin: 10px 5px;
+  }
+
+  .item img {
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+
+  .item p {
+    border: 0 solid #ddd;
+    border-width: 0 1px 1px 1px;
+    padding: 5px;
+  }
+
+  @media (min-width: 768px) {
+    .item img {
+      width: 275px;
+    }
+    .item p {
+      width: 275px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .item img {
+      width: 275px;
+    }
+    .item p {
+      width: 275px;
+    }
+  }
+
+  .item img {
+    display: block;
   }
 }

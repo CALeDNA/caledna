@@ -2,7 +2,13 @@
 
 module TaxaSearchHelper
   def self.image(record)
-    search_result = FormatTaxaSearchResult.new(record)
-    search_result.image.try(:url)
+    result = FormatTaxaSearchResult.new(record)
+    result.image.try(:url)
+  end
+
+  def self.common_names(record)
+    result = FormatTaxaSearchResult.new(record)
+    return if result.common_names.blank?
+    "(#{result.common_names.join(', ')})"
   end
 end
