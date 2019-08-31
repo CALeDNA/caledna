@@ -3,7 +3,7 @@
 class SamplesController < ApplicationController
   include PaginatedSamples
   include BatchData
-  include SampleAsvFormatter
+  include AsvTreeFormatter
 
   def index
     @samples = paginated_samples

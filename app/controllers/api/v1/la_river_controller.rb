@@ -7,6 +7,7 @@ module Api
 
       include PaginatedSamples
       include BatchData
+      include AsvTreeFormatter
 
       def sites
         render json: {
@@ -21,6 +22,10 @@ module Api
 
       def detection_frequency
         render json: project_service.detection_frequency, status: :ok
+      end
+
+      def tree_of_life
+        render json: asv_tree, status: :ok
       end
 
       private
@@ -39,7 +44,15 @@ module Api
         end
       end
 
-      private
+      def asv_tree
+        asv_tree_taxa = fetch_asv_tree_taxa
+        tree = asv_tree_taxa.map do |taxon|
+          taxon_object = create_taxon_object(taxon)
+          create_tree_objects(taxon_object, taxon.rank)
+        end.flatten
+        tree << { 'name': 'Life', 'id': 'Life', 'common_name': nil }
+        tree.uniq! { |i| i[:id] }
+      end
 
       def query_string
         {}

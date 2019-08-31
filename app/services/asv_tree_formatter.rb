@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-module SampleAsvFormatter
+module AsvTreeFormatter
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
   def create_taxon_object(taxon)
     rank = taxon.rank
-    k = taxon.ncbi_division.name
+    k = taxon.domain
     p = taxon.hierarchy_names['phylum']
     c = taxon.hierarchy_names['class']
     o = taxon.hierarchy_names['order']
@@ -52,27 +52,34 @@ module SampleAsvFormatter
       results[:kingdom_id] = k_id || format_blank_rank(results[:phylum_id], 'k')
     end
 
-    results.reject { |_k, v| v.blank? }
+    results = results.reject { |_k, v| v.blank? }
+    results[:common_name] = taxon.common_name
+    results[:original_rank] = rank
+
+    results
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/MethodLength
 
-  def format_blank_rank(name, rank)
-    "#{rank}_#{name}"
-  end
+  # rubocop:disable Metrics/MethodLength
+  def create_tree_object(taxon_object, rank, parent_id, id)
+    common_name = if taxon_object[:original_rank] == rank.to_s
+                    taxon_object[:common_name]
+                  end
 
-  def format_blank_name(name, rank)
-    prev_name = name.split(' for ').last
-    "#{rank} for #{prev_name}"
-  end
-
-  def create_tree_object(taxon_object, name, parent, id)
+    display_name = if common_name.present?
+                     "#{taxon_object[rank]} (#{common_name})"
+                   else
+                     taxon_object[rank]
+                   end
     {
-      name: taxon_object[name],
-      parent: taxon_object[parent],
-      id: taxon_object[id]
+      name: display_name,
+      parent: taxon_object[parent_id],
+      id: taxon_object[id],
+      common_name: common_name
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
@@ -106,10 +113,54 @@ module SampleAsvFormatter
     if %w[species genus family order class phylum kingdom].include?(rank)
       objects << { name: taxon_object[:kingdom],
                    parent: 'Life',
-                   id: taxon_object[:kingdom_id] }
+                   id: taxon_object[:kingdom_id],
+                   common_name: nil }
     end
     objects
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/MethodLength
+
+  def ncbi_names_sql
+    <<-SQL
+      LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
+      AND (ncbi_names.name_class IN ('common name', 'genbank common name'))
+      AND ncbi_names.id IN (
+        SELECT ncbi_names.id
+        FROM ncbi_names
+        WHERE taxon_id = ncbi_nodes.taxon_id
+        AND name_class IN ('common name', 'genbank common name')
+        LIMIT 1
+      )
+    SQL
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def fetch_asv_tree_taxa
+    NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
+            .joins('join research_project_sources ON ' \
+              'research_project_sources.sample_id = asvs.sample_id')
+            .joins(:ncbi_division)
+            .joins(ncbi_names_sql)
+            .where('research_project_sources.research_project_id = ?',
+                   ResearchProject::LA_RIVER.id)
+            .where('cal_division_id IS NOT NULL')
+            .where("ncbi_divisions.name != 'Environmental samples'")
+            .select('ncbi_divisions.name as domain')
+            .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
+            .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
+            .select('ncbi_names.name as common_name')
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  private
+
+  def format_blank_rank(name, rank)
+    "#{rank}_#{name}"
+  end
+
+  def format_blank_name(name, rank)
+    prev_name = name.split(' for ').last
+    "#{rank} for #{prev_name}"
+  end
 end
