@@ -23,6 +23,10 @@
     <% end %>
     <h3>Classification</h3>
     <table class="table table-condensed taxonomy-tree">
+      <tr>
+        <td>7 kingdoms</td>
+        <td><%= taxon.ncbi_division.name %></td>
+      </tr>
       <% taxon.taxonomy_tree.each do |taxon|%>
         <tr>
         <td>
