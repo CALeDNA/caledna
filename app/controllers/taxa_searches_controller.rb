@@ -14,7 +14,8 @@ class TaxaSearchesController < ApplicationController
   end
 
   def matches
-    raw_records = conn.exec_query(result_sql)
+    bindings = [[nil, query], [nil, limit], [nil, offset]]
+    raw_records = conn.exec_query(result_sql, 'q', bindings)
     records = raw_records.map { |r| OpenStruct.new(r) }
     add_pagination_methods(records)
     records
@@ -26,31 +27,33 @@ class TaxaSearchesController < ApplicationController
 
   def result_sql
     <<-SQL
-    SELECT taxon_id, canonical_name, rank, alt_names, asvs_count,
-    eol_ids, eol_images, eol_image_attributions,
-    inat_ids, inat_images, inat_image_attributions,
-    wikidata_images
+    SELECT taxon_id, canonical_name, rank, asvs_count,
+    eol_ids, eol_images,
+    inat_ids, inat_images,
+    wikidata_images, common_names
     FROM (
       SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
-      ncbi_nodes.alt_names, asvs_count,
+      asvs_count,
+      ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
       ARRAY_AGG(DISTINCT eol_id) AS eol_ids,
       ARRAY_AGG(DISTINCT eol_image) AS eol_images,
-      ARRAY_AGG(DISTINCT eol_image_attribution) AS eol_image_attributions,
       ARRAY_AGG(DISTINCT inaturalist_id) AS inat_ids,
       ARRAY_AGG(DISTINCT inat_image) AS inat_images,
-      ARRAY_AGG(DISTINCT inat_image_attribution) AS inat_image_attributions,
       ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images,
       to_tsvector('simple', canonical_name) ||
       to_tsvector('english', coalesce(alt_names, '')) AS doc
       FROM ncbi_nodes
       LEFT JOIN external_resources
-      ON external_resources.ncbi_id = ncbi_nodes.taxon_id
+        ON external_resources.ncbi_id = ncbi_nodes.taxon_id
+      LEFT JOIN ncbi_names
+        ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
+        AND ncbi_names.name_class IN ('common name', 'genbank common name')
       GROUP BY ncbi_nodes.taxon_id
       ORDER BY asvs_count DESC
     ) AS search
-    WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})
-    OR search.doc @@ plainto_tsquery('english', #{conn.quote(query)})
-    LIMIT #{limit} OFFSET #{offset};
+    WHERE search.doc @@ plainto_tsquery('simple', $1)
+    OR search.doc @@ plainto_tsquery('english', $1)
+    LIMIT $2 OFFSET $3;
     SQL
   end
 
@@ -73,6 +76,6 @@ class TaxaSearchesController < ApplicationController
   end
 
   def limit
-    10
+    12
   end
 end

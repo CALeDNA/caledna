@@ -9,18 +9,34 @@ class FormatTaxaSearchResult
     @records = records
   end
 
+  # use images saved in exteral_sources. if no images exist and records have
+  # inat_ids and eol_ids, connect to eol and inat api.
   def image
     wikidata_image || inaturalist_image || eol_image ||
       inaturalist_api_image || eol_api_image
   end
 
-  def common_names
-    converted_names = parse_string_arrays(records.common_names).compact
-    return if converted_names.blank?
-    converted_names
+  def common_names(parenthesis: true, truncate: true)
+    unless records.common_names.present?
+      raise StandardError, 'must add common_names in sql query'
+    end
+
+    names = parse_string_arrays(records.common_names).compact
+    return if names.blank?
+
+    if parenthesis
+      truncate ? "(#{common_names_string(names)})" : "(#{names.join(', ')})"
+    else
+      truncate ? common_names_string(names) : names.join(', ')
+    end
   end
 
   private
+
+  def common_names_string(names)
+    max = 3
+    names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
+  end
 
   def eol_image
     image = value_for(records.eol_images)
@@ -117,6 +133,7 @@ class FormatTaxaSearchResult
 
   def value_for(values)
     return if values.blank?
+
     parse_string_arrays(values).compact.last
   end
 end

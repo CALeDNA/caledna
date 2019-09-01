@@ -8,7 +8,6 @@ module TaxaSearchHelper
 
   def self.common_names(record)
     result = FormatTaxaSearchResult.new(record)
-    return if result.common_names.blank?
-    "(#{result.common_names.join(', ')})"
+    result.common_names
   end
 end

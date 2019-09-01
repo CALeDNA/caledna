@@ -9,22 +9,30 @@
   </a>
 </div>
 
-<table class="table taxa-search">
+<div class="taxa-image-gallery">
   <% @matches.each do |match| %>
-    <tr>
-      <td>
-        <% if TaxaSearchHelper.image(match).present? %>
-          <%= link_to(image_tag(TaxaSearchHelper.image(match), width: 200), taxon_path(id: match.taxon_id)) %>
-        <% else %>
-          <%= image_tag 'blank_photo.svg', width: 200 %>
+    <div class="item">
+      <% if TaxaSearchHelper.image(match).present? %>
+        <%= link_to(image_tag(TaxaSearchHelper.image(match), class: 'img-responsive'),
+          taxon_path(id: match.taxon_id)) %>
+      <% else %>
+        <%= link_to(image_tag('blank_photo.svg'),
+          taxon_path(id: match.taxon_id)) %>
+      <% end %>
+      <p>
+        <%= match.rank %>: <%= link_to match.canonical_name,
+          taxon_path(id: match.taxon_id) %><br>
+        <%
+          common_names = TaxaSearchHelper.common_names(match)
+          if common_names.present?
+        %>
+          <%= common_names %><br>
         <% end %>
-        <%= match.rank %>: <%= link_to match.canonical_name, taxon_path(id: match.taxon_id) %><br>
-        <%= "(#{match.alt_names.split(' | ').join(', ')})" if match.alt_names %><br>
         <%= pluralize(match.asvs_count, 'site') %>
-      </td>
-    </tr>
+      </p>
+    </div>
   <% end %>
-</table>
+</div>
 
 <% if @matches.present? %>
 <%= paginate @matches %>

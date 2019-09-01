@@ -13,7 +13,7 @@ describe FormatTaxaSearchResult do
         common_names: '{name1,name2}'
       )
 
-      expect(subject(record)).to eq(%w[name1 name2])
+      expect(subject(record)).to eq('(name1, name2)')
     end
 
     it 'returns array of common names if one name exists' do
@@ -21,7 +21,7 @@ describe FormatTaxaSearchResult do
         common_names: '{name1}'
       )
 
-      expect(subject(record)).to eq(%w[name1])
+      expect(subject(record)).to eq('(name1)')
     end
 
     it 'returns empty array if NULL' do
@@ -37,7 +37,14 @@ describe FormatTaxaSearchResult do
         common_names: '{name1,NULL,name2,NULL}'
       )
 
-      expect(subject(record)).to eq(%w[name1 name2])
+      expect(subject(record)).to eq('(name1, name2)')
+    end
+
+    it 'raises an error if common name not set' do
+      record = OpenStruct.new
+
+      expect { subject(record) }
+        .to raise_error(StandardError, 'must add common_names in sql query')
     end
   end
 
