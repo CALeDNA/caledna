@@ -121,6 +121,7 @@ module ResearchProjectService
             ON asvs.sample_id = samples.id
             WHERE sourceable_type = 'Extraction'
             AND research_project_id = #{project.id}
+            AND rank = 'species'
           SQL
 
           if taxon_groups
