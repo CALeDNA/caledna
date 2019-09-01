@@ -146,6 +146,8 @@ class NcbiNode < ApplicationRecord
     statuses.include?(conservation_status)
   end
 
+  # loops through external_resources *_image to get saved images and
+  # then *_id to get images from api. Best used when showing one taxa.
   def image
     @image ||= begin
       wikidata_image || inat_image || eol_image ||

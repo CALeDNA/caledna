@@ -9,15 +9,17 @@
 </div>
 
 <h1>Most Commonly Found Animal Species</h1>
+
 <div class="taxa-image-gallery">
 <% @top_animal_taxa.each do |taxon| %>
-  <%= render partial: 'taxa_gallery_item', locals: { taxon: taxon } %>
+  <%= render partial: './shared/taxa_gallery_item', locals: { taxon: taxon } %>
 <% end %>
 </div>
 
 <h1>Most Commonly Found Plant Species</h1>
+
 <div class="taxa-image-gallery">
 <% @top_plant_taxa.each do |taxon| %>
-  <%= render partial: 'taxa_gallery_item', locals: { taxon: taxon } %>
+  <%= render partial: './shared/taxa_gallery_item', locals: { taxon: taxon } %>
 <% end %>
 </div>

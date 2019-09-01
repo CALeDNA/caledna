@@ -11,7 +11,7 @@ module ResearchProjectService
       def identified_species
         sql = <<-SQL
           SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
-          ncbi_nodes.asvs_count_la_river,
+          ncbi_nodes.asvs_count_la_river as asvs_count,
           ARRAY_AGG(DISTINCT(samples.metadata ->> 'location')) as locations,
           ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
           ARRAY_AGG(DISTINCT eol_image) AS eol_images,

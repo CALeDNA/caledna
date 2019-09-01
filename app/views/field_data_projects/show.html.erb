@@ -22,15 +22,6 @@
     </p>
 
     <p>
-      <%= pluralize(@project.samples.processing_sample.with_coordinates.count, 'site') %> being processed.
-      <% if @project.samples.processing_sample.with_coordinates.count > 0 %>
-        <%= render partial: 'samples_links', locals: {
-          map_path: field_data_project_path(id: @project.id, status: :processing_sample),
-          list_path: field_data_project_path(id: @project.id, status: :processing_sample, view: :list) } %>
-      <% end %>
-    </p>
-
-    <p>
       <%= pluralize(@project.samples.results_completed.with_coordinates.count, 'site') %> with DNA results.
       <% if @project.samples.results_completed.with_coordinates.count > 0 %>
         <%= render partial: 'samples_links', locals: {
