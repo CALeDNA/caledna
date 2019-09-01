@@ -111,11 +111,18 @@ class NcbiNode < ApplicationRecord
     parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
   end
 
-  def common_names_display(parenthesis = true)
+  def common_names_display(parenthesis: true, truncate: true)
+    unless respond_to?(:common_names)
+      raise StandardError, 'must add common_names in sql query'
+    end
+
     names = common_names.compact
     return if names.blank?
-
-    parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
+    if parenthesis
+      truncate ? "(#{common_names_string(names)})" : "(#{names.join(', ')})"
+    else
+      truncate ? common_names_string(names) : names.join(', ')
+    end
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity

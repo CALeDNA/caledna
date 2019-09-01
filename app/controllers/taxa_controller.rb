@@ -68,9 +68,23 @@ class TaxaController < ApplicationController
   # show
   #================
 
+  # rubocop:disable Metrics/MethodLength
   def taxon
-    @taxon ||= NcbiNode.includes(:ncbi_names, :ncbi_division).find(params[:id])
+    @taxon ||= begin
+      NcbiNode.joins('LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ' \
+                'ncbi_nodes.taxon_id ' \
+                'AND ncbi_names.name_class IN ' \
+                "('common name', 'genbank common name')")
+              .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
+              .select('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
+              .select('ncbi_nodes.rank')
+              .select('ncbi_nodes.hierarchy_names, ncbi_nodes.cal_division_id')
+              .select('ncbi_nodes.hierarchy, ncbi_nodes.lineage')
+              .group('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
+              .find(params[:id])
+    end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def samples
     if params[:view]
@@ -80,7 +94,7 @@ class TaxaController < ApplicationController
     end
   end
 
-  def select_sql
+  def samples_sql
     <<-SQL
       SELECT samples.id, samples.barcode, status_cd AS status,
       samples.latitude, samples.longitude,
@@ -89,16 +103,15 @@ class TaxaController < ApplicationController
       FROM asvs
       JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
       JOIN samples ON samples.id = asvs.sample_id
+      WHERE ids @> '{#{conn.quote(id)}}'
+      GROUP BY samples.id
+      LIMIT $1 OFFSET $2;
     SQL
   end
 
   def paginated_samples
-    sql = select_sql
-    sql += " WHERE ids @> '{#{conn.quote(id)}}' " \
-      'GROUP BY samples.id ' \
-      "LIMIT #{limit} OFFSET #{offset};"
-
-    raw_records = conn.exec_query(sql)
+    bindings = [[nil, limit], [nil, offset]]
+    raw_records = conn.exec_query(samples_sql, 'query', bindings)
     records = raw_records.map { |r| OpenStruct.new(r) }
 
     add_pagination_methods(records)

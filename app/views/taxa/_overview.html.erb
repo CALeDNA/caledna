@@ -93,7 +93,7 @@
           <input type="checkbox" checked value="asvs" class="js-taxa-markers">
           <svg height="30" width="100%">
             <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
-            <text x="30" y="20">sites with <%= taxon.canonicalName %> <%= taxon.common_names(true) %></text>
+            <text x="30" y="20">sites with <%= taxon.canonical_name %> <%= taxon.common_names_display(truncate: false) %></text>
           </svg>
         </div>
         <div>
