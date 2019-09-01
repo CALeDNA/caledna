@@ -39,6 +39,7 @@ Rails.application.routes.draw do
       get '/pillar_point/source_comparison_all',
           to: 'research_projects#pillar_point_source_comparison_all'
       get '/la_river/area_diversity', to: 'la_river#area_diversity'
+      get '/la_river/pa_area_diversity', to: 'la_river#pa_area_diversity'
       get '/la_river/detection_frequency', to: 'la_river#detection_frequency'
       get '/la_river/sites', to: 'la_river#sites'
       get '/la_river/asv_tree', to: 'la_river#asv_tree'

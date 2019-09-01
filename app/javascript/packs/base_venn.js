@@ -223,14 +223,15 @@ checkboxEls.forEach(el => {
   });
 });
 
-document
-  .querySelector("button[type=submit]")
-  .addEventListener("click", event => {
+const submitEl = document.querySelector("button[type=submit]");
+if (submitEl) {
+  submitEl.addEventListener("click", event => {
     event.preventDefault();
 
     let url = `${apiEndpointUrl}?${formatQuerystring(filters)}`;
     initApp(url);
   });
+}
 
 if (graphBtn) {
   graphBtn.addEventListener("click", event => {
@@ -246,18 +247,21 @@ if (tableBtn) {
   });
 }
 
-document.querySelector(".js-reset-filters").addEventListener("click", event => {
-  event.preventDefault();
-  initApp(apiEndpointUrl);
+const resetEl = document.querySelector(".js-reset-filters");
+if (resetEl) {
+  resetEl.addEventListener("click", event => {
+    event.preventDefault();
+    initApp(apiEndpointUrl);
 
-  document.querySelectorAll("input").forEach(el => {
-    if (el.value === "all") {
-      el.checked = true;
-    } else {
-      el.checked = false;
-    }
+    document.querySelectorAll("input").forEach(el => {
+      if (el.value === "all") {
+        el.checked = true;
+      } else {
+        el.checked = false;
+      }
+    });
   });
-});
+}
 
 export default {
   showTables,

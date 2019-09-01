@@ -17,7 +17,11 @@ module Api
       end
 
       def area_diversity
-        render json: area_diversity_json, status: :ok
+        render json: project_service.area_diversity_data, status: :ok
+      end
+
+      def pa_area_diversity
+        render json: project_service.pa_area_diversity_data, status: :ok
       end
 
       def detection_frequency
@@ -32,10 +36,6 @@ module Api
 
       def project_service
         ResearchProjectService::LaRiver.new(project, params)
-      end
-
-      def area_diversity_json
-        project_service.area_diversity_data
       end
 
       def project

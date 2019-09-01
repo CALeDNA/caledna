@@ -1,23 +1,48 @@
+<style>
+#graph-edna {
+  height: 375px;
+}
+
+.links {
+  padding: 0;
+  margin: 0;
+}
+.links li {
+  display: inline-block;
+  margin-right: 1.5rem;
+}
+</style>
 <%
 hahamongna = @identified_species_by_location['{Hahamongna}']
 both = @identified_species_by_location['{Hahamongna,"Maywood Park"}']
 maywood = @identified_species_by_location['{"Maywood Park"}']
 locations = [
-  { title: 'Hahamongna', species: hahamongna || [] },
-  { title: 'Maywood Park', species: maywood || [] },
-  { title: 'Hahamongna & Maywood Park', species: both || []}
+  { title: 'Hahamongna', species: hahamongna || [], text: 'found only at ' },
+  { title: 'Maywood Park', species: maywood || [], text: 'found only at '},
+  { title: 'Hahamongna & Maywood Park', species: both || [], text: 'found at both '}
 ]
 %>
 
+
+<div id="graph-edna" class=""></div>
+
+<ul class="links">
+  <li>Locations: </li>
 <% locations.each do |location| %>
-  <h3><%= location[:title] %>: <%= location[:species].length %> species</h3>
+  <li><%= link_to location[:title], "##{location[:title].parameterize}"%></li>
+<% end %>
+</ul>
+
+<% locations.each do |location| %>
+  <h3 id="<%= location[:title].parameterize %>">
+    <%= "#{location[:species].length} species #{location[:text]} #{location[:title]}" %>
+  </h3>
 
   <div class="taxa-image-gallery">
     <% location[:species].each do |taxon| %>
       <%= render partial: './shared/taxa_gallery_item', locals: { taxon: taxon } %>
     <% end %>
   </div>
-
 <% end %>
 
-
+<%= javascript_pack_tag 'la_river_pa_area_diversity' %>

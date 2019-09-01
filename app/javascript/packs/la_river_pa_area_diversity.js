@@ -11,10 +11,8 @@ const location_names = {
   "Maywood Park": "Maywood Park"
 };
 let diversityData;
-let filters = { taxon_groups: [], months: [] };
-const apiEndpoint = "/api/v1/la_river/area_diversity";
-const tableEls = [document.querySelector("#table-edna")];
-const graphEls = [document.querySelector("#graph-edna")];
+const apiEndpoint = "/api/v1/la_river/pa_area_diversity";
+const graphEls = document.querySelector("#graph-edna");
 
 // =============
 // misc
@@ -22,7 +20,7 @@ const graphEls = [document.querySelector("#graph-edna")];
 
 function initDiversity(endpoint) {
   const opts = { color: "#333", left: "50%", top: "0", scale: 1.75 };
-  let spinner1 = new Spinner(opts).spin(graphEls[0]);
+  let spinner1 = new Spinner(opts).spin(graphEls);
 
   axios
     .get(endpoint)
@@ -58,11 +56,9 @@ function formatDatasets(data) {
 // =============
 
 baseVenn.config({
-  tables: tableEls,
   graphs: graphEls,
   apiEndpoint,
   init: initDiversity,
-  chartFilters: filters
+  chartFilters: []
 });
-baseVenn.showTables(tableEls);
 initDiversity(apiEndpoint);
