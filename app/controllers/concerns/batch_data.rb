@@ -12,14 +12,4 @@ module BatchData
     sql += "WHERE sample_id = #{sample_id}" if sample_id
     @asvs_count ||= ActiveRecord::Base.connection.execute(sql)
   end
-
-  def batch_vernaculars
-    sql = 'SELECT ncbi_names.taxon_id, ncbi_names.name ' \
-    'FROM asvs ' \
-    'JOIN ncbi_names ON asvs."taxonID" = ncbi_names.taxon_id ' \
-    "WHERE asvs.sample_id = #{params[:id]} " \
-    "AND (name_class = 'common name' OR name_class = 'genbank common name')"
-
-    @batch_vernaculars ||= ActiveRecord::Base.connection.execute(sql)
-  end
 end

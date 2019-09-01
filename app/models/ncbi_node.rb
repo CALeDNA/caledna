@@ -89,9 +89,11 @@ class NcbiNode < ApplicationRecord
   # rubocop:enable Naming/MethodName
 
   def taxonomy_string
-    [
-      superkingdom, kingdom, phylum, class_name, order, family, genus, species
-    ].compact.join(', ')
+    if respond_to?(:cal_kingdom)
+      [cal_kingdom, phylum, class_name, order, family, genus, species]
+    else
+      [superkingdom, kingdom, phylum, class_name, order, family, genus, species]
+    end.compact.join(', ')
   end
 
   def vernaculars
@@ -100,15 +102,6 @@ class NcbiNode < ApplicationRecord
 
   def synonyms
     ncbi_names.synonyms
-  end
-
-  def batch_common_names(vernaculars, parenthesis = true)
-    names = vernaculars.to_a
-                       .select { |i| i['taxon_id'] == taxon_id }
-                       .pluck('name')
-    return if names.blank?
-
-    parenthesis ? "(#{common_names_string(names)})" : common_names_string(names)
   end
 
   def common_names_display(parenthesis: true, truncate: true)

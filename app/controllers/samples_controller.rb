@@ -15,21 +15,35 @@ class SamplesController < ApplicationController
     @division_counts = division_counts
     @sample = sample
     @organisms = organisms
-    @batch_vernaculars = batch_vernaculars
     @asv_tree = asv_tree_data
-    @asv_tree_count = asv_tree_taxa.length
   end
 
   private
 
   def organisms
     @organisms ||= begin
-      Asv.joins(ncbi_node: :ncbi_division)
-         .joins('LEFT JOIN external_resources ON ' \
-           'external_resources.ncbi_id = ncbi_nodes.taxon_id')
-         .select('DISTINCT hierarchy_names, ncbi_nodes.taxon_id, ' \
-           '"taxonID", iucn_status, name, rank')
-         .where(sample: sample)
+      NcbiNode.joins(:asvs)
+              .joins('JOIN ncbi_divisions on ncbi_nodes.cal_division_id = ' \
+                'ncbi_divisions.id')
+              .joins('LEFT JOIN external_resources ON ' \
+                'external_resources.ncbi_id = ncbi_nodes.taxon_id')
+              .joins('LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ' \
+                'ncbi_nodes.taxon_id ' \
+                'AND ncbi_names.name_class IN ' \
+                "('common name', 'genbank common name')")
+              .select('hierarchy_names, ncbi_nodes.taxon_id, ' \
+                'iucn_status, ncbi_divisions.name as cal_kingdom, rank')
+              .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
+              .group('ncbi_nodes.taxon_id, ' \
+                'iucn_status, ncbi_divisions.name')
+              .where('asvs.sample_id = ?', sample.id)
+              .order('cal_kingdom')
+              .order("hierarchy_names ->>'phylum'")
+              .order("hierarchy_names ->>'class'")
+              .order("hierarchy_names ->>'order'")
+              .order("hierarchy_names ->>'family'")
+              .order("hierarchy_names ->>'genus'")
+              .order("hierarchy_names ->>'species'")
     end
   end
 

@@ -42,7 +42,6 @@
       <%= render partial: "organisms_list",
         locals: {
           sample: @sample,
-          batch_vernaculars: @batch_vernaculars,
           organisms: @organisms
         }
       %>
@@ -56,8 +55,7 @@
   window.caledna = {
     kingdom_counts: <%= @division_counts.to_json.html_safe %>,
     asv_tree: <%= @asv_tree.to_json.html_safe %>,
-    asv_count: <%= @asv_tree_count %>
-
+    asv_count: <%= @asv_tree.try(:length) %>
   }
 
 })(window)
