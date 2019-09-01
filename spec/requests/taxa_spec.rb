@@ -11,7 +11,21 @@ describe 'Taxa' do
     end
 
     it 'returns OK when there are taxa' do
-      create(:ncbi_node)
+      plant = create(:ncbi_division, name: 'Plantae')
+      create(
+        :ncbi_node,
+        cal_division_id: plant.id,
+        hierarchy_names: { phylum: 'Streptophyta' },
+        asvs_count: 10
+      )
+      animal = create(:ncbi_division, name: 'Animalia')
+      create(
+        :ncbi_node,
+        cal_division_id: animal.id,
+        hierarchy_names: { kingdom: 'Metazoa' },
+        asvs_count: 10
+      )
+
       get taxa_path
 
       expect(response.status).to eq(200)

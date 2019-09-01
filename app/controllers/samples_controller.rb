@@ -20,6 +20,7 @@ class SamplesController < ApplicationController
 
   private
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def organisms
     @organisms ||= begin
       NcbiNode.joins(:asvs)
@@ -46,6 +47,7 @@ class SamplesController < ApplicationController
               .order("hierarchy_names ->>'species'")
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def division_counts
     @division_counts ||= begin

@@ -21,6 +21,8 @@ class TaxaController < ApplicationController
 
   def top_plant_taxa
     @top_plant_taxa ||= begin
+      return [] if plants_sql.blank?
+
       results = conn.exec_query(plants_sql)
       results.map { |r| OpenStruct.new(r) }
     end
@@ -28,12 +30,14 @@ class TaxaController < ApplicationController
 
   def top_animal_taxa
     @top_animal_taxa ||= begin
+      return [] if animals_sql.blank?
+
       results = conn.exec_query(animals_sql)
       results.map { |r| OpenStruct.new(r) }
     end
   end
 
-  def top_sql(kingdom_sql=nil)
+  def top_sql(kingdom_sql = nil)
     <<-SQL
     SELECT ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
     ARRAY_AGG(DISTINCT eol_image) AS eol_images,
@@ -59,7 +63,7 @@ class TaxaController < ApplicationController
 
   def plants_sql
     division = NcbiDivision.find_by(name: 'Plantae')
-    return [] if division.blank?
+    return if division.blank?
 
     kingdom_sql = <<-SQL
       AND ncbi_nodes.cal_division_id = #{division.id}
@@ -70,7 +74,7 @@ class TaxaController < ApplicationController
 
   def animals_sql
     division = NcbiDivision.find_by(name: 'Animalia')
-    return [] if division.blank?
+    return if division.blank?
 
     kingdom_sql = <<-SQL
       AND ncbi_nodes.cal_division_id = #{division.id}

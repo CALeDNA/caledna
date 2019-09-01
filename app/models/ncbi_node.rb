@@ -88,6 +88,7 @@ class NcbiNode < ApplicationRecord
   end
   # rubocop:enable Naming/MethodName
 
+  # rubocop:disable Metrics/AbcSize
   def taxonomy_string
     if respond_to?(:cal_kingdom)
       [cal_kingdom, phylum, class_name, order, family, genus, species]
@@ -95,6 +96,7 @@ class NcbiNode < ApplicationRecord
       [superkingdom, kingdom, phylum, class_name, order, family, genus, species]
     end.compact.join(', ')
   end
+  # rubocop:enable Metrics/AbcSize
 
   def vernaculars
     ncbi_names.vernaculars.where(taxon_id: taxon_id)
