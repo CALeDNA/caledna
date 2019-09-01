@@ -19,62 +19,81 @@ class TaxaController < ApplicationController
   # index
   #================
 
-  def top_taxa
-    @top_taxa ||= ordered_taxa
-  end
-
   def top_plant_taxa
     @top_plant_taxa ||= begin
-      division = NcbiDivision.find_by(name: 'Plantae')
-      return [] if division.blank?
-
-      ordered_taxa.where(cal_division_id: division.id)
-                  .where("hierarchy_names ->> 'phylum' = 'Streptophyta'")
+      results = conn.exec_query(plants_sql)
+      results.map { |r| OpenStruct.new(r) }
     end
   end
 
   def top_animal_taxa
     @top_animal_taxa ||= begin
-      division = NcbiDivision.find_by(name: 'Animalia')
-      return [] if division.blank?
-
-      ordered_taxa.where(cal_division_id: division.id)
-                  .where("hierarchy_names ->> 'kingdom' = 'Metazoa'")
+      results = conn.exec_query(animals_sql)
+      results.map { |r| OpenStruct.new(r) }
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def ordered_taxa
-    @ordered_taxa ||= begin
-      NcbiNode.order(asvs_count: :desc)
-              .limit(12)
-              .where(rank: :species)
-              .where('asvs_count > 0')
-              .joins('LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ' \
-                'ncbi_nodes.taxon_id ' \
-                'AND ncbi_names.name_class IN ' \
-                "('common name', 'genbank common name')")
-              .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
-              .select('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
-              .select('ncbi_nodes.asvs_count, ncbi_nodes.rank')
-              .select('ncbi_nodes.hierarchy_names')
-              .group('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
-              .group('ncbi_nodes.asvs_count')
-    end
+  def top_sql(kingdom_sql=nil)
+    <<-SQL
+    SELECT ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
+    ARRAY_AGG(DISTINCT eol_image) AS eol_images,
+    ARRAY_AGG(DISTINCT inat_image) AS inat_images,
+    ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images,
+    ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.asvs_count,
+    ncbi_nodes.hierarchy_names
+    FROM "ncbi_nodes"
+    JOIN "external_resources"
+       ON "external_resources"."ncbi_id" = "ncbi_nodes"."taxon_id"
+    LEFT JOIN ncbi_names
+      ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
+      AND ncbi_names.name_class IN ('common name', 'genbank common name')
+    WHERE "ncbi_nodes"."rank" = 'species'
+    AND (asvs_count > 0)
+    #{kingdom_sql}
+    GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
+    ncbi_nodes.asvs_count
+    ORDER BY "ncbi_nodes"."asvs_count" DESC
+    LIMIT 12;
+    SQL
   end
-  # rubocop:enable Metrics/MethodLength
+
+  def plants_sql
+    division = NcbiDivision.find_by(name: 'Plantae')
+    return [] if division.blank?
+
+    kingdom_sql = <<-SQL
+      AND ncbi_nodes.cal_division_id = #{division.id}
+      AND (hierarchy_names ->> 'phylum' = 'Streptophyta')
+    SQL
+    top_sql(kingdom_sql)
+  end
+
+  def animals_sql
+    division = NcbiDivision.find_by(name: 'Animalia')
+    return [] if division.blank?
+
+    kingdom_sql = <<-SQL
+      AND ncbi_nodes.cal_division_id = #{division.id}
+      AND (hierarchy_names ->> 'kingdom' = 'Metazoa')
+    SQL
+    top_sql(kingdom_sql)
+  end
 
   #================
   # show
   #================
 
-  # rubocop:disable Metrics/MethodLength
+  def join_ncbi_names_sql
+    <<-SQL
+    LEFT JOIN ncbi_names
+      ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
+      AND ncbi_names.name_class IN ('common name', 'genbank common name')
+    SQL
+  end
+
   def taxon
     @taxon ||= begin
-      NcbiNode.joins('LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ' \
-                'ncbi_nodes.taxon_id ' \
-                'AND ncbi_names.name_class IN ' \
-                "('common name', 'genbank common name')")
+      NcbiNode.joins(join_ncbi_names_sql)
               .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
               .select('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
               .select('ncbi_nodes.rank')
@@ -84,7 +103,6 @@ class TaxaController < ApplicationController
               .find(params[:id])
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def samples
     if params[:view]
