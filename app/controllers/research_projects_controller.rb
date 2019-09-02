@@ -74,7 +74,7 @@ class ResearchProjectsController < ApplicationController
         @division_counts_unique = la_river_service.division_counts_unique
       elsif params[:id] == 'sites'
         project_samples
-      elsif params[:id] == 'identified-species'
+      elsif params[:id] == 'plants-animals'
         @identified_species_by_location =
           la_river_service.identified_species_by_location
       end
