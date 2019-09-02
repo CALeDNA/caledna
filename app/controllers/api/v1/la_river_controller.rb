@@ -28,10 +28,6 @@ module Api
         render json: project_service.detection_frequency, status: :ok
       end
 
-      def asv_tree
-        render json: asv_tree_data, status: :ok
-      end
-
       private
 
       def project_service
@@ -42,20 +38,6 @@ module Api
         @project ||= begin
           ResearchProject.find_by(slug: 'los-angeles-river')
         end
-      end
-
-      def asv_tree_taxa
-        @asv_tree_taxa ||=
-          fetch_asv_tree_for_research_project(ResearchProject::LA_RIVER.id)
-      end
-
-      def asv_tree_data
-        tree = asv_tree_taxa.map do |taxon|
-          taxon_object = create_taxon_object(taxon)
-          create_tree_objects(taxon_object, taxon.rank)
-        end.flatten
-        tree << { 'name': 'Life', 'id': 'Life', 'common_name': nil }
-        tree.uniq! { |i| i[:id] }
       end
 
       def query_string

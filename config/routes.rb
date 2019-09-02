@@ -42,7 +42,6 @@ Rails.application.routes.draw do
       get '/la_river/pa_area_diversity', to: 'la_river#pa_area_diversity'
       get '/la_river/detection_frequency', to: 'la_river#detection_frequency'
       get '/la_river/sites', to: 'la_river#sites'
-      get '/la_river/asv_tree', to: 'la_river#asv_tree'
     end
   end
 
