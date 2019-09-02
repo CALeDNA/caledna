@@ -24,6 +24,10 @@ module Api
         render json: project_service.pa_area_diversity_data, status: :ok
       end
 
+      def sampling_types
+        render json: project_service.sampling_types_data, status: :ok
+      end
+
       def detection_frequency
         render json: project_service.detection_frequency, status: :ok
       end

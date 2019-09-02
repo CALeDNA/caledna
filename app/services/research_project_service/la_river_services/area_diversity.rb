@@ -6,6 +6,9 @@ module ResearchProjectService
     module AreaDiversity
       HAHAMONGNA = 'Hahamongna'
       MAYWOOD = 'Maywood Park'
+      WATER = 'water'
+      SEDIMENT = 'sediment'
+
       def area_diversity_data
         {
           cal: {
@@ -50,7 +53,63 @@ module ResearchProjectService
         }
       end
 
+      def sampling_types_data
+        {
+          cal: {
+            total: sampling_types_total,
+            locations: [
+              {
+                names: [WATER],
+                count: samples_by_type(WATER)
+              },
+              {
+                names: [SEDIMENT],
+                count: samples_by_type(SEDIMENT)
+              },
+              {
+                names: [WATER, SEDIMENT],
+                count: samples_by_type(WATER, SEDIMENT)
+              }
+            ]
+          }
+        }
+      end
+
       private
+
+      # ============================
+      # sampling types
+      # ============================
+
+      def sampling_types_total
+        sql_string = area_diversity_cal_sql
+
+        sql = <<-SQL
+        SELECT COUNT(DISTINCT("taxonID")) FROM (
+          #{sql_string}
+        ) AS foo
+        SQL
+
+        query_results(sql).first['count']
+      end
+
+      def samples_by_type(*types)
+        sql_array = types.map { |t| sample_type(t) }
+        sql_string = sql_array.join(' INTERSECT ')
+        sql_string = <<-SQL
+        SELECT COUNT(DISTINCT("taxonID")) FROM (
+          #{sql_string}
+        ) AS foo
+        SQL
+
+        query_results(sql_string).first['count']
+      end
+
+      def sample_type(type)
+        sql = area_diversity_cal_sql
+        sql += " AND samples.substrate_cd = '#{type}'"
+        sql
+      end
 
       # ============================
       # plants and animals taxa

@@ -21,7 +21,7 @@ const graphEls = [document.querySelector("#graph-edna")];
 // =============
 
 function initDiversity(endpoint) {
-  const opts = { color: "#333", left: "50%", top: "0", scale: 1.75 };
+  const opts = { color: "#333", left: "50%", scale: 1.75 };
   let spinner1 = new Spinner(opts).spin(graphEls[0]);
 
   axios

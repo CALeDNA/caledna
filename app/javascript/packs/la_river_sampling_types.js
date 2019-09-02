@@ -7,20 +7,22 @@ import baseVenn from "./base_venn.js";
 // =============
 
 const location_names = {
-  Hahamongna: "Hahamongna",
-  "Maywood Park": "Maywood Park"
+  water: "water",
+  sediment: "sediment"
 };
 let diversityData;
-const apiEndpoint = "/api/v1/la_river/pa_area_diversity";
-const graphEls = document.querySelector("#graph-edna");
-console.log("df", graphEls);
+let filters = { taxon_groups: [] };
+const apiEndpoint = "/api/v1/la_river/sampling_types";
+const tableEls = [document.querySelector("#table-edna")];
+const graphEls = [document.querySelector("#graph-edna")];
+
 // =============
 // misc
 // =============
 
 function initDiversity(endpoint) {
   const opts = { color: "#333", left: "50%", scale: 1.75 };
-  let spinner1 = new Spinner(opts).spin(graphEls);
+  let spinner1 = new Spinner(opts).spin(graphEls[0]);
 
   axios
     .get(endpoint)
@@ -56,9 +58,11 @@ function formatDatasets(data) {
 // =============
 
 baseVenn.config({
+  tables: tableEls,
   graphs: graphEls,
   apiEndpoint,
   init: initDiversity,
-  chartFilters: []
+  chartFilters: filters
 });
+baseVenn.showTables(tableEls);
 initDiversity(apiEndpoint);
