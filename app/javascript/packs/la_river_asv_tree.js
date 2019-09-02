@@ -54,7 +54,7 @@ var stratifySettings = spec.data[0].transform.filter(
 )[0];
 var textSettings = spec.marks.filter(mark => mark.type == "text")[0];
 
-spec.height = 3100 * 18;
+spec.height = data.length * 16;
 spec.width = 3000;
 spec.data[0].values = data;
 stratifySettings.key = "id";
