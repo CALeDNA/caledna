@@ -5,26 +5,6 @@ require 'rails_helper'
 describe SqlParser do
   let(:dummy_class) { Class.new { extend SqlParser } }
 
-  describe '#numeric?' do
-    def subject(string)
-      dummy_class.numeric?(string)
-    end
-
-    it 'returns true if string is numeric' do
-      values = ['5.5', '23', '-123', '1,234,123']
-      values.each do |value|
-        expect(subject(value)).to eq(true)
-      end
-    end
-
-    it 'returns false if string is not numeric' do
-      values =  ['hello', '99designs', '(123)456-7890']
-      values.each do |value|
-        expect(subject(value)).to eq(false)
-      end
-    end
-  end
-
   describe '#parse_string_arrays' do
     def subject(value)
       dummy_class.parse_string_arrays(value)
@@ -39,7 +19,7 @@ describe SqlParser do
     it 'parses array with NULL value' do
       value = '{NULL}'
 
-      expect(subject(value)).to eq([nil])
+      expect(subject(value)).to eq([])
     end
 
     it 'parses array with one letter value' do
@@ -57,7 +37,7 @@ describe SqlParser do
     it 'parses array with multiple values' do
       value = '{1,a,2,NULL}'
 
-      expect(subject(value)).to eq([1, 'a', 2, nil])
+      expect(subject(value)).to eq([1, 'a', 2])
     end
 
     it 'parses strings with spaces' do
@@ -73,5 +53,23 @@ describe SqlParser do
       expect(subject(value)).to eq(['foo bar', 'foo', 'baz foo'])
     end
     # rubocop:enable Style/StringLiterals
+
+    it 'parses strings with commas' do
+      value = "{\"a,a\",1,b,'c,c'}"
+
+      expect(subject(value)).to eq(['a,a', 1, 'b', 'c,c'])
+    end
+
+    it 'parses strings with :' do
+      value = '{a:b,c,d:e}'
+
+      expect(subject(value)).to eq(['a:b', 'c', 'd:e'])
+    end
+
+    it 'parses strings with ?' do
+      value = '{a?b,c,d?e}'
+
+      expect(subject(value)).to eq(['a?b', 'c', 'd?e'])
+    end
   end
 end
