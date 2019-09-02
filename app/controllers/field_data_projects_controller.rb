@@ -9,38 +9,27 @@ class FieldDataProjectsController < ApplicationController
       FieldDataProject
       .published
       .where('id IN (SELECT DISTINCT(field_data_project_id) from samples)')
-      .order(:name).page params[:page]
+      .order(:name)
+      .page(params[:page])
   end
 
   def show
     @samples = samples
-    @project = FieldDataProject.find(params[:id])
+    @project = FieldDataProject.find(project_id)
     @asvs_count = counts
   end
 
   private
 
   def counts
-    if params[:view]
-      asvs_count
-    else
-      []
-    end
+    @counts ||= list_view? ? asvs_count : []
   end
 
   def samples
-    if params[:view]
-      paginated_samples
-    else
-      []
-    end
+    @samples ||= list_view? ? field_data_project_paginated_samples : []
   end
 
-  def query_string
-    query = {}
-    query[:status_cd] = params[:status] if params[:status]
-    project_id = params[:id]
-    query[:field_data_project_id] = project_id if project_id
-    query
+  def project_id
+    params[:id]
   end
 end
