@@ -8,7 +8,7 @@ import baseVenn from "./base_venn.js";
 
 const location_names = {
   Hahamongna: "Hahamongna",
-  "Maywood Park": "Maywood Park"
+  "Maywood Park": "Maywood"
 };
 let diversityData;
 let filters = { taxon_groups: [], months: [] };

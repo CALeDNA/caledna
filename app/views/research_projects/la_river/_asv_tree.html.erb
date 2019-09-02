@@ -1,2 +1,15 @@
-<div id="asv-tree" class="tree-chart"></div>
+<style>
+.btn-group {
+  margin: 1em 0;
+}
+</style>
+
+<div class="btn-group" role="group" >
+  <a href="#" class="btn btn-default js-interactive" >Interactive Tree</a>
+  <a href="#" class="btn btn-default js-static">Static Tree</a>
+</div>
+
+<div id="asv-tree1" class="tree-chart"></div>
+<div id="asv-tree2" class="tree-chart"></div>
+
 <%= javascript_pack_tag 'la_river_asv_tree' %>

@@ -138,7 +138,6 @@ function centerNode(source, svg) {
 }
 
 function expand(d) {
-  console.log(d);
   if (d._children) {
     d.children = d._children;
     d.children.forEach(expand);
