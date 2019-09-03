@@ -52,7 +52,6 @@ describe Page do
           expect(page.valid?).to eq(true)
         end
 
-
         it 'returns false if slug is not unique for the research project' do
           project = create(:research_project)
           create(:page, slug: 'slug', research_project: project, website: site)

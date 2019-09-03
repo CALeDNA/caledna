@@ -13,7 +13,6 @@ namespace :taxa_tree do
     tree << { 'name': 'Life', 'id': 'Life', 'common_name': nil }
     tree.uniq! { |i| i[:id] }
 
-
     File.write('./app/javascript/data/la_river_taxa_tree.json', tree.to_json)
   end
 end

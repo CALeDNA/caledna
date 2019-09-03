@@ -60,7 +60,8 @@ module Api
         end
 
         def project_service
-          @project_service ||= ResearchProjectService::PillarPoint.new(project, params)
+          @project_service ||=
+            ResearchProjectService::PillarPoint.new(project, params)
         end
 
         # =======================

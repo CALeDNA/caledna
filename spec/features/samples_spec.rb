@@ -40,15 +40,5 @@ describe 'Samples' do
       expect(page).to_not have_content 'sample 4'
       expect(page).to_not have_content 'sample 5'
     end
-
-    it 'renders one sample when sample_id is in query string' do
-      visit samples_path(view: :list, sample_id: sample1.id)
-
-      expect(page).to have_content 'sample 1'
-      expect(page).to_not have_content 'sample 2'
-      expect(page).to_not have_content 'sample 3'
-      expect(page).to_not have_content 'sample 4'
-      expect(page).to_not have_content 'sample 5'
-    end
   end
 end
