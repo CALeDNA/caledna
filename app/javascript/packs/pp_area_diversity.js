@@ -13,7 +13,7 @@ const location_names = {
 };
 let diversityData;
 let filters = { taxon_groups: [], months: [] };
-const apiEndpoint = "/api/v1/pillar_point/area_diversity";
+const apiEndpoint = "/api/v1/research_projects/pillar_point/area_diversity";
 const tableEls = [
   document.querySelector("#table-edna"),
   document.querySelector("#table-gbif")
@@ -35,6 +35,8 @@ function initDiversity(endpoint) {
   axios
     .get(endpoint)
     .then(res => {
+      console.log("res", res.data);
+
       diversityData = res.data;
       const ednaSets = formatDatasets(diversityData.cal);
       const gbifSets = formatDatasets(diversityData.gbif);
@@ -56,6 +58,7 @@ function initDiversity(endpoint) {
         tableColumnNames,
         "#table-gbif"
       );
+      console.log("stop");
 
       spinner1.stop();
       spinner2.stop();

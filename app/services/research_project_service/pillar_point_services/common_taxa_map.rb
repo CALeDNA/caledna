@@ -3,6 +3,10 @@
 module ResearchProjectService
   module PillarPointServices
     module CommonTaxaMap
+      def conn
+        @conn ||= ActiveRecord::Base.connection
+      end
+
       def common_taxa_map
         @common_taxa_map ||= begin
           sql = <<-SQL

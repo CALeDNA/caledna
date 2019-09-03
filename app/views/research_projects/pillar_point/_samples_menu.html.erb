@@ -29,10 +29,12 @@
 
 <div class="samples-menu">
   <div class="btn-group" role="group" >
-    <a href="<%= research_projects_pillar_point_path %>" class="<%= pill_menu_classes(!list_view) %>">
+    <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id]) %>"
+      class="<%= pill_menu_classes(!list_view) %>">
       <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
     </a>
-    <a href="<%= research_projects_pillar_point_path(view: :list) %>" class="<%= pill_menu_classes(list_view) %>">
+    <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id], view: :list) %>"
+      class="<%= pill_menu_classes(list_view) %>">
       <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
     </a>
   </div>

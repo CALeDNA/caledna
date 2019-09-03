@@ -28,16 +28,17 @@ Rails.application.routes.draw do
         get '/home_page', to: 'stats#home_page'
       end
       resource :samples_search, only: %i[show]
-      get '/pillar_point/area_diversity',
-          to: 'research_projects#pillar_point_area_diversity'
-      get '/pillar_point/pillar_point_common_taxa_map',
-          to: 'research_projects#pillar_point_common_taxa_map'
-      get '/pillar_point/pillar_point_biodiversity_bias',
-          to: 'research_projects#pillar_point_biodiversity_bias'
-      get '/pillar_point/pillar_point_occurrences',
-          to: 'research_projects#pillar_point_occurrences'
-      get '/pillar_point/source_comparison_all',
-          to: 'research_projects#pillar_point_source_comparison_all'
+
+      namespace :research_projects do
+        namespace :pillar_point do
+          params = { slug: 'pillar-point' }
+          get 'area_diversity', defaults: params
+          get 'common_taxa_map', defaults: params
+          get 'biodiversity_bias', defaults: params
+          get 'occurrences', defaults: params
+          get 'source_comparison_all', defaults: params
+          get 'sites', defaults: params
+        end
 
         namespace :la_river do
           params = { slug: 'los-angeles-river' }
@@ -105,12 +106,6 @@ Rails.application.routes.draw do
       resources :import_processing_extractions, only: %i[index create]
       resources :import_csv_status, only: %i[index]
 
-      # resources :normalize_gbif_taxa, only: %i[index show] do
-      #   put 'update_existing' => 'normalize_gbif_taxa#update_existing'
-      #   put 'update_create' => 'normalize_gbif_taxa#update_create'
-      #   post 'duplicate' => 'normalize_gbif_taxa#duplicate'
-      # end
-
       resources :normalize_ncbi_taxa, only: %i[index show] do
         put 'update_existing' => 'normalize_ncbi_taxa#update_existing'
         put 'update_create' => 'normalize_ncbi_taxa#update_create'
@@ -151,9 +146,6 @@ Rails.application.routes.draw do
     resources :survey_responses, only: %i[create show]
   end
 
-  get 'research_projects/pillar-point', to: 'research_projects#pillar_point',
-                                        defaults: { id: 'pillar-point' }
-
   resources :research_projects, only: %i[index show edit] do
     resources :pages, only: %i[show edit], controller: 'research_projects/pages'
   end
@@ -162,17 +154,6 @@ Rails.application.routes.draw do
     get 'geojson_demo', to: 'geojson_demo'
     get 'map_v2', to: 'map_v2'
   end
-
-  # get '/safety-training-quiz',
-  #     to: 'surveys#show',
-  #     defaults: { slug: 'safety-training-quiz' }
-
-  # get '/kit-training-quiz',
-  #   to: 'surveys#show',
-  #   defaults: { slug: 'kit-training-quiz' }
-
-  # home_2 is made of two Page records because there are 2 editable text fields
-  get '/home_2', to: 'pages#home_2'
 
   root 'samples#index'
 end

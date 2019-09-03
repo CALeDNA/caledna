@@ -1,20 +1,44 @@
 import baseMap from "./base_map.js";
 
-var taxonMatches = /taxon=(\w+)/.exec(window.location.search);
-var taxonRankMatches = /taxon_rank=(\w+)/.exec(window.location.search);
-
-var taxon = taxonMatches ? taxonMatches[1] : null;
-var taxonRank = taxonRankMatches ? taxonRankMatches[1] : "phylum";
-
-var apiEndpoint = `/api/v1/research_projects/pillar_point/common_taxa_map?taxon_rank=${taxonRank}`;
-if (taxon) {
-  apiEndpoint += `&taxon=${taxon}`;
-}
-
+var apiEndpoint = `/api/v1/research_projects/pillar_point/sites?include_research=true`;
 var map = baseMap.createMap(L.latLng(37.49547, -122.496478), 15);
 
+var sources = { cal: true, gbif: true };
 var gbifMarkerLayer;
 var calMarkerLayer;
+var source;
+
+var sourceEls = document.querySelectorAll(".js-source");
+sourceEls.forEach(function(el) {
+  el.addEventListener("click", chooseSourceHandler);
+});
+
+function chooseSourceHandler(e) {
+  source = e.target.dataset.source;
+  var isChecked = e.target.checked;
+
+  if (source == "cal") {
+    if (isChecked) {
+      if (!sources.cal) {
+        map.addLayer(calMarkerLayer);
+        sources.cal = true;
+      }
+    } else {
+      map.removeLayer(calMarkerLayer);
+      sources.cal = false;
+    }
+  } else if (source == "gbif") {
+    if (isChecked) {
+      if (!sources.gbif) {
+        map.addLayer(gbifMarkerLayer);
+        sources.gbif = true;
+      }
+    } else {
+      map.removeLayer(gbifMarkerLayer);
+      sources.gbif = false;
+    }
+  }
+}
 
 baseMap.fetchSamples(apiEndpoint, map, function(data) {
   if (data.researchProjectData) {
@@ -26,7 +50,10 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
     map.addLayer(gbifMarkerLayer);
   }
 
-  calMarkerLayer = baseMap.renderIndividualIcons(data.samplesData, map);
+  calMarkerLayer = baseMap.createMarkerCluster(
+    data.samplesData,
+    baseMap.createIconMarker
+  );
   map.addLayer(calMarkerLayer);
 });
 

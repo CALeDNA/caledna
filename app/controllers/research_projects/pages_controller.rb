@@ -9,6 +9,8 @@ module ResearchProjects
       @project = project
       @page = project_page
       la_river_view if project_slug == 'los-angeles-river'
+      pillar_point_view if project_slug == 'pillar-point'
+    end
     end
 
     private
@@ -29,10 +31,13 @@ module ResearchProjects
       @paginated_samples ||= research_project_paginated_samples(project.id)
     end
 
+    # =======================
+    # common
+    # =======================
+
     def project_page
       @project_page ||= begin
-        slug = params[:id]
-        Page.where(research_project: project, slug: slug).first
+        Page.where(research_project: project, slug: page_slug).first
       end
     end
 
@@ -42,6 +47,15 @@ module ResearchProjects
 
     def project_slug
       params[:research_project_id]
+    end
+
+    def page_slug
+      params[:id]
+    end
+
+    def raw_params
+      params.require(:page)
+            .permit(:body, :title)
     end
 
     # =======================
@@ -68,6 +82,49 @@ module ResearchProjects
     def la_river_service
       @la_river_service ||= begin
         ResearchProjectService::LaRiver.new(project, params)
+      end
+    end
+
+    # =======================
+    # pillar point
+    # =======================
+
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    def pillar_point_view
+      if params[:id] == 'occurrence_comparison'
+        @division_counts = pillar_point_service.division_counts
+        @division_counts_unique = pillar_point_service.division_counts_unique
+      elsif params[:id] == 'gbif_breakdown'
+        @gbif_breakdown = pillar_point_service.gbif_breakdown
+      elsif params[:id] == 'interactions'
+        if params[:taxon]
+          @interactions = pillar_point_service.globi_interactions
+          @globi_target_taxon = pillar_point_service.globi_target_taxon
+        else
+          @taxon_list = pillar_point_service.globi_index
+        end
+      elsif params[:view] == 'list'
+        @occurrences = occurrences
+        @stats = pillar_point_service.stats
+        @asvs_count = asvs_count
+      elsif params[:id] == 'common_taxa'
+        @taxon = params[:taxon]
+        @gbif_taxa_with_edna_map = pillar_point_service.common_taxa_map
+      elsif params[:id] == 'edna_gbif_comparison'
+        @gbif_taxa = pillar_point_service.gbif_taxa
+      elsif params[:id] == 'intro'
+        @stats = pillar_point_service.stats
+      end
+
+      render 'research_projects/pillar_point'
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def pillar_point_service
+      @pillar_point_service ||= begin
+        ResearchProjectService::PillarPoint.new(project, params)
       end
     end
   end
