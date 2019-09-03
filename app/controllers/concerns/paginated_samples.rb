@@ -41,4 +41,24 @@ module PaginatedSamples
     query[:field_data_project_id] = params[:id]
     query
   end
+
+  # =======================
+  # research projects
+  # =======================
+
+  def research_project_paginated_samples(project_id)
+    @research_project_paginated_samples ||= begin
+      research_project_samples(project_id).page(page)
+    end
+  end
+
+  def research_project_samples(project_id)
+    @research_project_samples ||= begin
+      Sample.approved.with_coordinates.order(:created_at)
+            .joins('JOIN research_project_sources ' \
+              'ON samples.id = research_project_sources.sample_id')
+            .where('research_project_sources.research_project_id = ?',
+                   project_id)
+    end
+  end
 end
