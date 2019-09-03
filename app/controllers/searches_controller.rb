@@ -13,35 +13,18 @@ class SearchesController < ApplicationController
   private
 
   def samples
-    params[:view] == 'list' ? paginated_samples : []
+    list_view? ? paginated_samples(query_string: { id: multisearch_ids }) : []
   end
 
   def counts
-    params[:view] == 'list' ? asvs_count : []
-  end
-
-  def all_samples
-    raw_samples = []
-    raw_samples += multisearch_samples if multisearch_samples.present?
-    raw_samples
+    list_view? ? asvs_count : []
   end
 
   def multisearch_ids
-    search_results = PgSearch.multisearch(query)
-    search_results.pluck(:searchable_id)
-  end
-
-  def multisearch_samples
-    @multisearch_samples ||=
-      Sample.includes(:field_data_project).approved.with_coordinates
-            .where(id: multisearch_ids)
+    @multisearch_ids ||= PgSearch.multisearch(query).pluck(:searchable_id)
   end
 
   def query
     params[:query]
-  end
-
-  def query_string
-    {}
   end
 end
