@@ -24,6 +24,28 @@ module PaginatedSamples
   end
 
   # =======================
+  # sample searches
+  # =======================
+
+  def search_paginated_samples(query)
+    @search_paginated_samples ||= begin
+      ids = multisearch_ids(query)
+      paginated_samples(query_string: { id: ids })
+    end
+  end
+
+  def search_samples(query)
+    @search_samples ||= begin
+      ids = multisearch_ids(query)
+      all_samples(query_string: { id: ids })
+    end
+  end
+
+  def multisearch_ids(query)
+    @multisearch_ids ||= PgSearch.multisearch(query).pluck(:searchable_id)
+  end
+
+  # =======================
   # field data projects
   # =======================
 

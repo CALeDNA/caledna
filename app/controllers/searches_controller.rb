@@ -13,15 +13,11 @@ class SearchesController < ApplicationController
   private
 
   def samples
-    list_view? ? paginated_samples(query_string: { id: multisearch_ids }) : []
+    list_view? ? search_paginated_samples(query) : []
   end
 
   def counts
     list_view? ? asvs_count : []
-  end
-
-  def multisearch_ids
-    @multisearch_ids ||= PgSearch.multisearch(query).pluck(:searchable_id)
   end
 
   def query
