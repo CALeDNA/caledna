@@ -140,14 +140,14 @@ Rails.application.routes.draw do
   end
   resources :uploads, only: %i[create destroy]
   resource :profile, only: [:show]
-  resources :pages, only: [:update]
 
   resources :surveys, only: %i[show] do
     resources :survey_responses, only: %i[create show]
   end
 
   resources :research_projects, only: %i[index show edit] do
-    resources :pages, only: %i[show edit], controller: 'research_projects/pages'
+    resources :pages, only: %i[show edit update],
+                      controller: 'research_projects/pages'
   end
 
   namespace :beta do

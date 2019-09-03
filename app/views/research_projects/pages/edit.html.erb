@@ -1,0 +1,9 @@
+<%= simple_form_for @page,
+  url: research_project_page_path(research_project_id: params[:research_project_id], id:  params[:id]),
+  method: :put,
+  html: {enctype: 'multipart/form-data'} do |f| %>
+  <%= f.input :title %>
+  <%= f.input :body, as: :summernote %>
+  <%= f.submit %>
+<% end %>
+<%= params %>

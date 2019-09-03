@@ -1,6 +1,0 @@
-<%= simple_form_for @page, html: {enctype: 'multipart/form-data'} do |f| %>
-  <%= f.input :title %>
-  <%= f.input :body, as: :summernote %>
-  <%= f.hidden_field :section, value: params[:section] %>
-  <%= f.submit %>
-<% end %>

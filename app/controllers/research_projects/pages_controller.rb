@@ -11,6 +11,20 @@ module ResearchProjects
       la_river_view if project_slug == 'los-angeles-river'
       pillar_point_view if project_slug == 'pillar-point'
     end
+
+    def edit
+      redirect_to research_projects_path unless current_researcher
+
+      @page = Page.find_by(research_project: project, slug: page_slug)
+    end
+
+    def update
+      if current_researcher && project_page.update(raw_params)
+        redirect_to redirect_path
+      else
+        flash[:error] = 'Something went wrong. Changes not saved'
+        redirect_to request.referrer
+      end
     end
 
     private
@@ -29,6 +43,15 @@ module ResearchProjects
 
     def paginated_samples
       @paginated_samples ||= research_project_paginated_samples(project.id)
+    end
+
+    # =======================
+    # edit
+    # =======================
+
+    def redirect_path
+      research_project_page_path(research_project_id: project_slug,
+                                 id: page_slug)
     end
 
     # =======================
