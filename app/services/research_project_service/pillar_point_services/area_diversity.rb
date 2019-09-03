@@ -125,7 +125,8 @@ module ResearchProjectService
           SQL
 
           if taxon_groups
-            sql += " AND combine_taxa.kingdom in (#{selected_taxon_groups})"
+            sql +=
+              " AND lower(combine_taxa.kingdom) in (#{selected_taxon_groups})"
           end
 
           if months
@@ -151,7 +152,7 @@ module ResearchProjectService
         SQL
 
         if taxon_groups
-          sql += " AND combine_taxa.kingdom in (#{selected_taxon_groups})"
+          sql += " AND lower(combine_taxa.kingdom) in (#{selected_taxon_groups})"
         end
 
         if months

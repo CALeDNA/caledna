@@ -114,7 +114,7 @@ module ResearchProjectService
     end
 
     def taxon_groups
-      params['taxon_groups']
+      params['taxon_groups'].try(:downcase)
     end
 
     def selected_taxon_groups
