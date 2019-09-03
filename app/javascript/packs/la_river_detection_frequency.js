@@ -14,7 +14,7 @@ let filters = { taxon_groups: [], taxon_rank: [] };
 
 let chartData = {};
 let filteredData = {};
-const endpoint = "/api/v1/la_river/detection_frequency";
+const endpoint = "/api/v1/research_projects/la_river/detection_frequency";
 const limit = 200000;
 const barHeight = 60;
 

@@ -38,11 +38,16 @@ Rails.application.routes.draw do
           to: 'research_projects#pillar_point_occurrences'
       get '/pillar_point/source_comparison_all',
           to: 'research_projects#pillar_point_source_comparison_all'
-      get '/la_river/area_diversity', to: 'la_river#area_diversity'
-      get '/la_river/pa_area_diversity', to: 'la_river#pa_area_diversity'
-      get '/la_river/sampling_types', to: 'la_river#sampling_types'
-      get '/la_river/detection_frequency', to: 'la_river#detection_frequency'
-      get '/la_river/sites', to: 'la_river#sites'
+
+        namespace :la_river do
+          params = { slug: 'los-angeles-river' }
+          get 'area_diversity', defaults: params
+          get 'pa_area_diversity', defaults: params
+          get 'sampling_types', defaults: params
+          get 'detection_frequency', defaults: params
+          get 'sites', defaults: params
+        end
+      end
     end
   end
 
@@ -150,8 +155,7 @@ Rails.application.routes.draw do
                                         defaults: { id: 'pillar-point' }
 
   resources :research_projects, only: %i[index show edit] do
-    resources :pages, only: %i[show], controller: 'research_projects',
-                      action: 'show_project_page'
+    resources :pages, only: %i[show edit], controller: 'research_projects/pages'
   end
 
   namespace :beta do

@@ -12,7 +12,7 @@ const location_names = {
 };
 let diversityData;
 let filters = { taxon_groups: [] };
-const apiEndpoint = "/api/v1/la_river/sampling_types";
+const apiEndpoint = "/api/v1/research_projects/la_river/sampling_types";
 const tableEls = [document.querySelector("#table-edna")];
 const graphEls = [document.querySelector("#graph-edna")];
 

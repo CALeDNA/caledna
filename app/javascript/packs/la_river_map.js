@@ -22,7 +22,7 @@ $.get(inatApiEndpoint, function(data) {
   inatLayer = createMarkerLayer(inatData, inatLayer, map);
 });
 
-var apiEndpoint = "/api/v1/la_river/sites";
+var apiEndpoint = "/api/v1/research_projects/la_river/sites";
 $.get(apiEndpoint, function(data) {
   console.log(data);
   samplesData = data.samples.data.map(function(sample) {

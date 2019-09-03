@@ -11,7 +11,7 @@ const location_names = {
   "Maywood Park": "Maywood Park"
 };
 let diversityData;
-const apiEndpoint = "/api/v1/la_river/pa_area_diversity";
+const apiEndpoint = "/api/v1/research_projects/la_river/pa_area_diversity";
 const graphEls = document.querySelector("#graph-edna");
 console.log("df", graphEls);
 // =============
