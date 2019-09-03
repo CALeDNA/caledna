@@ -35,7 +35,8 @@ class Page < ApplicationRecord
   def unique_slugs
     limit = new_record? ? 0 : 1
     if research_project_id?
-      return if existing_research_pages.count <= limit
+      return if existing_research_pages
+                .where(research_project: research_project).count <= limit
     else
       # rubocop:disable Style/IfInsideElse
       return if existing_pages.count <= limit

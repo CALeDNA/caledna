@@ -41,6 +41,18 @@ describe Page do
           expect(page.valid?).to eq(true)
         end
 
+        it 'returns true if two different projects have same slug' do
+          project = create(:research_project)
+          create(:page, slug: 'slug1', research_project: project, website: site)
+
+          project2 = create(:research_project)
+          page = build(:page, slug: 'slug1', research_project: project2,
+                              website: site)
+
+          expect(page.valid?).to eq(true)
+        end
+
+
         it 'returns false if slug is not unique for the research project' do
           project = create(:research_project)
           create(:page, slug: 'slug', research_project: project, website: site)
