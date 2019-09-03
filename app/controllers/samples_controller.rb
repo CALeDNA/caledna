@@ -6,9 +6,8 @@ class SamplesController < ApplicationController
   include AsvTreeFormatter
 
   def index
-    @samples = paginated_samples
-    @display_name = display_name
-    @asvs_count = asvs_count
+    @samples = samples
+    @asvs_count = counts
   end
 
   def show
@@ -19,6 +18,22 @@ class SamplesController < ApplicationController
   end
 
   private
+
+  # =======================
+  # index
+  # =======================
+
+  def counts
+    @counts ||= list_view? ? asvs_count : []
+  end
+
+  def samples
+    @samples ||= list_view? ? paginated_samples : []
+  end
+
+  # =======================
+  # show
+  # =======================
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def organisms
@@ -63,15 +78,6 @@ class SamplesController < ApplicationController
     @sample ||= Sample.approved.with_coordinates.find(params[:id])
   end
 
-  # TODO: add test
-  def display_name
-    if params[:field_data_project_id]
-      FieldDataProject.select(:name).find(params[:field_data_project_id]).name
-    elsif params[:sample_id]
-      Sample.select(:barcode).find(params[:sample_id]).barcode
-    end
-  end
-
   def asv_tree_taxa
     @asv_tree_taxa ||= fetch_asv_tree_for_sample(sample.id)
   end
@@ -83,11 +89,5 @@ class SamplesController < ApplicationController
     end.flatten
     tree << { 'name': 'Life', 'id': 'Life', 'common_name': nil }
     tree.uniq! { |i| i[:id] }
-  end
-
-  def query_string
-    query = {}
-    query[:id] = params[:sample_id] if params[:sample_id]
-    query
   end
 end

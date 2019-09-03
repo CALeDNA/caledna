@@ -31,10 +31,6 @@ module Api
       def sample
         @sample ||= Sample.approved.with_coordinates.find(params[:id])
       end
-
-      def query_string
-        {}
-      end
     end
   end
 end
