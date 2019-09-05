@@ -271,4 +271,24 @@ namespace :ncbi do
       ActiveRecord::Base.connection.exec_query(sql)
     end
   end
+
+  task add_ruggiero_taxa_to_ncbi_order: :environment do
+    CombineTaxon.where(taxon_rank: 'order', source: 'paper')
+                .each do |taxon|
+      puts '.'
+
+      NcbiNode.where('kingdom_r IS NULL')
+              .where("hierarchy_names ->> 'order' = ?", taxon.order)
+              .where("hierarchy_names ->> 'class' = ?", taxon.class_name)
+              .where("hierarchy_names ->> 'phylum' = ?", taxon.phylum)
+              .in_batches do |taxa|
+                puts taxa.first.taxon_id
+
+                taxa.update(kingdom_r: taxon.kingdom,
+                            phylum_r: taxon.phylum,
+                            class_r: taxon.class_name,
+                            order_r: taxon.order)
+              end
+    end
+  end
 end
