@@ -1,17 +1,18 @@
 <h3>Classification</h3>
 <table class="table table-condensed taxonomy-tree">
-  <% taxon.lineage && taxon.lineage.each do |lineage|%>
+  <% taxon.taxonomy_lineage.each do |taxon|%>
     <tr>
-    <td>
-      <%= lineage.third %>
-    </td>
-    <td>
-    <% if lineage.first %>
-      <%= link_to lineage.second, taxon_path(id: lineage.first) %>
-    <% else %>
-      <%= lineage.second %>
-    <% end %>
-  </td>
+      <td>
+        <%= taxon.rank %>
+      </td>
+      <td>
+      <% if taxon.taxon_id %>
+        <%= link_to taxon.canonical_name, taxon_path(id: taxon.taxon_id) %>
+      <% else %>
+        <%= taxon.canonical_name %>
+      <% end %>
+      (<%= pluralize(taxon.asvs_count_display, 'site') %>)
+      </td>
     </tr>
   <% end %>
 </table>

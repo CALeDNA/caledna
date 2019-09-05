@@ -129,22 +129,35 @@ class NcbiNode < ApplicationRecord
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity, Metrics/LineLength
-  def taxonomy_tree
-    tree = []
-    tree.push(name: :superkingdom, value: superkingdom, id: hierarchy['superkingdom']) if superkingdom.present?
-    tree.push(name: :kingdom, value: kingdom, id: hierarchy['kingdom']) if kingdom.present?
-    tree.push(name: :phylum, value: phylum, id: hierarchy['phylum']) if phylum.present?
-    tree.push(name: :class, value: class_name, id: hierarchy['class']) if class_name.present?
-    tree.push(name: :order, value: order, id: hierarchy['order']) if order.present?
-    tree.push(name: :family, value: family, id: hierarchy['family']) if family.present?
-    tree.push(name: :genus, value: genus, id: hierarchy['genus']) if genus.present?
-    tree.push(name: :species, value: species, id: hierarchy['species']) if species.present?
-    tree
+  def taxonomy_lineage
+    @taxonomy_lineage ||= begin
+      taxa = NcbiNode.where('ncbi_id in (?)', ids)
+      # NOTE: query returns taxa in random order; use ids.map to order the
+      # taxa according according to ids
+      ids.map do |id|
+        taxa.find { |t| t.taxon_id == id.to_i }
+      end
+    end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity, Metrics/LineLength
+
+  # rubocop:disable Metrics/MethodLength
+  def taxonomy_tree
+    @taxonomy_tree ||= begin
+      tree = []
+      ranks = %w[superkingdom kingdom phylum class_name order family genus
+                 species]
+
+      taxonomy_lineage.each do |taxon|
+        if ranks.include?(taxon.rank)
+          tree << taxon
+        elsif taxon.taxon_id == taxon_id
+          tree << taxon
+        end
+      end
+      tree
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
 
   def conservation_status?
     conservation_status.present?

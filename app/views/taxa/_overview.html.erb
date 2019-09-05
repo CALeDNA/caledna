@@ -11,35 +11,38 @@
     <% else %>
       <%= image_tag 'blank_photo.svg' %>
     <% end %>
-  </div>
-
-  <div class="col-md-6">
     <% if taxon.wikipedia_excerpt %>
-      <h3><%= taxon.canonical_name %></h3>
       <p>
         <%= taxon.wikipedia_excerpt %>
         <%= link_to 'Source: Wikipedia', taxon.wikipedia_link.url %>
       </p>
     <% end %>
+  </div>
+
+
+
+  <div class="col-md-6">
     <h3>Classification</h3>
-    <table class="table table-condensed taxonomy-tree">
+
+    <table class="table taxonomy-tree">
       <tr>
         <td>7 kingdoms</td>
         <td><%= taxon.ncbi_division.name %></td>
       </tr>
       <% taxon.taxonomy_tree.each do |taxon|%>
-        <tr>
+      <tr>
         <td>
-          <%= taxon[:name] %>
+          <%= taxon.rank %>
         </td>
         <td>
-        <% if taxon[:id] %>
-          <%= link_to taxon[:value], taxon_path(id: taxon[:id]) %>
+        <% if taxon.taxon_id %>
+          <%= link_to taxon.canonical_name, taxon_path(id: taxon.taxon_id) %>
         <% else %>
-          <%= taxon[:value] %>
+          <%= taxon.canonical_name %>
         <% end %>
-      </td>
-        </tr>
+        (<%= pluralize(taxon.asvs_count_display, 'site') %>)
+        </td>
+      </tr>
       <% end %>
     </table>
 
