@@ -1,6 +1,82 @@
 # frozen_string_literal: true
 
 class InteractionType
+  NEUTRAL_TYPES = %w[
+    adjacentTo
+    coOccursWith
+    interactsWith
+    livesWith
+    symbiontOf
+  ].freeze
+
+  ACTIVE_TYPES = %w[
+    createsHabitatFor
+    damages
+    dispersalVectorOf
+    eats
+    ectoParasiteOf
+    ectoParasitoid
+    endoparasiteOf
+    endoparasitoidOf
+    epiphyteOf
+    farms
+    visitsFlowersOf
+    guestOf
+    hostOf
+    hyperparasiteOf
+    hyperparasitoidOf
+    inhabits
+    kills
+    kleptoparasiteOf
+    laysEggsOn
+    livesInsideOf
+    livesNear
+    livesOn
+    livesUnder
+    parasiteOf
+    parasitoidOf
+    pathogenOf
+    perchingOn
+    pollinates
+    preysOn
+    visits
+    vectorOf
+  ].freeze
+
+  PASSIVE_TYPES = %w[
+    isHabitatOf
+    damagedBy
+    hasDispersalVector
+    eatenBy
+    hasEctoparasite
+    hasEctoparasitoid
+    hasEndoparasite
+    hasEndoparasitoid
+    hasEpiphyte
+    farmedBy
+    flowersVisitedBy
+    hasGuestOf
+    hasHost
+    hasHyperparasite
+    hasHyperparasitoid
+    inhabitedBy
+    killedBy
+    hasKleptoparasite
+    hasEggsLayedOnBy
+    livedInsideOfBy
+    livedNearBy
+    livedOnBy
+    livedUnderBy
+    hasParasite
+    hasParasitoid
+    hasPathogen
+    perchedOnBy
+    pollinatedBy
+    preyedUponBy
+    visitedBy
+    hasVector
+  ].freeze
+
   TYPES = {
     'adjacentTo': 'adjacentTo',
 
@@ -9,8 +85,8 @@ class InteractionType
     'createsHabitatFor': 'isHabitatOf',
     'isHabitatOf': 'createsHabitatFor',
 
-    'damagedBy': 'damages',
     'damages': 'damagedBy',
+    'damagedBy': 'damages',
 
     'dispersalVectorOf': 'hasDispersalVector',
     'hasDispersalVector': 'dispersalVectorOf',
@@ -33,11 +109,11 @@ class InteractionType
     'epiphyteOf': 'hasEpiphyte',
     'hasEpiphyte': 'epiphyteOf',
 
-    'farmedBy': 'farms',
     'farms': 'farmedBy',
+    'farmedBy': 'farms',
 
-    'flowersVisitedBy': 'visitsFlowersOf',
     'visitsFlowersOf': 'flowersVisitedBy',
+    'flowersVisitedBy': 'visitsFlowersOf',
 
     'guestOf': 'hasGuestOf',
     'hasGuestOf': 'guestOf',
@@ -51,8 +127,8 @@ class InteractionType
     'hyperparasitoidOf': 'hasHyperparasitoid',
     'hasHyperparasitoid': 'hyperparasitoidOf',
 
-    'inhabitedBy': 'inhabits',
     'inhabits': 'inhabitedBy',
+    'inhabitedBy': 'inhabits',
 
     'interactsWith': 'interactsWith',
 
@@ -65,17 +141,17 @@ class InteractionType
     'laysEggsOn': 'hasEggsLayedOnBy',
     'hasEggsLayedOnBy': 'laysEggsOn',
 
-    'livedInsideOfBy': 'livesInsideOf',
     'livesInsideOf': 'livedInsideOfBy',
+    'livedInsideOfBy': 'livesInsideOf',
 
-    'livedNearBy': 'livesNear',
     'livesNear': 'livedNearBy',
+    'livedNearBy': 'livesNear',
 
-    'livedOnBy': 'livesOn',
     'livesOn': 'livedOnBy',
+    'livedOnBy': 'livesOn',
 
-    'livedUnderBy': 'livesUnder',
     'livesUnder': 'livedUnderBy',
+    'livedUnderBy': 'livesUnder',
 
     'livesWith': 'livesWith',
 

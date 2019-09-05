@@ -67,6 +67,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: #fff;
 }
 
 #main-wrapper {
@@ -159,6 +160,17 @@ h4 {
 // =============
 // common
 // =============
+
+.my-btn-default {
+  background-color: #f6f6f6;
+  border-color: #ccc;
+}
+
+.my-btn-default:focus,
+.my-btn-default:hover {
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
 
 .subheading {
   margin-top: 0;

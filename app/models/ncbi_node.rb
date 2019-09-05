@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class NcbiNode < ApplicationRecord
+  include GlobiService
+
   LINKS = %i[
     bold_link
     calflora_link
@@ -44,6 +46,14 @@ class NcbiNode < ApplicationRecord
       url: 'https://www.ncbi.nlm.nih.gov/taxonomy',
       citation: 'NCBI Taxonomy database. November 2017.'
     )
+  end
+
+  def show_interactions?
+    @show_interactions ||= biotic_interactions.values.any?(&:present?)
+  end
+
+  def biotic_interactions
+    @biotic_interactions ||= display_globi_for(taxon_id)
   end
 
   def children

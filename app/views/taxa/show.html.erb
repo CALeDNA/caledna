@@ -2,10 +2,14 @@
   <%= @taxon.taxonRank %>: <%= @taxon.canonicalName %>
 </h1>
 
-<h2><%= @taxon.common_names_display(parenthesis: false, truncate: false)%></h2>
+<h2 class="subheading"><%= @taxon.common_names_display(parenthesis: false, truncate: false)%></h2>
 
 <ul class="nav nav-tabs" role="tablist">
   <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+  <% if @taxon.show_interactions? %>
+    <li role="presentation"><a href="#interactions" aria-controls="interactions" role="tab" data-toggle="tab">Interactions</a></li>
+  <% end %>
+
   <li role="presentation"><a href="#names" aria-controls="names" role="tab" data-toggle="tab">Names</a></li>
   <li role="presentation"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">More Info</a></li>
 </ul>
@@ -14,6 +18,11 @@
   <div role="tabpanel" class="tab-pane active" id="overview">
     <%= render partial: "overview", locals: { taxon: @taxon, samples: @samples } %>
   </div>
+  <% if @taxon.show_interactions? %>
+    <div role="tabpanel" class="tab-pane active" id="interactions">
+      <%= render partial: "interactions", locals: { taxon: @taxon, samples: @samples } %>
+    </div>
+  <% end %>
   <div role="tabpanel" class="tab-pane" id="names">
     <%= render partial: "names", locals: { taxon: @taxon } %>
   </div>
