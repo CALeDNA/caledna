@@ -39,4 +39,30 @@ namespace :globi do
       GlobiInteraction.create(attributes)
     end
   end
+
+  task add_ncbi_gbif_ids: :environment do
+    include GlobiService
+
+    sql = <<-SQL
+      (
+        "sourceTaxonIds" LIKE '%NCBI%' OR
+        "sourceTaxonIds" LIKE '%GBIF%' OR
+        "targetTaxonIds" LIKE '%NCBI%' OR
+        "targetTaxonIds" LIKE '%GBIF%'
+      )
+      AND
+      (
+        target_ncbi_id is NULL AND
+        source_ncbi_id is NULL AND
+        target_gbif_id IS NULL AND
+        source_gbif_id IS NULL
+      )
+    SQL
+
+    GlobiInteraction.where(sql).order(:id).find_each do |globi|
+      puts globi.id if (globi.id % 1000).zero?
+      add_ncbi_gbif_ids(globi, globi.targetTaxonIds, :target)
+      add_ncbi_gbif_ids(globi, globi.sourceTaxonIds, :source)
+    end
+  end
 end

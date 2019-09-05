@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_03_132358) do
+ActiveRecord::Schema.define(version: 2019_09_04_234539) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -322,6 +322,10 @@ ActiveRecord::Schema.define(version: 2019_09_03_132358) do
     t.integer "asvs_count_5", default: 0
     t.integer "asvs_count_la_river", default: 0
     t.integer "asvs_count_la_river_5", default: 0
+    t.string "kingdom_r"
+    t.string "phylum_r"
+    t.string "class_r"
+    t.string "order_r"
     t.index "((hierarchy_names -> 'class'::text))", name: "ncbi_nodes_expr_idx1"
     t.index "((hierarchy_names -> 'order'::text))", name: "ncbi_nodes_expr_idx2"
     t.index "((hierarchy_names -> 'phylum'::text))", name: "ncbi_nodes_expr_idx"
@@ -336,6 +340,7 @@ ActiveRecord::Schema.define(version: 2019_09_03_132358) do
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
+    t.index ["kingdom_r"], name: "index_ncbi_nodes_on_kingdom_r"
     t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
