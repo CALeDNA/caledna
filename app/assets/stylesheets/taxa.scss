@@ -1,14 +1,26 @@
-.taxonomy-tree {
+.table.taxonomy-tree {
   width: auto !important;
+
+  margin-top: 1em;
 
   td {
     border: none !important;
+
+    padding: 2px 20px 2px 0;
   }
 
   caption {
     font-weight: bold;
     font-size: 2rem;
   }
+
+  .minor-rank {
+    display: none;
+  }
+}
+
+button.btn.js-taxonomy-abridged {
+  display: none;
 }
 
 .data-source {
@@ -56,4 +68,11 @@
   .item img {
     display: block;
   }
+}
+
+.children-taxonomy {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 1em;
+  list-style: none;
 }

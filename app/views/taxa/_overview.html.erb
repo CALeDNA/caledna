@@ -23,14 +23,22 @@
 
   <div class="col-md-6">
     <h3>Classification</h3>
+    <button class='btn btn-default js-taxonomy-abridged'>
+      show abridged classification
+    </button>
+
+    <button class='btn btn-default js-taxonomy-complete'>
+      show complete classification
+    </button>
 
     <table class="table taxonomy-tree">
       <tr>
         <td>7 kingdoms</td>
         <td><%= taxon.ncbi_division.name %></td>
       </tr>
-      <% taxon.taxonomy_tree.each do |taxon|%>
-      <tr>
+      <% taxon.taxonomy_lineage.each do |taxon|%>
+      <% ranks = %w[superkingdom kingdom phylum class_name order family genus species ] %>
+      <tr class=<%= 'js-minor-rank' unless ranks.include?(taxon.rank) %>>
         <td>
           <%= taxon.rank %>
         </td>

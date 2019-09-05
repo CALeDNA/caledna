@@ -140,25 +140,6 @@ class NcbiNode < ApplicationRecord
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def taxonomy_tree
-    @taxonomy_tree ||= begin
-      tree = []
-      ranks = %w[superkingdom kingdom phylum class_name order family genus
-                 species]
-
-      taxonomy_lineage.each do |taxon|
-        if ranks.include?(taxon.rank)
-          tree << taxon
-        elsif taxon.taxon_id == taxon_id
-          tree << taxon
-        end
-      end
-      tree
-    end
-  end
-  # rubocop:enable Metrics/MethodLength
-
   def conservation_status?
     conservation_status.present?
   end
