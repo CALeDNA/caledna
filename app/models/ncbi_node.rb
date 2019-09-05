@@ -46,6 +46,15 @@ class NcbiNode < ApplicationRecord
     )
   end
 
+  def children
+    @children ||= begin
+      NcbiNode.where(parent_taxon_id: taxon_id)
+              .where.not(canonical_name: 'environmental samples')
+              .where("canonical_name NOT LIKE 'unclassified%'")
+              .order('canonical_name')
+    end
+  end
+
   def superkingdom
     hierarchy_names['superkingdom']
   end

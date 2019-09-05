@@ -99,10 +99,7 @@ class TaxaController < ApplicationController
     @taxon ||= begin
       NcbiNode.joins(join_ncbi_names_sql)
               .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
-              .select('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
-              .select('ncbi_nodes.rank')
-              .select('ncbi_nodes.hierarchy_names, ncbi_nodes.cal_division_id')
-              .select('ncbi_nodes.hierarchy, ncbi_nodes.lineage')
+              .select('ncbi_nodes.*')
               .group('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
               .find(params[:id])
     end
