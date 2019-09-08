@@ -73,6 +73,15 @@
       <p><%= taxon.conservation_status %></p>
       <p class='data-source'>Source: <a href='www.iucnredlist.org'>IUCN 2017. IUCN Red List of Threatened Species.</a> Version 2017-3</p>
     <% end %>
+
+    <% if taxon.gbif_id.present? %>
+      <h3>Known Occurrences</h3>
+      <div id="gbif-occurrence-map"></div>
+
+      <p class='data-source'>Source:
+        <a href='https://www.gbif.org/species/<%= taxon.gbif_id %>'>GBIF</a>
+      </p>
+    <% end%>
   </div>
 </div>
 

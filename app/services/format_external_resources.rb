@@ -22,6 +22,10 @@ class FormatExternalResources
     )
   end
 
+  def gbif_id
+    @gbif_id ||= resource_value_for(:gbif_id)
+  end
+
   def inat_image
     image = resource_value_for(:inat_image)
     return if image.blank?

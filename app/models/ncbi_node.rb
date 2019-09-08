@@ -30,7 +30,7 @@ class NcbiNode < ApplicationRecord
   delegate *LINKS, to: :format_resources
   # rubocop:enable Lint/AmbiguousOperator
   delegate :wikidata_entity, :wikidata_image, :eol_image, :inat_image,
-           :conservation_status, to: :format_resources
+           :conservation_status, :gbif_id, to: :format_resources
 
   def self.taxa_dataset
     OpenStruct.new(
