@@ -47,19 +47,20 @@
       <% end %>
     </table>
 
-    <% if taxon.children.length > 0 %>
-    <h4>Immediate Children</h4>
-    <table class="table taxonomy-tree">
-      <% taxon.children.each do |child| %>
-      <tr>
-        <td><%= child.rank %></td>
-        <td>
-          <%= link_to child.canonical_name, taxon_path(child) %>
-          (<%= child.asvs_count %> sites)
-        </td>
-      </tr>
-      <% end %>
-    </table>
+    <% if @children.length > 0 %>
+      <h4>Immediate Children</h4>
+      <table class="table taxonomy-tree">
+        <% @children.each do |child| %>
+        <tr>
+          <td><%= child.rank %></td>
+          <td>
+            <%= link_to child.canonical_name, taxon_path(child) %>
+            (<%= child.asvs_count %> sites)
+          </td>
+        </tr>
+        <% end %>
+      </table>
+      <%= paginate @children %>
     <% end %>
 
     <p class='data-source'>

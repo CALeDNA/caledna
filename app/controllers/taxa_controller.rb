@@ -11,6 +11,7 @@ class TaxaController < ApplicationController
   def show
     @taxon = taxon
     @samples = samples
+    @children = children
   end
 
   private
@@ -135,6 +136,15 @@ class TaxaController < ApplicationController
 
     add_pagination_methods(records)
     records
+  end
+
+  def children
+    @children ||= begin
+      NcbiNode.where(parent_taxon_id: id)
+              .order('canonical_name')
+              .page(params[:page])
+              .per(25)
+    end
   end
 
   def total_records
