@@ -142,7 +142,6 @@ module AsvTreeFormatter
               .joins(:ncbi_division)
               .joins(ncbi_names_sql)
               .where('cal_division_id IS NOT NULL')
-              .where("ncbi_divisions.name != 'Environmental samples'")
               .select('ncbi_divisions.name as domain')
               .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
               .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
