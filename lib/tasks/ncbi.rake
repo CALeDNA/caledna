@@ -311,6 +311,23 @@ namespace :ncbi do
     end
   end
 
+  task fix_environmental_samples_divisions: :environment do
+    sql = <<-SQL
+      UPDATE ncbi_nodes SET cal_division_id = subquery.division_id
+      FROM (
+        SELECT cal_division_id, division_id, ncbi_nodes.taxon_id
+        FROM ncbi_nodes
+        JOIN ncbi_divisions ON
+          ncbi_divisions.id = ncbi_nodes.division_id
+        WHERE division_id != cal_division_id
+        AND ncbi_divisions.name = 'Environmental samples'
+      ) AS subquery
+      WHERE ncbi_nodes.taxon_id = subquery.taxon_id;
+    SQL
+
+    ActiveRecord::Base.connection.exec_query(sql)
+  end
+
   task add_ruggiero_taxa_to_ncbi_order: :environment do
     CombineTaxon.where(taxon_rank: 'order', source: 'paper')
                 .each do |taxon|
