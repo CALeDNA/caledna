@@ -3,6 +3,10 @@
 
   margin-top: 1em;
 
+  .js-minor-rank {
+    display: none;
+  }
+
   td {
     border: none !important;
 
@@ -49,6 +53,15 @@ button.btn.js-interactions-all {
     margin: 10px 5px;
   }
 
+  .item img.kingdom-icon {
+    margin-right: 3px;
+    max-height: 30px;
+    max-width: 30px;
+    object-fit: contain;
+    border: none;
+    display: inline;
+  }
+
   .item img {
     width: 100%;
     border: 1px solid #ddd;
@@ -79,4 +92,16 @@ button.btn.js-interactions-all {
   margin: 0;
   margin-bottom: 1em;
   list-style: none;
+}
+
+.taxa-header {
+  .kingdom-icon {
+    max-width: 50px;
+    margin-right: 7px;
+    max-height: 30px;
+  }
+
+  h2:nth-child(2) {
+    margin-top: 0;
+  }
 }

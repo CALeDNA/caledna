@@ -30,9 +30,10 @@ class TaxaSearchesController < ApplicationController
     SELECT taxon_id, canonical_name, rank, asvs_count,
     eol_ids, eol_images,
     inat_ids, inat_images,
-    wikidata_images, common_names
+    wikidata_images, common_names, division_name
     FROM (
       SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
+      ncbi_divisions.name as division_name,
       asvs_count,
       ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
       ARRAY_AGG(DISTINCT eol_id) AS eol_ids,
@@ -48,7 +49,9 @@ class TaxaSearchesController < ApplicationController
       LEFT JOIN ncbi_names
         ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
         AND ncbi_names.name_class IN ('common name', 'genbank common name')
-      GROUP BY ncbi_nodes.taxon_id
+      LEFT JOIN ncbi_divisions
+        ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+      GROUP BY ncbi_nodes.taxon_id, ncbi_divisions.name
       ORDER BY asvs_count DESC
     ) AS search
     WHERE search.doc @@ plainto_tsquery('simple', $1)

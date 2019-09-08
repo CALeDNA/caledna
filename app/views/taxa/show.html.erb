@@ -1,15 +1,19 @@
-<h1>
-  <%= @taxon.taxonRank %>: <%= @taxon.canonicalName %>
-</h1>
-
-<h2 class="subheading"><%= @taxon.common_names_display(parenthesis: false, truncate: false)%></h2>
+<div class="taxa-header">
+    <h1>
+      <% if TaxaHelper.show_kingdom_icon?(@taxon.ncbi_division&.name) %>
+        <%= image_tag TaxaHelper.kingdom_icon(@taxon.ncbi_division&.name), class: 'kingdom-icon' %>
+        <%= @taxon.ncbi_division&.name %> &raquo;
+      <% end %>
+      <%= @taxon.taxonRank %>: <%= @taxon.canonicalName %>
+    </h1>
+  <h2><%= @taxon.common_names_display(parenthesis: false, truncate: false)%></h2>
+</div>
 
 <ul class="nav nav-tabs" role="tablist">
   <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
   <% if @taxon.show_interactions? %>
     <li role="presentation"><a href="#interactions" aria-controls="interactions" role="tab" data-toggle="tab">Interactions</a></li>
   <% end %>
-
   <li role="presentation"><a href="#names" aria-controls="names" role="tab" data-toggle="tab">Names</a></li>
   <li role="presentation"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">More Info</a></li>
 </ul>

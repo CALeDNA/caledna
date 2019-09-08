@@ -30,13 +30,8 @@
     </button>
 
     <table class="table taxonomy-tree">
-      <tr>
-        <td>7 kingdoms</td>
-        <td><%= taxon.ncbi_division.name %></td>
-      </tr>
       <% taxon.taxonomy_lineage.each do |taxon|%>
-      <% ranks = %w[superkingdom kingdom phylum class_name order family genus species ] %>
-      <tr class=<%= 'js-minor-rank' unless ranks.include?(taxon.rank) %>>
+      <tr class=<%= 'js-minor-rank' unless CalTaxon::TAXON_RANK.include?(taxon.rank) %>>
         <td>
           <%= taxon.rank %>
         </td>

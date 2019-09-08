@@ -7,8 +7,11 @@
       taxon_path(id: taxon.taxon_id)) %>
   <% end %>
   <p>
-
-    <%= "#{taxon.rank}: " if taxon.rank %>
+    <% if TaxaHelper.show_kingdom_icon?(taxon.division_name) %>
+      <%= image_tag TaxaHelper.kingdom_icon(taxon.division_name), class: 'kingdom-icon' %>
+      <%= taxon.division_name %><br>
+    <% end %>
+    <%= "#{taxon.rank}: " if taxon.rank? %>
     <%= link_to taxon.canonical_name,
       taxon_path(id: taxon.taxon_id) %><br>
     <%
