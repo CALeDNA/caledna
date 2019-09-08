@@ -272,6 +272,45 @@ namespace :ncbi do
     end
   end
 
+  task update_ncbi_divisions: :environment do
+    queries = [
+      'UPDATE ncbi_nodes SET cal_division_id = NULL WHERE taxon_id = 2759;',
+      "UPDATE ncbi_nodes SET cal_division_id = 14 WHERE ids @> '{2763}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 17 WHERE ids @> '{33630}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 17 WHERE ids @> '{193537}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 17 WHERE ids @> '{2830}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 17 WHERE ids @> '{543769}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 17 WHERE ids @> '{33634}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{554915}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{554296}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{1401294}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{33682}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{207245}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{556282}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{136087}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{5719}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{134557}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{98350}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{2018064}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{2018063}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{251709}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{154966}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{691882}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{2033803}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{2006546}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{2006545}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{2006709}';",
+      "UPDATE ncbi_nodes SET cal_division_id = 18 WHERE ids @> '{1993908}';",
+      'UPDATE ncbi_nodes SET cal_division_id = NULL WHERE taxon_id = 33154;',
+      'UPDATE ncbi_nodes SET cal_division_id = NULL WHERE taxon_id = 42461;',
+      'UPDATE ncbi_nodes SET cal_division_id = NULL WHERE taxon_id = 1001604;'
+    ]
+
+    queries.each do |sql|
+      ActiveRecord::Base.connection.exec_query(sql)
+    end
+  end
+
   task add_ruggiero_taxa_to_ncbi_order: :environment do
     CombineTaxon.where(taxon_rank: 'order', source: 'paper')
                 .each do |taxon|
