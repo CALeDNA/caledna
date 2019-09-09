@@ -43,6 +43,12 @@ namespace :ncbi do
     create_ids
   end
 
+  desc 'create common names'
+  task create_common_names: :environment do
+    puts 'create_common_names...'
+    create_common_names
+  end
+
   desc 'add ncbi_id to ncbi_nodes to handle BOLD'
   task add_ncbi_id_to_ncbi_nodes: :environment do
     sql = <<-SQL

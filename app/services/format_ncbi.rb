@@ -62,6 +62,29 @@ module FormatNcbi
   end
   # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
+  def create_common_names
+    sql = <<-SQL
+      name_class = 'common name' OR
+      name_class = 'genbank common name'
+    SQL
+
+    NcbiName.where(sql).find_each do |record|
+      puts record.taxon_id
+
+      clean_name = record.name.delete("'")
+      sql = <<-SQL
+        UPDATE ncbi_nodes
+        SET common_names = coalesce($1 || '|' || common_names, $1)
+        WHERE ncbi_id = $2
+      SQL
+      binding = [[nil, clean_name], [nil, record.taxon_id]]
+
+      conn.exec_query(sql, 'q', binding)
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
   def create_ids
     nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
     nodes.each do |node|
@@ -73,6 +96,10 @@ module FormatNcbi
   end
 
   private
+
+  def conn
+    @conn ||= ActiveRecord::Base.connection
+  end
 
   def valid_rank?(node)
     node.rank != 'no rank'
