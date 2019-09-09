@@ -100,8 +100,8 @@ class NcbiNode < ApplicationRecord
 
   # rubocop:disable Metrics/AbcSize
   def taxonomy_string
-    if respond_to?(:cal_kingdom)
-      [cal_kingdom, phylum, class_name, order, family, genus, species]
+    if respond_to?(:division_name)
+      [division_name, phylum, class_name, order, family, genus, species]
     else
       [superkingdom, kingdom, phylum, class_name, order, family, genus, species]
     end.compact.join(', ')

@@ -1,3 +1,21 @@
 .gallery-initial-photo {
   cursor: pointer;
 }
+
+.kingdom-submenu {
+  margin-bottom: 2rem;
+
+  .kingdom-icon {
+    max-height: 30px;
+    max-width: 30px;
+    object-fit: contain;
+  }
+
+  a {
+    font-size: 1em;
+    padding: 1rem 1rem;
+    margin: 0.5rem;
+
+    height: 3em;
+  }
+}

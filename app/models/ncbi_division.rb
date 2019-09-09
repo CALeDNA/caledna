@@ -2,7 +2,7 @@
 
 class NcbiDivision < ApplicationRecord
   SEVEN_KINGDOMS = %w[
-    Animalia Plantae Bacteria Fungi Archaea Chromista Protozoa
+    Animalia Archaea Bacteria Chromista Fungi Plantae Protozoa
   ].freeze
 
   has_many :ncbi_nodes

@@ -35,34 +35,41 @@ class SamplesController < ApplicationController
   # show
   # =======================
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def organisms_sql
+    <<-SQL
+      SELECT canonical_name,
+      hierarchy_names,
+      ncbi_nodes.taxon_id, iucn_status,
+      ncbi_divisions.name AS division_name, rank,
+      common_names
+      FROM "ncbi_nodes"
+      JOIN "asvs" ON "asvs"."taxonID" = "ncbi_nodes"."taxon_id"
+      JOIN ncbi_divisions
+        ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+      LEFT JOIN external_resources
+        ON external_resources.ncbi_id = ncbi_nodes.taxon_id
+      WHERE asvs.sample_id = $1
+      GROUP BY ncbi_nodes.taxon_id, external_resources.iucn_status,
+      ncbi_divisions.name
+      ORDER BY division_name,
+      hierarchy_names ->>'phylum',
+      hierarchy_names ->>'class',
+      hierarchy_names ->>'order',
+      hierarchy_names ->>'family',
+      hierarchy_names ->>'genus',
+      hierarchy_names ->>'species';
+    SQL
+  end
+
   def organisms
     @organisms ||= begin
-      NcbiNode.joins(:asvs)
-              .joins('JOIN ncbi_divisions on ncbi_nodes.cal_division_id = ' \
-                'ncbi_divisions.id')
-              .joins('LEFT JOIN external_resources ON ' \
-                'external_resources.ncbi_id = ncbi_nodes.taxon_id')
-              .joins('LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ' \
-                'ncbi_nodes.taxon_id ' \
-                'AND ncbi_names.name_class IN ' \
-                "('common name', 'genbank common name')")
-              .select('hierarchy_names, ncbi_nodes.taxon_id, ' \
-                'iucn_status, ncbi_divisions.name as cal_kingdom, rank')
-              .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
-              .group('ncbi_nodes.taxon_id, ' \
-                'iucn_status, ncbi_divisions.name')
-              .where('asvs.sample_id = ?', sample.id)
-              .order('cal_kingdom')
-              .order("hierarchy_names ->>'phylum'")
-              .order("hierarchy_names ->>'class'")
-              .order("hierarchy_names ->>'order'")
-              .order("hierarchy_names ->>'family'")
-              .order("hierarchy_names ->>'genus'")
-              .order("hierarchy_names ->>'species'")
+      sql = organisms_sql
+
+      binding = [[nil, params[:id]]]
+      raw_records = ActiveRecord::Base.connection.exec_query(sql, 'q', binding)
+      raw_records.map { |r| OpenStruct.new(r) }
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def division_counts
     @division_counts ||= begin
