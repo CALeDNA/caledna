@@ -16,6 +16,9 @@ export default function convertFlatJsonToFlareJson(flatJson, nestedKey) {
       (parent.children || (parent.children = []))
         // add node to child array
         .push(node);
+
+      // sort the children
+      parent.children.sort((a, b) => a.name.localeCompare(b.name));
     } else {
       // parent is null or missing
       treeData.push(node);
