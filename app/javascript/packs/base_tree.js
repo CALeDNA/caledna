@@ -10,8 +10,8 @@
 import * as d3 from "d3";
 
 let viewerWidth = window.innerWidth * 1.5;
-let viewerHeight = window.innerHeight * 2;
-let duration = 750;
+let viewerHeight = window.innerHeight * 1.5;
+let duration = 900;
 let circleRadius = 7;
 let circleHasChildrenColor = "lightsteelblue";
 let circleColor = "#fff";

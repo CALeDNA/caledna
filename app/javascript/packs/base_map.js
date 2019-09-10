@@ -557,8 +557,9 @@ function filterSamplesByStatus(samples, status) {
 }
 
 function addMapLayerModal(map) {
+  // NOTE: can't use font awesome because it makes d3 tree have buggy anomation
   L.easyButton(
-    " fa-info",
+    "map-button-info",
     function(btn, map) {
       $("#map-layer-modal").modal("show");
     },

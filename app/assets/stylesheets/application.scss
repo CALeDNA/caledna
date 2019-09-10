@@ -403,3 +403,11 @@ footer {
     color: $main-text;
   }
 }
+
+.map-button-info:before {
+  font-family: "Open Sans", sans-serif;
+  left: -3px;
+  position: relative;
+  content: "i";
+  font-size: larger;
+}
