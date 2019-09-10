@@ -171,9 +171,14 @@ describe AsvTreeFormatter do
       end
     end
 
-    def append_taxon(taxon, common_name = nil)
-      OpenStruct.new(taxon.attributes
-                          .merge(domain: 'division', common_name: common_name))
+    def append_taxon(taxon, common_names = nil)
+      taxon.instance_eval { class << self; self end }
+           .send(:attr_accessor,
+                 :domain, :common_names)
+
+      taxon.domain = 'division'
+      taxon.common_names = common_names
+      taxon
     end
 
     it 'converts taxons that are species' do
@@ -319,9 +324,23 @@ describe AsvTreeFormatter do
 
       taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
                                  rank: rank, cal_division_id: division.id)
-      taxon = append_taxon(taxon, 'cn')
+      taxon = append_taxon(taxon, 'a')
       expected = {
-        common_name: 'cn',
+        common_name: 'a',
+        original_rank: rank
+      }
+      expect(subject(taxon)).to eq(expected)
+    end
+
+    it 'adds first common name if multiple common names exists' do
+      rank = 'superkingdom'
+      remove_keys(%i[species genus family order class phylum kingdom])
+
+      taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
+                                 rank: rank, cal_division_id: division.id)
+      taxon = append_taxon(taxon, 'a|b|c')
+      expected = {
+        common_name: 'a',
         original_rank: rank
       }
       expect(subject(taxon)).to eq(expected)

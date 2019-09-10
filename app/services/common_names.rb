@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module CommonNames
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def format_common_names(names, parenthesis: true, truncate: true,
                           first_only: false)
     return if names.blank?
@@ -15,6 +16,7 @@ module CommonNames
       truncate ? common_names_string(names) : names.join(', ')
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
   private
 

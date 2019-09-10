@@ -26,7 +26,8 @@ describe 'GlobiService' do
 
   def create_ncbi_node(name:, taxon_id:, ncbi_id:, asvs_count:)
     create(:ncbi_node, canonical_name: name, taxon_id: taxon_id,
-                       ncbi_id: ncbi_id, asvs_count: asvs_count)
+                       ncbi_id: ncbi_id, asvs_count: asvs_count,
+                       common_names: 'a|b')
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -50,10 +51,12 @@ describe 'GlobiService' do
                      :source_ncbi_name,
                      :source_ncbi_id,
                      :source_asvs_count,
+                     :source_common_names,
                      :target_cal_id,
                      :target_ncbi_name,
                      :target_ncbi_id,
-                     :target_asvs_count)
+                     :target_asvs_count,
+                     :target_common_names)
 
     interaction.interaction_type = type
 
@@ -61,11 +64,13 @@ describe 'GlobiService' do
     interaction.source_ncbi_name = source_ncbi_name
     interaction.source_ncbi_id = source_ncbi_id
     interaction.source_asvs_count = source_asvs_count
+    interaction.source_common_names = 'a|b'
 
     interaction.target_cal_id = cal_id_2
     interaction.target_ncbi_name = target_ncbi_name
     interaction.target_ncbi_id = target_ncbi_id
     interaction.target_asvs_count = target_asvs_count
+    interaction.target_common_names = 'c|d'
     interaction
   end
   # rubocop:enable Metrics/MethodLength
@@ -92,7 +97,8 @@ describe 'GlobiService' do
             passive: [],
             neutral: [
               { type: neutral_display, taxon_name: ncbi_name_1,
-                taxon_id: cal_id_1, asvs_count: source_asvs_count }
+                taxon_id: cal_id_1, asvs_count: source_asvs_count,
+                common_names: 'a|b' }
             ]
           }
           expect(subject(ncbi_id_1)).to eq(expected)
@@ -107,7 +113,8 @@ describe 'GlobiService' do
           expected = {
             active: [
               { type: active_display, taxon_name: ncbi_name_1,
-                taxon_id: cal_id_1, asvs_count: source_asvs_count }
+                taxon_id: cal_id_1, asvs_count: source_asvs_count,
+                common_names: 'a|b' }
             ],
             passive: [],
             neutral: []
@@ -125,7 +132,8 @@ describe 'GlobiService' do
             active: [],
             passive: [
               { type: passive_display, taxon_name: ncbi_name_1,
-                taxon_id: cal_id_1, asvs_count: source_asvs_count }
+                taxon_id: cal_id_1, asvs_count: source_asvs_count,
+                common_names: 'a|b' }
             ],
             neutral: []
           }
@@ -149,7 +157,8 @@ describe 'GlobiService' do
             passive: [],
             neutral: [
               { type: neutral_display, taxon_name: ncbi_name_2,
-                taxon_id: cal_id_2, asvs_count: target_asvs_count }
+                taxon_id: cal_id_2, asvs_count: target_asvs_count,
+                common_names: 'a|b' }
             ]
           }
           expect(subject(ncbi_id_1)).to eq(expected)
@@ -162,7 +171,8 @@ describe 'GlobiService' do
           expected = {
             active: [
               { type: active_display, taxon_name: ncbi_name_2,
-                taxon_id: cal_id_2, asvs_count: target_asvs_count  }
+                taxon_id: cal_id_2, asvs_count: target_asvs_count,
+                common_names: 'a|b' }
             ],
             passive: [],
             neutral: []
@@ -178,7 +188,8 @@ describe 'GlobiService' do
             active: [],
             passive: [
               { type: passive_display, taxon_name: ncbi_name_2,
-                taxon_id: cal_id_2, asvs_count: target_asvs_count  }
+                taxon_id: cal_id_2, asvs_count: target_asvs_count,
+                common_names: 'a|b' }
             ],
             neutral: []
           }
@@ -203,7 +214,8 @@ describe 'GlobiService' do
             passive: [],
             neutral: [
               { type: neutral_display, taxon_name: ncbi_name_1,
-                taxon_id: cal_id_2, asvs_count: source_asvs_count }
+                taxon_id: cal_id_2, asvs_count: source_asvs_count,
+                common_names: 'a|b' }
             ]
           }
           expect(subject(ncbi_id_1)).to eq(expected)
@@ -217,7 +229,8 @@ describe 'GlobiService' do
             active: [],
             passive: [
               { type: passive_display, taxon_name: ncbi_name_1,
-                taxon_id: cal_id_2, asvs_count: source_asvs_count }
+                taxon_id: cal_id_2, asvs_count: source_asvs_count,
+                common_names: 'a|b' }
             ],
             neutral: []
           }
@@ -231,7 +244,8 @@ describe 'GlobiService' do
           expected = {
             active: [
               { type: active_display, taxon_name: ncbi_name_1,
-                taxon_id: cal_id_2, asvs_count: source_asvs_count }
+                taxon_id: cal_id_2, asvs_count: source_asvs_count,
+                common_names: 'a|b' }
             ],
             passive: [],
             neutral: []
@@ -263,15 +277,15 @@ describe 'GlobiService' do
       expected = {
         active: [
           { type: active_display, taxon_name: ncbi_name_2, taxon_id: cal_id_2,
-            asvs_count: target_asvs_count }
+            asvs_count: target_asvs_count, common_names: 'a|b' }
         ],
         passive: [
           { type: passive_display, taxon_name: ncbi_name_2, taxon_id: cal_id_2,
-            asvs_count: target_asvs_count }
+            asvs_count: target_asvs_count, common_names: 'a|b' }
         ],
         neutral: [
           { type: neutral_display, taxon_name: ncbi_name_2, taxon_id: cal_id_2,
-            asvs_count: target_asvs_count }
+            asvs_count: target_asvs_count, common_names: 'a|b' }
         ]
       }
       expect(subject(ncbi_id_1)).to eq(expected)
@@ -303,21 +317,21 @@ describe 'GlobiService' do
       expected = {
         active: [
           { type: active_display, taxon_name: ncbi_name_2, taxon_id: 4,
-            asvs_count: target_asvs_count },
+            asvs_count: target_asvs_count, common_names: 'a|b' },
           { type: active_display, taxon_name: ncbi_name_1, taxon_id: 7,
-            asvs_count: source_asvs_count }
+            asvs_count: source_asvs_count, common_names: 'a|b' }
         ],
         passive: [
           { type: passive_display, taxon_name: ncbi_name_2, taxon_id: 6,
-            asvs_count: target_asvs_count },
+            asvs_count: target_asvs_count, common_names: 'a|b' },
           { type: passive_display, taxon_name: ncbi_name_1, taxon_id: 5,
-            asvs_count: source_asvs_count }
+            asvs_count: source_asvs_count, common_names: 'a|b' }
         ],
         neutral: [
           { type: neutral_display, taxon_name: ncbi_name_2, taxon_id: 2,
-            asvs_count: target_asvs_count },
+            asvs_count: target_asvs_count, common_names: 'a|b' },
           { type: neutral_display, taxon_name: ncbi_name_1, taxon_id: 3,
-            asvs_count: source_asvs_count }
+            asvs_count: source_asvs_count, common_names: 'a|b' }
         ]
       }
 
@@ -337,7 +351,7 @@ describe 'GlobiService' do
         passive: [],
         neutral: [
           { type: neutral_display, taxon_name: target_globi_name,
-            taxon_id: nil, asvs_count: nil }
+            taxon_id: nil, asvs_count: nil, common_names: nil }
         ]
       }
       expect(subject(ncbi_id_1)).to eq(expected)
@@ -354,7 +368,7 @@ describe 'GlobiService' do
         passive: [],
         neutral: [
           { type: neutral_display, taxon_name: source_globi_name,
-            taxon_id: nil, asvs_count: nil }
+            taxon_id: nil, asvs_count: nil, common_names: nil }
         ]
       }
 
@@ -380,15 +394,18 @@ describe 'GlobiService' do
         active: [],
         passive: [],
         neutral: [
-          { type: 'adjacent to', taxon_name: 'c', taxon_id: 3, asvs_count: 0 },
-          { type: 'adjacent to', taxon_name: 'd', taxon_id: 4, asvs_count: 0 },
-          { type: 'adjacent to', taxon_name: 'e', taxon_id: 2, asvs_count: 0 },
+          { type: 'adjacent to', taxon_name: 'c', taxon_id: 3, asvs_count: 0,
+            common_names: 'a|b' },
+          { type: 'adjacent to', taxon_name: 'd', taxon_id: 4, asvs_count: 0,
+            common_names: 'a|b' },
+          { type: 'adjacent to', taxon_name: 'e', taxon_id: 2, asvs_count: 0,
+            common_names: 'a|b' },
           { type: 'co occurs with', taxon_name: 'd', taxon_id: 4,
-            asvs_count: 0 },
+            asvs_count: 0, common_names: 'a|b' },
           { type: 'co occurs with', taxon_name: 'source_globi_name',
-            taxon_id: nil, asvs_count: nil },
+            taxon_id: nil, asvs_count: nil, common_names: nil },
           { type: 'co occurs with', taxon_name: 'target_globi_name',
-            taxon_id: nil, asvs_count: nil }
+            taxon_id: nil, asvs_count: nil, common_names: nil }
         ]
       }
 
@@ -438,7 +455,8 @@ describe 'GlobiService' do
             taxon_name: ncbi_name_2,
             taxon_id: cal_id_2,
             type: neutral_display,
-            asvs_count: target_asvs_count
+            asvs_count: target_asvs_count,
+            common_names: 'c|d'
           }
           expect(subject(globi, 'source')).to eq(expected)
         end
@@ -455,7 +473,8 @@ describe 'GlobiService' do
             taxon_name: ncbi_name_2,
             taxon_id: cal_id_2,
             type: neutral_display,
-            asvs_count: target_asvs_count
+            asvs_count: target_asvs_count,
+            common_names: 'c|d'
           }
           expect(subject(globi, 'source')).to eq(expected)
         end
@@ -472,7 +491,8 @@ describe 'GlobiService' do
             taxon_name: ncbi_name_2,
             taxon_id: cal_id_2,
             type: neutral_display,
-            asvs_count: target_asvs_count
+            asvs_count: target_asvs_count,
+            common_names: 'c|d'
           }
           expect(subject(globi, 'source')).to eq(expected)
         end
@@ -512,7 +532,8 @@ describe 'GlobiService' do
             taxon_name: ncbi_name_1,
             taxon_id: cal_id_1,
             type: neutral_display,
-            asvs_count: source_asvs_count
+            asvs_count: source_asvs_count,
+            common_names: 'a|b'
           }
           expect(subject(globi, 'target')).to eq(expected)
         end
@@ -529,7 +550,8 @@ describe 'GlobiService' do
             taxon_name: ncbi_name_1,
             taxon_id: cal_id_1,
             type: neutral_display,
-            asvs_count: source_asvs_count
+            asvs_count: source_asvs_count,
+            common_names: 'a|b'
           }
           expect(subject(globi, 'target')).to eq(expected)
         end
@@ -546,7 +568,8 @@ describe 'GlobiService' do
             taxon_name: ncbi_name_1,
             taxon_id: cal_id_1,
             type: neutral_display,
-            asvs_count: source_asvs_count
+            asvs_count: source_asvs_count,
+            common_names: 'a|b'
           }
           expect(subject(globi, 'target')).to eq(expected)
         end
