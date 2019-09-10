@@ -6,7 +6,7 @@
       <% end %>
       <%= @taxon.taxonRank %>: <%= @taxon.canonicalName %>
     </h1>
-  <h2><%= @taxon.common_names_display(parenthesis: false, truncate: false)%></h2>
+  <h2><%= @taxon.common_names_display(parenthesis: false, truncate: false) if @taxon.common_names.present? %></h2>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">

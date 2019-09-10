@@ -2,6 +2,7 @@
 
 class NcbiNode < ApplicationRecord
   include GlobiService
+  include CommonNames
 
   LINKS = %i[
     bold_link
@@ -116,18 +117,12 @@ class NcbiNode < ApplicationRecord
     ncbi_names.synonyms
   end
 
-  def common_names_display(parenthesis: true, truncate: true)
-    unless respond_to?(:common_names)
-      raise StandardError, 'must add common_names in sql query'
-    end
+  def common_names_display(parenthesis: true, truncate: true, first_only: false)
+    return if common_names.blank?
 
-    names = common_names.compact
-    return if names.blank?
-    if parenthesis
-      truncate ? "(#{common_names_string(names)})" : "(#{names.join(', ')})"
-    else
-      truncate ? common_names_string(names) : names.join(', ')
-    end
+    format_common_names(common_names, parenthesis: parenthesis,
+                                      truncate: truncate,
+                                      first_only: first_only)
   end
 
   def taxonomy_lineage
@@ -276,10 +271,5 @@ class NcbiNode < ApplicationRecord
   def format_resources
     @format_resources ||=
       FormatExternalResources.new(taxon_id, external_resources)
-  end
-
-  def common_names_string(names)
-    max = 3
-    names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
   end
 end

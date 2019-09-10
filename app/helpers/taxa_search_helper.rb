@@ -6,8 +6,8 @@ module TaxaSearchHelper
     result.image.try(:url)
   end
 
-  def self.common_names(record)
-    result = FormatTaxaSearchResult.new(record)
-    result.common_names
+  def self.display_common_names(names)
+    temp = Class.new { extend CommonNames }
+    temp.format_common_names(names)
   end
 end

@@ -2,6 +2,7 @@
 
 class FormatTaxaSearchResult
   include SqlParser
+  include CommonNames
 
   attr_reader :records
 
@@ -16,27 +17,14 @@ class FormatTaxaSearchResult
       inaturalist_api_image || eol_api_image
   end
 
-  def common_names(parenthesis: true, truncate: true)
-    unless records.common_names.present?
-      raise StandardError, 'must add common_names in sql query'
-    end
-
-    names = parse_string_arrays(records.common_names).compact
+  def common_names(names, parenthesis: true, truncate: true, first_only: false)
     return if names.blank?
 
-    if parenthesis
-      truncate ? "(#{common_names_string(names)})" : "(#{names.join(', ')})"
-    else
-      truncate ? common_names_string(names) : names.join(', ')
-    end
+    format_common_names(names, parenthesis: parenthesis, truncate: truncate,
+                               first_only: first_only)
   end
 
   private
-
-  def common_names_string(names)
-    max = 3
-    names.count > max ? "#{names.take(max).join(', ')}..." : names.join(', ')
-  end
 
   def eol_image
     image = value_for(records.eol_images)

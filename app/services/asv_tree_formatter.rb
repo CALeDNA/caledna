@@ -53,7 +53,8 @@ module AsvTreeFormatter
     end
 
     results = results.reject { |_k, v| v.blank? }
-    results[:common_name] = taxon.common_name
+    results[:common_name] =
+      taxon.common_names.present? ? taxon.common_names.split('|').first : nil
     results[:original_rank] = rank
 
     results
@@ -121,34 +122,17 @@ module AsvTreeFormatter
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/MethodLength
 
-  def ncbi_names_sql
-    <<-SQL
-      LEFT JOIN ncbi_names ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
-      AND (ncbi_names.name_class IN ('common name', 'genbank common name'))
-      AND ncbi_names.id IN (
-        SELECT ncbi_names.id
-        FROM ncbi_names
-        WHERE taxon_id = ncbi_nodes.taxon_id
-        AND name_class IN ('common name', 'genbank common name')
-        LIMIT 1
-      )
-    SQL
-  end
-
-  # rubocop:disable Metrics/MethodLength
   def fetch_asv_tree
     @fetch_asv_tree ||= begin
       NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
               .joins(:ncbi_division)
-              .joins(ncbi_names_sql)
               .where('cal_division_id IS NOT NULL')
               .select('ncbi_divisions.name as domain')
               .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
               .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
-              .select('ncbi_names.name as common_name')
+              .select('ncbi_nodes.common_names')
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def fetch_asv_tree_for_sample(sample_id)
     fetch_asv_tree.where('asvs.sample_id = ?', sample_id)

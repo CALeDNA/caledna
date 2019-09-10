@@ -11,24 +11,23 @@ module ResearchProjectService
       def identified_species
         sql = <<-SQL
           SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
-          ncbi_nodes.asvs_count_la_river as asvs_count,
+          ncbi_nodes.asvs_count_la_river as asvs_count, common_names,
+          ncbi_divisions.name as division_name,
           ARRAY_AGG(DISTINCT(samples.metadata ->> 'location')) as locations,
-          ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
           ARRAY_AGG(DISTINCT eol_image) AS eol_images,
           ARRAY_AGG(DISTINCT inat_image) AS inat_images,
           ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images
           FROM asvs
           JOIN ncbi_nodes
             ON asvs."taxonID" = ncbi_nodes.taxon_id
-          LEFT JOIN ncbi_names
-            ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
-            AND ncbi_names.name_class IN ('common name', 'genbank common name')
           JOIN samples
             ON asvs.sample_id = samples.id
           JOIN research_project_sources
             ON research_project_sources.sourceable_id = asvs.extraction_id
           LEFT JOIN external_resources
             ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
+          LEFT JOIN ncbi_divisions
+            ON ncbi_nodes.cal_division_id = ncbi_divisions.id
           WHERE sourceable_type = 'Extraction'
           AND research_project_id = $1
           AND (
@@ -36,8 +35,7 @@ module ResearchProjectService
             OR hierarchy_names ->> 'phylum' = 'Streptophyta'
           )
           AND rank  = 'species'
-          GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
-          ncbi_nodes.asvs_count_la_river
+          GROUP BY ncbi_nodes.taxon_id, ncbi_divisions.name
           ORDER BY asvs_count_la_river DESC;
         SQL
 

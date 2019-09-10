@@ -11,15 +11,15 @@
       <%= image_tag TaxaHelper.kingdom_icon(taxon.division_name), class: 'kingdom-icon' %>
       <%= taxon.division_name %><br>
     <% end %>
-    <%= "#{taxon.rank}: " if taxon.rank? %>
+    <%= "#{taxon.rank}: " if taxon.rank.present? %>
     <%= link_to taxon.canonical_name,
       taxon_path(id: taxon.taxon_id) %><br>
     <%
-      common_names = TaxaSearchHelper.common_names(taxon)
+      common_names = TaxaSearchHelper.display_common_names(taxon.common_names)
       if common_names.present?
     %>
       <%= common_names %><br>
     <% end %>
-    <%= pluralize(taxon.asvs_count, 'site') %>
+    <span class="meta"><%= pluralize(taxon.asvs_count, 'site') %></span>
   </p>
 </div>

@@ -36,12 +36,9 @@
           <%= taxon.rank %>
         </td>
         <td>
-        <% if taxon.taxon_id %>
-          <%= link_to taxon.canonical_name, taxon_path(id: taxon.taxon_id) %>
-        <% else %>
-          <%= taxon.canonical_name %>
-        <% end %>
-        (<%= pluralize(taxon.asvs_count_display, 'site') %>)
+        <%= link_to taxon.canonical_name, taxon_path(id: taxon.taxon_id) %>
+        <%= taxon.common_names_display(first_only: true) if taxon.common_names.present? %>
+         <span class="meta"><%= pluralize(taxon.asvs_count_display, 'site') %></span>
         </td>
       </tr>
       <% end %>
@@ -50,12 +47,13 @@
     <% if @children.length > 0 %>
       <h4>Immediate Children</h4>
       <table class="table taxonomy-tree">
-        <% @children.each do |child| %>
+        <% @children.each do |taxon| %>
         <tr>
-          <td><%= child.rank %></td>
+          <td><%= taxon.rank %></td>
           <td>
-            <%= link_to child.canonical_name, taxon_path(child) %>
-            (<%= child.asvs_count %> sites)
+            <%= link_to taxon.canonical_name, taxon_path(taxon) %>
+            <%= taxon.common_names_display(first_only: true) if taxon.common_names.present? %>
+            <span class="meta"><%= pluralize(taxon.asvs_count_display, 'site') %></span>
           </td>
         </tr>
         <% end %>

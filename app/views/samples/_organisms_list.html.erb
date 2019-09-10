@@ -14,14 +14,14 @@
 </div>
 
 <ul class="organism-list">
-  <% organisms.each do |organism| %>
-    <li class="<%= organism.division_name.tr(' ', '_') %> item">
-      <% if SamplesHelper.threatened?(organism.iucn_status) %>
-        (Name not shown because this species is <%= organism.iucn_status %>)
+  <% organisms.each do |taxon| %>
+    <li class="<%= taxon.division_name.tr(' ', '_') %> item">
+      <% if SamplesHelper.threatened?(taxon.iucn_status) %>
+        (Name not shown because this species is <%= taxon.iucn_status %>)
       <% else %>
-        <%= organism.rank %>:
-        <%= link_to SamplesHelper.taxonomy_string(organism), taxon_path(organism.taxon_id) %>
-        <%= "(#{organism.common_names})" if organism.common_names %>
+        <%= taxon.rank %>:
+        <%= link_to SamplesHelper.taxonomy_string(taxon), taxon_path(taxon.taxon_id) %>
+        <%= TaxaSearchHelper.display_common_names(taxon.common_names) if taxon.common_names %>
       <% end %>
     </li>
   <% end %>

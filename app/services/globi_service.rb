@@ -69,7 +69,8 @@ module GlobiService
         taxon_name: interaction.target_ncbi_name ||
           interaction.target_globi_name,
         taxon_id: interaction.target_cal_id,
-        asvs_count: interaction.target_asvs_count
+        asvs_count: interaction.target_asvs_count,
+        common_names: interaction.target_common_names
       }
     elsif relationship == 'target'
       type = InteractionType::TYPES[type.to_sym]
@@ -78,7 +79,8 @@ module GlobiService
         taxon_name: interaction.source_ncbi_name ||
           interaction.source_globi_name,
         taxon_id: interaction.source_cal_id,
-        asvs_count: interaction.source_asvs_count
+        asvs_count: interaction.source_asvs_count,
+        common_names: interaction.source_common_names
       }
     end
   end
@@ -128,12 +130,14 @@ module GlobiService
       ncbi_target.taxon_id AS target_cal_id,
       ncbi_target.asvs_count AS target_asvs_count,
       ncbi_target.canonical_name AS target_ncbi_name,
+      ncbi_target.common_names AS target_common_names,
       globi.target_ncbi_id AS target_ncbi_id,
       globi."targetTaxonName" AS target_globi_name,
 
       ncbi_source.taxon_id AS source_cal_id,
       ncbi_source.asvs_count AS source_asvs_count,
       ncbi_source.canonical_name AS source_ncbi_name,
+      ncbi_source.common_names AS source_common_names,
       globi.source_ncbi_id AS source_ncbi_id,
       globi."sourceTaxonName" AS source_globi_name
 

@@ -6,12 +6,8 @@
         <%= taxon.rank %>
       </td>
       <td>
-      <% if taxon.taxon_id %>
         <%= link_to taxon.canonical_name, taxon_path(id: taxon.taxon_id) %>
-      <% else %>
-        <%= taxon.canonical_name %>
-      <% end %>
-      (<%= pluralize(taxon.asvs_count_display, 'site') %>)
+        <%= taxon.common_names_display if taxon.common_names.present? %>
       </td>
     </tr>
   <% end %>

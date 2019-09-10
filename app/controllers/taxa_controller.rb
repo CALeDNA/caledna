@@ -40,23 +40,23 @@ class TaxaController < ApplicationController
 
   def top_sql(kingdom_sql = nil)
     <<-SQL
-    SELECT ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
+    SELECT
     ARRAY_AGG(DISTINCT eol_image) AS eol_images,
     ARRAY_AGG(DISTINCT inat_image) AS inat_images,
     ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images,
     ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.asvs_count,
-    ncbi_nodes.hierarchy_names
+    ncbi_nodes.hierarchy_names, ncbi_nodes.common_names,
+    ncbi_divisions.name as division_name
     FROM "ncbi_nodes"
     JOIN "external_resources"
        ON "external_resources"."ncbi_id" = "ncbi_nodes"."taxon_id"
-    LEFT JOIN ncbi_names
-      ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
-      AND ncbi_names.name_class IN ('common name', 'genbank common name')
+    LEFT JOIN ncbi_divisions
+      ON ncbi_nodes.cal_division_id = ncbi_divisions.id
     WHERE "ncbi_nodes"."rank" = 'species'
     AND (asvs_count > 0)
     #{kingdom_sql}
     GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
-    ncbi_nodes.asvs_count
+    ncbi_nodes.asvs_count, ncbi_divisions.name
     ORDER BY "ncbi_nodes"."asvs_count" DESC
     LIMIT 12;
     SQL
@@ -88,22 +88,8 @@ class TaxaController < ApplicationController
   # show
   #================
 
-  def join_ncbi_names_sql
-    <<-SQL
-    LEFT JOIN ncbi_names
-      ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
-      AND ncbi_names.name_class IN ('common name', 'genbank common name')
-    SQL
-  end
-
   def taxon
-    @taxon ||= begin
-      NcbiNode.joins(join_ncbi_names_sql)
-              .select('ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names')
-              .select('ncbi_nodes.*')
-              .group('ncbi_nodes.taxon_id, ncbi_nodes.canonical_name')
-              .find(params[:id])
-    end
+    @taxon ||= NcbiNode.find(params[:id])
   end
 
   def samples

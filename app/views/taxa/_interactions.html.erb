@@ -11,7 +11,7 @@
 <ul>
   <% taxon.biotic_interactions.each do |key, interactions| %>
     <% next if interactions.blank? %>
-    <h3><%= key %></h3>
+    <h3><%= key.capitalize %> Interactions</h3>
     <% interactions.each do |globi| %>
       <li class="<%= 'js-no-sites' if globi[:asvs_count].blank? || globi[:asvs_count].zero? %>">
         <%= globi[:type] %>
@@ -20,7 +20,8 @@
         <% else %>
           <%= globi[:taxon_name] %>
         <% end %>
-        (<%= pluralize globi[:asvs_count], 'site' %>)
+        <%= TaxaSearchHelper.display_common_names(globi[:common_names]) if globi[:common_names].present? %>
+        <span class="meta"><%= pluralize globi[:asvs_count], 'site' %></span>
       </li>
     <% end %>
   <% end %>

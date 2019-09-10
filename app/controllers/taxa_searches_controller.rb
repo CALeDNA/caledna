@@ -34,8 +34,7 @@ class TaxaSearchesController < ApplicationController
     FROM (
       SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
       ncbi_divisions.name as division_name,
-      asvs_count,
-      ARRAY_AGG(DISTINCT(ncbi_names.name)) as common_names,
+      asvs_count, common_names,
       ARRAY_AGG(DISTINCT eol_id) AS eol_ids,
       ARRAY_AGG(DISTINCT eol_image) AS eol_images,
       ARRAY_AGG(DISTINCT inaturalist_id) AS inat_ids,
@@ -46,9 +45,6 @@ class TaxaSearchesController < ApplicationController
       FROM ncbi_nodes
       LEFT JOIN external_resources
         ON external_resources.ncbi_id = ncbi_nodes.taxon_id
-      LEFT JOIN ncbi_names
-        ON ncbi_names.taxon_id = ncbi_nodes.taxon_id
-        AND ncbi_names.name_class IN ('common name', 'genbank common name')
       LEFT JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
       GROUP BY ncbi_nodes.taxon_id, ncbi_divisions.name
