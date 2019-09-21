@@ -15,7 +15,7 @@
   end
 
   def base_url
-    '/research_projects/pillar-point?section=edna_gbif_comparison'
+    '/research_projects/pillar-point/pages/edna_gbif_comparison'
   end
 %>
 
@@ -23,7 +23,7 @@
 
 <ul class="nav nav-pills">
   <% ['phylum', 'class', 'order', 'family', 'genus', 'species'].each do |rank| %>
-    <li class=<%= 'active' if rank == taxon_rank %>><a href="<%= base_url %>&taxon_rank=<%= rank %>">
+    <li class=<%= 'active' if rank == taxon_rank %>><a href="<%= base_url %>?taxon_rank=<%= rank %>">
       <%= rank %>
     </a></li>
   <% end %>
@@ -35,8 +35,8 @@
 
 <table class="table">
   <tr>
-    <th><a href="<%= base_url %>&taxon_rank=<%= taxon_rank %>&sort=taxon">Taxon</a></th>
-    <th><a href="<%= base_url %>&taxon_rank=<%= taxon_rank %>&sort=count">GBIF Occurences</a></th>
+    <th><a href="<%= base_url %>?taxon_rank=<%= taxon_rank %>&sort=taxon">Taxon</a></th>
+    <th><a href="<%= base_url %>?taxon_rank=<%= taxon_rank %>&sort=count">GBIF Occurences</a></th>
     <th>NCBI Match</th>
     <th>eDNA Match</th>
   </tr>

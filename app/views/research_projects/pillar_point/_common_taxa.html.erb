@@ -6,13 +6,13 @@
   gbif_id = params[:gbif_id] || @gbif_taxa_with_edna_map.first['gbif_id']
 
     def base_url
-    '/research_projects/pillar-point?section=common_taxa'
+    '/research_projects/pillar-point/pages/common_taxa'
   end
 %>
 
 <ul class="nav nav-pills">
   <% ['phylum', 'class', 'order', 'family', 'genus', 'species'].each do |rank| %>
-    <li class=<%= 'active' if rank == taxon_rank %>><a href="<%= base_url %>&taxon_rank=<%= rank %>">
+    <li class=<%= 'active' if rank == taxon_rank %>><a href="<%= base_url %>?taxon_rank=<%= rank %>">
       <%= rank %>
     </a></li>
   <% end %>
@@ -25,7 +25,7 @@
       <% @gbif_taxa_with_edna_map.each do |taxon| %>
         <li>
           <%= link_to CombineTaxonHelper.taxon_string(taxon),
-            "#{base_url}&taxon_rank=#{taxon_rank}" \
+            "#{base_url}?taxon_rank=#{taxon_rank}" \
             "&taxon=#{CombineTaxonHelper.target_taxon(taxon).tr(' ', '_')}"
           %>
           <br><%= CombineTaxonHelper.vernaculars(taxon) %>
