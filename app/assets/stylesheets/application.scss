@@ -233,6 +233,13 @@ legend.border {
   height: 80vh;
 }
 
+.small-map {
+  height: 50vh;
+  + img {
+    margin-top: 2em;
+  }
+}
+
 .samples-menu {
   margin-bottom: 1em;
 

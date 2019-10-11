@@ -7,6 +7,7 @@ module ResearchProjectService
     include ResearchProjectService::LaRiverServices::AreaDiversity
     include ResearchProjectService::LaRiverServices::DetectionFrequency
     include ResearchProjectService::LaRiverServices::IdentifiedSpecies
+    include ResearchProjectService::LaRiverServices::Intro
 
     attr_reader :project, :taxon_rank, :sort_by, :params,
                 :globi_taxon

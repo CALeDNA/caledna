@@ -1,0 +1,38 @@
+<h2>Stats</h2>
+<table class="table">
+  <tr>
+    <th>Location</th>
+    <th>Sample Sites</th>
+    <th>Unique Taxa Identified</th>
+  </tr>
+  <tr>
+    <td>Hahamongna</td>
+    <td><%= @stats[:hahamongna][:sites] %></td>
+    <td><%= @stats[:hahamongna][:taxa] %></td>
+  </tr>
+  <tr>
+    <td>Maywood</td>
+    <td><%= @stats[:maywood][:sites] %></td>
+    <td><%= @stats[:maywood][:taxa] %></td>
+  </tr>
+
+  <tr>
+    <td>Total</td>
+    <td><%= @stats[:total][:sites] %></td>
+    <td><%= @stats[:total][:taxa] %></td>
+  </tr>
+</table>
+
+<div class="col-sm-6">
+  <h3>Hahamongna</h3>
+  <div id="map_hahamongna" class="small-map"></div>
+  <%= image_tag 'la_river/bioblitz/Hahamongna.jpg', class: "img-responsive" %>
+</div>
+
+<div class="col-sm-6">
+  <h3>Maywood</h3>
+  <div id="map_maywood" class="small-map"></div>
+  <%= image_tag 'la_river/bioblitz/Maywood.jpg', class: "img-responsive" %>
+</div>
+
+<%= javascript_pack_tag 'la_river_intro' %>

@@ -24,7 +24,6 @@ $.get(inatApiEndpoint, function(data) {
 
 var apiEndpoint = "/api/v1/research_projects/la_river/sites";
 $.get(apiEndpoint, function(data) {
-  console.log(data);
   samplesData = data.samples.data.map(function(sample) {
     return baseMap.formatSamplesData(sample);
   });
