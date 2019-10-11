@@ -1,6 +1,6 @@
 <%= simple_form_for :search, url: search_path, method: :get, enforce_utf8: false,
   html: { class: 'form-inline search-form' }, wrapper: :inline_form do |f| %>
-  <%= f.input :query, placeholder: 'Search barcode, project name', label: false,
+  <%= f.input :query, placeholder: 'Search sample sites (e.g., barcode, project name)', label: false,
     input_html: { class: 'icon search-icon', value: @query, name: :query }  %>
   <%= f.button :button, name: nil do %>
     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
