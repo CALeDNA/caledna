@@ -12,6 +12,6 @@
   <%= render partial: "samples/list",
     locals: { samples: @samples, asvs_count: @asvs_count }  %>
 <% else %>
-  <%= render partial: "map" %>
+  <%= render partial: "shared/map" %>
   <%= javascript_pack_tag 'samples_map' %>
 <% end %>

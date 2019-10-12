@@ -23,6 +23,6 @@
 <% if params[:view] == 'list' %>
   <%= render partial: "samples/list", locals: { samples: @samples, asvs_count: @asvs_count }  %>
 <% else %>
-  <%= render partial: "samples/map" %>
+  <%= render partial: "shared/map" %>
   <%= javascript_pack_tag 'samples_search_map' %>
 <% end %>
