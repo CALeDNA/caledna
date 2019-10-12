@@ -23,7 +23,7 @@
     <%= render partial: "overview", locals: { taxon: @taxon, samples: @samples } %>
   </div>
   <% if @taxon.show_interactions? %>
-    <div role="tabpanel" class="tab-pane active" id="interactions">
+    <div role="tabpanel" class="tab-pane" id="interactions">
       <%= render partial: "interactions", locals: { taxon: @taxon, samples: @samples } %>
     </div>
   <% end %>
