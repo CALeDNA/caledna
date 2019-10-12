@@ -129,7 +129,7 @@ class TaxaController < ApplicationController
       NcbiNode.where(parent_taxon_id: id)
               .order('canonical_name')
               .page(params[:page])
-              .per(25)
+              .per(10)
     end
   end
 
