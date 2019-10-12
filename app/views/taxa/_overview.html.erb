@@ -3,7 +3,7 @@
 <div class="row">
   <div class="col-md-6">
     <% if taxon.image.present? %>
-      <%= image_tag taxon.image.url, alt: taxon.canonicalName, width: 350 %><br>
+      <%= image_tag taxon.image.url, alt: taxon.canonicalName, width: 350, class: 'taxa-hero-image' %><br>
       <p class='data-source'>
         Image Source: <%=  taxon.image.attribution %>
         via <%= link_to taxon.image.source, taxon.image.url %>
@@ -74,7 +74,7 @@
   </div>
 </div>
 
-<h3 id="samples" class="title">eDNA Sites</h3>
+<h3 id="samples" class="title">eDNA Sites with <%= taxon.canonical_name %></h3>
 
 <% if samples.total_records.zero? %>
   <div class="panel panel-default">

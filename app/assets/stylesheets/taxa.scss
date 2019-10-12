@@ -21,6 +21,10 @@
   .minor-rank {
     display: none;
   }
+
+  + .pagination {
+    margin: -15px 0 15px 0;
+  }
 }
 
 button.btn.js-taxonomy-abridged {
@@ -37,6 +41,10 @@ button.btn.js-interactions-all {
     display: flex;
     align-items: center;
   }
+}
+
+.taxa-hero-image {
+  margin-top: 2em;
 }
 
 .taxa-image-gallery {

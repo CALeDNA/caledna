@@ -1,5 +1,10 @@
 <h3>Biotic Interactions</h3>
 
+<p>
+Biotic interactions are the various ways that an organism interacts with other
+organisms or the environment (e.g. predator/prey, parasite/host)
+</p>
+
 <button class='btn my-btn-default js-interactions-edna'>
   show interactions with eDNA results
 </button>
@@ -8,10 +13,10 @@
   show all interactions
 </button>
 
-<ul>
-  <% taxon.biotic_interactions.each do |key, interactions| %>
-    <% next if interactions.blank? %>
-    <h3><%= key.capitalize %> Interactions</h3>
+<% taxon.biotic_interactions.each do |key, interactions| %>
+  <% next if interactions.blank? %>
+  <h4><%= key.capitalize %> Interactions</h4>
+  <ul>
     <% interactions.each do |globi| %>
       <li class="<%= 'js-no-sites' if globi[:asvs_count].blank? || globi[:asvs_count].zero? %>">
         <%= globi[:type] %>
@@ -24,5 +29,10 @@
         <span class="meta"><%= pluralize globi[:asvs_count], 'site' %></span>
       </li>
     <% end %>
-  <% end %>
-</ul>
+  </ul>
+<% end %>
+
+<p class='data-source'>Biotic Interactions Source:
+  <a href='https://www.globalbioticinteractions.org'>Global Biotic Interactions</a><br>
+  August 2018.
+</p>

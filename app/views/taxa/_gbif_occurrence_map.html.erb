@@ -1,5 +1,12 @@
 <% if taxon.gbif_id.present? %>
-  <h3>GBIF Occurrences</h3>
+  <h3>GBIF Occurrences for <%= taxon.canonical_name %></h3>
+
+  <p>
+  GBIF is international network that aggregates biodiversity data from
+  institutions from around the world. This map represents all the GBIF
+  occurrence records for <%= taxon.canonical_name %>.
+  </p>
+
   <div id="gbif-occurrence-map"></div>
   <p class='data-source'>Occurrence Source:
     <a href='https://www.gbif.org/species/<%= taxon.gbif_id %>'>GBIF</a>
