@@ -31,12 +31,8 @@ function createMap(selector, latLng) {
     maxZoom: 18
   });
 
-  L.tileLayer(
-    "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-    {
-      attribution:
-        'Map tiles by <a href="https://carto.com/">Carto</a>, under CC BY 3.0. Data by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, under ODbL'
-    }
-  ).addTo(map);
+  L.tileLayer(baseMap.tileLayerOptions.cartoPositron.tile, {
+    attribution: baseMap.tileLayerOptions.cartoPositron.attribution
+  }).addTo(map);
   return map;
 }

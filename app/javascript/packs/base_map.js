@@ -14,49 +14,51 @@ var filteredSamplesData = [];
 var disableClustering = 15;
 var currentMarkerFormat = "cluster";
 var apiEndpoint = null;
+var mapboxAccessToken =
+  "pk.eyJ1Ijoid3lraHVoIiwiYSI6ImNqY2gzMHJ3OTIyeW4zM210Zmgwd2ZoMXEifQ.p-v5zVFnVgvvdxKiVRpCRA";
 
-var openstreetmap = L.tileLayer(
-  "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-  {
+var tileLayerOptions = {
+  openstreetmap: {
+    tile: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
-  }
-);
-
-var accessToken =
-  "pk.eyJ1Ijoid3lraHVoIiwiYSI6ImNqY2gzMHJ3OTIyeW4zM210Zmgwd2ZoMXEifQ.p-v5zVFnVgvvdxKiVRpCRA";
-var mapboxSatellite = L.tileLayer(
-  "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=" +
-    accessToken,
-  {
+  },
+  mapboxSatellite: {
+    tile:
+      "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=" +
+      mapboxAccessToken,
     attribution:
       '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  }
-);
-
-var cartoPositron = L.tileLayer(
-  "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
-  {
+  },
+  cartoPositron: {
+    tile:
+      "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
     attribution:
       'Map tiles by <a href="https://carto.com/">Carto</a>, under CC BY 3.0. Data by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, under ODbL'
-  }
-);
-
-var thuderforestLandscape = L.tileLayer(
-  "https://tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=5354ed1fe58c49efb6b5e34ec3caf15e",
-  {
+  },
+  thuderforestLandscape: {
+    tile:
+      "https://tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=5354ed1fe58c49efb6b5e34ec3caf15e",
     attribution:
       'Maps © <a href="http://www.thunderforest.com/">Thunderforest</a>, Data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
   }
-);
+};
 
 var latlng = L.latLng(initialLat, initialLng);
 
-var baseMaps = {
-  Streets: openstreetmap,
-  Satellite: mapboxSatellite,
-  Terrain: thuderforestLandscape,
-  Minimal: cartoPositron
+var tileLayers = {
+  Streets: L.tileLayer(tileLayerOptions.openstreetmap.tile, {
+    attribution: tileLayerOptions.openstreetmap.attribution
+  }),
+  Satellite: L.tileLayer(tileLayerOptions.mapboxSatellite.tile, {
+    attribution: tileLayerOptions.mapboxSatellite.attribution
+  }),
+  Terrain: L.tileLayer(tileLayerOptions.thuderforestLandscape.tile, {
+    attribution: tileLayerOptions.thuderforestLandscape.attribution
+  }),
+  Minimal: L.tileLayer(tileLayerOptions.cartoPositron.tile, {
+    attribution: tileLayerOptions.cartoPositron.attribution
+  })
 };
 
 var individualMarkerLayer = L.layerGroup();
@@ -85,7 +87,7 @@ function createMap(customLatlng = null, customInitialZoom = null) {
     center: latlng,
     zoom: initialZoom,
     maxZoom: maxZoom,
-    layers: [openstreetmap]
+    layers: [tileLayers.Streets]
   });
 }
 
@@ -379,11 +381,11 @@ function createOverlays(map) {
         "UC Reserves": uc_reserves
       };
 
-      var envLayers = Object.keys(environmentLayers).map(function(layer) {
+      Object.keys(environmentLayers).map(function(layer) {
         overlayMaps[layer] = environmentLayers[layer].layer;
       });
 
-      L.control.layers(baseMaps, overlayMaps).addTo(map);
+      L.control.layers(tileLayers, overlayMaps).addTo(map);
     });
   });
 }
@@ -582,5 +584,6 @@ export default {
   formatInatData,
   createIconMarker,
   addMapLayerModal,
-  formatSamplesData
+  formatSamplesData,
+  tileLayerOptions
 };
