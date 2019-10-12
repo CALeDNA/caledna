@@ -23,11 +23,11 @@
             About
           </a>
           <ul class="dropdown-menu">
-            <li><a href="http://www.ucedna.com/our-mission/">Our Mission</a>
-            <li><a href="http://www.ucedna.com/why-protect-biodiversity/">Why Protect Biodiversity?</a>
-            <li><a href="http://www.ucedna.com/frequently-asked-questions">FAQ</a>
-            <li><a href="http://www.ucedna.com/whos-on-the-team/">Meet the Team</a>
-            <li><a href="http://www.ucedna.com/contact/">Contact Us</a>
+            <li><a href="http://www.ucedna.com/our-mission/">Our Mission</a></li>
+            <li><a href="http://www.ucedna.com/why-protect-biodiversity/">Why Protect Biodiversity?</a></li>
+            <li><a href="http://www.ucedna.com/frequently-asked-questions">FAQ</a></li>
+            <li><a href="http://www.ucedna.com/whos-on-the-team/">Meet the Team</a></li>
+            <li><a href="http://www.ucedna.com/contact/">Contact Us</a></li>
           </ul>
         </li>
 
@@ -36,10 +36,10 @@
             Explore Data
           </a>
           <ul class="dropdown-menu">
-            <li><%= nav_link 'Sites', samples_path %></li>
-            <li><%= nav_link 'Identified Organisms', taxa_path %></li>
-            <li><%= nav_link 'Field Data Projects', field_data_projects_path %></li>
-            <li><%= nav_link 'Research Projects', research_projects_path %></li>
+            <%= nav_link 'Sites', samples_path %>
+            <%= nav_link 'Identified Organisms', taxa_path %>
+            <%= nav_link 'Field Data Projects', field_data_projects_path %>
+            <%= nav_link 'Research Projects', research_projects_path %>
             <li role="separator" class="divider"></li>
             <li><a href="http://www.ucedna.com/how-are-samples-analyzed/">How are Samples Analyzed?</a></li>
             <li><a href="http://www.ucedna.com/disclaimer/">Disclaimer</a></li>
@@ -62,9 +62,9 @@
             News
           </a>
           <ul class="dropdown-menu">
-            <li><a href="http://www.ucedna.com/blog">News</a>
-            <li><%= nav_link "Events", events_path %></li>
-            <li><a href="http://www.ucedna.com/newsletter">Newsletter</a>
+            <li><a href="http://www.ucedna.com/blog">News</a></li>
+            <%= nav_link "Events", events_path %>
+            <li><a href="http://www.ucedna.com/newsletter">Newsletter</a></li>
           </ul>
         </li>
       </ul>
@@ -77,8 +77,8 @@
               <%= current_user.username %>
             </a>
             <ul class="dropdown-menu">
-              <li><%= nav_link "Profile", profile_path %></li>
-              <li><%= nav_link "Settings", edit_user_registration_path %></li>
+              <%= nav_link "Profile", profile_path %>
+              <%= nav_link "Settings", edit_user_registration_path %>
             </ul>
           </li>
 

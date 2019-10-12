@@ -31,7 +31,7 @@
 
     <table class="table taxonomy-tree">
       <% taxon.taxonomy_lineage.each do |taxon|%>
-      <tr class=<%= 'js-minor-rank' unless CalTaxon::TAXON_RANK.include?(taxon.rank) %>>
+      <tr <%= 'class=js-minor-rank' unless CalTaxon::TAXON_RANK.include?(taxon.rank) %>>
         <td>
           <%= taxon.rank %>
         </td>
