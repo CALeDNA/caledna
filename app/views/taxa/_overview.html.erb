@@ -69,14 +69,14 @@
     <% if taxon.conservation_status? %>
       <h3>Conservation Status</h3>
       <p><%= taxon.conservation_status %></p>
-      <p class='data-source'>Source: <a href='www.iucnredlist.org'>IUCN 2017. IUCN Red List of Threatened Species.</a> Version 2017-3</p>
+      <p class='data-source'>Conservation Status Source: <a href='www.iucnredlist.org'>IUCN 2017. IUCN Red List of Threatened Species.</a> Version 2017-3</p>
     <% end %>
 
     <% if taxon.gbif_id.present? %>
       <h3>Known Occurrences</h3>
       <div id="gbif-occurrence-map"></div>
 
-      <p class='data-source'>Source:
+      <p class='data-source'>Occurrence Source:
         <a href='https://www.gbif.org/species/<%= taxon.gbif_id %>'>GBIF</a>
       </p>
     <% end%>
@@ -103,7 +103,7 @@
     </div>
   <% end %>
 <% else %>
-  <h2 id="samples" class="title"><%= pluralize(samples.total_records, 'Site') %></h2>
+  <h2 id="samples" class="title">Sites</h2>
 
   <% if samples.present? %>
     <div class="samples-menu">
@@ -125,14 +125,14 @@
           <input type="checkbox" checked value="asvs" class="js-taxa-markers">
           <svg height="30" width="100%">
             <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
-            <text x="30" y="20">sites with <%= taxon.canonical_name %> <%= taxon.common_names_display(truncate: false) %></text>
+            <text x="30" y="20"><%= pluralize(samples.total_records, 'site') %> with <%= taxon.canonical_name %> <%= taxon.common_names_display(truncate: false) %></text>
           </svg>
         </div>
         <div>
           <input type="checkbox" value="presence" class="js-taxa-markers">
           <svg height="30" width="100%">
             <circle cx="15" cy="15" r="7" stroke="#777" stroke-width="2" fill="#ddd" />
-            <text x="30" y="20">sites with results</text>
+            <text x="30" y="20">sites with eDNA results</text>
           </svg>
         </div>
       </div>
