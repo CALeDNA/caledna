@@ -1,0 +1,7 @@
+<% if taxon.gbif_id.present? %>
+  <h3>GBIF Occurrences</h3>
+  <div id="gbif-occurrence-map"></div>
+  <p class='data-source'>Occurrence Source:
+    <a href='https://www.gbif.org/species/<%= taxon.gbif_id %>'>GBIF</a>
+  </p>
+<% end %>

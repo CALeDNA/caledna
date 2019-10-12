@@ -38,12 +38,14 @@
 <script>
 (function(){
   window.caledna = {
-    gbif_id: <%= @taxon.gbif_id %>
+    gbif_id: <%= @taxon.gbif_id.present? ? @taxon.gbif_id : 'null' %>
   }
 })(window)
 </script>
 
 <%= javascript_pack_tag 'taxa_show' %>
 <%= javascript_pack_tag 'taxa_detail_map' %>
-<%= javascript_pack_tag 'gbif_occurrence_map' %>
 
+<% if @taxon.gbif_id.present? %>
+  <%= javascript_pack_tag 'gbif_occurrence_map' %>
+<% end %>
