@@ -17,7 +17,7 @@
   <%= render partial: "samples/list",
     locals: { samples: @samples, asvs_count: @asvs_count }  %>
 <% else %>
-  <div class="taxa-markers">
+  <form autocomplete="off" class="taxa-markers">
     <div>
       <input type="checkbox" checked value="asvs" class="js-taxa-markers">
       <svg height="30"  width="100%">
@@ -32,7 +32,7 @@
         <text x="30" y="20">iNaturalist observations</text>
       </svg>
     </div>
-  </div>
+  </form>
 
   <div id='mapid'></div>
   <%= render partial: 'shared/map_layer_modal' %>

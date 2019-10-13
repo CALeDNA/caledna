@@ -113,7 +113,7 @@
   <% if params[:view] == 'list' %>
     <%= render partial: "list", locals: { samples: samples, asvs_count: @asvs_count }  %>
   <% else %>
-    <div class="taxa-markers">
+    <form autocomplete="off" class="taxa-markers">
       <div>
         <input type="checkbox" checked value="asvs" class="js-taxa-markers">
         <svg height="30" width="100%">
@@ -128,7 +128,7 @@
           <text x="30" y="20">sites with eDNA results</text>
         </svg>
       </div>
-    </div>
+    </form>
     <%= render partial: "shared/map" %>
     <%= render partial: "gbif_occurrence_map", locals: { taxon: taxon } %>
 
