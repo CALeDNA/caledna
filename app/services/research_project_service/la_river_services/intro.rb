@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/MethodLength
 module ResearchProjectService
   module LaRiverServices
     module Intro
@@ -56,4 +55,3 @@ module ResearchProjectService
     end
   end
 end
-# rubocop:enable Metrics/MethodLength
