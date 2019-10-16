@@ -2,5 +2,6 @@
 
 FactoryBot.define do
   factory :asv do
+    ncbi_node
   end
 end
