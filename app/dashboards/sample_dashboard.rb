@@ -4,7 +4,7 @@ require "administrate/base_dashboard"
 
 class SampleDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
-    field_data_project: Field::BelongsTo.with_options(
+    field_project: Field::BelongsTo.with_options(
       order: 'name asc', # order in form dropdown
       searchable: true, # make associated project name searchable
       searchable_field: 'name'
@@ -45,7 +45,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :latitude,
     :longitude,
     :status_cd,
-    :field_data_project,
+    :field_project,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
@@ -54,7 +54,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :longitude,
     :altitude,
     :gps_precision,
-    :field_data_project,
+    :field_project,
     :research_projects,
     :location,
     :status_cd,
@@ -80,7 +80,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :longitude,
     :altitude,
     :gps_precision,
-    :field_data_project,
+    :field_project,
     :research_projects,
     :location,
     :status_cd,

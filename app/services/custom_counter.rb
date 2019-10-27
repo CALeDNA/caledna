@@ -31,8 +31,8 @@ module CustomCounter
               .joins('JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes.taxon_id')
               .joins('JOIN samples ON samples.id = asvs.sample_id')
               .select('DISTINCT(sample_id)')
-              .where('samples.field_data_project_id = ?',
-                     FieldDataProject::LA_RIVER.id)
+              .where('samples.field_project_id = ?',
+                     FieldProject::LA_RIVER.id)
     asvs.map(&:sample_id)
   end
 
@@ -67,7 +67,7 @@ module CustomCounter
         FROM asvs
         JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
         JOIN samples ON samples.id = asvs.sample_id
-        AND samples.field_data_project_id = #{FieldDataProject::LA_RIVER.id}
+        AND samples.field_project_id = #{FieldProject::LA_RIVER.id}
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
       GROUP BY foo.taxon_id;

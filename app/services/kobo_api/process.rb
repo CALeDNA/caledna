@@ -22,7 +22,7 @@ module KoboApi
 
     def save_project_data(hash_payload)
       data = OpenStruct.new(hash_payload)
-      project = ::FieldDataProject.new(
+      project = ::FieldProject.new(
         name: data.title,
         description: data.description,
         kobo_id: data.id,
@@ -33,21 +33,21 @@ module KoboApi
       project.save
     end
 
-    def save_sample_data(field_data_project_id, kobo_id, hash_payload)
+    def save_sample_data(field_project_id, kobo_id, hash_payload)
       case kobo_id
       when 95_481, 87_534, 95_664, 83_937
-        process_multi_samples(field_data_project_id, hash_payload)
+        process_multi_samples(field_project_id, hash_payload)
       when 136_577, 130_560, 138_676, 170_620
-        process_single_sample_v1(field_data_project_id, hash_payload)
+        process_single_sample_v1(field_project_id, hash_payload)
       else
-        process_single_sample_v2(field_data_project_id, hash_payload)
+        process_single_sample_v2(field_project_id, hash_payload)
       end
     end
 
     private
 
     def project_ids
-      FieldDataProject.pluck(:kobo_id)
+      FieldProject.pluck(:kobo_id)
     end
 
     def clean_kit_number(kit_number)
@@ -97,7 +97,7 @@ module KoboApi
       barcode
     end
 
-    def process_single_sample_v1(field_data_project_id, hash_payload)
+    def process_single_sample_v1(field_project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
       data.barcode = format_barcode(data)
       data.gps = data.Get_the_GPS_Location_e_this_more_accurate
@@ -110,13 +110,13 @@ module KoboApi
         data.Where_are_you_A_UC_serve_or_in_Yosemite,
         data.Location
       ].compact.join(' ')
-      data.field_data_project_id = field_data_project_id
+      data.field_project_id = field_project_id
 
       sample = save_sample(data, hash_payload)
       save_photos(sample.id, hash_payload)
     end
 
-    def process_single_sample_v2(field_data_project_id, hash_payload)
+    def process_single_sample_v2(field_project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
       data.barcode = format_barcode(data)
       data.gps = data.Get_the_GPS_Location_e_this_more_accurate
@@ -126,7 +126,7 @@ module KoboApi
         data.Where_are_you_A_UC_serve_or_in_Yosemite,
         data.Location
       ].compact.join(' ')
-      data.field_data_project_id = field_data_project_id
+      data.field_project_id = field_project_id
       data.habitat = data._optional_Describe_ou_are_sampling_from
       data.depth = data._optional_What_dept_re_your_samples_from
       data.environmental_features = [
@@ -140,7 +140,7 @@ module KoboApi
       save_photos(sample.id, hash_payload)
     end
 
-    def process_multi_samples(field_data_project_id, hash_payload)
+    def process_multi_samples(field_project_id, hash_payload)
       data = OpenStruct.new(hash_payload)
       kit_number = clean_kit_number(data.kit || '')
 
@@ -151,7 +151,7 @@ module KoboApi
         data.field_notes = data.send("#{prefix[:other]}comments")
         data.location =
           [data.somewhere, data.where, data.reserves].compact.join('; ')
-        data.field_data_project_id = field_data_project_id
+        data.field_project_id = field_project_id
 
         sample = save_sample(data, hash_payload)
         photo_payload = find_photos(prefix[:other], hash_payload)
@@ -173,7 +173,7 @@ module KoboApi
 
     def save_sample(data, hash_payload)
       sample_data = {
-        field_data_project_id: data.field_data_project_id,
+        field_project_id: data.field_project_id,
         kobo_id: data._id,
         kobo_data: hash_payload,
         collection_date: data.Enter_the_sampling_date_and_time,

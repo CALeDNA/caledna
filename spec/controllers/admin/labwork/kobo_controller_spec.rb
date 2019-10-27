@@ -25,7 +25,7 @@ describe Admin::Labwork::KoboController do
     end
 
     it 'assigns projects' do
-      project = create(:field_data_project)
+      project = create(:field_project)
       get :import_kobo
 
       expect(assigns[:projects]).to eq([project])
@@ -60,7 +60,7 @@ describe Admin::Labwork::KoboController do
 
   describe '#POST import_samples' do
     let(:kobo_id) { 10 }
-    let(:project) { create(:field_data_project, kobo_id: kobo_id) }
+    let(:project) { create(:field_project, kobo_id: kobo_id) }
 
     it 'calls KoboApi::Process and KoboApi::Connect methods' do
       kobo_data = [

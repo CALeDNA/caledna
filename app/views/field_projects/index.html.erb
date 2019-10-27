@@ -1,4 +1,4 @@
-<h1>Field Data Projects</h1>
+<h1>Field Projects</h1>
 <p class="page-description">
   Here's all the events where community scientists and researchers collected
   soil and sediment samples.
@@ -11,7 +11,7 @@
   </tr>
 
   <% @projects.each do |project| %>
-    <tr class="clickable_row" data-path='<%=  field_data_project_path project%>' >
+    <tr class="clickable_row" data-path='<%=  field_project_path project%>' >
       <td><%= project.name %></td>
       <td><%= project.samples.approved.with_coordinates.count %> </td>
     </tr>

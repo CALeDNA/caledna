@@ -1143,7 +1143,7 @@ describe ProcessTestResults do
 
   describe '#find_sample_from_barcode' do
     let(:barcode) { 'K0001-LA-S1' }
-    let(:project) { create(:field_data_project, name: 'unknown') }
+    let(:project) { create(:field_project, name: 'unknown') }
     let(:status) { :processing_sample }
 
     def subject
@@ -1152,17 +1152,17 @@ describe ProcessTestResults do
 
     context 'there are no samples for a given bar code' do
       it 'creates a new sample' do
-        stub_const('FieldDataProject::DEFAULT_PROJECT', project)
+        stub_const('FieldProject::DEFAULT_PROJECT', project)
 
         expect { subject }.to change { Sample.count }.by(1)
       end
 
       it 'returns the created sample' do
-        stub_const('FieldDataProject::DEFAULT_PROJECT', project)
+        stub_const('FieldProject::DEFAULT_PROJECT', project)
         result = subject
 
         expect(result.barcode).to eq(barcode)
-        expect(result.field_data_project).to eq(project)
+        expect(result.field_project).to eq(project)
         expect(result.missing_coordinates).to eq(true)
         expect(result.status).to eq(status)
       end

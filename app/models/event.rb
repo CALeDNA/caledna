@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Event < ApplicationRecord
-  belongs_to :field_data_project, optional: true
+  belongs_to :field_project, optional: true
   has_one_attached :flyer
   has_many :event_registrations
   has_many :users, through: :event_registrations

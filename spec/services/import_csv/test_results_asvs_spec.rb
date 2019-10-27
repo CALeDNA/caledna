@@ -200,8 +200,8 @@ describe ImportCsv::TestResultsAsvs do
     include ActiveJob::TestHelper
 
     before(:each) do
-      project = create(:field_data_project, name: 'unknown')
-      stub_const('FieldDataProject::DEFAULT_PROJECT', project)
+      project = create(:field_project, name: 'unknown')
+      stub_const('FieldProject::DEFAULT_PROJECT', project)
     end
 
     def subject(file, research_project_id, extraction_type_id, primer)
@@ -258,8 +258,8 @@ describe ImportCsv::TestResultsAsvs do
     include ActiveJob::TestHelper
 
     before(:each) do
-      project = create(:field_data_project, name: 'unknown')
-      stub_const('FieldDataProject::DEFAULT_PROJECT', project)
+      project = create(:field_project, name: 'unknown')
+      stub_const('FieldProject::DEFAULT_PROJECT', project)
     end
 
     def subject(data, sample_cells, extractions, primer)

@@ -2,7 +2,7 @@
 
 require "administrate/base_dashboard"
 
-class FieldDataProjectDashboard < Administrate::BaseDashboard
+class FieldProjectDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     samples: Field::HasMany,
     id: Field::Number,

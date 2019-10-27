@@ -54,7 +54,7 @@ module ImportCsv
         location: row['Reserve'],
         field_notes: row['Notes'],
         substrate_cd: row['Substrate'],
-        field_data_project_id: FieldDataProject.find_by(name: 'unknown').id
+        field_project_id: FieldProject.find_by(name: 'unknown').id
       }
     end
     # rubocop:enable Metrics/MethodLength

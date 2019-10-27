@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe 'Samples' do
   describe 'samples index page' do
-    let(:project) { create(:field_data_project) }
+    let(:project) { create(:field_project) }
     let!(:sample1) do
       create(:sample, barcode: 'sample 1', status_cd: :approved, latitude: 1,
                       longitude: 1)

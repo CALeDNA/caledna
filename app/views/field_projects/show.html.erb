@@ -15,8 +15,8 @@
     <%= pluralize(@project.samples.approved.with_coordinates.count, 'site') %> approved.
     <% if @project.samples.approved.with_coordinates.count > 0 %>
       <%= render partial: 'samples_links', locals: {
-        map_path: field_data_project_path(id: @project.id),
-        list_path: field_data_project_path(id: @project.id, view: :list) } %>
+        map_path: field_project_path(id: @project.id),
+        list_path: field_project_path(id: @project.id, view: :list) } %>
     <% end %>
   </p>
 
@@ -24,8 +24,8 @@
     <%= pluralize(@project.samples.results_completed.with_coordinates.count, 'site') %> with DNA results.
     <% if @project.samples.results_completed.with_coordinates.count > 0 %>
       <%= render partial: 'samples_links', locals: {
-        map_path: field_data_project_path(id: @project.id, status: :results_completed),
-        list_path: field_data_project_path(id: @project.id, status: :results_completed, view: :list) } %>
+        map_path: field_project_path(id: @project.id, status: :results_completed),
+        list_path: field_project_path(id: @project.id, status: :results_completed, view: :list) } %>
     <% end %>
   </p>
 </div>

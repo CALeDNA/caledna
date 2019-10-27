@@ -2,14 +2,14 @@
 
 module Api
   module V1
-    class FieldDataProjectsController < Api::V1::ApplicationController
+    class FieldProjectsController < Api::V1::ApplicationController
       before_action :add_cors_headers
       include PaginatedSamples
       include BatchData
 
       def show
         render json: {
-          samples: SampleSerializer.new(field_data_project_samples),
+          samples: SampleSerializer.new(field_project_samples),
           asvs_count: asvs_count
         }, status: :ok
       end

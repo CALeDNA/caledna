@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe FieldDataProjectPolicy do
+describe FieldProjectPolicy do
   subject { described_class }
   let(:director) { create(:director) }
   let(:lab_manager) { create(:lab_manager) }

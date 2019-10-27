@@ -26,7 +26,7 @@
     <tr>
       <th><%= check_box_tag :rows %></th>
       <th>Barcode</th>
-      <th>Field Data Project</th>
+      <th>Field Project</th>
       <th>Lat/Lng</th>
       <th>Photo</th>
     </tr>
@@ -34,7 +34,7 @@
     <tr>
       <td><%= check_box_tag 'batch_ids[]', sample.id, false, class: "row" %> </td>
       <td><%= link_to sample.barcode, admin_sample_path(sample.id) %></td>
-      <td><%= link_to sample.field_data_project.name, admin_field_data_project_path(sample.field_data_project) %></td>
+      <td><%= link_to sample.field_project.name, admin_field_project_path(sample.field_project) %></td>
       <td>
         <% unless sample.inside_california? %>
           WARNING: coordinates are not in California.<br>

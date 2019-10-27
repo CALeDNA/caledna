@@ -46,21 +46,21 @@ module PaginatedSamples
   end
 
   # =======================
-  # field data projects
+  # field projects
   # =======================
 
-  def field_data_project_samples
-    all_samples(query_string: field_data_project_query_string)
+  def field_project_samples
+    all_samples(query_string: field_project_query_string)
   end
 
-  def field_data_project_paginated_samples
-    paginated_samples(query_string: field_data_project_query_string)
+  def field_project_paginated_samples
+    paginated_samples(query_string: field_project_query_string)
   end
 
-  def field_data_project_query_string
+  def field_project_query_string
     query = {}
     query[:status_cd] = params[:status] if params[:status]
-    query[:field_data_project_id] = params[:id]
+    query[:field_project_id] = params[:id]
     query
   end
 

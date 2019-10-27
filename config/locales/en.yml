@@ -50,7 +50,7 @@ en:
         ecosystem_category_cd: 'Ecosystem Category'
         alt_id: 'Alt ID'
         kobo_id: 'Kobo ID'
-      field_data_project:
+      field_project:
         kobo_id: 'Kobo ID'
       survey_question:
         type_cd: Type

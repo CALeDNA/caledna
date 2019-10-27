@@ -2,7 +2,7 @@ require "administrate/base_dashboard"
 
 class EventDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
-    field_data_project: Field::BelongsTo,
+    field_project: Field::BelongsTo,
     flyer: ActiveStorageAttachmentField,
     id: Field::Number,
     name: Field::String,
@@ -28,7 +28,7 @@ class EventDashboard < Administrate::BaseDashboard
     :description,
     :location,
     :contact,
-    :field_data_project,
+    :field_project,
     :flyer,
     :created_at,
     :updated_at,
@@ -43,7 +43,7 @@ class EventDashboard < Administrate::BaseDashboard
     :description,
     :location,
     :contact,
-    :field_data_project,
+    :field_project,
     :flyer
   ].freeze
 

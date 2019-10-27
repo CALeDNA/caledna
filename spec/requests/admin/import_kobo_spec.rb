@@ -39,7 +39,7 @@ describe 'ImportKobo' do
         stub_connect_projects
 
         expect { post admin_labwork_import_kobo_projects_path }
-          .to change(FieldDataProject, :count).by(1)
+          .to change(FieldProject, :count).by(1)
       end
     end
 
@@ -49,7 +49,7 @@ describe 'ImportKobo' do
         ActiveJob::Base.queue_adapter = :test
         include ActiveJob::TestHelper
 
-        project = create(:field_data_project, kobo_id: 1)
+        project = create(:field_project, kobo_id: 1)
 
         expect { post admin_labwork_import_kobo_samples_path(id: project.id) }
           .to have_enqueued_job(ImportKoboSampleJob)
@@ -71,7 +71,7 @@ describe 'ImportKobo' do
         stub_connect_projects
 
         expect { post admin_labwork_import_kobo_projects_path }
-          .to change(FieldDataProject, :count).by(0)
+          .to change(FieldProject, :count).by(0)
       end
     end
 
@@ -79,7 +79,7 @@ describe 'ImportKobo' do
       it 'does not create a new sample' do
         stub_connect_project
 
-        project = create(:field_data_project, kobo_id: 1)
+        project = create(:field_project, kobo_id: 1)
 
         expect { post admin_labwork_import_samples_path(id: project.id) }
           .to change(Sample, :count).by(0)

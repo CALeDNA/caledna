@@ -7,7 +7,7 @@ class Highlight < ApplicationRecord
 
   def project
     return unless highlightable_type == 'Asv'
-    highlightable.extraction.sample.field_data_project
+    highlightable.extraction.sample.field_project
   end
 
   def sample

@@ -4,11 +4,11 @@ class Sample < ApplicationRecord
   include PgSearch
   include InsidePolygon
   multisearchable against: %i[
-    barcode status_cd location_display field_data_project_name
+    barcode status_cd location_display field_project_name
     research_projects_names
   ]
 
-  belongs_to :field_data_project
+  belongs_to :field_project
   has_many :photos
   has_many :extractions
   has_many :asvs
@@ -18,7 +18,7 @@ class Sample < ApplicationRecord
   validate :unique_approved_barcodes
 
   scope :la_river, (lambda do
-    where(field_data_project_id: FieldDataProject::LA_RIVER.try(:id))
+    where(field_project_id: FieldProject::LA_RIVER.try(:id))
   end)
   scope :processing_sample, -> { where(status_cd: :processing_sample) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
@@ -42,8 +42,8 @@ class Sample < ApplicationRecord
     status.to_s.tr('_', ' ')
   end
 
-  def field_data_project_name
-    field_data_project.name
+  def field_project_name
+    field_project.name
   end
 
   def inside_california?

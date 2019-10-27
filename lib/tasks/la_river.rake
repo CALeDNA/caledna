@@ -6,13 +6,13 @@ namespace :la_river do
     path = args[:path]
 
     data = JSON.parse(File.read(path))
-    project = FieldDataProject.find_by(name: 'Los Angeles River')
+    project = FieldProject.find_by(name: 'Los Angeles River')
 
     raise 'Cannot file project' if project.blank?
 
     data.each do |datum|
       puts datum['_id']
-      results = Sample.where(field_data_project: project)
+      results = Sample.where(field_project: project)
                       .where("(kobo_data ->> '_id')::INTEGER = ?", datum['_id'])
 
       next if results.blank?

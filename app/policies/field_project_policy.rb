@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FieldDataProjectPolicy < ApplicationPolicy
+class FieldProjectPolicy < ApplicationPolicy
   def index?
     all_roles
   end

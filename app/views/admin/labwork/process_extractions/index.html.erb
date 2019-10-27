@@ -15,14 +15,14 @@
       <tr>
         <th><%= check_box_tag :rows %></th>
         <th>Barcode</th>
-        <th>Field Data Project</th>
+        <th>Field Project</th>
         <th></th>
       </tr>
       <% @extractions.each do |extraction| %>
       <tr>
         <th><%= check_box_tag "batch_ids[]", extraction.id, false, class: "row" %></th>
         <td><%= link_to extraction.sample.barcode, admin_sample_path( extraction.sample)  %></td>
-        <td><%= link_to extraction.sample.field_data_project.name, admin_field_data_project_path(extraction.sample.field_data_project) %></td>
+        <td><%= link_to extraction.sample.field_project.name, admin_field_project_path(extraction.sample.field_project) %></td>
         <td><%= link_to 'Edit', edit_admin_extraction_path(extraction) %></td>
       </tr>
       <% end %>

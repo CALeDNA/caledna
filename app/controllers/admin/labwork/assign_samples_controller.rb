@@ -7,7 +7,7 @@ module Admin
         authorize 'Labwork::AssignSamples'.to_sym, :index?
 
         @samples = Sample.where(status_cd: :approved)
-                         .order(:field_data_project_id, :barcode)
+                         .order(:field_project_id, :barcode)
                          .page params[:page]
         @processors = Researcher.sample_processors
                                 .collect { |p| [p.username, p.id] }

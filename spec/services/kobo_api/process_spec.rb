@@ -18,10 +18,10 @@ describe KoboApi::Process do
 
     it 'creates new Project with passed in data' do
       expect { subject(data) }
-        .to change { FieldDataProject.count }.by(1)
-      expect(FieldDataProject.first.name).to eq(title)
-      expect(FieldDataProject.first.kobo_id).to eq(id)
-      expect(FieldDataProject.first.kobo_payload).to eq(data)
+        .to change { FieldProject.count }.by(1)
+      expect(FieldProject.first.name).to eq(title)
+      expect(FieldProject.first.kobo_id).to eq(id)
+      expect(FieldProject.first.kobo_payload).to eq(data)
     end
   end
 
@@ -40,7 +40,7 @@ describe KoboApi::Process do
     context 'incoming data contains new projects' do
       it 'all items are saved' do
         expect { subject(data) }
-          .to change { FieldDataProject.count }.by(2)
+          .to change { FieldProject.count }.by(2)
       end
 
       it 'returns true when all items are saved' do
@@ -50,12 +50,12 @@ describe KoboApi::Process do
 
     context 'incoming data contains previously imported projects' do
       before(:each) do
-        create(:field_data_project, kobo_id: 1)
+        create(:field_project, kobo_id: 1)
       end
 
       it 'does not save previously imported items' do
         expect { subject(data) }
-          .to change { FieldDataProject.count }.by(1)
+          .to change { FieldProject.count }.by(1)
       end
 
       it 'returns true when only new items are saved' do
@@ -71,8 +71,8 @@ describe KoboApi::Process do
       dummy_class.import_kobo_samples(project_id, kobo_id, hash_payload)
     end
 
-    let(:field_data_project) { create(:field_data_project) }
-    let(:project_id) { field_data_project.id }
+    let(:field_project) { create(:field_project) }
+    let(:project_id) { field_project.id }
     let(:kobo_id) { 1 }
     let(:data) do
       [
@@ -101,7 +101,7 @@ describe KoboApi::Process do
     context 'incoming data contains previously imported sample' do
       before(:each) do
         create(:sample, kobo_id: kobo_id,
-                        field_data_project: field_data_project)
+                        field_project: field_project)
       end
 
       it 'enqueues ImportKoboSampleJob only for new samples' do
@@ -120,11 +120,11 @@ describe KoboApi::Process do
       dummy_class.save_sample_data(project_id, kobo_id, hash_payload)
     end
 
-    let(:field_data_project) { create(:field_data_project) }
-    let(:project_id) { field_data_project.id }
+    let(:field_project) { create(:field_project) }
+    let(:project_id) { field_project.id }
 
     context 'when incoming data has one sample V1' do
-      let(:kobo_id) { FieldDataProject::SINGLE_SAMPLE_PROJECTS_V1.first }
+      let(:kobo_id) { FieldProject::SINGLE_SAMPLE_PROJECTS_V1.first }
       let(:data) do
         {
           'What_is_your_kit_number_e_g_K0021' => 'K2',
@@ -150,7 +150,7 @@ describe KoboApi::Process do
           .to change { Sample.count }.by(1)
 
         sample = Sample.first
-        expect(sample.field_data_project_id).to eq(project_id)
+        expect(sample.field_project_id).to eq(project_id)
         expect(sample.collection_date).to eq('2010-01-01')
         expect(sample.submission_date).to eq('2010-01-02')
         expect(sample.location).to eq('location location2')
@@ -197,7 +197,7 @@ describe KoboApi::Process do
           .to change { Sample.count }.by(1)
 
         sample = Sample.first
-        expect(sample.field_data_project_id).to eq(project_id)
+        expect(sample.field_project_id).to eq(project_id)
         expect(sample.collection_date).to eq('2010-01-01')
         expect(sample.submission_date).to eq('2010-01-02')
         expect(sample.location).to eq('location location2')
@@ -238,7 +238,7 @@ describe KoboApi::Process do
     end
 
     context 'when incoming data has multiple samples' do
-      let(:kobo_id) { FieldDataProject::MULTI_SAMPLE_PROJECTS.first }
+      let(:kobo_id) { FieldProject::MULTI_SAMPLE_PROJECTS.first }
 
       let(:data) do
         {
@@ -311,7 +311,7 @@ describe KoboApi::Process do
         subject(project_id, kobo_id, data)
 
         sample_a1 = Sample.first
-        expect(sample_a1.field_data_project_id).to eq(project_id)
+        expect(sample_a1.field_project_id).to eq(project_id)
         expect(sample_a1.collection_date).to eq('2010-01-01')
         expect(sample_a1.submission_date).to eq('2010-01-02')
         expect(sample_a1.location).to eq('somewhere; where; reserves')
@@ -374,7 +374,7 @@ describe KoboApi::Process do
       it 'creates samples with identical values' do
         subject(project_id, kobo_id, data)
 
-        project_ids = Sample.pluck(:field_data_project_id).uniq
+        project_ids = Sample.pluck(:field_project_id).uniq
         collection_dates = Sample.pluck(:collection_date).uniq
         submission_dates = Sample.pluck(:submission_date).uniq
         locations = Sample.pluck(:location).uniq

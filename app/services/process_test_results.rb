@@ -219,7 +219,7 @@ module ProcessTestResults
         barcode: barcode,
         status_cd: status,
         missing_coordinates: true,
-        field_data_project: FieldDataProject::DEFAULT_PROJECT
+        field_project: FieldProject::DEFAULT_PROJECT
       )
 
       raise TaxaError, "Sample #{barcode} not created" unless sample.valid?

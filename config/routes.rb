@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       resources :taxa, only: %i[index show]
       resources :samples, only: %i[index show]
       resources :research_projects, only: %i[show]
-      resources :field_data_projects, only: %i[show]
+      resources :field_projects, only: %i[show]
       resources :inat_observations, only: %i[index]
       resource :stats do
         get '/home_page', to: 'stats#home_page'
@@ -54,7 +54,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: 'labwork/home#index'
-    resources :field_data_projects
+    resources :field_projects
     resources :research_projects
     resources :samples
     resources :photos
@@ -131,7 +131,7 @@ Rails.application.routes.draw do
   resources :samples, only: %i[index show]
   resource :search, only: %i[show]
   resource :taxa_search, only: %i[show]
-  resources :field_data_projects, only: %i[index show]
+  resources :field_projects, only: %i[index show]
   resources :taxa, only: %i[index show create]
   resources :events, only: %i[index show] do
     resources :event_registrations, only: %i[create]

@@ -59,7 +59,7 @@ module ApplicationHelper
   end
 
   def explore_data_active?
-    paths = [samples_path, field_data_projects_path,
+    paths = [samples_path, field_projects_path,
              research_projects_path, taxa_path]
     dropdown_active?(paths)
   end

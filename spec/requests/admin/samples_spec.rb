@@ -28,7 +28,7 @@ describe 'Samples' do
       it 'does not creates a new sample' do
         attributes = {
           barcode: '123',
-          field_data_project_id: create(:field_data_project).id
+          field_project_id: create(:field_project).id
         }
         params = { sample: attributes }
 
@@ -72,7 +72,7 @@ describe 'Samples' do
       it 'does not create a new sample' do
         attributes = {
           barcode: '123',
-          field_data_project_id: create(:field_data_project).id
+          field_project_id: create(:field_project).id
         }
         params = { sample: attributes }
 
