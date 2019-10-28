@@ -91,5 +91,12 @@
       <td><%= data.second %></td>
     </tr>
   <% end %>
+
+  <% sample.csv_data_display.each do |data| %>
+    <tr>
+      <td><%= data.first.tr('_', ' ') %></td>
+      <td><%= data.second %></td>
+    </tr>
+  <% end %>
 </table>
 

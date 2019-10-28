@@ -233,6 +233,28 @@ class Sample < ApplicationRecord
   end
   # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
+  def csv_data_display
+    return {} if csv_data == '{}'
+
+    csv_data.except(
+      'sample_id',
+      'sampling_date',
+      'sampling_time',
+      'location',
+      'latitude',
+      'longitude',
+      'gps_altitude',
+      'gps_precision',
+      'substrate',
+      'habitat',
+      'sampling_depth',
+      'environmental_features',
+      'environmental_settings',
+      'field_notes'
+    )
+  end
+
   private
 
   def unique_approved_barcodes
