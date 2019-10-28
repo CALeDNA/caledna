@@ -37,5 +37,19 @@ describe CsvUtils do
 
       expect(subject(file)).to eq(',')
     end
+
+    it 'returns a semicolon when delimiter is ;' do
+      csv = './spec/fixtures/csv/semicolon.csv'
+      file = fixture_file_upload(csv, 'text/csv')
+
+      expect(subject(file)).to eq(';')
+    end
+
+    it 'returns a semicolon when delimiter is ";"' do
+      csv = './spec/fixtures/csv/semicolon_with_quotes.csv'
+      file = fixture_file_upload(csv, 'text/csv')
+
+      expect(subject(file)).to eq(';')
+    end
   end
 end

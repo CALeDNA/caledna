@@ -2,7 +2,7 @@
 
 # code from https://stackoverflow.com/a/14695355
 module CsvUtils
-  COMMON_DELIMITERS = ['","', "\"\t\""].freeze
+  COMMON_DELIMITERS = ['","', "\"\t\"", '";"'].freeze
 
   def delimiter_detector(file)
     first_line = File.open(file.path).first
