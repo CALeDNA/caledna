@@ -24,7 +24,7 @@ en:
     formats:
       long: "%b %d, %Y"
       short: "%b %d"
-      long_datetime: '%a %b %d, %Y %l:%M %P'
+      long_datetime: "%a %b %d, %Y %l:%M %P"
   activerecord:
     models:
       survey_question: Question
@@ -32,10 +32,10 @@ en:
       asv: ASV
 
   pundit:
-    default: 'You cannot perform this action.'
+    default: "You cannot perform this action."
   administrate:
     actions:
-      new: 'New'
+      new: "New"
     fields:
       nested_has_many:
         add: Add %{resource}
@@ -47,18 +47,17 @@ en:
       sample:
         status_cd: Status
         substrate_cd: Substrate
-        ecosystem_category_cd: 'Ecosystem Category'
-        alt_id: 'Alt ID'
-        kobo_id: 'Kobo ID'
+        alt_id: "Alt ID"
+        kobo_id: "Kobo ID"
       field_project:
-        kobo_id: 'Kobo ID'
+        kobo_id: "Kobo ID"
       survey_question:
         type_cd: Type
-        content: ''
+        content: ""
   # NOTE: adding attributes because error message turns canonicalName
   # into "Canonicalname"
   attributes:
-    parentNameUsageID: 'Parent Name Usage ID'
-    canonicalName: 'Canonical Name'
-    taxonRank: 'Taxon Rank'
-    taxonomicStatus: 'Taxonomic Status'
+    parentNameUsageID: "Parent Name Usage ID"
+    canonicalName: "Canonical Name"
+    taxonRank: "Taxon Rank"
+    taxonomicStatus: "Taxonomic Status"

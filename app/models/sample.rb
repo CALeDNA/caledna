@@ -36,7 +36,6 @@ class Sample < ApplicationRecord
              results_completed processed_invalid_sample],
           map: :string
   as_enum :substrate, %i[soil sediment water other], map: :string
-  as_enum :ecosystem_category, %i[terrestrial aquatic], map: :string
 
   def status_display
     status.to_s.tr('_', ' ')

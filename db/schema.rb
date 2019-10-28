@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_27_113901) do
+ActiveRecord::Schema.define(version: 2019_10_27_142939) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -488,12 +488,9 @@ ActiveRecord::Schema.define(version: 2019_10_27_113901) do
     t.datetime "collection_date"
     t.string "status_cd", default: "submitted"
     t.string "substrate_cd"
-    t.string "ecosystem_category_cd"
-    t.string "alt_id"
     t.decimal "altitude"
     t.integer "gps_precision"
     t.string "location"
-    t.decimal "elevatr_altitude"
     t.text "director_notes"
     t.string "habitat"
     t.string "depth"
@@ -502,6 +499,7 @@ ActiveRecord::Schema.define(version: 2019_10_27_113901) do
     t.boolean "missing_coordinates", default: false
     t.jsonb "metadata", default: {}
     t.string "primers", default: [], array: true
+    t.jsonb "csv_data", default: {}
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"

@@ -3,7 +3,7 @@
 module Admin
   module Labwork
     class ImportSamplesController < Admin::ApplicationController
-      include ::ImportCsv::SampleCsv
+      include ::ImportCsv::SamplesCsv
 
       def index
         authorize 'Labwork::ImportCsv'.to_sym, :index?

@@ -1,0 +1,2 @@
+sample_id;sampling_date;sampling_time;location;latitude;longitude;gps_altitude;gps_precision;substrate;habitat;sampling_depth;environmental_features;environmental_settings;light;pH;moisture;field_notes
+K9999-A1;2019-07-02;13:30;Yosemite;34.100001;-118.300001;0;10;soil;Terrestrial habitat;Top layer;Enclosed water;On roadside;;;;my notes

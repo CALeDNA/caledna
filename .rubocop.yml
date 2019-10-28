@@ -1,15 +1,15 @@
 AllCops:
   TargetRubyVersion: 2.4.0
   Exclude:
-    - 'bin/**/*'
-    - 'config/initializers/*.rb'
-    - 'config/environments/*.rb'
-    - 'db/schema.rb'
-    - 'db/migrate/*.rb'
-    - 'app/dashboards/*.rb'
-    - 'db/data/*.sql'
-    - 'z_ignore/**/*'
-    - 'node_modules/**/*'
+    - "bin/**/*"
+    - "config/initializers/*.rb"
+    - "config/environments/*.rb"
+    - "db/schema.rb"
+    - "db/migrate/*.rb"
+    - "app/dashboards/*.rb"
+    - "db/data/*.sql"
+    - "z_ignore/**/*"
+    - "node_modules/**/*"
 
 Style/Documentation:
   Enabled: false
@@ -25,11 +25,14 @@ Metrics/ClassLength:
 
 Metrics/BlockLength:
   Exclude:
-    - 'spec/**/*.rb'
-    - 'lib/tasks/**/*.rake'
+    - "spec/**/*.rb"
+    - "lib/tasks/**/*.rake"
 
 Style/StructInheritance:
   Enabled: false
 
 Naming/UncommunicativeMethodParamName:
+  Enabled: false
+
+Style/DateTime:
   Enabled: false
