@@ -152,7 +152,7 @@ class NcbiNode < ApplicationRecord
   def image
     @image ||= begin
       wikidata_image || inat_image || eol_image ||
-        inaturalist_api_image || eol_api_image
+        inaturalist_api_image || eol_api_image || gbif_api_image
     end
   end
 
@@ -234,6 +234,42 @@ class NcbiNode < ApplicationRecord
       )
     end
   end
+
+  def gbif_api
+    @gbif_api ||= ::GbifApi.new
+  end
+
+  def gbif_occurrences
+    @gbif_occurrences ||= begin
+      return if gbif_link.blank?
+
+      id = gbif_link.id
+      results = gbif_api.occurence_by_taxon(id)
+      JSON.parse(results.body)['results']
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def gbif_api_image
+    @gbif_api_image ||= begin
+      return if gbif_occurrences.blank?
+
+      cc_license = 'http://creativecommons.org/licenses/by-nc/4.0/'
+      media = gbif_occurrences.flat_map { |i| i['media'] }
+                              .compact
+                              .select { |i| i['license'] == cc_license }
+
+      return if media.blank?
+      photo = media.first
+
+      OpenStruct.new(
+        url: photo['identifier'],
+        attribution: "#{photo['creator']} (#{photo['publisher']})",
+        source: 'GBIF'
+      )
+    end
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def eol_api
     @eol_api ||= ::EolApi.new

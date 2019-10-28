@@ -25,4 +25,8 @@ class GbifApi
   def media(id)
     self.class.get("/species/#{id}/media", @options)
   end
+
+  def occurence_by_taxon(taxon_id)
+    self.class.get('/occurrence/search', query: { taxonKey: taxon_id })
+  end
 end
