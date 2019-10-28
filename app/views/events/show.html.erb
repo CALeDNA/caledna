@@ -43,6 +43,6 @@
 <h3>Details</h3>
 <%= sanitize @event.description %>
 
-<% if @event.flyer? %>
-  <div><%= image_tag @event.flyer %></div>
+<% if @event.flyer.attachment.present? %>
+  <div><%= image_tag @event.flyer, class: 'img-responsive' %></div>
 <% end %>

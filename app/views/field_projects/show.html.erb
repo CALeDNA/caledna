@@ -1,5 +1,9 @@
 <h1><%= @project.name %></h1>
 
+<% if @project.image.attachment.present? %>
+  <div><%= image_tag @project.image, class: 'img-responsive' %></div>
+<% end %>
+
 <p><%= @project.description %></p>
 
 <hr>

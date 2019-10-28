@@ -6,6 +6,8 @@ class FieldProject < ApplicationRecord
   SINGLE_SAMPLE_PROJECTS_V1 = [136_577, 130_560, 138_676, 170_620].freeze
   LA_RIVER = FieldProject.find_by(name: 'Los Angeles River')
 
+  has_one_attached :image
+
   validates :kobo_id, uniqueness: true
 
   has_many :samples, dependent: :destroy

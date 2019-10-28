@@ -15,6 +15,7 @@ class FieldProjectDashboard < Administrate::BaseDashboard
     updated_at: Field::DateTime,
     last_import_date: Field::DateTime,
     published: Field::Boolean,
+    image: ActiveStorageAttachmentField
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -27,6 +28,7 @@ class FieldProjectDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :name,
     :description,
+    :image,
     :kobo_id,
     :created_at,
     :updated_at,
@@ -38,11 +40,16 @@ class FieldProjectDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
     :name,
     :description,
+    :image,
     :kobo_id,
     :published,
   ].freeze
 
   def display_resource(project)
     project.name
+  end
+
+  def permitted_attributes
+    super + [:image]
   end
 end
