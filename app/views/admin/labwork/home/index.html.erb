@@ -94,30 +94,6 @@
   </ol>
 </section>
 
-
-<% if policy(:ReseedDatabase).delete? %>
-<header class="main-content__header" role="banner">
-  <h1 class="main-content__page-title">
-    Reset Database Data
-  </h1>
-</header>
-
-<section class="main-content__body">
-  <ul>
-    <li>
-      <%= link_to "Delete labwork data", admin_delete_labwork_data_path, data: {confirm: "You sure?"} %>:
-      delete all ASVs, extractions, custom taxons
-    </li>
-
-    <li>
-      <%= link_to "Delete fieldwork data", admin_delete_fieldwork_data_path, data: {confirm: "You sure?"} %>:
-      delete all samples, photos, fieldwork projects, research projects
-    </li>
-  </ul>
-</section>
-<% end %>
-
-
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
     CSV Templates
