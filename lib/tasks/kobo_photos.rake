@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 namespace :kobo_photos do
+  require 'csv'
+
   desc 'add dimensions'
   task add_dimensions: :environment do
     require 'fastimage'
@@ -11,8 +13,15 @@ namespace :kobo_photos do
     end
   end
 
+  task remove_table_key_from_kobo_payload: :environment do
+    KoboPhoto.all.each do |photo|
+      next unless photo.kobo_payload['table'].present?
+      puts photo.id
+      photo.update(kobo_payload: photo.kobo_payload['table'])
+    end
+  end
+
   task upload_to_s3: :environment do
-    require 'csv'
     include ProcessFileUploads
 
     path = "#{Rails.root}/db/data/private/kobo_photos.csv"
