@@ -21,6 +21,33 @@ namespace :kobo_photos do
     end
   end
 
+  task find_photos_not_in_db: :environment do
+    # array all all filenames downloaded from kobo api
+    path = "#{Rails.root}/db/data/private/kobo_photos.csv"
+    api_photos = CSV.foreach(path, headers: true)
+    api_filenames = api_photos.map { |i| i['source_filename'] }
+
+    # list of all filenames from the db
+    path = "#{Rails.root}/db/data/private/existing_kobo_photos.csv"
+    db_photos = CSV.foreach(path, headers: true)
+    db_filenames = db_photos.map { |i| i['filename'] }
+
+    # find filenames  from api that are not in the db
+    missing_filenames = api_filenames - db_filenames
+
+    # find all photos from api that are not in the db
+    missing_photos = api_photos.select do |photo|
+      missing_filenames.include? photo['source_filename']
+    end
+
+    # get list of kobi ids and check if any samples have does ideas
+    missing_ids = missing_photos.map { |i| i['submission_id'].to_i }
+    # we get nil results; which means there are photos from the api that
+    # aren't associated with samples
+    samples = Sample.where(kobi_id: missing_ids)
+    samples.count
+  end
+
   task upload_to_s3: :environment do
     include ProcessFileUploads
 
