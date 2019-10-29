@@ -5,6 +5,14 @@ module ProcessFileUploads
     photo_path.split('/').last
   end
 
+  def upload_image(resource, photo_path)
+    image_name = create_image_name(photo_path)
+
+    resource.attach(io: File.open(photo_path), filename: image_name)
+  end
+
+  private
+
   def extract_mime_type(photo_path)
     file_extension = extract_file_extenstion(photo_path)
 
@@ -14,14 +22,6 @@ module ProcessFileUploads
       'image/png'
     end
   end
-
-  def upload_image(resource, photo_path)
-    image_name = create_image_name(photo_path)
-
-    resource.images.attach(io: File.open(photo_path), filename: image_name)
-  end
-
-  private
 
   def extract_file_extenstion(photo_path)
     photo_path.split('.').last.downcase
