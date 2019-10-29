@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PhotoPolicy < ApplicationPolicy
+class KoboPhotoPolicy < ApplicationPolicy
   def index?
     all_roles
   end

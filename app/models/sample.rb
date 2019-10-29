@@ -9,7 +9,7 @@ class Sample < ApplicationRecord
   ]
 
   belongs_to :field_project
-  has_many :photos
+  has_many :kobo_photos
   has_many :extractions
   has_many :asvs
   has_many :research_project_sources, foreign_key: 'sample_id'

@@ -304,7 +304,7 @@ describe KoboApi::Process do
 
       it 'creates multiple photos' do
         expect { subject(project_id, kobo_id, data) }
-          .to change { Photo.count }.by(9)
+          .to change { KoboPhoto.count }.by(9)
       end
 
       it 'creates samples with incoming data' do
@@ -391,17 +391,17 @@ describe KoboApi::Process do
         subject(project_id, kobo_id, data)
 
         sample_ids = Sample.order(created_at: :asc).pluck(:id)
-        photo_ids = Photo.order(created_at: :asc).pluck(:id)
+        photo_ids = KoboPhoto.order(created_at: :asc).pluck(:id)
 
-        expect(Photo.find(photo_ids[0]).sample_id).to eq(sample_ids[0])
-        expect(Photo.find(photo_ids[1]).sample_id).to eq(sample_ids[0])
-        expect(Photo.find(photo_ids[2]).sample_id).to eq(sample_ids[1])
-        expect(Photo.find(photo_ids[3]).sample_id).to eq(sample_ids[2])
-        expect(Photo.find(photo_ids[4]).sample_id).to eq(sample_ids[2])
-        expect(Photo.find(photo_ids[5]).sample_id).to eq(sample_ids[3])
-        expect(Photo.find(photo_ids[6]).sample_id).to eq(sample_ids[4])
-        expect(Photo.find(photo_ids[7]).sample_id).to eq(sample_ids[4])
-        expect(Photo.find(photo_ids[8]).sample_id).to eq(sample_ids[5])
+        expect(KoboPhoto.find(photo_ids[0]).sample_id).to eq(sample_ids[0])
+        expect(KoboPhoto.find(photo_ids[1]).sample_id).to eq(sample_ids[0])
+        expect(KoboPhoto.find(photo_ids[2]).sample_id).to eq(sample_ids[1])
+        expect(KoboPhoto.find(photo_ids[3]).sample_id).to eq(sample_ids[2])
+        expect(KoboPhoto.find(photo_ids[4]).sample_id).to eq(sample_ids[2])
+        expect(KoboPhoto.find(photo_ids[5]).sample_id).to eq(sample_ids[3])
+        expect(KoboPhoto.find(photo_ids[6]).sample_id).to eq(sample_ids[4])
+        expect(KoboPhoto.find(photo_ids[7]).sample_id).to eq(sample_ids[4])
+        expect(KoboPhoto.find(photo_ids[8]).sample_id).to eq(sample_ids[5])
       end
     end
   end

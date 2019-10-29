@@ -208,7 +208,7 @@ module KoboApi
         data = OpenStruct.new(photo_data)
 
         filename = data.filename.split('/').last
-        photo = ::Photo.new(
+        photo = ::KoboPhoto.new(
           file_name: filename,
           source_url: "#{ENV.fetch('KOBO_MEDIA_URL')}#{data.filename}",
           kobo_payload: data,

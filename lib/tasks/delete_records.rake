@@ -15,7 +15,7 @@ namespace :delete_records do
 
     ActiveRecord::Base.transaction do
       ResearchProjectSource.where(sample_id: sample_id).destroy_all
-      Photo.where(sample_id: sample_id).destroy_all
+      KoboPhoto.where(sample_id: sample_id).destroy_all
       Extraction.where(sample_id: sample_id).destroy_all
       Asv.where(sample_id: sample_id).destroy_all
       sample.destroy

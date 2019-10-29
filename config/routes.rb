@@ -57,7 +57,7 @@ Rails.application.routes.draw do
     resources :field_projects
     resources :research_projects
     resources :samples
-    resources :photos
+    resources :kobo_photos
     resources :extraction_types
     resources :extractions
     resources :asvs
