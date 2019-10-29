@@ -18,8 +18,8 @@ namespace :kobo_photos do
     path = "#{Rails.root}/db/data/private/kobo_photos.csv"
 
     CSV.foreach(path, headers: true) do |row|
-      sample = Sample.find_by(kobo_id: row['submission_id'])
-      kobo_photos = KoboPhoto.where(sample: sample)
+      samples = Sample.where(kobo_id: row['submission_id'])
+      kobo_photos = KoboPhoto.where(sample: samples)
 
       kobo_photos.each do |kobo_photo|
         puts row['path']
