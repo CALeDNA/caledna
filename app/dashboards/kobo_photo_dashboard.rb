@@ -2,7 +2,7 @@
 
 require "administrate/base_dashboard"
 
-class PhotoDashboard < Administrate::BaseDashboard
+class KoboPhotoDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     sample: Field::BelongsTo,
     id: Field::Number,
@@ -11,11 +11,12 @@ class PhotoDashboard < Administrate::BaseDashboard
     kobo_payload: Field::JSON.with_options(searchable: false),
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    photo: ActiveStorageAttachmentField,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
     :sample,
-    :source_url,
+    :photo,
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -23,7 +24,7 @@ class PhotoDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :sample,
     :file_name,
-    :source_url,
+    :photo,
     :kobo_payload,
     :created_at,
     :updated_at,
@@ -32,7 +33,11 @@ class PhotoDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
   ].freeze
 
-  def display_resource(photo)
-    "Photo ##{photo.id}"
+  def permitted_attributes
+    super + [:photo]
+  end
+
+  def display_resource(resource)
+    "Photo ##{resource.id}"
   end
 end

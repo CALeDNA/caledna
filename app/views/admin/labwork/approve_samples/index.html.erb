@@ -44,9 +44,9 @@
         precision: <%= sample.gps_precision %>
       </td>
       <td>
-        <% sample.photos.each do |photo| %>
-          <%= link_to admin_photo_path(photo) do %>
-            <%= image_tag(photo.source_url)  %>
+        <% sample.kobo_photos.each do |kobo_photo| %>
+          <%= link_to admin_kobo_photo_path(kobo_photo) do %>
+            <%= image_tag(kobo_photo.photo) if kobo_photo.photo.attachment %>
           <% end %>
         <% end %>
       </td>

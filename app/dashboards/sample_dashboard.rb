@@ -9,7 +9,7 @@ class SampleDashboard < Administrate::BaseDashboard
       searchable: true, # make associated project name searchable
       searchable_field: 'name'
     ),
-    photos: Field::HasMany,
+    kobo_photos: Field::HasMany,
     research_projects: Field::HasMany,
     id: Field::Number,
     kobo_id: Field::Number,
@@ -67,7 +67,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :environmental_features,
     :environmental_settings,
     :primers,
-    :photos,
+    :kobo_photos,
     :metadata,
     :kobo_data
   ].freeze
@@ -92,7 +92,7 @@ class SampleDashboard < Administrate::BaseDashboard
     :environmental_features,
     :environmental_settings,
     :primers,
-    :photos,
+    :kobo_photos,
     :metadata,
   ].freeze
 

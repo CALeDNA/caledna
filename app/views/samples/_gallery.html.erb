@@ -43,33 +43,39 @@
   </div>
 </div>
 
-<%= image_tag photos.first.source_url, width: '100%', class: "gallery-initial-photo" %>
+<% if kobo_photos.first.photo.attachment.present? %>
+  <%= image_tag kobo_photos.first.photo, width: '100%', class: "gallery-initial-photo" %>
+<% else %>
+  <%= image_tag 'blank_photo.svg' %>
+<% end %>
 
-<script>
-  (function(){
-    var openPhotoSwipe = function() {
-    var pswpElement = document.querySelectorAll('.pswp')[0];
+<% if kobo_photos.first.photo.attachment %>
+  <script>
+    (function(){
+      var openPhotoSwipe = function() {
+      var pswpElement = document.querySelectorAll('.pswp')[0];
 
-    var items = [
-      <% photos.each do |photo| %>
-        {
-          src: "<%= photo.source_url %>",
-          w: <%= photo.width %>,
-          h: <%= photo.height %>
-        },
-      <% end %>
-    ]
+      var items = [
+        <% kobo_photos.each do |kobo_photo| %>
+          {
+            src: "<%= url_for(kobo_photo.photo) %>",
+            w: <%= kobo_photo.width %>,
+            h: <%= kobo_photo.height %>
+          },
+        <% end %>
+      ]
 
-      var options = {
-          index: 0
+        var options = {
+            index: 0
+        };
+
+        var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+        gallery.init();
       };
 
-      var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
-      gallery.init();
-    };
+      var el = document.querySelector('.gallery-initial-photo');
+      el.addEventListener('click', openPhotoSwipe)
 
-    var el = document.querySelector('.gallery-initial-photo');
-    el.addEventListener('click', openPhotoSwipe)
-
-  }());
-</script>
+    }());
+  </script>
+<% end %>
