@@ -1,4 +1,4 @@
-<% content_for(:title) { 'Import ASV form DNA Results' } %>
+<% content_for(:title) { 'Import taxonomy from eDNA results' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -7,14 +7,14 @@
 </header>
 
 <section class="main-content__body">
-  <p>Upload CSV to import ASVs from DNA test results.</p>
+  <p>Upload CSV to import taxonomy from eDNA results.</p>
 
-  <%= form_tag admin_labwork_import_results_asvs_path, multipart: true do %>
+  <%= form_tag admin_labwork_import_edna_results_taxa_path, multipart: true do %>
     <%= select(:dna_results, :research_project_id, @projects, {include_blank: 'Select research project'}) %>
     <%= select(:dna_results, :primer, Extraction::METABARCODING_PRIMERS, {include_blank: 'Select primer'}) %>
+    <%= label_tag(:notes, "Notes:") %>
+    <%= text_field_tag('dna_results[notes]') %>
 
-    <%#= select(:dna_results, :extraction_type_id, @extraction_types, {include_blank: 'Select extraction type'}) %>
-    <%= hidden_field(:dna_results, :extraction_type_id, value: ExtractionType.first.id) %>
     <%= file_field_tag :file %>
     <%= submit_tag "Import" %>
   <% end %>

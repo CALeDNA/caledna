@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-describe ImportCsv::TestResultsAsvs do
-  let(:dummy_class) { Class.new { extend ImportCsv::TestResultsAsvs } }
+describe ImportCsv::EdnaResultsAsvs do
+  let(:dummy_class) { Class.new { extend ImportCsv::EdnaResultsAsvs } }
 
   describe '#convert_header_to_barcode' do
     def subject(header)

@@ -2,8 +2,8 @@
 
 module Admin
   module Labwork
-    class ImportResultsTaxaController < Admin::ApplicationController
-      include ImportCsv::TestResultsTaxa
+    class ImportEdnaResultsTaxaController < Admin::ApplicationController
+      include ImportCsv::EdnaResultsTaxa
 
       def index
         authorize 'Labwork::ImportCsv'.to_sym, :index?
@@ -25,7 +25,7 @@ module Admin
 
       def handle_error(results)
         flash[:error] = results.errors
-        redirect_to admin_labwork_import_results_taxa_path
+        redirect_to admin_labwork_import_edna_results_taxa_path
       end
 
       def file

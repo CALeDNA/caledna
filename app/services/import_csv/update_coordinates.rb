@@ -2,7 +2,7 @@
 
 module ImportCsv
   module UpdateCoordinates
-    include ProcessTestResults
+    include ProcessEdnaResults
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity

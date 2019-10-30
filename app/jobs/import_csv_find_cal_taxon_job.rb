@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ImportCsvFindCalTaxonJob < ApplicationJob
-  include ImportCsv::TestResultsTaxa
+  include ImportCsv::EdnaResultsTaxa
 
   queue_as :default
 

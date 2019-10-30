@@ -2,10 +2,10 @@
 
 namespace :ncbi do
   require_relative '../../app/services/format_ncbi'
-  require_relative '../../app/services/process_test_results'
+  require_relative '../../app/services/process_edna_results'
 
   include FormatNcbi
-  include ProcessTestResults
+  include ProcessEdnaResults
 
   desc 'create canonical name'
   task create_canonical_name: :environment do

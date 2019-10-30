@@ -7,81 +7,59 @@
 </header>
 
 <section class="main-content__body">
-  <h3>Kobo</h3>
-  <ol>
-    <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
-      <li>
-        <%= link_to 'Import Kobo Projects', admin_labwork_import_kobo_path %>:
-        import projects and sample from Kobo
-      </li>
-    <% end %>
-    <% if policy('Labwork::ApproveSamples'.to_sym).index? %>
-      <li>
-        <%= link_to 'Approve Samples', admin_labwork_approve_samples_path %>:
-        approve samples submitted by citizen scientists and researchers
-      </li>
-    <% end %>
-  </ol>
+  <h2>Kobo data</h2>
 
-  <h3 class="subtitle">Import Samples</h3>
-  <p>Use "Samples CSV" template</p>
+  <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
+    <p>
+      <%= link_to 'Import Kobo Projects', admin_labwork_import_kobo_path %>:
+      Import projects and samples from Kobo.
+    </p>
+  <% end %>
 
-  <ol>
-    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
-      <li>
-        <%= link_to 'Import Samples for Research Project', admin_labwork_import_samples_path %>:
-        Add samples for a research project via CSV upload
-      </li>
-    <% end %>
-  </ol>
+  <% if policy('Labwork::ApproveSamples'.to_sym).index? %>
+    <p>
+      <%= link_to 'Approve Samples', admin_labwork_approve_samples_path %>:
+      Approve samples submitted from Kobo.
+    </p>
+  <% end %>
 
-  <h3 class="subtitle">Processing eDNA</h3>
-  <p>Use "Processing eDNA" template</p>
 
-  <ol>
-    <% if policy('Labwork::ProcessExtractions'.to_sym).index? %>
-      <li>
-        <%= link_to 'Processing eDNA', admin_labwork_process_extractions_path %>:
-        Add info about processing eDNA samples via a form
-      </li>
-    <% end %>
+  <h2>Import samples</h2>
 
-    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
-      <li>
-        <%= link_to 'Import Processing eDNA', admin_labwork_import_processing_extractions_path %>:
-        Add info about processing eDNA samples via CSV upload
-      </li>
-    <% end %>
-  </ol>
+  <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+    <p>
+      <%= link_to 'Import Samples', admin_labwork_import_samples_path %>:
+      Add samples for a research project via CSV upload.
+      Use <%= link_to "Samples CSV", '/csv_templates/samples_metadata_template.csv' %> template.
+    </p>
+  <% end %>
 
-  <h3 class="subtitle">Create taxonomy from eDNA test results</h3>
+  <h2>Import taxonomy from eDNA results</h2>
 
-  <ol>
-    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
-      <li>
-        <%= link_to 'Import Taxonomy from DNA Results', admin_labwork_import_results_taxa_path %>:
-        Import taxonomy from DNA test results via CSV upload
-      </li>
-    <% end %>
-    <% if policy('Labwork::NormalizeTaxon'.to_sym).index? %>
-      <li>
-        <%= link_to 'Normalize Taxonomy from DNA Results', admin_labwork_normalize_ncbi_taxa_path	 %>:
-        Match taxonomy from test results to NCBI taxonomy
-      </li>
-    <% end %>
-  </ol>
+  <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+    <p>
+      <%= link_to 'Import Taxonomy', admin_labwork_import_edna_results_taxa_path %>:
+      Import taxonomy from eDNA results via CSV upload.
+    </p>
+  <% end %>
 
-  <h3 class="subtitle">Import ASVs from eDNA test results</h3>
-  <p>Use "DNA test results CSV" template</p>
+  <% if policy('Labwork::NormalizeTaxon'.to_sym).index? %>
+    <p>
+      <%= link_to 'Normalize Taxonomy', admin_labwork_normalize_ncbi_taxa_path	 %>:
+      Match taxonomy from eDNA results to NCBI taxonomy.
+    </p>
+  <% end %>
 
-  <ol>
-    <% if policy('Labwork::ImportCsv'.to_sym).index? %>
-      <li>
-        <%= link_to 'Import ASV form DNA Results', admin_labwork_import_results_asvs_path %>:
-        Import ASVs from DNA test results via CSV upload
-      </li>
-    <% end %>
-  </ol>
+  <h2>Import ASVs from eDNA results</h2>
+
+  <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+    <p>
+      <%= link_to 'Import ASVs', admin_labwork_import_edna_results_asvs_path %>:
+      Import ASVs from eDNA results via CSV upload. Use CSVs produced by Anacapa, or
+      use <%= link_to "eDNA results CSV", '/csv_templates/eDNA_results_template.csv' %> template.
+    </p>
+  <% end %>
+
 </section>
 
 <header class="main-content__header" role="banner">
@@ -91,9 +69,11 @@
 </header>
 
 <section class="main-content__body">
-  <ul>
-    <li>
-      <%= link_to "Samples CSV", '/csv_templates/samples.csv' %>
-    </li>
-  </ul>
+  <p>
+    <%= link_to "Samples CSV", '/csv_templates/samples_metadata_template.csv' %>
+  </p>
+  <p>
+    <%= link_to "eDNA results CSV", '/csv_templates/eDNA_results_template.csv' %>
+  </p>
+  <p>
 </section>

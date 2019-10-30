@@ -90,10 +90,10 @@ Rails.application.routes.draw do
         put 'update_multiple_approvals'
       end
 
+      resources :import_csv_status, only: %i[index] # Sidekiq dashboard
       resources :import_samples, only: %i[index create]
-      resources :import_results_asvs, only: %i[index create]
-      resources :import_results_taxa, only: %i[index create]
-      resources :import_csv_status, only: %i[index]
+      resources :import_edna_results_asvs, only: %i[index create]
+      resources :import_edna_results_taxa, only: %i[index create]
 
       resources :normalize_ncbi_taxa, only: %i[index show] do
         put 'update_existing' => 'normalize_ncbi_taxa#update_existing'

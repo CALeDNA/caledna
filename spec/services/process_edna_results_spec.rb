@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-describe ProcessTestResults do
-  let(:dummy_class) { Class.new { extend ProcessTestResults } }
+describe ProcessEdnaResults do
+  let(:dummy_class) { Class.new { extend ProcessEdnaResults } }
 
   describe '#find_taxon_from_string_phylum' do
     def subject(string)

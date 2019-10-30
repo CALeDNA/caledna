@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module ImportCsv
-  module TestResultsTaxa
+  module EdnaResultsTaxa
     require 'csv'
-    include ProcessTestResults
+    include ProcessEdnaResults
     include CsvUtils
 
     # rubocop:disable Metrics/MethodLength

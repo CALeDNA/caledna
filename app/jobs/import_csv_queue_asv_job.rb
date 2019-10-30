@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ImportCsvQueueAsvJob < ApplicationJob
-  include ImportCsv::TestResultsAsvs
+  include ImportCsv::EdnaResultsAsvs
 
   queue_as :default
 

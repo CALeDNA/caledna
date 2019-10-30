@@ -2,8 +2,8 @@
 
 module Admin
   module Labwork
-    class ImportResultsAsvsController < Admin::ApplicationController
-      include ImportCsv::TestResultsAsvs
+    class ImportEdnaResultsAsvsController < Admin::ApplicationController
+      include ImportCsv::EdnaResultsAsvs
 
       def index
         authorize 'Labwork::ImportCsv'.to_sym, :index?
@@ -29,7 +29,7 @@ module Admin
 
       def handle_error(results)
         flash[:error] = results.errors
-        redirect_to admin_labwork_import_results_asvs_path
+        redirect_to admin_labwork_import_edna_results_asvs_path
       end
 
       def research_project_id

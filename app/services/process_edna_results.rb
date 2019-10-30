@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ProcessTestResults
+module ProcessEdnaResults
   def invalid_taxon?(taxonomy_string)
     return true if taxonomy_string == 'NA'
     return true if taxonomy_string.split(';').blank?
