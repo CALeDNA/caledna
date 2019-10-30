@@ -35,16 +35,6 @@
     <% end %>
   </ol>
 
-  <h3>Assign Processor</h3>
-  <ol>
-    <% if policy('Labwork::AssignSamples'.to_sym).index? %>
-      <li>
-        <%= link_to 'Assign Samples', admin_labwork_assign_samples_path %>:
-        assign samples to sample processors
-      </li>
-    <% end %>
-  </ol>
-
   <h3 class="subtitle">Processing eDNA</h3>
   <p>Use "Processing eDNA" template</p>
 

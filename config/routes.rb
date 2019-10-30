@@ -84,10 +84,6 @@ Rails.application.routes.draw do
              as: :import_kobo_samples
       end
 
-      controller 'assign_samples' do
-        get 'assign_samples' => 'assign_samples#index'
-      end
-
       controller 'approve_samples' do
         get 'approve_samples' => 'approve_samples#index'
         post 'edit_multiple_approvals', as: :edit_multiple_approvals
@@ -115,8 +111,6 @@ Rails.application.routes.draw do
     controller 'batch_actions' do
       post 'labwork/batch_approve_samples' =>
         'labwork/batch_actions#approve_samples'
-      post 'labwork/batch_assign_samples' =>
-        'labwork/batch_actions#assign_samples'
       post 'labwork/batch_change_longitude_sign' =>
         'labwork/batch_actions#change_longitude_sign'
     end

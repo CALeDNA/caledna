@@ -35,30 +35,6 @@ module Admin
       end
       # rubocop:enable Metrics/MethodLength
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      def assign_samples
-        authorize 'Labwork::AssignSamples'.to_sym, :create?
-
-        if processor_id.blank?
-          return error_handler_message('processor required')
-        end
-
-        if samples.update(status_cd: :assigned)
-          samples.each do |sample|
-            sample.extractions << Extraction.create(
-              status_cd: :assigned,
-              processor_id: processor_id
-            )
-          end
-
-          flash[:success] = 'Samples assigned'
-          success_handler
-        else
-          error_handler(samples)
-        end
-      end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-
       private
 
       def processor_id
