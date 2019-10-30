@@ -94,6 +94,7 @@ Rails.application.routes.draw do
       resources :import_samples, only: %i[index create]
       resources :import_edna_results_asvs, only: %i[index create]
       resources :import_edna_results_taxa, only: %i[index create]
+      resources :import_edna_results_metadata, only: %i[index create]
 
       resources :normalize_ncbi_taxa, only: %i[index show] do
         put 'update_existing' => 'normalize_ncbi_taxa#update_existing'

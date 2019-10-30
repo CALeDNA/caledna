@@ -60,6 +60,15 @@
     </p>
   <% end %>
 
+  <h2>Import metadata from eDNA results </h2>
+
+  <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+    <p>
+      <%= link_to 'Import metadata', admin_labwork_import_edna_results_metadata_path %>:
+      Import metadata from eDNA results via CSV upload.
+      Use <%= link_to "eDNA metadata CSV", '/csv_templates/eDNA_results_metadata_template.csv' %> template.
+    </p>
+  <% end %>
 </section>
 
 <header class="main-content__header" role="banner">
@@ -76,4 +85,6 @@
     <%= link_to "eDNA results CSV", '/csv_templates/eDNA_results_template.csv' %>
   </p>
   <p>
+    <%= link_to "eDNA metadata CSV", '/csv_templates/eDNA_results_metadata_template.csv' %>
+  </p>
 </section>

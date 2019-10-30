@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_29_114755) do
+ActiveRecord::Schema.define(version: 2019_10_30_225606) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -440,6 +440,11 @@ ActiveRecord::Schema.define(version: 2019_10_29_114755) do
     t.datetime "updated_at", null: false
     t.boolean "published", default: false
     t.string "slug"
+    t.text "reference_barcode_database"
+    t.string "dryad_link"
+    t.string "decontamination_method"
+    t.string "primers"
+    t.jsonb "metadata", default: {}
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|

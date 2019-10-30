@@ -12,6 +12,11 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     updated_at: Field::DateTime,
     researcher_authors: ProjectAuthorField,
     user_authors: ProjectAuthorField,
+    reference_barcode_database: Field::Text,
+    dryad_link: Field::String,
+    decontamination_method: Field::String,
+    primers: Field::String,
+    metadata: Field::JSON.with_options(searchable: false),
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -23,20 +28,29 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
 
   SHOW_PAGE_ATTRIBUTES = [
     :name,
-    :description,
     :published,
+    :description,
+    :reference_barcode_database,
+    :dryad_link,
+    :decontamination_method,
+    :primers,
     :researcher_authors,
     :user_authors,
     :created_at,
     :updated_at,
+    :metadata
   ].freeze
 
   FORM_ATTRIBUTES = [
     :name,
     :published,
     :description,
+    :reference_barcode_database,
+    :dryad_link,
+    :decontamination_method,
+    :primers,
     :researcher_authors,
-    :user_authors,
+    :user_authors
   ].freeze
 
 
