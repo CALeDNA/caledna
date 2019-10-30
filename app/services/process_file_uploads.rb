@@ -1,29 +1,31 @@
 # frozen_string_literal: true
 
 module ProcessFileUploads
-  def create_image_name(photo_path)
-    photo_path.split('/').last
+  def attach_local_file_to(file_path, resource)
+    image_name = create_file_name(file_path)
+
+    resource.attach(io: File.open(file_path), filename: image_name)
   end
 
-  def upload_image(resource, photo_path)
-    image_name = create_image_name(photo_path)
+  # https://github.com/rubocop-hq/rubocop/pull/6210/files
+  # https://stackoverflow.com/a/264239
+  def fetch_kobo_file_and_attach_to(url, resource)
+    image_name = create_file_name(url)
 
-    resource.attach(io: File.open(photo_path), filename: image_name)
+    file = open_and_read(url)
+    resource.attach(io: file, filename: image_name)
   end
 
   private
 
-  def extract_mime_type(photo_path)
-    file_extension = extract_file_extenstion(photo_path)
-
-    if %w[jpg jpeg].include?(file_extension)
-      'image/jpeg'
-    elsif file_extension == 'png'
-      'image/png'
-    end
+  # NOTE: application code allows URI.open;
+  # rspec fails because URI.open is a private method
+  def open_and_read(url)
+    token = "Token #{ENV.fetch('KOBO_TOKEN')}"
+    URI.parse(url).open('Authorization' => token)
   end
 
-  def extract_file_extenstion(photo_path)
-    photo_path.split('.').last.downcase
+  def create_file_name(path)
+    path.split('/').last
   end
 end

@@ -254,6 +254,7 @@ class Sample < ApplicationRecord
       'field_notes'
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 

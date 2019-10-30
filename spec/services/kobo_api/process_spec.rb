@@ -117,6 +117,7 @@ describe KoboApi::Process do
 
   describe '.save_sample_data' do
     def subject(project_id, kobo_id, hash_payload)
+      dummy_class.stub(:open_and_read).and_return(Tempfile.new('foo'))
       dummy_class.save_sample_data(project_id, kobo_id, hash_payload)
     end
 
@@ -307,6 +308,11 @@ describe KoboApi::Process do
           .to change { KoboPhoto.count }.by(9)
       end
 
+      it 'attaches a photo via ActiveStorage' do
+        expect { subject(project_id, kobo_id, data) }
+          .to change(ActiveStorage::Attachment, :count).by(9)
+      end
+
       it 'creates samples with incoming data' do
         subject(project_id, kobo_id, data)
 
@@ -387,7 +393,7 @@ describe KoboApi::Process do
         expect(statuses.count).to eq(1)
       end
 
-      it 'associates photos with related samples' do
+      it 'associates kobo photos with related samples' do
         subject(project_id, kobo_id, data)
 
         sample_ids = Sample.order(created_at: :asc).pluck(:id)
@@ -402,6 +408,15 @@ describe KoboApi::Process do
         expect(KoboPhoto.find(photo_ids[6]).sample_id).to eq(sample_ids[4])
         expect(KoboPhoto.find(photo_ids[7]).sample_id).to eq(sample_ids[4])
         expect(KoboPhoto.find(photo_ids[8]).sample_id).to eq(sample_ids[5])
+      end
+
+      it 'attaches a photo to kobo photo' do
+        subject(project_id, kobo_id, data)
+
+        KoboPhoto.all.each do |kobo_photo|
+          expect(kobo_photo.photo)
+            .to be_an_instance_of(ActiveStorage::Attached::One)
+        end
       end
     end
   end

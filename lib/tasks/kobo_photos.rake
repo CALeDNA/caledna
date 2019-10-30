@@ -60,7 +60,7 @@ namespace :kobo_photos do
       kobo_photos.each do |kobo_photo|
         puts row['path']
         photo_path = "#{Rails.root}/db/data/private/#{row['path']}"
-        upload_image(kobo_photo.photo, photo_path)
+        attach_local_file_to(photo_path, kobo_photo.photo)
       end
     end
   end

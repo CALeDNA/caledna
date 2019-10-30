@@ -2,6 +2,8 @@
 
 module KoboApi
   module Process
+    include ProcessFileUploads
+
     def import_kobo_projects(hash_payload)
       results = hash_payload.map do |project_data|
         next if project_ids.include?(project_data['id'])
@@ -207,15 +209,17 @@ module KoboApi
       photos_data.map do |photo_data|
         data = OpenStruct.new(photo_data)
 
+        url = "#{ENV.fetch('KOBO_MEDIA_URL')}#{data.filename}"
         filename = data.filename.split('/').last
-        photo = ::KoboPhoto.new(
+        kobo_photo = ::KoboPhoto.new(
           file_name: filename,
-          source_url: "#{ENV.fetch('KOBO_MEDIA_URL')}#{data.filename}",
+          source_url: url,
           kobo_payload: data,
           sample_id: sample_id
         )
 
-        photo.save
+        kobo_photo.save
+        fetch_kobo_file_and_attach_to(url, kobo_photo.photo)
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
