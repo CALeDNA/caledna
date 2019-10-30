@@ -2,7 +2,6 @@
 
 module ImportCsv
   module CreateRecords
-    include ProcessingExtractions
     include CustomCounter
 
     def create_asv(cell, extraction, cal_taxon, count, primer)
@@ -33,13 +32,6 @@ module ImportCsv
 
       return if project.valid?
       raise ImportError, 'ResearchProjectSource not created'
-    end
-
-    def update_extraction_details(extraction, extraction_type_id, row)
-      hash = JSON.parse(row).to_h
-      update_data = format_update_data(hash, extraction_type_id)
-      extraction.update(clean_up_hash(update_data))
-      extraction
     end
 
     def create_cal_taxon(data)

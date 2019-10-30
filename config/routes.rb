@@ -90,16 +90,9 @@ Rails.application.routes.draw do
         put 'update_multiple_approvals'
       end
 
-      controller 'process_extractions' do
-        get 'process_extractions' => 'process_extractions#index'
-        post 'edit_multiple', as: :edit_multiple_extractions
-        put 'update_multiple'
-      end
-
       resources :import_samples, only: %i[index create]
       resources :import_results_asvs, only: %i[index create]
       resources :import_results_taxa, only: %i[index create]
-      resources :import_processing_extractions, only: %i[index create]
       resources :import_csv_status, only: %i[index]
 
       resources :normalize_ncbi_taxa, only: %i[index show] do
