@@ -5,3 +5,7 @@
   <%= @page.title %>
 </h2>
 <%= sanitize @page.body %>
+
+<% if params[:id] == 'appendix' %>
+  <%= render partial: "appendix" %>
+<% end %>
