@@ -2,16 +2,17 @@
 
 module Admin
   class ResearchProjectsController < Admin::ApplicationController
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def create
       authorize_resource(resource)
 
       if resource.save
         create_user_authors
         create_researcher_authors
+        page = create_intro_page(resource)
 
         redirect_to(
-          [namespace, resource],
+          ['edit', namespace, page],
           notice: translate_with_resource('create.success')
         )
       else
@@ -20,7 +21,7 @@ module Admin
         }
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # rubocop:disable Metrics/MethodLength
     def update
@@ -60,6 +61,16 @@ module Admin
                                      research_project_id: resource.id,
                                      authorable_type: type)
       end
+    end
+
+    def create_intro_page(project)
+      Page.create(research_project: project,
+                  title: 'Introduction',
+                  slug: 'intro',
+                  menu_text: 'Introduction',
+                  body: "Intro for #{project.name}",
+                  published: true,
+                  display_order: 1)
     end
 
     def update_user_authors
