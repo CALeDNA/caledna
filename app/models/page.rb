@@ -2,10 +2,11 @@
 
 class Page < ApplicationRecord
   belongs_to :research_project, optional: true
-  belongs_to :website, optional: true
+  belongs_to :website
 
   before_save :set_slug
 
+  validates :website, presence: true
   validate :unique_slugs
 
   as_enum :menu, %i[

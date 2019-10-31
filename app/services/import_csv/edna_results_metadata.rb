@@ -10,7 +10,6 @@ module ImportCsv
       csv_data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
       save_metadata(csv_data.first, research_project_id)
-      create_appendix_page(research_project_id)
       OpenStruct.new(valid?: true, errors: nil)
     end
 
@@ -25,15 +24,6 @@ module ImportCsv
       project.primers = row['primers']
       project.metadata = row.to_h
       project.save
-    end
-
-    def create_appendix_page(research_project_id)
-      page = Page.where(research_project_id: research_project_id)
-                 .where(slug: 'appendix')
-      return if page.present?
-
-      Page.create(title: 'Appendix', slug: 'appendix', published: true,
-                  body: '', research_project_id: research_project_id)
     end
   end
 end

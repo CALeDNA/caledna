@@ -28,23 +28,5 @@ describe ImportCsv::EdnaResultsAsvs do
         .and change { research_project.primers }
         .to(row['primers'])
     end
-
-    it 'create a project appendix page if page does not exist' do
-      expect { subject(file, research_project.id) }
-        .to change { Page.count }.by(1)
-
-      page = Page.first
-      expect(page.slug).to eq('appendix')
-      expect(page.title).to eq('Appendix')
-      expect(page.published).to eq(true)
-      expect(page.research_project).to eq(research_project)
-    end
-
-    it 'does not create a project appendix page if page exists' do
-      create(:page, slug: 'appendix', research_project: research_project)
-
-      expect { subject(file, research_project.id) }
-        .to change { Page.count }.by(0)
-    end
   end
 end
