@@ -7,7 +7,7 @@
     <td>Research Projects</td>
     <td>
       <% sample.research_projects.each do |project| %>
-        <%= link_to project.name, research_project_path(project) %>
+        <%= link_to project.name, research_project_path(id: project.slug) %>
       <% end %>
     </td>
   </tr>
