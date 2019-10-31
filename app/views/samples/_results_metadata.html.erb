@@ -1,0 +1,4 @@
+<% sample.research_projects.each do |project| %>
+  <h2><%= link_to project.name, research_project_path(id: project.slug) %></h2>
+  <%= render partial: "research_projects/pages/metadata", locals: { project: project } %>
+<% end %>

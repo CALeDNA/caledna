@@ -20,12 +20,14 @@
   <% end %>
 
   <% if @page.show_edna_results_metadata? %>
-    <%= render partial: "metadata" %>
+    <h3>Project Details</h3>
+    <%= render partial: "metadata", locals: { project: @project } %>
   <% end %>
 
 <%# show pages with metadata, no maps %>
 <% elsif  @page.show_edna_results_metadata? %>
-   <%= render partial: "metadata" %>
+   <h3>Project Details</h3>
+   <%= render partial: "metadata", locals: { project: @project } %>
    <%= sanitize @page.body %>
 
 <%# show normal pages %>

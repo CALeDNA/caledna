@@ -1,9 +1,8 @@
-<h3>Project Details</h3>
 <table class="table">
   <tr>
     <td>Researchers</td>
     <td>
-    <% @project.research_project_authors.each do |author| %>
+    <% project.research_project_authors.each do |author| %>
       <% if author.authorable_type == 'Researcher'%>
       <%= author.authorable.username %>
       <% if author.authorable.orcid.present? %>
@@ -18,22 +17,30 @@
   </tr>
   <tr>
     <td>Reference barcode database</td>
-    <td><%= @project.reference_barcode_database %></td>
+    <td><%= project.reference_barcode_database %></td>
   </tr>
   <tr>
     <td>DRYAD link</td>
-    <td><%= link_to @project.dryad_link, @project.dryad_link %></td>
+    <td>
+      <% if project.dryad_link %>
+      <%= link_to(project.dryad_link, project.dryad_link) %>
+      <% end %>
+    </td>
   </tr>
   <tr>
     <td>Decontamination method</td>
-    <td><%= link_to @project.decontamination_method, @project.decontamination_method %></td>
+    <td>
+      <% if project.decontamination_method %>
+      <%= link_to(project.decontamination_method, project.decontamination_method) %>
+      <% end %>
+    </td>
   </tr>
   <tr>
     <td>Primers</td>
-    <td><%= @project.primers %></td>
+    <td><%= project.primers %></td>
   </tr>
 
-  <% @project.metadata_display.each do |data| %>
+  <% project.metadata_display.each do |data| %>
     <tr>
       <td><%= data.first.tr('_', ' ') %></td>
       <td><%= data.second %></td>
