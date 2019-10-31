@@ -7,6 +7,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
     id: Field::Number,
     email: Field::String,
     username: Field::String,
+    orcid: Field::String,
     role_cd: EnumField,
     encrypted_password: Field::String,
     reset_password_token: Field::String,
@@ -33,6 +34,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
     email
     username
+    orcid
     role_cd
     sign_in_count
     current_sign_in_at
@@ -45,6 +47,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
     email
     username
+    orcid
     role_cd
     active
     password

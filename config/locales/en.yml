@@ -44,6 +44,7 @@ en:
     label:
       researcher:
         role_cd: Role
+        orcid: "ORCID"
       sample:
         status_cd: Status
         substrate_cd: Substrate
