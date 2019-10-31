@@ -143,33 +143,4 @@ describe Page do
       end
     end
   end
-
-  describe '#show_project_map?' do
-    context 'when page does not have research project' do
-      it 'returns false' do
-        page = create(:page, research_project: nil)
-
-        expect(page.show_project_map?).to eq(false)
-      end
-    end
-
-    context 'when page does not have research project' do
-      it 'returns true when page if default project page' do
-        project = create(:research_project)
-        page = create(:page, research_project: project)
-        project.stub(:default_page) { page }
-
-        expect(page.show_project_map?).to eq(true)
-      end
-
-      it 'returns false otherwise' do
-        project = create(:research_project)
-        page1 = create(:page, research_project: project)
-        page = create(:page, research_project: project)
-        project.stub(:default_page) { page1 }
-
-        expect(page.show_project_map?).to eq(false)
-      end
-    end
-  end
 end

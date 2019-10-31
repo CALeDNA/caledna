@@ -70,7 +70,9 @@ module Admin
                   menu_text: 'Introduction',
                   body: "Intro for #{project.name}",
                   published: true,
-                  display_order: 1)
+                  display_order: 1,
+                  show_map: true,
+                  show_edna_results_metadata: true)
     end
 
     def update_user_authors

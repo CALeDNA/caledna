@@ -13,6 +13,8 @@ class PageDashboard < Administrate::BaseDashboard
     slug: Field::String,
     research_project: Field::BelongsTo,
     menu_text: Field::String,
+    show_map: Field::Boolean,
+    show_edna_results_metadata: Field::Boolean,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -29,6 +31,8 @@ class PageDashboard < Administrate::BaseDashboard
     :slug,
     :display_order,
     :research_project,
+    :show_map,
+    :show_edna_results_metadata,
     :body,
     :created_at,
     :updated_at
@@ -42,6 +46,8 @@ class PageDashboard < Administrate::BaseDashboard
     :display_order,
     :slug,
     :research_project,
+    :show_map,
+    :show_edna_results_metadata,
     :body,
   ].freeze
 

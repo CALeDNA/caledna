@@ -4,8 +4,31 @@
 <h2>
   <%= @page.title %>
 </h2>
-<%= sanitize @page.body %>
 
-<% if params[:id] == 'appendix' %>
-  <%= render partial: "appendix" %>
+<%# show pages with maps %>
+<% if @page.show_map? %>
+  <%= sanitize @page.body %>
+
+  <% if params[:view] == 'list' %>
+    <%= render partial: "map_menu" %>
+    <%= render partial: "samples/list",
+      locals: { samples: @samples, asvs_count: @asvs_count } %>
+  <% else %>
+    <%= render partial: "map_menu" %>
+    <%= render partial: "shared/map" %>
+    <%= javascript_pack_tag 'projects_detail_map' %>
+  <% end %>
+
+  <% if @page.show_edna_results_metadata? %>
+    <%= render partial: "metadata" %>
+  <% end %>
+
+<%# show pages with metadata, no maps %>
+<% elsif  @page.show_edna_results_metadata? %>
+   <%= render partial: "metadata" %>
+   <%= sanitize @page.body %>
+
+<%# show normal pages %>
+<% else %>
+ <%= sanitize @page.body %>
 <% end %>

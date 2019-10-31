@@ -34,6 +34,17 @@ class ResearchProject < ApplicationRecord
     pages.published.present?
   end
 
+  def metadata_display
+    return {} if metadata == '{}'
+
+    metadata.except(
+      'reference_barcode_database',
+      'Dryad_link',
+      'decontamination_method',
+      'primers'
+    )
+  end
+
   private
 
   def set_slug

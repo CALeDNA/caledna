@@ -23,12 +23,6 @@ class Page < ApplicationRecord
     menu_text || title
   end
 
-  def show_project_map?
-    return false unless research_project.present?
-
-    self == research_project.default_page
-  end
-
   private
 
   def unique_slugs

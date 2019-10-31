@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_30_234725) do
+ActiveRecord::Schema.define(version: 2019_10_31_141458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -377,6 +377,8 @@ ActiveRecord::Schema.define(version: 2019_10_30_234725) do
     t.integer "research_project_id"
     t.string "menu_text"
     t.bigint "website_id"
+    t.boolean "show_map"
+    t.boolean "show_edna_results_metadata"
     t.index ["display_order"], name: "index_pages_on_display_order"
     t.index ["slug"], name: "index_pages_on_slug"
     t.index ["website_id"], name: "index_pages_on_website_id"

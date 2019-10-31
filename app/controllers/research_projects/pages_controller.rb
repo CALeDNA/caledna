@@ -8,8 +8,13 @@ module ResearchProjects
     def show
       @project = project
       @page = project_page
-      la_river_view if project_slug == 'los-angeles-river'
-      pillar_point_view if project_slug == 'pillar-point'
+      if project_slug == 'los-angeles-river'
+        la_river_view
+      elsif project_slug == 'pillar-point'
+        pillar_point_view
+      else
+        default_view
+      end
     end
 
     def edit
@@ -79,6 +84,16 @@ module ResearchProjects
     def raw_params
       params.require(:page)
             .permit(:body, :title)
+    end
+
+    # =======================
+    # default
+    # =======================
+
+    def default_view
+      return unless params[:view] == 'list'
+      @samples = samples
+      @asvs_count = asvs_count
     end
 
     # =======================
