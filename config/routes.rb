@@ -70,6 +70,7 @@ Rails.application.routes.draw do
     resources :surveys
     resources :survey_responses
     resources :websites
+    resources :primers
 
     get 'events/:id/download_csv', to: 'events#download_csv',
                                    as: 'event_download_csv'

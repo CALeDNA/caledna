@@ -38,7 +38,7 @@ FactoryBot.define do
       dna_extraction_date Time.zone.now
       protocol_dna_extraction { Faker::Lorem.words(2).join(' ') }
       changes_protocol_dna_extraction { Faker::Lorem.words(2).join(' ') }
-      metabarcoding_primers { Extraction::METABARCODING_PRIMERS.sample }
+      metabarcoding_primers { Primer.sample }
       stat_barcoding_pcr_done_date Time.zone.now
       barcoding_pcr_number_of_replicates 1
       reamps_needed { Faker::Lorem.words(2).join(' ') }
