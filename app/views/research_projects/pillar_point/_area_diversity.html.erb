@@ -13,7 +13,7 @@
 <form class="area-diversity collapse" id="collapseFilters">
   <div class="row">
     <div class="col-sm-6">
-      <%= render partial: "shared/filters_taxa_divisions" %>
+      <%= render partial: "shared/filters_taxa_kingdoms" %>
 
     </div>
 
@@ -21,20 +21,20 @@
       <fieldset>
         <legend>Collection period</legend>
         <div class="checkbox">
-          <label for="all">
-            <input type="checkbox" name="months" id="all" value="all" checked>
+          <label for="all_months">
+            <input class="filter-option" type="checkbox" name="months" id="all_months" value="all" checked>
             All
           </label>
         </div>
         <div class="checkbox">
           <label for="february">
-            <input type="checkbox" name="months" id="february" value="february">
+            <input class="filter-option" type="checkbox" name="months" id="february" value="february">
             February
           </label>
         </div>
         <div class="checkbox">
           <label for="april">
-            <input type="checkbox" name="months" id="april" value="april">
+            <input class="filter-option" type="checkbox" name="months" id="april" value="april">
             April
           </label>
         </div>
@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary">Apply filters</button>
+  <button type="submit" class="btn btn-primary js-submit-filters">Apply filters</button>
   <button class="btn btn-primary js-reset-filters">Reset filters</button>
 </form>
 

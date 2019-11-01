@@ -1,6 +1,11 @@
 import axios from "axios";
 import { Spinner } from "spin.js";
 import baseVenn from "./base_venn.js";
+import {
+  addSubmitHandler,
+  addResetHandler,
+  addOptionsHander
+} from "../utils/data_viz_filters";
 
 // =============
 // config
@@ -11,8 +16,9 @@ const location_names = {
   "Maywood Park": "Maywood"
 };
 let diversityData;
-let filters = { taxon_groups: [], months: [] };
-const apiEndpoint = "/api/v1/research_projects/la_river/area_diversity";
+const baseFilters = { taxon_groups: [], taxon_rank: [] };
+let currentFilters = { taxon_groups: [], taxon_rank: [] };
+const endpoint = "/api/v1/research_projects/la_river/area_diversity";
 const tableEls = [document.querySelector("#table-edna")];
 const graphEls = [document.querySelector("#graph-edna")];
 
@@ -20,7 +26,7 @@ const graphEls = [document.querySelector("#graph-edna")];
 // misc
 // =============
 
-function initDiversity(endpoint) {
+function initApp(endpoint) {
   const opts = { color: "#333", left: "50%", scale: 1.75 };
   let spinner1 = new Spinner(opts).spin(graphEls[0]);
 
@@ -54,15 +60,39 @@ function formatDatasets(data) {
 }
 
 // =============
+// event listeners
+// =============
+
+const optionEls = document.querySelectorAll(".filter-option");
+
+function setFilters(newFilters) {
+  currentFilters = newFilters;
+  // console.log('currentFilters', currentFilters)
+}
+
+function resetFilters() {
+  currentFilters = JSON.parse(JSON.stringify(baseFilters));
+  // console.log('currentFilters', currentFilters)
+}
+
+function fetchFilters() {
+  return currentFilters;
+}
+
+addOptionsHander(optionEls, fetchFilters, setFilters);
+addSubmitHandler(initApp, endpoint, fetchFilters);
+addResetHandler(initApp, endpoint, resetFilters);
+
+// =============
 // init
 // =============
 
 baseVenn.config({
   tables: tableEls,
   graphs: graphEls,
-  apiEndpoint,
-  init: initDiversity,
-  chartFilters: filters
+  apiEndpoint: endpoint,
+  init: initApp,
+  chartFilters: currentFilters
 });
 baseVenn.showTables(tableEls);
-initDiversity(apiEndpoint);
+initApp(endpoint);

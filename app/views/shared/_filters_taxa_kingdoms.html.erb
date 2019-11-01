@@ -1,15 +1,15 @@
 <fieldset>
   <legend>Kingdoms</legend>
   <div class="checkbox">
-    <label for="all">
-      <input type="checkbox" name="taxon_groups" id="all" value="all" checked>
+    <label for="all_taxon_groups">
+      <input class="filter-option" type="checkbox" name="taxon_groups" id="all_taxon_groups" value="all" checked>
       All
     </label>
   </div>
   <% CombineTaxon::KINGDOMS.each do |kingdom| %>
     <div class="checkbox">
       <label for="<%= kingdom %>">
-        <input type="checkbox" name="taxon_groups" id="<%= kingdom %>" value="<%= kingdom %>">
+        <input class="filter-option" type="checkbox" name="taxon_groups" id="<%= kingdom %>" value="<%= kingdom %>">
         <%= kingdom %>
       </label>
     </div>

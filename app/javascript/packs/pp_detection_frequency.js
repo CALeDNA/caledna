@@ -1,25 +1,26 @@
-import Chart from "chart.js";
 import axios from "axios";
 import bar from "britecharts/dist/umd/bar.min";
-import miniTooltip from "britecharts/dist/umd/miniTooltip.min";
 import * as pp_utils from "services/pp_utils";
 import * as d3Selection from "d3-selection";
 import * as d3 from "d3";
 
+import {
+  addSubmitHandler,
+  addResetHandler,
+  addOptionsHander
+} from "../utils/data_viz_filters";
+
 // =============
 // config
 // =============
-
-let filters = { taxon_groups: [], taxon_rank: [] };
+const baseFilters = { taxon_groups: [], taxon_rank: [] };
+let currentFilters = { taxon_groups: [], taxon_rank: [] };
 
 let chartData = {};
 let filteredData = {};
 const endpoint = "/api/v1/research_projects/pillar_point/biodiversity_bias";
 const limit = 200000;
 const barHeight = 60;
-
-const chartElCal = document.querySelector("#taxonomic-diversity-chart-cal");
-const chartElGbif = document.querySelector("#taxonomic-diversity-chart-gbif");
 
 // =============
 // misc
@@ -54,16 +55,6 @@ function createColorScheme(data) {
   return data
     .map(taxon => (taxon.source === "ncbi" ? "#5b9f72" : "#ccc"))
     .reverse();
-}
-
-function formatQuerystring(filters) {
-  let query = [];
-  for (let key in filters) {
-    if (filters[key].length > 0) {
-      query.push(`${key}=${filters[key].join("|")}`);
-    }
-  }
-  return query.join("&");
 }
 
 // =============
@@ -120,17 +111,6 @@ function transformXAxis() {
     .attr("transform", "translate(0, -40)");
 }
 
-function updateChart(data, barChart, barContainer) {
-  barChart
-    .colorSchema(createColorScheme(data))
-    .height(data.length * barHeight + 50);
-
-  barContainer.datum(data).call(barChart);
-  transformXAxis();
-
-  return barChart;
-}
-
 // NOTE: need to remove existing  before redrawing
 function removeChart(selector) {
   const targetEl = document.querySelector(`${selector} svg`);
@@ -143,73 +123,25 @@ function removeChart(selector) {
 // event listeners
 // =============
 
-const checkboxEls = document.querySelectorAll("input");
+const optionEls = document.querySelectorAll(".filter-option");
 
-function uncheckTaxonGroupsHandler() {
-  checkboxEls.forEach(el => {
-    if (el.value !== "all") {
-      el.checked = false;
-    }
-  });
+function setFilters(newFilters) {
+  currentFilters = newFilters;
+  // console.log('currentFilters', currentFilters)
 }
 
-function uncheckAllHandler() {
-  checkboxEls.forEach(el => {
-    if (el.value == "all") {
-      el.checked = false;
-    }
-  });
+function resetFilters() {
+  currentFilters = JSON.parse(JSON.stringify(baseFilters));
+  // console.log('currentFilters', currentFilters)
 }
 
-checkboxEls.forEach(el => {
-  el.addEventListener("click", event => {
-    let currentFilters = filters[event.target.name];
+function fetchFilters() {
+  return currentFilters;
+}
 
-    if (event.target.type === "radio") {
-      filters[event.target.name] = [event.target.value];
-    } else {
-      if (event.target.checked) {
-        if (event.target.value == "all") {
-          currentFilters = [];
-          uncheckTaxonGroupsHandler();
-        } else {
-          currentFilters.push(event.target.value);
-          uncheckAllHandler();
-        }
-      } else {
-        if (event.target.value !== "all") {
-          let index = currentFilters.indexOf(event.target.value);
-          if (index > -1) {
-            currentFilters.splice(index, 1);
-          }
-        }
-      }
-      filters[event.target.name] = [...new Set(currentFilters)];
-    }
-  });
-});
-
-document
-  .querySelector("button[type=submit]")
-  .addEventListener("click", event => {
-    event.preventDefault();
-
-    let url = `${endpoint}?${formatQuerystring(filters)}`;
-    initApp(url);
-  });
-
-document.querySelector(".js-reset-filters").addEventListener("click", event => {
-  event.preventDefault();
-  initApp(endpoint);
-
-  document.querySelectorAll("input").forEach(el => {
-    if (el.value === "all") {
-      el.checked = true;
-    } else {
-      el.checked = false;
-    }
-  });
-});
+addOptionsHander(optionEls, fetchFilters, setFilters);
+addSubmitHandler(initApp, endpoint, fetchFilters);
+addResetHandler(initApp, endpoint, resetFilters);
 
 // =============
 // init

@@ -11,14 +11,14 @@ const location_names = {
   "Maywood Park": "Maywood Park"
 };
 let diversityData;
-const apiEndpoint = "/api/v1/research_projects/la_river/pa_area_diversity";
+const endpoint = "/api/v1/research_projects/la_river/pa_area_diversity";
 const graphEls = document.querySelector("#graph-edna");
-console.log("df", graphEls);
+
 // =============
 // misc
 // =============
 
-function initDiversity(endpoint) {
+function initApp(endpoint) {
   const opts = { color: "#333", left: "50%", scale: 1.75 };
   let spinner1 = new Spinner(opts).spin(graphEls);
 
@@ -57,8 +57,8 @@ function formatDatasets(data) {
 
 baseVenn.config({
   graphs: graphEls,
-  apiEndpoint,
-  init: initDiversity,
+  apiEndpoint: endpoint,
+  init: initApp,
   chartFilters: []
 });
-initDiversity(apiEndpoint);
+initApp(endpoint);

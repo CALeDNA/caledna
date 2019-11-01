@@ -5,16 +5,11 @@
 <form class="area-diversity collapse" id="collapseFilters">
   <div class="row">
     <div class="col-sm-6">
-      <%= render partial: "shared/filters_taxa_divisions" %>
-
-    </div>
-
-    <div class="col-sm-6">
-
+      <%= render partial: "shared/filters_taxa_kingdoms" %>
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary">Apply filters</button>
+  <button type="submit" class="btn btn-primary js-submit-filters">Apply filters</button>
   <button class="btn btn-primary js-reset-filters">Reset filters</button>
 </form>
 

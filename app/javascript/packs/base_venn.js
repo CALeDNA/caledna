@@ -177,62 +177,6 @@ function showTables(tableEls) {
 // event listeners
 // =============
 
-const checkboxEls = document.querySelectorAll("input");
-
-function uncheckTaxonGroupsHandler() {
-  checkboxEls.forEach(el => {
-    if (el.value !== "all") {
-      el.checked = false;
-    }
-  });
-}
-
-function uncheckAllHandler() {
-  checkboxEls.forEach(el => {
-    if (el.value == "all") {
-      el.checked = false;
-    }
-  });
-}
-
-checkboxEls.forEach(el => {
-  el.addEventListener("click", event => {
-    let currentFilters = filters[event.target.name];
-
-    if (event.target.type === "radio") {
-      filters[event.target.name] = [event.target.value];
-    } else {
-      if (event.target.checked) {
-        if (event.target.value == "all") {
-          currentFilters = [];
-          uncheckTaxonGroupsHandler();
-        } else {
-          currentFilters.push(event.target.value);
-          uncheckAllHandler();
-        }
-      } else {
-        if (event.target.value !== "all") {
-          let index = currentFilters.indexOf(event.target.value);
-          if (index > -1) {
-            currentFilters.splice(index, 1);
-          }
-        }
-      }
-      filters[event.target.name] = [...new Set(currentFilters)];
-    }
-  });
-});
-
-const submitEl = document.querySelector("button[type=submit]");
-if (submitEl) {
-  submitEl.addEventListener("click", event => {
-    event.preventDefault();
-
-    let url = `${apiEndpointUrl}?${formatQuerystring(filters)}`;
-    initApp(url);
-  });
-}
-
 if (graphBtn) {
   graphBtn.addEventListener("click", event => {
     hideTables(tableEls);
@@ -244,22 +188,6 @@ if (tableBtn) {
   tableBtn.addEventListener("click", event => {
     showTables(tableEls);
     hideGraphs(graphEls);
-  });
-}
-
-const resetEl = document.querySelector(".js-reset-filters");
-if (resetEl) {
-  resetEl.addEventListener("click", event => {
-    event.preventDefault();
-    initApp(apiEndpointUrl);
-
-    document.querySelectorAll("input").forEach(el => {
-      if (el.value === "all") {
-        el.checked = true;
-      } else {
-        el.checked = false;
-      }
-    });
   });
 }
 

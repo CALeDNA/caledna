@@ -11,31 +11,15 @@
 <form class="area-diversity collapse" id="collapseFilters">
   <div class="row">
     <div class="col-sm-6">
-      <%= render partial: "shared/filters_taxa_divisions" %>
+      <%= render partial: "shared/filters_taxa_kingdoms" %>
     </div>
 
     <div class="col-sm-6">
-      <fieldset>
-        <legend>Taxa rank</legend>
-        <div class="radio">
-          <label for="phylum">
-            <input type="radio" name="taxon_rank" id="phylum" value="phylum" checked>
-            phylum
-          </label>
-        </div>
-        <% ['class', 'order', 'family', 'genus', 'species'].each do |rank| %>
-          <div class="radio">
-            <label for="<%= rank %>">
-              <input type="radio" name="taxon_rank" id="<%= rank %>" value="<%= rank %>">
-              <%= rank %>
-            </label>
-          </div>
-        <% end %>
-      </fieldset>
+      <%= render partial: "shared/filters_taxa_ranks" %>
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary">Apply filters</button>
+  <button type="submit" class="btn btn-primary js-submit-filters">Apply filters</button>
   <button class="btn btn-primary js-reset-filters">Reset filters</button>
 </form>
 
