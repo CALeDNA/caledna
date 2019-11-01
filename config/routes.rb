@@ -112,7 +112,6 @@ Rails.application.routes.draw do
   end
 
   resources :samples, only: %i[index show]
-  resource :search, only: %i[show]
   resource :taxa_search, only: %i[show]
   resources :field_projects, only: %i[index show]
   resources :taxa, only: %i[index show create]

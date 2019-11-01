@@ -2,11 +2,12 @@ import baseMap from "./base_map.js";
 import {
   addSubmitHandler,
   addResetHandler,
-  addOptionsHander
+  addOptionsHander,
+  addSubmitSearchHandler
 } from "../utils/data_viz_filters";
 
-const baseFilters = { status: [], substrate: [], primer: [] };
-let currentFilters = { status: [], substrate: [], primer: [] };
+const baseFilters = { status: [], substrate: [], primer: [], keyword: [] };
+let currentFilters = { status: [], substrate: [], primer: [], keyword: [] };
 let endpoint = "/api/v1/samples";
 let map = baseMap.createMap();
 let markerClusterLayer = null;
@@ -36,7 +37,7 @@ const optionEls = document.querySelectorAll(".filter-option");
 
 function setFilters(newFilters) {
   currentFilters = newFilters;
-  // console.log("currentFilters", currentFilters);
+  // console.log('currentFilters', currentFilters)
 }
 
 function resetFilters() {
@@ -51,6 +52,7 @@ function fetchFilters() {
 addOptionsHander(optionEls, fetchFilters, setFilters);
 addSubmitHandler(initApp, endpoint, fetchFilters);
 addResetHandler(initApp, endpoint, resetFilters);
+addSubmitSearchHandler(initApp, endpoint, fetchFilters, setFilters);
 
 // =============
 // init

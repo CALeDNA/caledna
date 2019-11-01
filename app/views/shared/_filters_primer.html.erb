@@ -1,0 +1,17 @@
+<fieldset>
+  <legend>Primer</legend>
+  <div class="checkbox">
+    <label for="all_primer">
+      <input class="filter-option" type="checkbox" name="primer" id="all_primer" value="all" checked>
+      All
+    </label>
+  </div>
+  <% Primer.all.each do |primer| %>
+    <div class="checkbox">
+      <label for="<%= primer.name %>">
+        <input class="filter-option" type="checkbox" name="primer" id="<%= primer.name %>" value="<%= primer.name %>">
+        <%= primer.name %>
+      </label>
+    </div>
+  <% end %>
+</fieldset>

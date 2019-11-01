@@ -21,6 +21,28 @@ export function addSubmitHandler(initApp, endpoint, fetchFilters) {
   }
 }
 
+export function addSubmitSearchHandler(
+  initApp,
+  endpoint,
+  fetchFilters,
+  setFilters
+) {
+  const submitEl = document.querySelector(".js-submit-search");
+  if (submitEl) {
+    submitEl.addEventListener("click", event => {
+      event.preventDefault();
+      const keyword = document.querySelector("#query").value;
+
+      const filters = fetchFilters();
+      filters["keyword"] = [keyword];
+      setFilters(filters);
+
+      let url = `${endpoint}?${formatQuerystring(filters)}`;
+      initApp(url);
+    });
+  }
+}
+
 export function addResetHandler(initApp, endpoint, resetFilters) {
   const submitEl = document.querySelector(".js-reset-filters");
   if (submitEl) {
