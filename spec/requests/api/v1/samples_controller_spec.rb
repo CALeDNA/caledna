@@ -250,7 +250,7 @@ describe 'Samples' do
   describe 'show' do
     it 'returns OK when sample is valid' do
       sample = create(:sample, status_cd: :approved, latitude: 1, longitude: 1)
-      get sample_path(id: sample.id)
+      get api_v1_sample_path(id: sample.id)
 
       expect(response.status).to eq(200)
     end
@@ -258,7 +258,7 @@ describe 'Samples' do
     it 'raises an error if sample is not approved' do
       sample = create(:sample, status_cd: :submitted, latitude: 1, longitude: 1)
 
-      expect { get sample_path(id: sample.id) }
+      expect { get api_v1_sample_path(id: sample.id) }
         .to raise_error(ActiveRecord::RecordNotFound)
     end
 
@@ -266,12 +266,12 @@ describe 'Samples' do
       sample = create(:sample, status_cd: :approved, latitude: nil,
                                longitude: nil)
 
-      expect { get sample_path(id: sample.id) }
+      expect { get api_v1_sample_path(id: sample.id) }
         .to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'raises an error for invalid id' do
-      expect { get sample_path(id: 1) }
+      expect { get api_v1_sample_path(id: 1) }
         .to raise_error(ActiveRecord::RecordNotFound)
     end
   end

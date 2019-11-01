@@ -5,9 +5,46 @@ require 'rails_helper'
 describe 'Taxa' do
   describe 'index' do
     it 'returns OK' do
-      get api_v1_taxa_path(query: 'foo')
+      get api_v1_taxa_path
 
       expect(response.status).to eq(200)
+    end
+
+    it 'returns empty array if no match' do
+      create(:ncbi_node, canonical_name: 'random')
+
+      get api_v1_taxa_path(query: 'MatCH')
+      json = JSON.parse(response.body)
+
+      expect(json['data'].length).to eq(0)
+    end
+
+    it 'returns taxa that has exact canonical_name match' do
+      create(:ncbi_node, canonical_name: 'random', id: 1)
+      create(:ncbi_node, canonical_name: 'match', id: 2)
+      create(:ncbi_node, canonical_name: 'match', id: 3)
+
+      get api_v1_taxa_path(query: 'MatCH')
+      data = JSON.parse(response.body)['data']
+
+      expect(data.length).to eq(2)
+
+      ids = data.map { |i| i['id'] }
+      expect(ids).to match_array(%w[2 3])
+    end
+
+    it 'returns taxa that has canonical_name prefix match' do
+      create(:ncbi_node, canonical_name: 'xx match', id: 1)
+      create(:ncbi_node, canonical_name: 'match', id: 2)
+      create(:ncbi_node, canonical_name: 'match xx', id: 3)
+
+      get api_v1_taxa_path(query: 'MatCH')
+      data = JSON.parse(response.body)['data']
+
+      expect(data.length).to eq(2)
+
+      ids = data.map { |i| i['id'] }
+      expect(ids).to match_array(%w[2 3])
     end
   end
 

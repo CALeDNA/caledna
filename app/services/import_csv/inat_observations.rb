@@ -64,7 +64,6 @@ module ImportCsv
     def create_inat_observation(row)
       record = InatObservation.find_by(observation_id: row['id'])
       return if record.present?
-      puts row['id']
 
       attributes = {
         observation_id: row['id'],
@@ -89,9 +88,7 @@ module ImportCsv
         canonical_name: find_canonical_name(row)
       }
 
-      obs = InatObservation.create(attributes)
-      puts obs.errors.messages unless obs.valid?
-      obs
+      InatObservation.create(attributes)
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 

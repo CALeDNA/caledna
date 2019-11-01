@@ -70,8 +70,6 @@ module FormatNcbi
     SQL
 
     NcbiName.where(sql).find_each do |record|
-      puts record.taxon_id
-
       clean_name = record.name.delete("'")
       sql = <<-SQL
         UPDATE ncbi_nodes
