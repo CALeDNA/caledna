@@ -5,6 +5,9 @@ namespace :taxa_search_cache do
     require_relative '../../app/services/custom_counter'
     include CustomCounter
 
+    puts 'destroy cache...'
+    TaxaSearchCache.destroy_all
+
     puts 'create cache...'
 
     sql = "rank = 'superkingdom' OR rank ='kingdom' OR rank='phylum'"
@@ -26,6 +29,9 @@ namespace :taxa_search_cache do
   task cache_la_river: :environment do
     require_relative '../../app/services/custom_counter'
     include CustomCounter
+
+    puts 'destroy cache...'
+    TaxaSearchCache.destroy_all
 
     puts 'create cache...'
 
