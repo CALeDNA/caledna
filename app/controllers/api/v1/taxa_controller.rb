@@ -13,7 +13,7 @@ module Api
         render json: {
           samples: SampleSerializer.new(samples),
           asvs_count: asvs_count,
-          base_samples: BasicSampleSerializer.new(Sample.results_completed)
+          base_samples: BasicSampleSerializer.new(base_samples)
         }, status: :ok
       end
 
@@ -70,6 +70,17 @@ module Api
         end
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+      def base_samples
+        @base_samples ||= begin
+          samples = Sample.results_completed.where(query_string)
+
+          if params[:primer] && params[:primer] != 'all'
+            samples = samples_for_primers(samples)
+          end
+          samples
+        end
+      end
 
       def samples_for_primers(samples)
         primers = Primer.all.pluck(:name)
