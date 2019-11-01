@@ -2,5 +2,5 @@
 
 class SampleSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :id, :latitude, :longitude, :barcode, :status
+  attributes :id, :latitude, :longitude, :barcode, :status, :substrate, :primers
 end
