@@ -6,9 +6,6 @@ module Api
       include BatchData
 
       def index
-        taxa = ::NcbiNode.where('lower("canonical_name") like ?', "#{query}%")
-                         .limit(15)
-
         render json: NcbiNodeSerializer.new(taxa)
       end
 
@@ -22,54 +19,74 @@ module Api
 
       private
 
-      def query
-        params[:query].downcase
+      # =======================
+      # index
+      # =======================
+
+      def taxa
+        if query.present?
+          ::NcbiNode.where('lower("canonical_name") like ?', "#{query}%")
+                    .limit(15)
+        else
+          []
+        end
       end
+
+      def query
+        params[:query]&.downcase
+      end
+
+      # =======================
+      # show
+      # =======================
 
       def cached_taxa_search
         @cached_taxa_search ||= TaxaSearchCache.find_by(taxon_id: params[:id])
       end
 
-      def select_sql
-        <<-SQL
-          SELECT samples.id, samples.barcode, status_cd AS status,
-          samples.latitude, samples.longitude
-          FROM asvs
-          JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
-          JOIN samples ON samples.id = asvs.sample_id
-          WHERE latitude IS NOT NULL AND longitude IS NOT NULL
-        SQL
-      end
-
-      def raw_samples
-        sql = select_sql
-        sql += " AND ids @> '{#{conn.quote(params[:id].to_i)}}' " \
-          'GROUP BY samples.id '
-
-        raw_records = conn.exec_query(sql)
-        raw_records.map { |r| OpenStruct.new(r) }
-      end
-
       def cached_samples
-        ids = cached_taxa_search.sample_ids.join(', ')
-        sql = select_sql
-        sql += " AND samples.id in (#{ids}) " \
-          'GROUP BY samples.id '
-
-        raw_records = conn.exec_query(sql)
-        raw_records.map { |r| OpenStruct.new(r) }
+        @cached_samples ||= Sample.where(id: cached_taxa_search.sample_ids)
       end
 
       def samples
-        if cached_taxa_search.present?
-          cached_samples
-        else
-          raw_samples
-        end
+        @samples ||= cached_taxa_search.present? ? cached_samples : all_samples
       end
 
-      def conn
-        @conn ||= ActiveRecord::Base.connection
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def all_samples
+        @all_samples ||= begin
+          samples =
+            Sample.joins('JOIN asvs on asvs.sample_id = samples.id')
+                  .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = ' \
+                  'asvs."taxonID"')
+                  .approved.with_coordinates.order(:barcode)
+                  .where(query_string)
+                  .where('ids @> ?', "{#{params[:id]}}")
+
+          if params[:primer] && params[:primer] != 'all'
+            samples = samples_for_primers(samples)
+          end
+          samples
+        end
+      end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+      def samples_for_primers(samples)
+        primers = Primer.all.pluck(:name)
+        raw_primers = params[:primer].split('|')
+                                     .select { |p| primers.include?(p) }
+
+        samples =
+          samples.where('samples.primers && ?', "{#{raw_primers.join(',')}}")
+        samples
+      end
+
+      def query_string
+        query = {}
+        if params[:substrate] && params[:substrate] != 'all'
+          query[:substrate_cd] = params[:substrate].split('|')
+        end
+        query
       end
     end
   end
