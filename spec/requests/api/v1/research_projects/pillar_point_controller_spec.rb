@@ -30,9 +30,9 @@ describe 'PillarPoint' do
     end
   end
 
-  describe 'source_comparison_all' do
+  describe 'taxonomy_comparison' do
     it 'returns OK' do
-      get api_v1_research_projects_pillar_point_source_comparison_all_path(
+      get api_v1_research_projects_pillar_point_taxonomy_comparison_path(
         slug: slug
       )
 

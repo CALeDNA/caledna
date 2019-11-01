@@ -21,8 +21,8 @@ module Api
           render json: project_service.area_diversity_data, status: :ok
         end
 
-        def source_comparison_all
-          render json: project_service.source_comparison_all_data, status: :ok
+        def taxonomy_comparison
+          render json: project_service.taxonomy_comparison_data, status: :ok
         end
 
         def biodiversity_bias

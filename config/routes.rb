@@ -36,7 +36,7 @@ Rails.application.routes.draw do
           get 'common_taxa_map', defaults: params
           get 'biodiversity_bias', defaults: params
           get 'occurrences', defaults: params
-          get 'source_comparison_all', defaults: params
+          get 'taxonomy_comparison', defaults: params
           get 'sites', defaults: params
         end
 

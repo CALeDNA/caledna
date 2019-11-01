@@ -2,8 +2,8 @@
 
 module ResearchProjectService
   module PillarPointServices
-    module SourceComparisonAll
-      def source_comparison_all_data
+    module TaxonomyComparison
+      def taxonomy_comparison_data
         gbif = 'gbif'
         edna = 'edna'
 
