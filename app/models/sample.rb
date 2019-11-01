@@ -14,6 +14,8 @@ class Sample < ApplicationRecord
   has_many :asvs
   has_many :research_project_sources, foreign_key: 'sample_id'
   has_many :research_projects, through: :research_project_sources
+  has_many :primer_samples
+  has_many :primers, through: :primer_samples
 
   validate :unique_approved_barcodes
 
