@@ -1,13 +1,59 @@
-import baseMap from './base_map.js';
+import baseMap from "./base_map.js";
+import {
+  addSubmitHandler,
+  addResetHandler,
+  addOptionsHander
+} from "../utils/data_viz_filters";
 
-var apiEndpoint = "/api/v1/samples";
-var map = baseMap.createMap()
-baseMap.fetchSamples(apiEndpoint, map, function(data) {
-  var markerClusterLayer =
-    baseMap.createMarkerCluster(data.samplesData, baseMap.createCircleMarker)
-  map.addLayer(markerClusterLayer);
-})
+const baseFilters = { status: [], substrate: [], primer: [] };
+let currentFilters = { status: [], substrate: [], primer: [] };
+let endpoint = "/api/v1/samples";
+let map = baseMap.createMap();
+let markerClusterLayer = null;
+
+function initApp(url) {
+  baseMap.fetchSamples(url, map, function(data) {
+    if (markerClusterLayer) {
+      markerClusterLayer.clearLayers();
+    }
+    markerClusterLayer = baseMap.createMarkerCluster(
+      data.samplesData,
+      baseMap.createCircleMarker
+    );
+    map.addLayer(markerClusterLayer);
+  });
+}
 
 baseMap.createOverlayEventListeners(map);
 baseMap.createOverlays(map);
 baseMap.addMapLayerModal(map);
+
+// =============
+// event listeners
+// =============
+
+const optionEls = document.querySelectorAll(".filter-option");
+
+function setFilters(newFilters) {
+  currentFilters = newFilters;
+  // console.log("currentFilters", currentFilters);
+}
+
+function resetFilters() {
+  currentFilters = JSON.parse(JSON.stringify(baseFilters));
+  // console.log('currentFilters', currentFilters)
+}
+
+function fetchFilters() {
+  return currentFilters;
+}
+
+addOptionsHander(optionEls, fetchFilters, setFilters);
+addSubmitHandler(initApp, endpoint, fetchFilters);
+addResetHandler(initApp, endpoint, resetFilters);
+
+// =============
+// init
+// =============
+
+initApp(endpoint);

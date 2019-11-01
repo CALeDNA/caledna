@@ -3,8 +3,11 @@
 <% list_view = params[:view] == 'list' %>
 
 <div class="samples-menu">
-  <div class="btn-group" role="group" >
+  <%= render partial: "searches/form" %>
+  <%= link_to 'Search Organisms', taxa_path %>
 
+  <br><br>
+  <div class="btn-group" role="group" >
     <a href="<%= samples_path(path_params) %>" class="<%= pill_menu_classes(!list_view) %>">
       <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
     </a>
@@ -13,5 +16,91 @@
     </a>
   </div>
 
-  <%= render partial: "searches/form" %>
+  <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+    <i class="fas fa-sliders-h"></i> Filters
+  </button>
+
+  <div>
+    <form class="samples-index collapse" id="collapseFilters">
+      <div class="row">
+        <div class="col-sm-4">
+          <fieldset>
+            <legend>Sample Status</legend>
+            <div class="radio">
+              <label for="all_status">
+                <input class="filter-option" type="radio" name="status" id="all_status" value="all" checked>
+                All
+              </label>
+            </div>
+            <div class="radio">
+              <label for="approved">
+                <input class="filter-option" type="radio" name="status" id="approved" value="approved">
+                Approved
+              </label>
+            </div>
+            <div class="radio">
+              <label for="results_completed">
+                <input class="filter-option" type="radio" name="status" id="results_completed" value="results_completed">
+                Results Completed
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="col-sm-4">
+          <fieldset>
+            <legend>Substrate</legend>
+            <div class="checkbox">
+              <label for="all_substrate">
+                <input class="filter-option" type="checkbox" name="substrate" id="all_substrate" value="all" checked>
+                All
+              </label>
+            </div>
+            <div class="checkbox">
+              <label for="soil">
+                <input class="filter-option" type="checkbox" name="substrate" id="soil" value="soil">
+                Soil
+              </label>
+            </div>
+            <div class="checkbox">
+              <label for="sediment">
+                <input class="filter-option" type="checkbox" name="substrate" id="sediment" value="sediment">
+                Sediment
+              </label>
+            </div>
+            <div class="checkbox">
+              <label for="water">
+                <input class="filter-option" type="checkbox" name="substrate" id="water" value="water">
+                Water
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="col-sm-4">
+          <fieldset>
+            <legend>Primer</legend>
+            <div class="checkbox">
+              <label for="all_primer">
+                <input class="filter-option" type="checkbox" name="primer" id="all_primer" value="all" checked>
+                All
+              </label>
+            </div>
+            <% Primer.all.each do |primer| %>
+              <div class="checkbox">
+                <label for="<%= primer.name %>">
+                  <input class="filter-option" type="checkbox" name="primer" id="<%= primer.name %>" value="<%= primer.name %>">
+                  <%= primer.name %>
+                </label>
+              </div>
+            <% end %>
+          </fieldset>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary js-submit-filters">Apply filters</button>
+      <button class="btn btn-primary js-reset-filters">Reset filters</button>
+    </form>
+
+  </div>
 </div>

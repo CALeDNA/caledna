@@ -48,7 +48,9 @@ module Api
           samples = Sample.approved.with_coordinates.order(:barcode)
                           .where(query_string)
 
-          samples = samples_for_primers(samples) if params[:primer]
+          if params[:primer] && params[:primer] != 'all'
+            samples = samples_for_primers(samples)
+          end
           samples
         end
       end
@@ -77,14 +79,18 @@ module Api
         params[:keyword]&.downcase
       end
 
+      # rubocop:disable Metrics/AbcSize
       def query_string
         query = {}
-        query[:status_cd] = params[:status] if params[:status]
-        if params[:substrate]
+        if params[:status] && params[:status] != 'all'
+          query[:status_cd] = params[:status]
+        end
+        if params[:substrate] && params[:substrate] != 'all'
           query[:substrate_cd] = params[:substrate].split('|')
         end
         query
       end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end
