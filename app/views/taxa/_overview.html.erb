@@ -108,6 +108,27 @@
         <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
       </a>
     </div>
+
+    <button class="btn btn-default" type="button" data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+      <i class="fas fa-sliders-h"></i> Filters
+    </button>
+
+    <div>
+      <form autocomplete="off" class="samples-index collapse" id="collapseFilters">
+        <div class="row">
+          <div class="col-sm-6">
+            <%= render partial: "shared/filters_substrate" %>
+          </div>
+
+          <div class="col-sm-6">
+            <%= render partial: "shared/filters_primer" %>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary js-submit-filters">Apply filters</button>
+        <button class="btn btn-primary js-reset-filters">Reset filters</button>
+      </form>
+    </div>
   </div>
 
   <% if params[:view] == 'list' %>
@@ -115,14 +136,15 @@
   <% else %>
     <form autocomplete="off" class="taxa-markers">
       <div>
-        <input type="checkbox" checked value="asvs" class="js-taxa-markers">
+        <input type="checkbox" checked value="taxa-sites" class="js-taxa-markers js-edna-sites">
         <svg height="30" width="100%">
           <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
-          <text x="30" y="20"><%= pluralize(samples.total_records, 'site') %> with <%= taxon.canonical_name %> <%= taxon.common_names_display(truncate: false) %></text>
+          <% taxon_name = "#{taxon.canonical_name} #{taxon.common_names_display(truncate: false)}".tr('"', "'") %>
+          <text x="30" y="20" class="js-edna-sites-count" data-taxon="<%= taxon_name %>">sites with <%= taxon_name %></text>
         </svg>
       </div>
       <div>
-        <input type="checkbox" value="presence" class="js-taxa-markers">
+        <input type="checkbox" value="presence" class="js-taxa-markers js-total-edna-sites">
         <svg height="30" width="100%">
           <circle cx="15" cy="15" r="7" stroke="#777" stroke-width="2" fill="#ddd" />
           <text x="30" y="20" class="js-total-edna-sites-count">sites with eDNA results</text>

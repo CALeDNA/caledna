@@ -54,7 +54,7 @@ export function addResetHandler(initApp, endpoint, resetFilters) {
       let url = endpoint;
       initApp(url);
 
-      document.querySelectorAll("input").forEach(el => {
+      document.querySelectorAll(".filter-option").forEach(el => {
         if (el.value === "all") {
           el.checked = true;
         } else if (el.name === "taxon_rank" && el.value === "phylum") {
