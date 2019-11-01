@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_20_162948) do
+ActiveRecord::Schema.define(version: 2019_10_31_141458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -400,12 +400,6 @@ ActiveRecord::Schema.define(version: 2019_04_20_162948) do
     t.text "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "primers_samples", id: false, force: :cascade do |t|
-    t.bigint "primer_id", null: false
-    t.bigint "sample_id", null: false
-    t.index ["primer_id", "sample_id"], name: "index_primers_samples_on_primer_id_and_sample_id", unique: true
   end
 
   create_table "raw_taxonomy_imports", force: :cascade do |t|
