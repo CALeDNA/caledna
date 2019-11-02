@@ -40,28 +40,20 @@ module Api
       # show
       # =======================
 
-      def cached_taxa_search
-        @cached_taxa_search ||= TaxaSearchCache.find_by(taxon_id: params[:id])
-      end
-
-      def cached_samples
-        @cached_samples ||= Sample.where(id: cached_taxa_search.sample_ids)
-      end
-
-      def samples
-        @samples ||= cached_taxa_search.present? ? cached_samples : all_samples
-      end
-
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      def all_samples
-        @all_samples ||= begin
+      def samples
+        @samples ||= begin
           samples =
-            Sample.joins('JOIN asvs on asvs.sample_id = samples.id')
+            Sample.select(:id).select(:barcode).select(:status_cd)
+                  .select(:latitude).select(:longitude).select(:substrate_cd)
+                  .select(:primers)
+                  .joins('JOIN asvs on asvs.sample_id = samples.id')
                   .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = ' \
                   'asvs."taxonID"')
-                  .approved.with_coordinates.order(:barcode)
+                  .results_completed.with_coordinates.order(:created_at)
                   .where(query_string)
                   .where('ids @> ?', "{#{params[:id]}}")
+                  .group(:id)
 
           if params[:primer] && params[:primer] != 'all'
             samples = samples_for_primers(samples)

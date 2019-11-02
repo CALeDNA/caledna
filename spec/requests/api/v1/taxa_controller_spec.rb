@@ -99,6 +99,25 @@ describe 'Taxa' do
       expect(base_samples.length).to eq(1)
     end
 
+    it 'returns unique samples for a given taxon' do
+      taxon1 = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
+      taxon2 = create(:ncbi_node, ids: [1, target_id], id: target_id)
+
+      sample1 = create(:sample, :results_completed)
+      extraction1 = create(:extraction, sample: sample1)
+      create(:asv, sample: sample1, extraction: extraction1,
+                   taxonID: taxon1.taxon_id)
+      create(:asv, sample: sample1, extraction: extraction1,
+                   taxonID: taxon2.taxon_id)
+
+      get api_v1_taxon_path(id: target_id)
+      samples, asvs_count, base_samples = parse_response(response)
+
+      expect(samples.length).to eq(1)
+      expect(asvs_count.length).to eq(1)
+      expect(base_samples.length).to eq(1)
+    end
+
     it 'ignores samples that contain other taxa' do
       taxon = create(:ncbi_node, ids: [4], id: 4)
       create_occurence(taxon)
