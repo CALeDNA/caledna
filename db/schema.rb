@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_31_141458) do
+ActiveRecord::Schema.define(version: 2019_11_02_152536) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -46,14 +45,12 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.integer "sample_id"
     t.integer "count", default: 0
     t.jsonb "counts", default: {}
-    t.bigint "research_project_id"
     t.index ["extraction_id"], name: "index_asvs_on_extraction_id"
-    t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
   end
 
-  create_table "cal_taxa", id: :serial, force: :cascade do |t|
+  create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
     t.string "datasetID"
     t.string "parentNameUsageID"
     t.text "scientificName"
@@ -71,8 +68,8 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.string "original_taxonomy_phylum"
     t.jsonb "original_hierarchy"
     t.boolean "normalized"
-    t.integer "taxonID"
     t.string "genericName"
+    t.integer "taxonID"
     t.string "complete_taxonomy"
     t.integer "rank_order"
     t.datetime "created_at", null: false
@@ -81,7 +78,7 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.text "notes"
     t.string "original_taxonomy_superkingdom"
     t.boolean "accepted", default: false
-    t.index ["kingdom", "canonicalName"], name: "cal_taxa_kingdom_canonicalName_idx1", unique: true
+    t.index ["kingdom", "canonicalName"], name: "index_cal_taxa_on_kingdom_and_canonicalName", unique: true
     t.index ["original_taxonomy_phylum"], name: "index_cal_taxa_on_original_taxonomy_phylum"
   end
 
@@ -167,9 +164,9 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
+    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "iucn_status"
     t.string "source"
     t.string "col_id"
     t.string "wikispecies_id"
@@ -250,8 +247,8 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.string "status_cd"
     t.string "sum_taxonomy_example"
     t.boolean "priority_sequencing"
-    t.datetime "created_at", default: "2018-04-23 16:12:39", null: false
-    t.datetime "updated_at", default: "2018-04-23 16:12:39", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id"
     t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id"
     t.index ["processor_id"], name: "index_extractions_on_processor_id"
@@ -348,7 +345,7 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.index "((hierarchy_names -> 'phylum'::text))", name: "ncbi_nodes_expr_idx"
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "idx_taxa_search", using: :gin
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
-    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "boo"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["asvs_count_5"], name: "index_ncbi_nodes_on_asvs_count_5"
     t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"
@@ -357,12 +354,10 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
-    t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
     t.index ["kingdom_r"], name: "index_ncbi_nodes_on_kingdom_r"
     t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
-    t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx"
   end
 
   create_table "pages", id: :serial, force: :cascade do |t|
@@ -426,11 +421,12 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.integer "sourceable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "sample_id"
     t.string "sourceable_type"
     t.jsonb "metadata", default: {}
-    t.integer "sample_id"
     t.index "((metadata ->> 'location'::text))", name: "idx_rps_metadata_location"
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
+    t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
     t.index ["sourceable_type"], name: "index_research_project_sources_on_sourceable_type"
   end
@@ -481,6 +477,7 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
@@ -581,54 +578,6 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
     t.index ["slug"], name: "index_surveys_on_slug"
   end
 
-  create_table "taxa", primary_key: "taxonID", id: :integer, default: nil, force: :cascade do |t|
-    t.string "datasetID", limit: 255
-    t.integer "parentNameUsageID"
-    t.integer "acceptedNameUsageID"
-    t.integer "originalNameUsageID"
-    t.text "scientificName"
-    t.text "scientificNameAuthorship"
-    t.string "canonicalName", limit: 255
-    t.string "genericName", limit: 255
-    t.string "specificEpithet", limit: 255
-    t.string "infraspecificEpithet", limit: 255
-    t.string "taxonRank", limit: 255
-    t.string "nameAccordingTo", limit: 255
-    t.text "namePublishedIn"
-    t.string "taxonomicStatus", limit: 255
-    t.string "nomenclaturalStatus", limit: 255
-    t.string "taxonRemarks", limit: 255
-    t.string "kingdom", limit: 255
-    t.string "phylum", limit: 255
-    t.string "className", limit: 255
-    t.string "order", limit: 255
-    t.string "family", limit: 255
-    t.string "genus", limit: 255
-    t.jsonb "hierarchy", default: {}
-    t.integer "asvs_count", default: 0
-    t.integer "rank_order"
-    t.string "iucn_status", limit: 255
-    t.integer "iucn_taxonid"
-    t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix"
-    t.index ["taxonID"], name: "taxon_pkey", unique: true
-  end
-
-  create_table "taxa_search_caches", force: :cascade do |t|
-    t.integer "taxon_id"
-    t.integer "sample_ids", array: true
-    t.integer "asvs_count"
-    t.string "rank"
-    t.string "canonical_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "asvs_count_5", default: 0
-    t.integer "asvs_count_la_river", default: 0
-    t.integer "asvs_count_la_river_5", default: 0
-    t.integer "sample_ids_5", default: [], array: true
-    t.integer "sample_ids_la_river", default: [], array: true
-    t.integer "sample_ids_la_river_5", default: [], array: true
-  end
-
   create_table "uploads", force: :cascade do |t|
     t.string "filename"
     t.datetime "created_at", null: false
@@ -679,7 +628,6 @@ ActiveRecord::Schema.define(version: 2019_10_31_141458) do
   end
 
   add_foreign_key "asvs", "extractions"
-  add_foreign_key "asvs", "research_projects"
   add_foreign_key "extractions", "extraction_types"
   add_foreign_key "extractions", "researchers", column: "local_fastq_storage_adder_id"
   add_foreign_key "extractions", "researchers", column: "processor_id"
