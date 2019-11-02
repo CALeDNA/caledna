@@ -45,7 +45,7 @@ module Api
 
       def all_samples
         @all_samples ||= begin
-          samples = Sample.approved.with_coordinates.order(:barcode)
+          samples = Sample.approved.with_coordinates.order(:created_at)
                           .where(query_string)
 
           if params[:primer] && params[:primer] != 'all'

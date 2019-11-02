@@ -23,12 +23,9 @@ class Sample < ApplicationRecord
   scope :processing_sample, -> { where(status_cd: :processing_sample) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do
-    where.not(status_cd: :submitted).where.not(status_cd: :rejected)
-    .where.not(status_cd: :duplicate_barcode)
+    where("status_cd  = 'approved' OR  status_cd = 'results_completed'")
   end)
-  scope :with_coordinates, (lambda do
-    where.not(latitude: nil).where.not(longitude: nil)
-  end)
+  scope :with_coordinates, -> { where('latitude > -1') }
 
   as_enum :status,
           %i[submitted approved rejected duplicate_barcode assigned

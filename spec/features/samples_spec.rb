@@ -9,10 +9,6 @@ describe 'Samples' do
       create(:sample, barcode: 'sample 1', status_cd: :approved, latitude: 1,
                       longitude: 1)
     end
-    let!(:sample2) do
-      create(:sample, barcode: 'sample 2', status_cd: :processing_sample,
-                      latitude: 1, longitude: 1)
-    end
     let!(:sample3) do
       create(:sample, barcode: 'sample 3', status_cd: :results_completed,
                       latitude: 1, longitude: 1)
@@ -31,7 +27,6 @@ describe 'Samples' do
       visit samples_path(view: :list)
 
       expect(page).to have_content 'sample 1'
-      expect(page).to have_content 'sample 2'
       expect(page).to have_content 'sample 3'
     end
 

@@ -18,8 +18,10 @@ module Api
       private
 
       def organism_count
-        sql = 'SELECT COUNT(DISTINCT("taxonID")) from asvs'
-        @organism_count ||= ActiveRecord::Base.connection.execute(sql)
+        @organism_count ||= begin
+          sql = 'SELECT COUNT(DISTINCT("taxonID")) from asvs'
+          ActiveRecord::Base.connection.execute(sql)
+        end
       end
     end
   end

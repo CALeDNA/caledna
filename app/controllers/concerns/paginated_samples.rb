@@ -76,7 +76,7 @@ module PaginatedSamples
 
   def research_project_samples(project_id)
     @research_project_samples ||= begin
-      Sample.approved.with_coordinates.order(:created_at)
+      Sample.results_completed.with_coordinates.order(:created_at)
             .joins('JOIN research_project_sources ' \
               'ON samples.id = research_project_sources.sample_id')
             .where('research_project_sources.research_project_id = ?',

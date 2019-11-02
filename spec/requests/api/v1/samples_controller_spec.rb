@@ -178,7 +178,9 @@ describe 'Samples' do
                                 status_cd: :foo, primers: ['12S'])
         create(:sample, :valid, id: 5, substrate_cd: :soil,
                                 status_cd: :results_completed, primers: ['foo'])
-        create(:sample, :valid, id: 6)
+        create(:sample, :valid, id: 6, substrate_cd: :soil,
+                                status_cd: :approved, primers: ['12S'])
+        create(:sample, :valid, id: 7)
         create(:primer, name: '12S')
 
         ActiveRecord::Base.connection.execute(
@@ -194,7 +196,7 @@ describe 'Samples' do
           INSERT INTO "pg_search_documents"
           ("content", "searchable_type", "searchable_id", "created_at",
           "updated_at")
-          VALUES('match', 'Sample', 4, '2018-10-20', '2018-10-20');
+          VALUES('match', 'Sample', 6, '2018-10-20', '2018-10-20');
           SQL
         )
       end
@@ -218,7 +220,7 @@ describe 'Samples' do
         expect(data.length).to eq(3)
 
         ids = data.map { |i| i['attributes']['id'] }
-        expect(ids).to eq([1, 2, 4])
+        expect(ids).to eq([1, 2, 6])
       end
 
       it 'returns samples that match substrate & keyword' do
@@ -229,7 +231,7 @@ describe 'Samples' do
         expect(data.length).to eq(2)
 
         ids = data.map { |i| i['attributes']['id'] }
-        expect(ids).to eq([1, 4])
+        expect(ids).to eq([1, 6])
       end
 
       it 'returns samples that match all the query params' do
