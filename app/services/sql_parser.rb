@@ -22,7 +22,7 @@ module SqlParser
     begin
       converted_value = YAML.safe_load(new_str)
     rescue StandardError => e
-      puts ">>>> YAML error #{e}}"
+      puts "---- YAML error #{e}}"
       return
     end
 

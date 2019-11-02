@@ -8,16 +8,26 @@ module TaxaHelper
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def self.format_matching_taxa(taxa)
     max_limit = 25
-    taxa_array = taxa.gsub(/[{}"]/, '').split(',')
+
+    # https://stackoverflow.com/a/17271822
+    # use YAML.safe_load  to convert string arrays from raw sql queries
+    # into arrays.
+    begin
+      taxa_array = YAML.safe_load(taxa)
+    rescue StandardError => e
+      puts "---- YAML error #{e}}"
+      return
+    end
+
     helpers = ActionController::Base.helpers
 
     results = "#{helpers.pluralize(taxa_array.length, 'match')}<br>"
-    results += taxa_array.take(max_limit).map do |taxon|
+    results += taxa_array.keys.take(max_limit).map do |taxon|
       name, id = taxon.split(' | ')
       path = Rails.application.routes.url_helpers.taxon_path(id: id)
       helpers.link_to(name, path)
     end.join(', ')
-    results += '...' if taxa_array.length > max_limit
+    results += ' ...' if taxa_array.length > max_limit
     results
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
