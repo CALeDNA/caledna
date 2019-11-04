@@ -19,6 +19,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resources :primers, only: %i[index]
       resources :taxa, only: %i[index show]
       resources :samples, only: %i[index show]
       resources :research_projects, only: %i[show]
