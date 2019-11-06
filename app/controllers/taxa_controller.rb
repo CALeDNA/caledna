@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class TaxaController < ApplicationController
-  include CustomPagination
-
   def index
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
@@ -10,8 +8,8 @@ class TaxaController < ApplicationController
 
   def show
     @taxon = taxon
-    @samples = samples
     @children = children
+    @total_records = total_records
   end
 
   private
@@ -57,8 +55,7 @@ class TaxaController < ApplicationController
     #{kingdom_sql}
     GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
     ncbi_nodes.asvs_count, ncbi_divisions.name
-    ORDER BY "ncbi_nodes"."asvs_count" DESC
-    LIMIT 12;
+    ORDER BY "ncbi_nodes"."asvs_count" DESC;
     SQL
   end
 
@@ -90,38 +87,6 @@ class TaxaController < ApplicationController
 
   def taxon
     @taxon ||= NcbiNode.find(params[:id])
-  end
-
-  def samples
-    if params[:view]
-      paginated_samples
-    else
-      OpenStruct.new(total_records: total_records)
-    end
-  end
-
-  def samples_sql
-    <<-SQL
-      SELECT samples.id, samples.barcode, status_cd AS status,
-      samples.latitude, samples.longitude,
-      array_agg(ncbi_nodes.canonical_name || ' | ' || ncbi_nodes.taxon_id)
-      AS taxa
-      FROM asvs
-      JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
-      JOIN samples ON samples.id = asvs.sample_id
-      WHERE ids @> '{#{conn.quote(id)}}'
-      GROUP BY samples.id
-      LIMIT $1 OFFSET $2;
-    SQL
-  end
-
-  def paginated_samples
-    bindings = [[nil, limit], [nil, offset]]
-    raw_records = conn.exec_query(samples_sql, 'query', bindings)
-    records = raw_records.map { |r| OpenStruct.new(r) }
-
-    add_pagination_methods(records)
-    records
   end
 
   def children

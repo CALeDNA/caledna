@@ -5,3 +5,7 @@ export const samplesDefaultFilters = {
   keyword: ""
 };
 
+export const taxaDefaultFilters = {
+  substrate: ["all"],
+  primer: ["all"]
+};

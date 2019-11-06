@@ -44,8 +44,8 @@
 </script>
 
 <%= javascript_pack_tag 'taxa_show' %>
-<%= javascript_pack_tag 'taxa_detail_map' %>
-
+<%= javascript_pack_tag 'taxa_details_map' %>
+<%= stylesheet_pack_tag 'taxa_details_map'%>
 <% if @taxon.gbif_id.present? %>
   <%= javascript_pack_tag 'gbif_occurrence_map' %>
 <% end %>

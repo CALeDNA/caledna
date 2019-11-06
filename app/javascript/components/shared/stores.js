@@ -1,4 +1,4 @@
-import { samplesDefaultFilters } from "./constants";
+import { samplesDefaultFilters, taxaDefaultFilters } from "./constants";
 
 export const allSamplesStore = {
   state: {
@@ -6,6 +6,13 @@ export const allSamplesStore = {
   },
   setPrimerArray,
   setPrimerString
+};
+
+export const completedSamplesStore = {
+  state: {
+    currentFilters: { ...taxaDefaultFilters }
+  },
+  setPrimerArray
 };
 
 function setPrimerArray(e) {

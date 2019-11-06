@@ -11,9 +11,10 @@ module Api
 
       def show
         render json: {
-          samples: SampleSerializer.new(samples),
+          samples: TaxonSampleSerializer.new(samples),
           asvs_count: asvs_count,
-          base_samples: BasicSampleSerializer.new(base_samples)
+          base_samples: BasicSampleSerializer.new(base_samples),
+          taxon: BasicTaxonSerializer.new(taxon)
         }, status: :ok
       end
 
@@ -40,13 +41,19 @@ module Api
       # show
       # =======================
 
+      def taxon
+        @taxon ||= NcbiNode.find(params[:id])
+      end
+
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def samples
         @samples ||= begin
           samples =
             Sample.select(:id).select(:barcode).select(:status_cd)
                   .select(:latitude).select(:longitude).select(:substrate_cd)
-                  .select(:primers)
+                  .select(:primers).select(:gps_precision).select(:location)
+                  .select('array_agg( "ncbi_nodes"."canonical_name"|| ' \
+                    "' | ' ||taxon_id) AS taxa")
                   .joins('JOIN asvs on asvs.sample_id = samples.id')
                   .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = ' \
                   'asvs."taxonID"')
