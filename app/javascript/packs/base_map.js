@@ -10,12 +10,23 @@ var fillColor = "#5aa172";
 var strokeColor = "#222";
 var initialZoom = 6;
 var maxZoom = 25;
-var filteredSamplesData = [];
 var disableClustering = 15;
-var currentMarkerFormat = "cluster";
-var apiEndpoint = null;
 var mapboxAccessToken =
   "pk.eyJ1Ijoid3lraHVoIiwiYSI6ImNqY2gzMHJ3OTIyeW4zM210Zmgwd2ZoMXEifQ.p-v5zVFnVgvvdxKiVRpCRA";
+
+var latlng = L.latLng(initialLat, initialLng);
+
+var defaultCircleOptions = {
+  fillColor: fillColor,
+  radius: 7,
+  fillOpacity: 0.7,
+  color: strokeColor,
+  weight: 2
+};
+
+// =============
+// tile layers
+// =============
 
 var tileLayerOptions = {
   openstreetmap: {
@@ -44,8 +55,6 @@ var tileLayerOptions = {
   }
 };
 
-var latlng = L.latLng(initialLat, initialLng);
-
 var tileLayers = {
   Streets: L.tileLayer(tileLayerOptions.openstreetmap.tile, {
     attribution: tileLayerOptions.openstreetmap.attribution
@@ -61,16 +70,16 @@ var tileLayers = {
   })
 };
 
-var individualMarkerLayer = L.layerGroup();
-
-var markerClusterLayer = L.markerClusterGroup({
-  disableClusteringAtZoom: disableClustering,
-  spiderfyOnMaxZoom: false
-});
-
 // =============
 // create markers
 // =============
+
+function createClusterGroup() {
+  return L.markerClusterGroup({
+    disableClusteringAtZoom: disableClustering,
+    spiderfyOnMaxZoom: false
+  });
+}
 
 function createMap(customLatlng = null, customInitialZoom = null) {
   if (customLatlng) {
@@ -90,6 +99,68 @@ function createMap(customLatlng = null, customInitialZoom = null) {
     layers: [tileLayers.Streets]
   });
 }
+
+function createCircleMarker(record, customOptions = {}) {
+  var options = { ...defaultCircleOptions, ...customOptions };
+
+  if (record.color) {
+    options.fillColor = record.color;
+  }
+
+  var circleMarker = L.circleMarker(L.latLng(record.lat, record.lng), options);
+  if (record.body) {
+    circleMarker.bindPopup(record.body);
+  }
+
+  return circleMarker;
+}
+
+function createIconMarker(sample, map) {
+  var icon = L.marker([sample.lat, sample.lng]);
+  if (sample.body) {
+    icon.bindPopup(sample.body);
+  }
+  return icon;
+}
+
+function createMarkerCluster(samples, createMarkerFn) {
+  let markerClusterGroup = createClusterGroup();
+  samples.forEach(function(sample) {
+    var marker = createMarkerFn(sample);
+    markerClusterGroup.addLayer(marker);
+  });
+  return markerClusterGroup;
+}
+
+function renderClusterLayer(data, map) {
+  let layer = createMarkerCluster(data, createCircleMarker);
+  map.addLayer(layer);
+  return layer;
+}
+
+function createMarkerLayer(samples, createMarkerFn) {
+  var markers = samples.map(function(sample) {
+    return createMarkerFn(sample);
+  });
+  return L.layerGroup(markers);
+}
+
+function renderCirclesLayer(samples, map, options = {}) {
+  return createMarkerLayer(samples, function(sample) {
+    return createCircleMarker(sample, {
+      ...addMapLayerModal.defaultCircleOptions,
+      ...options
+    });
+  }).addTo(map);
+}
+
+function renderIconsLayer(samples, map) {
+  return createMarkerLayer(samples, createIconMarker).addTo(map);
+}
+
+// =============
+// format data
+// =============
 
 function formatSamplesData(rawSample, asvsCount) {
   var sample = rawSample.attributes;
@@ -209,51 +280,85 @@ function formatInatData(rawRecord) {
   };
 }
 
-var defaultCircleOptions = {
-  fillColor: fillColor,
-  radius: 7,
-  fillOpacity: 0.7,
-  color: strokeColor,
-  weight: 2
-};
+function formatMapData(data) {
+  var samples = data.samples ? data.samples.data : [data.sample.data];
+  var asvsCounts = data.asvs_count;
+  var baseSamples = data.base_samples && data.base_samples.data;
+  var researchProjectMapData = data.research_project_data;
+  var taxonSamplesMapData;
+  var baseSamplesMapData;
 
-function createCircleMarker(record, customOptions = {}) {
-  var options = { ...defaultCircleOptions, ...customOptions };
+  var taxonSamplesMapData = samples
+    .filter(function(rawSample) {
+      var sample = rawSample.attributes;
+      return sample.latitude && sample.longitude;
+    })
+    .map(function(sample) {
+      var asvs_count = findAsvCount(sample, asvsCounts);
+      return formatSamplesData(sample, asvs_count);
+    });
 
-  if (record.color) {
-    options.fillColor = record.color;
+  if (baseSamples) {
+    baseSamplesMapData = baseSamples
+      .filter(function(rawSample) {
+        var sample = rawSample.attributes;
+        return sample.latitude && sample.longitude;
+      })
+      .map(function(sample) {
+        var asvs_count = null;
+        return formatSamplesData(sample, asvs_count);
+      });
   }
 
-  var circleMarker = L.circleMarker(L.latLng(record.lat, record.lng), options);
-  if (record.body) {
-    circleMarker.bindPopup(record.body);
-  }
-
-  return circleMarker;
+  return { taxonSamplesMapData, baseSamplesMapData, researchProjectMapData };
 }
 
-function createIconMarker(sample, map) {
-  var icon = L.marker([sample.lat, sample.lng]);
-  if (sample.body) {
-    icon.bindPopup(sample.body);
-  }
-  return icon;
-}
+// =============
+// fetch data
+// =============
 
-function createMarkerCluster(samples, createMarkerFn) {
-  samples.forEach(function(sample) {
-    var marker = createMarkerFn(sample);
-    markerClusterLayer.addLayer(marker);
+function fetchSamples(apiEndpoint, map, cb) {
+  var spinner = addSpinner(map);
+
+  $.get(apiEndpoint, function(data) {
+    var samples = data.samples ? data.samples.data : [data.sample.data];
+    var asvsCounts = data.asvs_count;
+    var baseSamples = data.base_samples && data.base_samples.data;
+    var samplesData;
+    var baseSamplesData;
+    var researchProjectData = data.research_project_data;
+
+    samplesData = samples
+      .filter(function(rawSample) {
+        var sample = rawSample.attributes;
+        return sample.latitude && sample.longitude;
+      })
+      .map(function(sample) {
+        var asvs_count = findAsvCount(sample, asvsCounts);
+        return formatSamplesData(sample, asvs_count);
+      });
+
+    if (baseSamples) {
+      baseSamplesData = baseSamples
+        .filter(function(rawSample) {
+          var sample = rawSample.attributes;
+          return sample.latitude && sample.longitude;
+        })
+        .map(function(sample) {
+          var asvs_count = null;
+          return formatSamplesData(sample, asvs_count);
+        });
+    }
+
+    map.removeLayer(spinner);
+
+    cb({ samplesData, baseSamplesData, researchProjectData });
   });
-  return markerClusterLayer;
 }
 
-function createMarkerLayer(samples, createMarkerFn) {
-  var markers = samples.map(function(sample) {
-    return createMarkerFn(sample);
-  });
-  individualMarkerLayer = L.layerGroup(markers);
-}
+// =============
+// overlays
+// =============
 
 function createRasterLayer(rasterFile) {
   var imgBounds = [[32.5325005393, -124.416666666], [42.0158338727, -114.125]];
@@ -265,53 +370,6 @@ function createLegend(legendImg) {
   div.innerHTML += '<img src="' + legendImg + '" alt="legend" width="100px">';
   return div;
 }
-
-function renderMarkerCluster(samples, map) {
-  createMarkerCluster(samples, createCircleMarker);
-  map.addLayer(markerClusterLayer);
-}
-
-function renderIndividualMarkers(samples, map) {
-  createMarkerLayer(samples, createCircleMarker);
-  individualMarkerLayer.addTo(map);
-  return individualMarkerLayer;
-}
-
-function renderIndividualIcons(samples, map) {
-  createMarkerLayer(samples, createIconMarker);
-  individualMarkerLayer.addTo(map);
-  return individualMarkerLayer;
-}
-
-function renderBasicIndividualMarkers(samples, map) {
-  createMarkerLayer(samples, function(sample) {
-    return createCircleMarker(sample, {
-      fillColor: "#ddd",
-      radius: 7,
-      fillOpacity: 0.7,
-      color: "#777",
-      weight: 2
-    });
-  });
-  individualMarkerLayer.addTo(map);
-  return individualMarkerLayer;
-}
-
-// =============
-// geojson layers
-// =============
-
-function onEachFeatureHandler(feature, layer) {
-  if (feature.properties && feature.properties.AgencyName) {
-    var body = "<b>Name:</b> " + feature.properties.Name + "<br>";
-    body += "<b>County:</b> " + feature.properties.COUNTY;
-    layer.bindPopup(body);
-  }
-}
-
-// =============
-// map layers
-// =============
 
 var bldfie = createRasterLayer("/data/map_rasters/bldfie_0.png");
 var clyppt = createRasterLayer("/data/map_rasters/clyppt_1.png");
@@ -335,6 +393,7 @@ var environmentLayers = {
 
 var legend = L.control({ position: "bottomright" });
 
+// NOTE: toggle the legend for each overlay
 function createOverlayEventListeners(map) {
   map.on("overlayadd", function(eventLayer) {
     map.removeControl(legend);
@@ -354,6 +413,16 @@ function createOverlayEventListeners(map) {
   });
 }
 
+// NOTE: add popoup for each UC reserve
+function onEachFeatureHandler(feature, layer) {
+  if (feature.properties && feature.properties.AgencyName) {
+    var body = "<b>Name:</b> " + feature.properties.Name + "<br>";
+    body += "<b>County:</b> " + feature.properties.COUNTY;
+    layer.bindPopup(body);
+  }
+}
+
+// NOTE: add each overlay to the map
 function createOverlays(map) {
   $.get("/data/map_layers/uc_reserves.geojson", function(data) {
     var uc_reserves = L.geoJSON(JSON.parse(data), {
@@ -390,58 +459,17 @@ function createOverlays(map) {
   });
 }
 
-// =============
-// fetch data
-// =============
-
-function fetchSamples(apiEndpoint, map, cb) {
-  var spinner = addSpinner(map);
-
-  $.get(apiEndpoint, function(data) {
-    var samples = data.samples ? data.samples.data : [data.sample.data];
-    var asvsCounts = data.asvs_count;
-    var baseSamples = data.base_samples && data.base_samples.data;
-    var samplesData;
-    var baseSamplesData;
-    var researchProjectData = data.research_project_data;
-
-    samplesData = samples
-      .filter(function(rawSample) {
-        var sample = rawSample.attributes;
-        return sample.latitude && sample.longitude;
-      })
-      .map(function(sample) {
-        var asvs_count = findAsvCount(sample, asvsCounts);
-        return formatSamplesData(sample, asvs_count);
-      });
-    filteredSamplesData = samplesData;
-
-    if (baseSamples) {
-      baseSamplesData = baseSamples
-        .filter(function(rawSample) {
-          var sample = rawSample.attributes;
-          return sample.latitude && sample.longitude;
-        })
-        .map(function(sample) {
-          var asvs_count = null;
-          return formatSamplesData(sample, asvs_count);
-        });
-    }
-
-    map.removeLayer(spinner);
-
-    cb({ samplesData, baseSamplesData, researchProjectData });
-  });
+// NOTE: show the modal that explains the various map overlays
+function addMapLayerModal(map) {
+  // NOTE: can't use font awesome because it makes d3 tree have buggy anomation
+  L.easyButton(
+    "map-button-info",
+    function(btn, map) {
+      $("#map-layer-modal").modal("show");
+    },
+    "Map info"
+  ).addTo(map);
 }
-
-// =============
-// config event listeners
-// =============
-
-var markerFormatEls = document.querySelectorAll(".js-marker-format");
-var sampleStatusEl = document.querySelector(".js-sample-status");
-var searchEl = document.querySelector(".js-map-search");
-var searchKeywordEl = document.querySelector(".js-map-search-keyword");
 
 // =============
 // event listeners
@@ -464,7 +492,7 @@ function addEventListener(map, samplesData) {
           currentMarkerFormat = "individual";
 
           map.removeLayer(markerClusterLayer);
-          renderIndividualMarkers(filteredSamplesData, map);
+          renderCirclesLayer(filteredSamplesData, map);
         }
       });
     });
@@ -480,27 +508,7 @@ function addEventListener(map, samplesData) {
         renderMarkerCluster(filteredSamplesData, map);
       } else {
         map.removeLayer(individualMarkerLayer);
-        renderIndividualMarkers(filteredSamplesData, map);
-      }
-    });
-  }
-
-  if (searchEl) {
-    searchEl.addEventListener("submit", function(event) {
-      event.preventDefault();
-      var keyword = searchKeywordEl.value;
-
-      if (isSampleBarcode(keyword)) {
-        // highlight one sample
-        filteredSamplesData = filterSamplesByBarcode(samplesData, keyword);
-        if (currentMarkerFormat == "cluster") {
-          renderMarkerCluster(filteredSamplesData, map);
-        } else {
-          renderIndividualMarkers(filteredSamplesData, map);
-        }
-      } else {
-        // search taxa
-        console.log("search taxa");
+        renderCirclesLayer(filteredSamplesData, map);
       }
     });
   }
@@ -520,16 +528,6 @@ function addSpinner(map) {
       iconSize: [0, 0]
     })
   }).addTo(map);
-}
-
-function isSampleBarcode(string) {
-  return /^k\d{4}-l(a|b|c)-s(1|2)$/.test(string.toLowerCase());
-}
-
-function filterSamplesByBarcode(samples, barcode) {
-  return samples.filter(function(sample) {
-    return sample.barcode == barcode;
-  });
 }
 
 function findAsvCount(sample, asvsCounts) {
@@ -559,18 +557,8 @@ function filterSamplesByStatus(samples, status) {
   });
 }
 
-function addMapLayerModal(map) {
-  // NOTE: can't use font awesome because it makes d3 tree have buggy anomation
-  L.easyButton(
-    "map-button-info",
-    function(btn, map) {
-      $("#map-layer-modal").modal("show");
-    },
-    "Map info"
-  ).addTo(map);
-}
-
 export default {
+  renderClusterLayer,
   fetchSamples,
   createMap,
   addEventListener,
@@ -578,13 +566,13 @@ export default {
   createOverlayEventListeners,
   createMarkerCluster,
   createCircleMarker,
-  renderBasicIndividualMarkers,
-  renderIndividualMarkers,
-  renderIndividualIcons,
+  renderCirclesLayer,
+  renderIconsLayer,
   formatGBIFData,
   formatInatData,
   createIconMarker,
   addMapLayerModal,
   formatSamplesData,
-  tileLayerOptions
+  tileLayerOptions,
+  formatMapData
 };

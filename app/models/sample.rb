@@ -106,13 +106,16 @@ class Sample < ApplicationRecord
   end
 
   def location_display
-    case location
-    when 'UCNRS' then 'UC Natural Reserve'
-    when 'CVMSHCP' then 'Coachella Valley MSHCP site'
-    when 'AUTOMATIC_1' then nil
-    when 'AUTOMATIC' then nil
-    else location
-    end
+    return if location.blank?
+    location.split(' ').map do |part|
+      case part
+      when 'UCNRS' then 'UC Natural Reserve'
+      when 'CVMSHCP' then 'Coachella Valley MSHCP site'
+      when 'AUTOMATIC_1' then nil
+      when 'AUTOMATIC_2' then nil
+      else part
+      end
+    end.compact.join(' ').tr('_', ' ')
   end
 
   # rubocop:disable Metrics/AbcSize

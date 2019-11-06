@@ -1,8 +1,18 @@
 export function formatQuerystring(filters) {
   let query = [];
-  for (let key in filters) {
-    if (filters[key].length > 0) {
-      query.push(`${key}=${filters[key].join("|")}`);
+  for (let type in filters) {
+    let typeFilters = filters[type];
+    if (typeFilters.length > 0) {
+      if (Array.isArray(typeFilters)) {
+        typeFilters = typeFilters.filter(f => f !== "all");
+        if (typeFilters.length > 0) {
+          query.push(`${type}=${typeFilters.join("|")}`);
+        }
+      } else {
+        if (typeFilters !== "all") {
+          query.push(`${type}=${typeFilters}`);
+        }
+      }
     }
   }
   return query.join("&");

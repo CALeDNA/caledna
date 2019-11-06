@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 
 class SamplesController < ApplicationController
-  include PaginatedSamples
-  include BatchData
   include AsvTreeFormatter
 
-  def index
-    @samples = samples
-    @asvs_count = counts
-  end
+  def index; end
 
   def show
     @division_counts = division_counts
@@ -18,18 +13,6 @@ class SamplesController < ApplicationController
   end
 
   private
-
-  # =======================
-  # index
-  # =======================
-
-  def counts
-    @counts ||= list_view? ? asvs_count : []
-  end
-
-  def samples
-    @samples ||= list_view? ? paginated_samples : []
-  end
 
   # =======================
   # show

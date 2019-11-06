@@ -6,12 +6,6 @@
   back to CALeDNA for genetic analyses.
 </p>
 
-<%= render partial: "samples_menu" %>
-
-<% if params[:view] == 'list' %>
-  <%= render partial: "samples/list",
-    locals: { samples: @samples, asvs_count: @asvs_count }  %>
-<% else %>
-  <%= render partial: "shared/map" %>
-  <%= javascript_pack_tag 'samples_map' %>
-<% end %>
+<div id="samples-map"></div>
+<%= javascript_pack_tag 'samples_map' %>
+<%= stylesheet_pack_tag 'samples_map'%>
