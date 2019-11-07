@@ -4,13 +4,12 @@ module Api
   module V1
     class ResearchProjectsController < Api::V1::ApplicationController
       before_action :add_cors_headers
-      include PaginatedSamples
       include BatchData
-      include ResearchProjectService::PillarPointServices::CommonTaxaMap
+      include FilterCompletedSamples
 
       def show
         render json: {
-          samples: SampleSerializer.new(research_project_samples(project.id)),
+          samples: SampleSerializer.new(research_project_samples),
           asvs_count: asvs_count
         }, status: :ok
       end
@@ -18,7 +17,7 @@ module Api
       private
 
       def project
-        ResearchProject.find_by(slug: params[:id])
+        @project ||= ResearchProject.find_by(slug: params[:id])
       end
     end
   end

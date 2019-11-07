@@ -26,12 +26,6 @@ describe 'Research Project' do
       expect(page).to have_content project.name
     end
 
-    it 'displays map' do
-      visit research_project_path(id: project.slug)
-
-      expect(page).to have_content 'Map Layers'
-    end
-
     it 'does not display submenu' do
       visit research_project_path(id: project.slug)
 
@@ -94,12 +88,6 @@ describe 'Research Project' do
 
         expect(page).to have_content project.name
       end
-
-      it 'displays map' do
-        visit research_project_path(id: project.slug)
-
-        expect(page).to have_content 'Map Layers'
-      end
     end
 
     context 'when visiting project with pages' do
@@ -119,15 +107,6 @@ describe 'Research Project' do
         )
 
         expect(page).to have_content project_with_pages.name
-      end
-
-      it 'does not displays map' do
-        visit research_project_page_path(
-          research_project_id: project_with_pages.slug,
-          id: project_page_1.slug
-        )
-
-        expect(page).to_not have_content 'Map Layers'
       end
 
       it 'displays page content' do
@@ -158,15 +137,6 @@ describe 'Research Project' do
         )
 
         expect(page).to have_content project_with_pages.name
-      end
-
-      it 'does not display map' do
-        visit research_project_page_path(
-          research_project_id: project_with_pages.slug,
-          id: project_page_2.slug
-        )
-
-        expect(page).not_to have_content 'Map Layers'
       end
 
       it 'displays page content' do

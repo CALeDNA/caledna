@@ -9,15 +9,9 @@
 <% if @page.show_map? %>
   <%= sanitize @page.body %>
 
-  <% if params[:view] == 'list' %>
-    <%= render partial: "map_menu" %>
-    <%= render partial: "samples/list",
-      locals: { samples: @samples, asvs_count: @asvs_count } %>
-  <% else %>
-    <%= render partial: "map_menu" %>
-    <%= render partial: "shared/map" %>
-    <%= javascript_pack_tag 'projects_detail_map' %>
-  <% end %>
+  <div id="projects-details-map"></div>
+  <%= javascript_pack_tag 'research_projects_details_map' %>
+  <%= stylesheet_pack_tag 'research_projects_details_map' %>
 
   <% if @page.show_edna_results_metadata? %>
     <h3>Project Details</h3>

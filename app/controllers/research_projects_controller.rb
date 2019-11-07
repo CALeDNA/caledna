@@ -1,19 +1,13 @@
 # frozen_string_literal: true
 
 class ResearchProjectsController < ApplicationController
-  include PaginatedSamples
-  include BatchData
-
   def index
     @projects = Kaminari.paginate_array(projects.to_a).page(params[:page])
   end
 
   def show
     redirect_show if project.show_pages?
-
     @project = project
-    @samples = samples
-    @asvs_count = counts
   end
 
   private
@@ -57,15 +51,6 @@ class ResearchProjectsController < ApplicationController
     redirect_to research_project_page_url(
       research_project_id: project.slug, id: project.default_page.slug
     )
-  end
-
-  def counts
-    @counts ||= list_view? ? asvs_count : []
-  end
-
-  def samples
-    @samples ||=
-      list_view? ? research_project_paginated_samples(project.id) : []
   end
 
   def project
