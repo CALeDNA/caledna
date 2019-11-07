@@ -109,7 +109,14 @@ function responsivefy(svg) {
   // and resizes the svg to fill it
   // while maintaining a consistent aspect ratio
   function resize() {
-    const w = parseInt(container.style("width"));
+    // TODO BUG: on samples#show, width is auto; on reports  page, width is 123px
+    let w = parseInt(container.style("width"));
+    console.log(container.style("width"));
+
+    if (isNaN(w)) {
+      const el = document.querySelector("h1");
+      w = parseInt(el.clientWidth);
+    }
     svg.attr("width", w);
     svg.attr("height", Math.round(w / aspect));
   }
