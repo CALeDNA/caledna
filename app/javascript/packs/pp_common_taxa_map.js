@@ -22,11 +22,11 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
       baseMap.formatGBIFData
     );
 
-    gbifMarkerLayer = baseMap.renderIndividualMarkers(gbifOccurrences, map);
+    gbifMarkerLayer = baseMap.renderCirclesLayer(gbifOccurrences, map);
     map.addLayer(gbifMarkerLayer);
   }
 
-  calMarkerLayer = baseMap.renderIndividualIcons(data.samplesData, map);
+  calMarkerLayer = baseMap.renderIconsLayer(data.samplesData, map);
   map.addLayer(calMarkerLayer);
 });
 

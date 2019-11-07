@@ -5,8 +5,8 @@ module Api
     module ResearchProjects
       class PillarPointController < Api::V1::ApplicationController
         before_action :add_cors_headers
+        include FilterCompletedSamples
         include BatchData
-        include PaginatedSamples
         include ResearchProjectService::PillarPointServices::CommonTaxaMap
 
         def sites
@@ -93,7 +93,7 @@ module Api
         end
 
         def all_samples
-          research_project_samples(project.id)
+          @all_samples ||= research_project_samples
         end
 
         # =======================

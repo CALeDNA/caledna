@@ -46,7 +46,7 @@ baseMap.fetchSamples(apiEndpoint, map, function(data) {
       baseMap.formatGBIFData
     );
 
-    gbifMarkerLayer = baseMap.renderIndividualMarkers(gbifOccurrences, map);
+    gbifMarkerLayer = baseMap.renderCirclesLayer(gbifOccurrences, map);
     map.addLayer(gbifMarkerLayer);
   }
 
