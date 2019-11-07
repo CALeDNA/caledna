@@ -54,22 +54,22 @@ if (taxaMarkerEls) {
 
       if (format == "presence") {
         if (checked) {
-          presenceLayer = baseMap.renderBasicIndividualMarkers(
-            baseSamplesData,
-            map
-          );
+          presenceLayer = baseMap.renderCirclesLayer(baseSamplesData, map, {
+            fillColor: "#ddd",
+            color: "#777"
+          });
 
           // rerender asvsLayer to ensure asvs markers are on top of presence markers
           if (showAsvs) {
             map.removeLayer(asvsLayer);
-            asvsLayer = baseMap.renderIndividualMarkers(samplesData, map);
+            asvsLayer = baseMap.renderCirclesLayer(samplesData, map);
           }
         } else if (presenceLayer) {
           map.removeLayer(presenceLayer);
         }
       } else if (format == "asvs") {
         if (checked) {
-          asvsLayer = baseMap.renderIndividualMarkers(samplesData, map);
+          asvsLayer = baseMap.renderCirclesLayer(samplesData, map);
           showAsvs = true;
         } else if (asvsLayer) {
           map.removeLayer(asvsLayer);

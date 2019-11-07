@@ -12,17 +12,9 @@ const map2 = createMap(
 );
 
 baseMap.fetchSamples(apiEndpoint, map1, function(data) {
-  createMarkerLayer(data.samplesData, map1);
-  createMarkerLayer(data.samplesData, map2);
+  baseMap.renderCirclesLayer(data.samplesData, map1);
+  baseMap.renderCirclesLayer(data.samplesData, map2);
 });
-
-function createMarkerLayer(data, map) {
-  var markers = data.map(record => {
-    return baseMap.createCircleMarker(record);
-  });
-
-  L.layerGroup(markers).addTo(map);
-}
 
 function createMap(selector, latLng) {
   const map = L.map(selector, {

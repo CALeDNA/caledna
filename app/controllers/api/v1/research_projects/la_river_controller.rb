@@ -5,8 +5,7 @@ module Api
     module ResearchProjects
       class LaRiverController < Api::V1::ApplicationController
         before_action :add_cors_headers
-
-        include PaginatedSamples
+        include FilterCompletedSamples
         include BatchData
         include AsvTreeFormatter
 
@@ -36,7 +35,7 @@ module Api
         private
 
         def samples
-          @samples ||= research_project_samples(project.id)
+          @samples ||= research_project_samples
         end
 
         def project_service
