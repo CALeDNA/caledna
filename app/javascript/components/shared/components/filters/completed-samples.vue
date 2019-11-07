@@ -7,6 +7,8 @@
       data-target="#collapseFilters"
       aria-expanded="false"
       aria-controls="collapseFilters"
+      :class="{ active: expandFilters }"
+      @click="expandFilters = !expandFilters"
     >
       <i class="fas fa-sliders-h"></i> Filters
     </button>
@@ -36,6 +38,11 @@ export default {
   components: {
     Substrate,
     Primer
+  },
+  data() {
+    return {
+      expandFilters: false
+    };
   },
   methods: {
     resetFilters() {
