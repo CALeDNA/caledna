@@ -33,6 +33,9 @@
             </div>
           </form>
         </div>
+        <div class="col-md-6">
+          <a href="/taxa">Search organisms</a>
+        </div>
       </div>
     </div>
     <div class="samples-menu">
