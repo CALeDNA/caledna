@@ -44,26 +44,6 @@ module PaginatedSamples
   def multisearch_ids(query)
     @multisearch_ids ||= PgSearch.multisearch(query).pluck(:searchable_id)
   end
-
-  # =======================
-  # field projects
-  # =======================
-
-  def field_project_samples
-    all_samples(query_string: field_project_query_string)
-  end
-
-  def field_project_paginated_samples
-    paginated_samples(query_string: field_project_query_string)
-  end
-
-  def field_project_query_string
-    query = {}
-    query[:status_cd] = params[:status] if params[:status]
-    query[:field_project_id] = params[:id]
-    query
-  end
-
   # =======================
   # research projects
   # =======================

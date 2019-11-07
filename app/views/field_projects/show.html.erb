@@ -10,34 +10,6 @@
 
 <h2>Sites</h2>
 
-<div>
-  <p>
-    <%= pluralize(@project.samples.count, 'site') %> submitted.
-  </p>
-
-  <p>
-    <%= pluralize(@project.samples.approved.with_coordinates.count, 'site') %> approved.
-    <% if @project.samples.approved.with_coordinates.count > 0 %>
-      <%= render partial: 'samples_links', locals: {
-        map_path: field_project_path(id: @project.id),
-        list_path: field_project_path(id: @project.id, view: :list) } %>
-    <% end %>
-  </p>
-
-  <p>
-    <%= pluralize(@project.samples.results_completed.with_coordinates.count, 'site') %> with DNA results.
-    <% if @project.samples.results_completed.with_coordinates.count > 0 %>
-      <%= render partial: 'samples_links', locals: {
-        map_path: field_project_path(id: @project.id, status: :results_completed),
-        list_path: field_project_path(id: @project.id, status: :results_completed, view: :list) } %>
-    <% end %>
-  </p>
-</div>
-
-<% if params[:view] == 'list' %>
-  <%= render partial: "list",
-    locals: { samples: @samples, asvs_count: @asvs_count }  %>
-<% else %>
-  <%= render partial: "shared/map" %>
-  <%= javascript_pack_tag 'projects_detail_map' %>
-<% end %>
+<div id="projects-details-map"></div>
+<%= javascript_pack_tag 'field_projects_details_map' %>
+<%= stylesheet_pack_tag 'field_projects_details_map' %>
