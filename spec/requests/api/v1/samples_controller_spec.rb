@@ -92,13 +92,6 @@ describe 'Samples' do
         substrate = data.map { |i| i['attributes']['substrate'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
-
-      it 'returns all samples when substrate is all' do
-        get api_v1_samples_path(substrate: 'all')
-        json = JSON.parse(response.body)
-
-        expect(json['samples']['data'].length).to eq(3)
-      end
     end
 
     describe 'status query param' do
@@ -119,13 +112,6 @@ describe 'Samples' do
         json = JSON.parse(response.body)
 
         expect(json['samples']['data'].length).to eq(0)
-      end
-
-      it 'returns all samples when status is all' do
-        get api_v1_samples_path(status: 'all')
-        json = JSON.parse(response.body)
-
-        expect(json['samples']['data'].length).to eq(2)
       end
     end
 
@@ -156,13 +142,6 @@ describe 'Samples' do
 
         primer = data.map { |i| i['attributes']['primers'] }
         expect(primer).to match_array([['12S'], ['18s']])
-      end
-
-      it 'returns all samples when primer is all' do
-        get api_v1_samples_path(primer: 'all')
-        json = JSON.parse(response.body)
-
-        expect(json['samples']['data'].length).to eq(3)
       end
     end
 

@@ -182,15 +182,6 @@ describe 'Taxa' do
         substrate = samples.map { |i| i['attributes']['substrate'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
-
-      it 'returns all samples when substrate is all' do
-        get api_v1_taxon_path(id: target_id, substrate: 'all')
-        samples, asvs_count, base_samples = parse_response(response)
-
-        expect(samples.length).to eq(3)
-        expect(asvs_count.length).to eq(3)
-        expect(base_samples.length).to eq(3)
-      end
     end
 
     describe 'primer query param' do
@@ -225,15 +216,6 @@ describe 'Taxa' do
 
         primers = samples.map { |i| i['attributes']['primers'] }
         expect(primers).to match_array([['12S'], ['18S']])
-      end
-
-      it 'returns all samples when primer is all' do
-        get api_v1_taxon_path(id: target_id, primer: 'all')
-        samples, asvs_count, base_samples = parse_response(response)
-
-        expect(samples.length).to eq(3)
-        expect(asvs_count.length).to eq(3)
-        expect(base_samples.length).to eq(3)
       end
     end
   end

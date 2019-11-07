@@ -5,6 +5,7 @@ module Api
     class SamplesController < Api::V1::ApplicationController
       before_action :add_cors_headers
       include BatchData
+      include FilterSamples
 
       def index
         render json: {
@@ -40,28 +41,7 @@ module Api
       # =======================
 
       def samples
-        @samples ||= keyword.present? ? multisearch_samples : all_samples
-      end
-
-      def all_samples
-        @all_samples ||= begin
-          samples = Sample.approved.with_coordinates.order(:created_at)
-                          .where(query_string)
-
-          if params[:primer] && params[:primer] != 'all'
-            samples = samples_for_primers(samples)
-          end
-          samples
-        end
-      end
-
-      def samples_for_primers(samples)
-        primers = Primer.all.pluck(:name)
-        raw_primers = params[:primer].split('|')
-                                     .select { |p| primers.include?(p) }
-
-        samples = samples.where('primers && ?', "{#{raw_primers.join(',')}}")
-        samples
+        @samples ||= keyword.present? ? multisearch_samples : approved_samples
       end
 
       def multisearch_ids
@@ -72,25 +52,12 @@ module Api
       end
 
       def multisearch_samples
-        @multisearch_samples ||= all_samples.where(id: multisearch_ids)
+        @multisearch_samples ||= approved_samples.where(id: multisearch_ids)
       end
 
       def keyword
         params[:keyword]&.downcase
       end
-
-      # rubocop:disable Metrics/AbcSize
-      def query_string
-        query = {}
-        if params[:status] && params[:status] != 'all'
-          query[:status_cd] = params[:status]
-        end
-        if params[:substrate] && params[:substrate] != 'all'
-          query[:substrate_cd] = params[:substrate].split('|')
-        end
-        query
-      end
-      # rubocop:enable Metrics/AbcSize
     end
   end
 end

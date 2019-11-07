@@ -4,6 +4,7 @@ module Api
   module V1
     class TaxaController < Api::V1::ApplicationController
       include BatchData
+      include FilterCompletedSamples
 
       def index
         render json: NcbiNodeSerializer.new(taxa)
@@ -13,7 +14,7 @@ module Api
         render json: {
           samples: TaxonSampleSerializer.new(samples),
           asvs_count: asvs_count,
-          base_samples: BasicSampleSerializer.new(base_samples),
+          base_samples: BasicSampleSerializer.new(completed_samples),
           taxon: BasicTaxonSerializer.new(taxon)
         }, status: :ok
       end
@@ -42,62 +43,26 @@ module Api
       # =======================
 
       def taxon
-        @taxon ||= NcbiNode.find(params[:id])
+        @taxon ||= NcbiNode.find_by(taxon_id: params[:id])
       end
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def samples
         @samples ||= begin
           samples =
-            Sample.select(:id).select(:barcode).select(:status_cd)
-                  .select(:latitude).select(:longitude).select(:substrate_cd)
-                  .select(:primers).select(:gps_precision).select(:location)
-                  .select('array_agg( "ncbi_nodes"."canonical_name"|| ' \
-                    "' | ' ||taxon_id) AS taxa")
-                  .joins('JOIN asvs on asvs.sample_id = samples.id')
-                  .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = ' \
-                  'asvs."taxonID"')
-                  .results_completed.with_coordinates.order(:created_at)
-                  .where(query_string)
-                  .where('ids @> ?', "{#{params[:id]}}")
-                  .group(:id)
-
-          if params[:primer] && params[:primer] != 'all'
-            samples = samples_for_primers(samples)
-          end
-          samples
+            completed_samples
+            .select(:id).select(:barcode).select(:status_cd)
+            .select(:latitude).select(:longitude).select(:substrate_cd)
+            .select(:primers).select(:gps_precision).select(:location)
+            .select('array_agg( "ncbi_nodes"."canonical_name"|| ' \
+              "' | ' ||taxon_id) AS taxa")
+            .joins('JOIN asvs on asvs.sample_id = samples.id')
+            .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs."taxonID"')
+            .where('ids @> ?', "{#{params[:id]}}")
+            .group(:id)
         end
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-
-      def base_samples
-        @base_samples ||= begin
-          samples = Sample.results_completed.where(query_string)
-
-          if params[:primer] && params[:primer] != 'all'
-            samples = samples_for_primers(samples)
-          end
-          samples
-        end
-      end
-
-      def samples_for_primers(samples)
-        primers = Primer.all.pluck(:name)
-        raw_primers = params[:primer].split('|')
-                                     .select { |p| primers.include?(p) }
-
-        samples =
-          samples.where('samples.primers && ?', "{#{raw_primers.join(',')}}")
-        samples
-      end
-
-      def query_string
-        query = {}
-        if params[:substrate] && params[:substrate] != 'all'
-          query[:substrate_cd] = params[:substrate].split('|')
-        end
-        query
-      end
     end
   end
 end
