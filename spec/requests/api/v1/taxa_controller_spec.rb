@@ -49,11 +49,13 @@ describe 'Taxa' do
   end
 
   describe 'show' do
-    let(:target_id) { 2 }
+    let(:target_id) { 10 }
 
-    def create_occurence(taxon, substrate: :soil, primers: '12S')
-      sample = create(:sample, :results_completed, substrate_cd: substrate,
-                                                   primers: primers.split('|'))
+    def create_occurence(taxon, substrate: :soil, primers: '12S',
+                         status: :results_completed)
+
+      sample = create(:sample, status: status, substrate_cd: substrate,
+                               primers: primers.split('|'))
       extraction = create(:extraction, sample: sample)
       create(:asv, sample: sample, extraction: extraction,
                    taxonID: taxon.taxon_id)
@@ -151,6 +153,35 @@ describe 'Taxa' do
       expect(sample_ids).to eq([sample1.id, sample2.id])
     end
 
+    context 'keyword query param' do
+      before(:each) do
+        ActiveRecord::Base.connection.execute(
+          <<-SQL
+          INSERT INTO "pg_search_documents"
+          ("content", "searchable_type", "searchable_id", "created_at",
+          "updated_at")
+          VALUES('match', 'Sample', 1, '2018-10-20', '2018-10-20');
+          SQL
+        )
+      end
+
+      it 'does not affect the associated samples' do
+        taxon = create(:ncbi_node, ids: [1, target_id], id: target_id)
+        sample1 = create_occurence(taxon)
+        sample2 = create_occurence(taxon)
+
+        get api_v1_taxon_path(id: target_id, keyword: 'match')
+        samples, asvs_count, base_samples = parse_response(response)
+
+        expect(samples.length).to eq(2)
+        expect(asvs_count.length).to eq(2)
+        expect(base_samples.length).to eq(2)
+
+        sample_ids = samples.map { |i| i['attributes']['id'] }
+        expect(sample_ids).to eq([sample1.id, sample2.id])
+      end
+    end
+
     describe 'substrate query param' do
       before(:each) do
         taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
@@ -181,6 +212,28 @@ describe 'Taxa' do
 
         substrate = samples.map { |i| i['attributes']['substrate'] }
         expect(substrate).to match_array(%w[sediment soil])
+      end
+    end
+
+    context 'status query param' do
+      let(:project) { create(:research_project, slug: target_id) }
+
+      before(:each) do
+        taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
+        create_occurence(taxon, status: :results_completed)
+        create_occurence(taxon, status: :approved)
+      end
+
+      it 'ignores status params and only returns completed samples ' do
+        get api_v1_taxon_path(id: target_id, status: 'foo')
+        samples, asvs_count, base_samples = parse_response(response)
+
+        expect(samples.length).to eq(1)
+        expect(asvs_count.length).to eq(2)
+        expect(base_samples.length).to eq(1)
+
+        substrate = samples.map { |i| i['attributes']['status'] }
+        expect(substrate).to match_array(%w[results_completed])
       end
     end
 
@@ -216,6 +269,13 @@ describe 'Taxa' do
 
         primers = samples.map { |i| i['attributes']['primers'] }
         expect(primers).to match_array([['12S'], ['18S']])
+      end
+
+      it 'ignores invalid primers' do
+        get api_v1_field_project_path(id: target_id, primer: 'bad')
+        data = JSON.parse(response.body)['samples']['data']
+
+        expect(data.length).to eq(0)
       end
     end
   end

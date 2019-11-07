@@ -11,7 +11,7 @@ describe 'Samples' do
     end
 
     it 'returns all valid samples' do
-      create_list(:sample, 3, :valid)
+      create_list(:sample, 3, :approved)
       get api_v1_samples_path
 
       json = JSON.parse(response.body)
@@ -28,11 +28,11 @@ describe 'Samples' do
       expect(json['samples']['data'].length).to eq(0)
     end
 
-    describe 'keyword query param' do
+    context 'keyword query param' do
       before(:each) do
-        create(:sample, :valid, id: 1)
-        create(:sample, :valid, id: 2)
-        create(:sample, :valid, id: 3)
+        create(:sample, :approved, id: 1)
+        create(:sample, :approved, id: 2)
+        create(:sample, :approved, id: 3)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
@@ -66,11 +66,11 @@ describe 'Samples' do
       end
     end
 
-    describe 'substrate query param' do
+    context 'substrate query param' do
       before(:each) do
-        create(:sample, :valid, substrate_cd: :soil)
-        create(:sample, :valid, substrate_cd: :bad)
-        create(:sample, :valid, substrate_cd: :sediment)
+        create(:sample, :approved, substrate_cd: :soil)
+        create(:sample, :approved, substrate_cd: :bad)
+        create(:sample, :approved, substrate_cd: :sediment)
       end
 
       it 'returns samples when there is one substrate' do
@@ -94,10 +94,10 @@ describe 'Samples' do
       end
     end
 
-    describe 'status query param' do
+    context 'status query param' do
       before(:each) do
-        create(:sample, :valid, status_cd: :approved)
-        create(:sample, :valid, status_cd: :results_completed)
+        create(:sample, :approved, status_cd: :approved)
+        create(:sample, :approved, status_cd: :results_completed)
       end
 
       it 'returns samples when there is one status' do
@@ -115,11 +115,11 @@ describe 'Samples' do
       end
     end
 
-    describe 'primer query param' do
+    context 'primer query param' do
       before(:each) do
-        create(:sample, :valid, primers: ['12S'])
-        create(:sample, :valid, primers: ['18s'])
-        create(:sample, :valid, primers: ['bad'])
+        create(:sample, :approved, primers: ['12S'])
+        create(:sample, :approved, primers: ['18s'])
+        create(:sample, :approved, primers: ['bad'])
         create(:primer, name: '12S')
         create(:primer, name: '18s')
       end
@@ -143,23 +143,30 @@ describe 'Samples' do
         primer = data.map { |i| i['attributes']['primers'] }
         expect(primer).to match_array([['12S'], ['18s']])
       end
+
+      it 'ignores invalid primers' do
+        get api_v1_samples_path(primer: 'bad')
+        data = JSON.parse(response.body)['samples']['data']
+
+        expect(data.length).to eq(0)
+      end
     end
 
-    describe 'multiple query params' do
+    context 'multiple query params' do
       before(:each) do
-        create(:sample, :valid, id: 1, substrate_cd: :soil,
-                                status_cd: :results_completed, primers: ['12S'])
-        create(:sample, :valid, id: 2, substrate_cd: :soil,
-                                status_cd: :results_completed, primers: ['12S'])
-        create(:sample, :valid, id: 3, substrate_cd: :foo,
-                                status_cd: :results_completed, primers: ['12S'])
-        create(:sample, :valid, id: 4, substrate_cd: :soil,
-                                status_cd: :foo, primers: ['12S'])
-        create(:sample, :valid, id: 5, substrate_cd: :soil,
-                                status_cd: :results_completed, primers: ['foo'])
-        create(:sample, :valid, id: 6, substrate_cd: :soil,
-                                status_cd: :approved, primers: ['12S'])
-        create(:sample, :valid, id: 7)
+        create(:sample, :results_completed, id: 1, substrate_cd: :soil,
+                                            primers: ['12S'])
+        create(:sample, :results_completed, id: 2, substrate_cd: :soil,
+                                            primers: ['12S'])
+        create(:sample, :results_completed, id: 3, substrate_cd: :foo,
+                                            primers: ['12S'])
+        create(:sample, :geo, id: 4, substrate_cd: :soil,
+                              status_cd: :foo, primers: ['12S'])
+        create(:sample, :results_completed, id: 5, substrate_cd: :soil,
+                                            primers: ['foo'])
+        create(:sample, :approved, id: 6, substrate_cd: :soil,
+                                   primers: ['12S'])
+        create(:sample, :approved, id: 7)
         create(:primer, name: '12S')
 
         ActiveRecord::Base.connection.execute(
@@ -229,11 +236,55 @@ describe 'Samples' do
   end
 
   describe 'show' do
-    it 'returns OK when sample is valid' do
-      sample = create(:sample, status_cd: :approved, latitude: 1, longitude: 1)
+    it 'returns OK when sample is approved' do
+      sample = create(:sample, :approved)
       get api_v1_sample_path(id: sample.id)
 
       expect(response.status).to eq(200)
+    end
+
+    context 'when sample is approved' do
+      it 'returns the sample data for the given sample' do
+        sample = create(:sample, :approved)
+
+        get api_v1_sample_path(id: sample.id)
+        data = JSON.parse(response.body)
+
+        expect(data['sample']['data']['id'].to_i).to eq(sample.id)
+      end
+
+      it 'returns 0 for asc count' do
+        sample = create(:sample, :approved)
+
+        get api_v1_sample_path(id: sample.id)
+        data = JSON.parse(response.body)
+
+        expect(data['asvs_count'].first['count']).to eq(0)
+      end
+    end
+
+    context 'when sample has results' do
+      it 'returns the sample data for the given sample' do
+        sample = create(:sample, :results_completed)
+
+        get api_v1_sample_path(id: sample.id)
+        data = JSON.parse(response.body)
+
+        expect(data['sample']['data']['id'].to_i).to eq(sample.id)
+      end
+
+      it 'returns the number of associated asvs for asv count' do
+        sample = create(:sample, :results_completed)
+        extraction = create(:extraction, sample: sample)
+        create(:asv, sample: sample, extraction: extraction)
+        create(:asv, sample: sample, extraction: extraction)
+        create(:asv, sample: sample, extraction: extraction)
+
+        get api_v1_sample_path(id: sample.id)
+        data = JSON.parse(response.body)
+
+        expect(data['asvs_count'].first['count']).to eq(3)
+      end
     end
 
     it 'raises an error if sample is not approved' do

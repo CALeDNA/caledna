@@ -28,6 +28,10 @@ Metrics/BlockLength:
     - "spec/**/*.rb"
     - "lib/tasks/**/*.rake"
 
+Style/SymbolProc:
+  Exclude:
+    - "app/serializers/**/*.rb"
+
 Style/StructInheritance:
   Enabled: false
 

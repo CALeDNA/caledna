@@ -4,7 +4,13 @@ FactoryBot.define do
   factory :sample do
     field_project
 
-    trait :valid do
+    trait :geo do
+      sequence(:barcode) { |n| "k_#{n}" }
+      latitude 1
+      longitude 1
+    end
+
+    trait :approved do
       sequence(:barcode) { |n| "k_#{n}" }
       latitude 1
       longitude 1

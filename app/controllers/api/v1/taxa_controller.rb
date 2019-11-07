@@ -49,8 +49,7 @@ module Api
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def samples
         @samples ||= begin
-          samples =
-            completed_samples
+          completed_samples
             .select(:id).select(:barcode).select(:status_cd)
             .select(:latitude).select(:longitude).select(:substrate_cd)
             .select(:primers).select(:gps_precision).select(:location)
