@@ -21,6 +21,7 @@ export default {
     Spinner,
     MapLayersModal
   },
+  mixins: [mapMixins],
   data() {
     return {
       map: null,
@@ -36,8 +37,6 @@ export default {
     this.addMapOverlays(this.map);
   },
   methods: {
-    addMapOverlays: mapMixins.methods.addMapOverlays,
-
     //================
     // fetch samples
     //================

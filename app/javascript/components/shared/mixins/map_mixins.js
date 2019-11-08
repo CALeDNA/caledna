@@ -15,19 +15,12 @@ export const mapMixins = {
       baseMap.createOverlayEventListeners(map);
       baseMap.createOverlays(map);
       baseMap.addMapLayerModal(map);
-    },
+    }
+  }
+};
 
-    toggleBaseLayer() {
-      this.showBaseLayer = !this.showBaseLayer;
-
-      if (this.showBaseLayer) {
-        this.addBaseLayer();
-        this.redrawTaxonLayer();
-      } else {
-        this.removeBaseLayer();
-      }
-    },
-
+export const taxonLayerMixins = {
+  methods: {
     toggleTaxonLayer() {
       if (this.showTaxonLayer) {
         this.removeTaxonLayer();
@@ -52,6 +45,28 @@ export const mapMixins = {
       }
     },
 
+    addTaxonLayer() {
+      this.taxonLayer = baseMap.renderCirclesLayer(
+        this.taxonSamplesMapData,
+        this.map
+      );
+    }
+  }
+};
+
+export const baseLayerMixins = {
+  methods: {
+    toggleBaseLayer() {
+      this.showBaseLayer = !this.showBaseLayer;
+
+      if (this.showBaseLayer) {
+        this.addBaseLayer();
+        this.redrawTaxonLayer();
+      } else {
+        this.removeBaseLayer();
+      }
+    },
+
     removeBaseLayer() {
       if (this.baseLayer) {
         this.baseLayer.clearLayers();
@@ -63,13 +78,6 @@ export const mapMixins = {
         this.baseSamplesMapData,
         this.map,
         { fillColor: "#ddd", color: "#777" }
-      );
-    },
-
-    addTaxonLayer() {
-      this.taxonLayer = baseMap.renderCirclesLayer(
-        this.taxonSamplesMapData,
-        this.map
       );
     }
   }

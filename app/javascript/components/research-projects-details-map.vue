@@ -61,7 +61,7 @@ import MapLayersModal from "./shared/components/map-layers-modal";
 import { formatQuerystring } from "../utils/data_viz_filters";
 import baseMap from "../packs/base_map.js";
 import { samplesTableColumns, samplesDefaultFilters } from "./shared/constants";
-import { mapMixins, searchMixins } from "./shared/mixins";
+import { mapMixins, searchMixins, taxonLayerMixins } from "./shared/mixins";
 import { completedSamplesStore } from "./shared/stores";
 
 var resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
@@ -75,7 +75,7 @@ export default {
     Spinner,
     MapLayersModal
   },
-  mixins: [mapMixins, searchMixins],
+  mixins: [mapMixins, searchMixins, taxonLayerMixins],
   data() {
     return {
       activeTab: "map",

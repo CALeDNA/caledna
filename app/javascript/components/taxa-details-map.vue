@@ -47,7 +47,7 @@
       >
         <template slot="table-row" slot-scope="props">
           <span v-if="props.column.field == 'barcode'">
-            <a v-bind:href="props.row.id">{{props.row.barcode}}</a>
+            <a v-bind:href="`/samples/${props.row.id}`">{{props.row.barcode}}</a>
           </span>
           <span v-html="processLocationTD(props.row)" v-else-if="props.column.field == 'location'"></span>
           <span v-html="processTaxaTD(props.row.taxa)" v-else-if="props.column.field == 'taxa'"></span>
@@ -72,7 +72,12 @@ import MapLayersModal from "./shared/components/map-layers-modal";
 import { formatQuerystring } from "../utils/data_viz_filters";
 import baseMap from "../packs/base_map.js";
 import { taxaTableColumns, taxaDefaultFilters } from "./shared/constants";
-import { mapMixins, searchMixins } from "./shared/mixins";
+import {
+  mapMixins,
+  searchMixins,
+  taxonLayerMixins,
+  baseLayerMixins
+} from "./shared/mixins";
 import { completedSamplesStore } from "./shared/stores";
 
 export default {
@@ -84,7 +89,7 @@ export default {
     Spinner,
     MapLayersModal
   },
-  mixins: [mapMixins, searchMixins],
+  mixins: [mapMixins, searchMixins, taxonLayerMixins, baseLayerMixins],
   data() {
     return {
       activeTab: "map",
