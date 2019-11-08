@@ -82,3 +82,31 @@ export const baseLayerMixins = {
     }
   }
 };
+
+export const iNatLayerMixins = {
+  methods: {
+    toggleInatLayer() {
+      this.showInatLayer = !this.showInatLayer;
+
+      if (this.showInatLayer) {
+        this.addInatLayer();
+        this.redrawTaxonLayer();
+      } else {
+        this.removeInatLayer();
+      }
+    },
+
+    removeInatLayer() {
+      if (this.inatLayer) {
+        this.inatLayer.clearLayers();
+      }
+    },
+
+    addInatLayer() {
+      this.inatLayer = baseMap.renderCirclesLayer(
+        this.inatSamplesMapData,
+        this.map
+      );
+    }
+  }
+};
