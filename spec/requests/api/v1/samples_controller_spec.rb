@@ -11,12 +11,13 @@ describe 'Samples' do
     end
 
     it 'returns all valid samples' do
-      create_list(:sample, 3, :approved)
+      create(:sample, :approved)
+      create(:sample, :results_completed)
       get api_v1_samples_path
 
       json = JSON.parse(response.body)
 
-      expect(json['samples']['data'].length).to eq(3)
+      expect(json['samples']['data'].length).to eq(2)
     end
 
     it 'ignores invalid samples' do
@@ -32,7 +33,7 @@ describe 'Samples' do
       before(:each) do
         create(:sample, :approved, id: 1)
         create(:sample, :approved, id: 2)
-        create(:sample, :approved, id: 3)
+        create(:sample, :results_completed, id: 3)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
@@ -70,7 +71,7 @@ describe 'Samples' do
       before(:each) do
         create(:sample, :approved, substrate_cd: :soil)
         create(:sample, :approved, substrate_cd: :bad)
-        create(:sample, :approved, substrate_cd: :sediment)
+        create(:sample, :results_completed, substrate_cd: :sediment)
       end
 
       it 'returns samples when there is one substrate' do
@@ -118,7 +119,7 @@ describe 'Samples' do
     context 'primer query param' do
       before(:each) do
         create(:sample, :approved, primers: ['12S'])
-        create(:sample, :approved, primers: ['18s'])
+        create(:sample, :results_completed, primers: ['18s'])
         create(:sample, :approved, primers: ['bad'])
         create(:primer, name: '12S')
         create(:primer, name: '18s')
@@ -161,7 +162,7 @@ describe 'Samples' do
         create(:sample, :results_completed, id: 3, substrate_cd: :foo,
                                             primers: ['12S'])
         create(:sample, :geo, id: 4, substrate_cd: :soil,
-                              status_cd: :foo, primers: ['12S'])
+                              status_cd: :rejected, primers: ['12S'])
         create(:sample, :results_completed, id: 5, substrate_cd: :soil,
                                             primers: ['foo'])
         create(:sample, :approved, id: 6, substrate_cd: :soil,
