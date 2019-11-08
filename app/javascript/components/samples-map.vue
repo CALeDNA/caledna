@@ -217,7 +217,7 @@ export default {
           this.showSpinner = false;
         })
         .catch(e => {
-          this.errors.push(e);
+          console.error(e);
         });
     }
   }
