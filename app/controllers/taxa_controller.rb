@@ -55,7 +55,8 @@ class TaxaController < ApplicationController
     #{kingdom_sql}
     GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
     ncbi_nodes.asvs_count, ncbi_divisions.name
-    ORDER BY "ncbi_nodes"."asvs_count" DESC;
+    ORDER BY "ncbi_nodes"."asvs_count" DESC
+    LIMIT 12;
     SQL
   end
 
