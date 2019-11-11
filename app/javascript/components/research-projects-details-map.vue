@@ -4,15 +4,34 @@
     <div class="taxa-markers">
       <div>
         <svg height="30" width="30" @click="toggleTaxonLayer">
-          <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
+          <circle
+            cx="15"
+            cy="15"
+            r="7"
+            stroke="#222"
+            stroke-width="2"
+            fill="#5aa172"
+          />
         </svg>
-        {{taxonSamplesCount}} sites
+        {{ taxonSamplesCount }} sites
       </div>
-      <div v-show="currentFiltersDisplay">filters: {{currentFiltersDisplay}}</div>
+      <div class="filters-list" v-show="currentFiltersDisplay">
+        filters: {{ currentFiltersDisplay }}
+        <a class="btn btn-default reset-search" @click="resetFilters">
+          Reset search
+        </a>
+      </div>
     </div>
     <div class="samples-menu">
-      <map-table-toggle :active-tab="activeTab" @active-tab-event="setActiveTab" />
-      <filters-layout :store="store" @reset-filters="resetFilters" @submit-filters="submitFilters" />
+      <map-table-toggle
+        :active-tab="activeTab"
+        @active-tab-event="setActiveTab"
+      />
+      <filters-layout
+        :store="store"
+        @reset-filters="resetFilters"
+        @submit-filters="submitFilters"
+      />
     </div>
 
     <div id="mapid" v-show="activeTab === 'map'"></div>
@@ -25,22 +44,24 @@
           perPage: 25,
           position: 'bottom',
           perPageDropdown: [25, 50],
-          dropdownAllowAll: false,
+          dropdownAllowAll: false
         }"
         :columns="columns"
         :rows="rows"
       >
         <template slot="table-row" slot-scope="props">
           <span v-if="props.column.field == 'barcode'">
-            <a v-bind:href="`/samples/${props.row.id}`">{{props.row.barcode}}</a>
+            <a v-bind:href="`/samples/${props.row.id}`">{{
+              props.row.barcode
+            }}</a>
           </span>
           <span v-else-if="props.column.field == 'location'">
-            {{props.row.location}}
+            {{ props.row.location }}
             <br />
             <br />
-            {{props.row.coordinates}}
+            {{ props.row.coordinates }}
           </span>
-          <span v-else>{{props.formattedRow[props.column.field]}}</span>
+          <span v-else>{{ props.formattedRow[props.column.field] }}</span>
         </template>
       </vue-good-table>
     </div>

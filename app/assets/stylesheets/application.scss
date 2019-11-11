@@ -241,7 +241,7 @@ legend.border {
 }
 
 .samples-menu {
-  margin-bottom: 1em;
+  margin: 1em 0;
 
   .btn-group {
     margin-right: 1em;
@@ -285,22 +285,6 @@ legend.border {
 
 .filters-container {
   margin: 1.5em 0;
-}
-
-.search-form {
-  position: relative;
-  .search-reset {
-    cursor: pointer;
-    position: absolute;
-    right: 50px;
-    color: #ccc;
-    z-index: 3;
-    font-size: 1.25em;
-    top: 7px;
-    &:hover {
-      color: #777;
-    }
-  }
 }
 
 // =============

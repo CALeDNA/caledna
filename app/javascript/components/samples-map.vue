@@ -4,27 +4,48 @@
     <div class="taxa-markers">
       <div>
         <svg height="30" width="30" @click="toggleTaxonLayer">
-          <circle cx="15" cy="15" r="7" stroke="#222" stroke-width="2" fill="#5aa172" />
+          <circle
+            cx="15"
+            cy="15"
+            r="7"
+            stroke="#222"
+            stroke-width="2"
+            fill="#5aa172"
+          />
         </svg>
-        {{taxonSamplesCount}} sites
+        {{ taxonSamplesCount }} sites
       </div>
-      <div v-show="currentFiltersDisplay">filters: {{currentFiltersDisplay}}</div>
+      <div class="filters-list" v-show="currentFiltersDisplay">
+        filters: {{ currentFiltersDisplay }}
+        <a class="btn btn-default reset-search" @click="resetFilters">
+          Reset search
+        </a>
+      </div>
     </div>
+
     <div class="samples-menu">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
           <form class="input-group search-form" @submit.prevent="submitFilters">
+            <div class="input-group-btn">
+              <div
+                class="btn btn-default dropdown-toggle"
+                data-toggle="dropdown"
+              >
+                {{ searchMeta[searchType]["label"] }}
+                <span class="caret"></span>
+              </div>
+              <ul class="dropdown-menu">
+                <li class @click="searchType = 'sites'">Sites</li>
+                <li class @click="searchType = 'taxa'">Organisms</li>
+              </ul>
+            </div>
             <input
               type="text"
               class="form-control"
-              placeholder="Search sites and projects"
+              :placeholder="searchMeta[searchType]['placeholder']"
               v-model="store.state.currentFilters.keyword"
             />
-            <span
-              class="glyphicon glyphicon-remove-circle search-reset"
-              aria-hidden="true"
-              @click="resetFilters"
-            ></span>
 
             <div class="input-group-btn">
               <button class="btn btn-primary" type="submit">
@@ -33,14 +54,18 @@
             </div>
           </form>
         </div>
-        <div class="col-md-6">
-          <a href="/taxa">Search organisms</a>
-        </div>
       </div>
     </div>
     <div class="samples-menu">
-      <map-table-toggle :active-tab="activeTab" @active-tab-event="setActiveTab" />
-      <filters-layout :store="store" @reset-filters="resetFilters" @submit-filters="submitFilters" />
+      <map-table-toggle
+        :active-tab="activeTab"
+        @active-tab-event="setActiveTab"
+      />
+      <filters-layout
+        :store="store"
+        @reset-filters="resetFilters"
+        @submit-filters="submitFilters"
+      />
     </div>
 
     <div id="mapid" v-show="activeTab === 'map'"></div>
@@ -53,22 +78,24 @@
           perPage: 25,
           position: 'bottom',
           perPageDropdown: [25, 50],
-          dropdownAllowAll: false,
+          dropdownAllowAll: false
         }"
         :columns="columns"
         :rows="rows"
       >
         <template slot="table-row" slot-scope="props">
           <span v-if="props.column.field == 'barcode'">
-            <a v-bind:href="`/samples/${props.row.id}`">{{props.row.barcode}}</a>
+            <a v-bind:href="`/samples/${props.row.id}`">{{
+              props.row.barcode
+            }}</a>
           </span>
           <span v-else-if="props.column.field == 'location'">
-            {{props.row.location}}
+            {{ props.row.location }}
             <br />
             <br />
-            {{props.row.coordinates}}
+            {{ props.row.coordinates }}
           </span>
-          <span v-else>{{props.formattedRow[props.column.field]}}</span>
+          <span v-else>{{ props.formattedRow[props.column.field] }}</span>
         </template>
       </vue-good-table>
     </div>
@@ -116,7 +143,17 @@ export default {
       taxonSamplesCount: null,
       taxonLayer: null,
       showTaxonLayer: true,
-      taxonSamplesMapData: []
+      taxonSamplesMapData: [],
+
+      searchType: "sites",
+      searchMeta: {
+        sites: { label: "Sites", placeholder: "Search site and project names" },
+        taxa: {
+          label: "Organisms",
+          placeholder:
+            "Search organisms by Latin or common names (e.g. Canis lups, wolf)"
+        }
+      }
     };
   },
   created() {
@@ -149,13 +186,21 @@ export default {
       this.fetchSamples(this.endpoint);
       this.currentFiltersDisplay = null;
     },
+
     submitFilters() {
-      let queryString = formatQuerystring(this.store.state.currentFilters);
-      let url = queryString ? `${this.endpoint}?${queryString}` : this.endpoint;
-      this.fetchSamples(url);
-      this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
-        this.store.state.currentFilters
-      );
+      if (this.searchType == "sites") {
+        let queryString = formatQuerystring(this.store.state.currentFilters);
+        let url = queryString
+          ? `${this.endpoint}?${queryString}`
+          : this.endpoint;
+        this.fetchSamples(url);
+        this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
+          this.store.state.currentFilters
+        );
+      } else {
+        // debugger;
+        window.location = `/taxa_search?query=${this.store.state.currentFilters.keyword}`;
+      }
     },
 
     //================
@@ -223,3 +268,15 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.dropdown-menu li {
+  padding: 3px 20px;
+  white-space: nowrap;
+}
+
+.dropdown-menu li:hover {
+  text-decoration: none;
+  background-color: #e8e8e8;
+}
+</style>
