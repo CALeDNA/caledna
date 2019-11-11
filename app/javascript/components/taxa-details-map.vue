@@ -20,7 +20,8 @@
             fill="#5aa172"
           />
         </svg>
-        {{ taxonSamplesCount }} sites with {{ taxonDisplayName }}
+        {{ taxonSamplesCount }} {{ "site" | pluralize(taxonSamplesCount) }} with
+        {{ taxonDisplayName }}
       </div>
       <div>
         <input
@@ -39,7 +40,8 @@
             fill="#ddd"
           />
         </svg>
-        {{ baseSamplesCount }} sites with eDNA results
+        {{ baseSamplesCount }} {{ "site" | pluralize(baseSamplesCount) }} with
+        eDNA results
       </div>
       <div class="filters-list" v-show="currentFiltersDisplay">
         filters: {{ currentFiltersDisplay }}
@@ -102,6 +104,7 @@
 import { VueGoodTable } from "vue-good-table";
 import "vue-good-table/dist/vue-good-table.css";
 import axios from "axios";
+import pluralize from "pluralize";
 
 import Spinner from "./shared/components/spinner";
 import MapTableToggle from "./shared/components/map-table-toggle";
@@ -129,6 +132,9 @@ export default {
     MapLayersModal
   },
   mixins: [mapMixins, searchMixins, taxonLayerMixins, baseLayerMixins],
+  filters: {
+    pluralize
+  },
   data() {
     return {
       activeTab: "map",
