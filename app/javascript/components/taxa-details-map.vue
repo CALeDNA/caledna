@@ -150,12 +150,12 @@ export default {
       baseSamplesCount: null,
       baseLayer: null,
       showBaseLayer: false,
-      baseSamplesMapData: [],
+      baseSamplesData: [],
 
       taxonSamplesCount: null,
       taxonLayer: null,
       showTaxonLayer: true,
-      taxonSamplesMapData: []
+      taxonSamplesData: []
     };
   },
   created() {
@@ -268,8 +268,8 @@ export default {
           this.formatTableData(taxonSamples, asvs_counts);
 
           const mapData = baseMap.formatMapData(response.data);
-          this.taxonSamplesMapData = mapData.taxonSamplesMapData;
-          this.baseSamplesMapData = mapData.baseSamplesMapData;
+          this.taxonSamplesData = mapData.taxonSamplesData;
+          this.baseSamplesData = mapData.baseSamplesData;
 
           this.removeBaseLayer();
           if (this.showBaseLayer) {

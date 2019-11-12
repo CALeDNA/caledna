@@ -15,8 +15,8 @@ export const mapMixins = {
       baseMap.createOverlayEventListeners(map);
       baseMap.createOverlays(map);
       baseMap.addMapLayerModal(map);
-    }
-  }
+    },
+  },
 };
 
 export const taxonLayerMixins = {
@@ -47,11 +47,11 @@ export const taxonLayerMixins = {
 
     addTaxonLayer() {
       this.taxonLayer = baseMap.renderCirclesLayer(
-        this.taxonSamplesMapData,
+        this.taxonSamplesData,
         this.map
       );
-    }
-  }
+    },
+  },
 };
 
 export const baseLayerMixins = {
@@ -75,12 +75,12 @@ export const baseLayerMixins = {
 
     addBaseLayer() {
       this.baseLayer = baseMap.renderCirclesLayer(
-        this.baseSamplesMapData,
+        this.baseSamplesData,
         this.map,
         { fillColor: "#ddd", color: "#777" }
       );
-    }
-  }
+    },
+  },
 };
 
 export const iNatLayerMixins = {
@@ -107,6 +107,6 @@ export const iNatLayerMixins = {
         this.inatSamplesMapData,
         this.map
       );
-    }
-  }
+    },
+  },
 };

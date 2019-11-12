@@ -114,7 +114,7 @@ export default {
       taxonSamplesCount: null,
       taxonLayer: null,
       showTaxonLayer: true,
-      taxonSamplesMapData: []
+      taxonSamplesData: []
     };
   },
   created() {
@@ -132,7 +132,7 @@ export default {
 
     addTaxonLayer() {
       this.taxonLayer = baseMap.renderClusterLayer(
-        this.taxonSamplesMapData,
+        this.taxonSamplesData,
         this.map
       );
     },
@@ -207,7 +207,7 @@ export default {
           this.formatTableData(taxonSamples, asvs_counts);
 
           const mapData = baseMap.formatMapData(response.data);
-          this.taxonSamplesMapData = mapData.taxonSamplesMapData;
+          this.taxonSamplesData = mapData.taxonSamplesData;
 
           this.removeTaxonLayer();
           if (this.showTaxonLayer) {

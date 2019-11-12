@@ -21,7 +21,7 @@ var defaultCircleOptions = {
   radius: 7,
   fillOpacity: 0.7,
   color: strokeColor,
-  weight: 2
+  weight: 2,
 };
 
 // =============
@@ -32,42 +32,42 @@ var tileLayerOptions = {
   openstreetmap: {
     tile: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ'
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Points &copy 2012 LINZ',
   },
   mapboxSatellite: {
     tile:
       "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=" +
       mapboxAccessToken,
     attribution:
-      '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      '© <a href="https://www.mapbox.com/feedback/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   },
   cartoPositron: {
     tile:
       "https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
     attribution:
-      'Map tiles by <a href="https://carto.com/">Carto</a>, under CC BY 3.0. Data by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, under ODbL'
+      'Map tiles by <a href="https://carto.com/">Carto</a>, under CC BY 3.0. Data by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, under ODbL',
   },
   thuderforestLandscape: {
     tile:
       "https://tile.thunderforest.com/landscape/{z}/{x}/{y}.png?apikey=5354ed1fe58c49efb6b5e34ec3caf15e",
     attribution:
-      'Maps © <a href="http://www.thunderforest.com/">Thunderforest</a>, Data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-  }
+      'Maps © <a href="http://www.thunderforest.com/">Thunderforest</a>, Data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+  },
 };
 
 var tileLayers = {
   Streets: L.tileLayer(tileLayerOptions.openstreetmap.tile, {
-    attribution: tileLayerOptions.openstreetmap.attribution
+    attribution: tileLayerOptions.openstreetmap.attribution,
   }),
   Satellite: L.tileLayer(tileLayerOptions.mapboxSatellite.tile, {
-    attribution: tileLayerOptions.mapboxSatellite.attribution
+    attribution: tileLayerOptions.mapboxSatellite.attribution,
   }),
   Terrain: L.tileLayer(tileLayerOptions.thuderforestLandscape.tile, {
-    attribution: tileLayerOptions.thuderforestLandscape.attribution
+    attribution: tileLayerOptions.thuderforestLandscape.attribution,
   }),
   Minimal: L.tileLayer(tileLayerOptions.cartoPositron.tile, {
-    attribution: tileLayerOptions.cartoPositron.attribution
-  })
+    attribution: tileLayerOptions.cartoPositron.attribution,
+  }),
 };
 
 // =============
@@ -77,7 +77,7 @@ var tileLayers = {
 function createClusterGroup() {
   return L.markerClusterGroup({
     disableClusteringAtZoom: disableClustering,
-    spiderfyOnMaxZoom: false
+    spiderfyOnMaxZoom: false,
   });
 }
 
@@ -96,7 +96,7 @@ function createMap(customLatlng = null, customInitialZoom = null) {
     center: latlng,
     zoom: initialZoom,
     maxZoom: maxZoom,
-    layers: [tileLayers.Streets]
+    layers: [tileLayers.Streets],
   });
 }
 
@@ -149,7 +149,7 @@ function renderCirclesLayer(samples, map, options = {}) {
   return createMarkerLayer(samples, function(sample) {
     return createCircleMarker(sample, {
       ...addMapLayerModal.defaultCircleOptions,
-      ...options
+      ...options,
     });
   }).addTo(map);
 }
@@ -164,41 +164,24 @@ function renderIconsLayer(samples, map) {
 
 function formatSamplesData(rawSample, asvsCount) {
   var sample = rawSample.attributes;
-  var lat = sample.latitude;
-  var lng = sample.longitude;
+  var body;
 
   if (sample.id) {
-    var id = sample.id;
-    var barcode = sample.barcode;
-    var sampleLink = "<a href='/samples/" + sample.id + "'>" + barcode + "</a>";
-    var status = sample.status;
+    var sampleLink = `<a href='/samples/${sample.id}'>${sample.barcode}</a>`;
     var asvsCount = asvsCount || "--";
-    var body =
-      "<b>Site:</b> " +
-      sampleLink +
-      "<br>" +
-      "<b>Lat/Long</b>: " +
-      lat +
-      ", " +
-      lng +
-      "<br>" +
-      "<b>Status</b>: " +
-      status +
-      "<br>" +
-      "<b>Organism count</b>: " +
-      asvsCount +
-      "<br>";
+    body = `<b>Site:</b> ${sampleLink} <br>
+      <b>Lat/Long</b>: ${sample.latitude} , ${sample.longitude} <br>
+      <b>Status</b>: ${sample.status} <br>
+      <b>Organism count</b>: ${asvsCount} <br>`;
   } else {
-    var body = null;
-    var status = null;
+    body = null;
   }
 
   return {
-    lat: lat,
-    lng: lng,
-    barcode: barcode,
+    ...sample,
+    lat: sample.latitude,
+    lng: sample.longitude,
     body: body,
-    status: status
   };
 }
 
@@ -211,7 +194,7 @@ function formatGBIFData(rawSample) {
     Fungi: "rgb(255, 20, 147)",
     Plantae: "rgb(115, 172, 19)",
     Protozoa: "",
-    Viruses: "rgb(30, 30, 30)"
+    Viruses: "rgb(30, 30, 30)",
   };
 
   var sample = rawSample.attributes;
@@ -252,7 +235,7 @@ function formatGBIFData(rawSample) {
     lat: lat,
     lng: lng,
     body: body,
-    color: color
+    color: color,
   };
 }
 
@@ -276,7 +259,7 @@ function formatInatData(rawRecord) {
     lat: lat,
     lng: lng,
     body: body,
-    color: "orange"
+    color: "orange",
   };
 }
 
@@ -284,11 +267,10 @@ function formatMapData(data) {
   var samples = data.samples ? data.samples.data : [data.sample.data];
   var asvsCounts = data.asvs_count;
   var baseSamples = data.base_samples && data.base_samples.data;
-  var researchProjectMapData = data.research_project_data;
-  var taxonSamplesMapData;
-  var baseSamplesMapData;
+  var taxonSamplesData;
+  var baseSamplesData;
 
-  var taxonSamplesMapData = samples
+  taxonSamplesData = samples
     .filter(function(rawSample) {
       var sample = rawSample.attributes;
       return sample.latitude && sample.longitude;
@@ -299,7 +281,7 @@ function formatMapData(data) {
     });
 
   if (baseSamples) {
-    baseSamplesMapData = baseSamples
+    baseSamplesData = baseSamples
       .filter(function(rawSample) {
         var sample = rawSample.attributes;
         return sample.latitude && sample.longitude;
@@ -310,7 +292,7 @@ function formatMapData(data) {
       });
   }
 
-  return { taxonSamplesMapData, baseSamplesMapData, researchProjectMapData };
+  return { taxonSamplesData, baseSamplesData };
 }
 
 // =============
@@ -388,7 +370,10 @@ var environmentLayers = {
   "hii (human impact)": { layer: hii, legend: "legend_hii.png" },
   elevation: { layer: elevation, legend: "legend_elevation.png" },
   precipitation: { layer: precipitation, legend: "legend_precipitation.png" },
-  "population density": { layer: popdens_geo, legend: "legend_popdens_geo.png" }
+  "population density": {
+    layer: popdens_geo,
+    legend: "legend_popdens_geo.png",
+  },
 };
 
 var legend = L.control({ position: "bottomright" });
@@ -426,7 +411,7 @@ function onEachFeatureHandler(feature, layer) {
 function createOverlays(map) {
   $.get("/data/map_layers/uc_reserves.geojson", function(data) {
     var uc_reserves = L.geoJSON(JSON.parse(data), {
-      onEachFeature: onEachFeatureHandler
+      onEachFeature: onEachFeatureHandler,
     });
 
     $.get("/data/map_layers/HyspIRI_CA.geojson", function(data) {
@@ -436,18 +421,18 @@ function createOverlays(map) {
         color: "#000",
         weight: 1,
         opacity: 1,
-        fillOpacity: 0.8
+        fillOpacity: 0.8,
       };
 
       var HyspIRI_CA = L.geoJSON(JSON.parse(data), {
         pointToLayer: function(feature, latlng) {
           return L.circleMarker(latlng, geojsonMarkerOptions);
-        }
+        },
       });
 
       var overlayMaps = {
         HyspIRI: HyspIRI_CA,
-        "UC Reserves": uc_reserves
+        "UC Reserves": uc_reserves,
       };
 
       Object.keys(environmentLayers).map(function(layer) {
@@ -525,8 +510,8 @@ function addSpinner(map) {
   return L.marker([initialLat, initialLng], {
     icon: L.divIcon({
       html: '<div class="spinner"></div>',
-      iconSize: [0, 0]
-    })
+      iconSize: [0, 0],
+    }),
   }).addTo(map);
 }
 
@@ -574,5 +559,5 @@ export default {
   addMapLayerModal,
   formatSamplesData,
   tileLayerOptions,
-  formatMapData
+  formatMapData,
 };

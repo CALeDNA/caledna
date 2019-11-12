@@ -147,7 +147,7 @@ export default {
       taxonSamplesCount: null,
       taxonLayer: null,
       showTaxonLayer: true,
-      taxonSamplesMapData: [],
+      taxonSamplesData: [],
 
       searchType: "sites",
       searchMeta: {
@@ -174,7 +174,7 @@ export default {
 
     addTaxonLayer() {
       this.taxonLayer = baseMap.renderClusterLayer(
-        this.taxonSamplesMapData,
+        this.taxonSamplesData,
         this.map
       );
     },
