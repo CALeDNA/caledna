@@ -9,7 +9,7 @@ function formatLongTaxonString(taxon) {
     taxon.order,
     taxon.family,
     taxon.genus,
-    taxon.species
+    taxon.species,
   ];
   const phylum = taxon.phylum === null ? "--" : taxon.phylum;
   const selectedRank = taxonRanks
@@ -24,10 +24,6 @@ function formatLongTaxonString(taxon) {
   return taxonString;
 }
 
-function formatShortTaxonString(taxon) {
-  return `${taxon.kingdom}: ${taxon.class}`;
-}
-
 function formatChartData(taxon) {
   const longString = formatLongTaxonString(taxon);
   return {
@@ -35,7 +31,7 @@ function formatChartData(taxon) {
     value: taxon.count,
     source: taxon.source,
     division: taxon.division,
-    tooltip_name: longString
+    tooltip_name: longString,
   };
 }
 
@@ -47,5 +43,5 @@ export {
   capitalizeFirstLetter,
   formatLongTaxonString,
   formatChartData,
-  sortData
+  sortData,
 };

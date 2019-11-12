@@ -1,189 +1,189 @@
-import { mount } from '@vue/test-utils';
-import App from 'components/app.vue';
+import { mount } from "@vue/test-utils";
+import App from "components/app.vue";
 
-describe('App.vue', () => {
+describe("App.vue", () => {
   const componentFactory = (values = {}) => {
     return mount(App, {
-      data: { ...values  }
-    })
-  }
+      data: { ...values },
+    });
+  };
 
-  describe('processSpecies', () => {
+  describe("processSpecies", () => {
     const subject = componentFactory().vm.processSpecies;
 
-    it('returns one word when given one word', () => {
-      const newTaxon = {specificEpithet: 'species'};
+    it("returns one word when given one word", () => {
+      const newTaxon = { species: "species" };
       const result = subject(newTaxon);
-      expect(result).toEqual('species');
-    })
+      expect(result).toEqual("species");
+    });
 
-    it('returns 2nd word when given 1 uppercase and 1 lowercase words', () => {
-      const newTaxon = {specificEpithet: 'Genus species'};
+    it("returns 2nd word when given 1 uppercase and 1 lowercase words", () => {
+      const newTaxon = { species: "Genus species" };
       const result = subject(newTaxon);
-      expect(result).toEqual('species');
-    })
+      expect(result).toEqual("species");
+    });
 
-    it('returns remaning words when given 1 uppercase and many lowercase words', () => {
-      const newTaxon = {specificEpithet: 'Genus species more'};
+    it("returns remaning words when given 1 uppercase and many lowercase words", () => {
+      const newTaxon = { species: "Genus species more" };
       const result = subject(newTaxon);
-      expect(result).toEqual('species more');
-    })
+      expect(result).toEqual("species more");
+    });
 
-    it('returns all word when given lowercase first word', () => {
-      const newTaxon = {specificEpithet: 'species more'};
+    it("returns all word when given lowercase first word", () => {
+      const newTaxon = { species: "species more" };
       const result = subject(newTaxon);
-      expect(result).toEqual('species more');
-    })
+      expect(result).toEqual("species more");
+    });
 
-    it('returns undefined when species is undefined', () => {
-      const newTaxon = {specificEpithet: undefined};
+    it("returns undefined when species is undefined", () => {
+      const newTaxon = { species: undefined };
       const result = subject(newTaxon);
       expect(result).toEqual(undefined);
-    })
+    });
 
-    it('trims extra spaces', () => {
-      const newTaxon = {specificEpithet: ' species '};
+    it("trims extra spaces", () => {
+      const newTaxon = { species: " species " };
       const result = subject(newTaxon);
-      expect(result).toEqual('species');
-    })
-  })
+      expect(result).toEqual("species");
+    });
+  });
 
-  describe('processCanonicalName', () => {
+  describe("processCanonicalName", () => {
     const subject = componentFactory().vm.processCanonicalName;
 
-    describe('when rank is species', () => {
-      it('returns genus and species', () => {
+    describe("when rank is species", () => {
+      it("returns genus and species", () => {
         const newTaxon = {
-          taxonRank: 'species',
-          genus: 'Genus_1',
-          specificEpithet: 'species_1'
+          rank: "species",
+          genus: "Genus_1",
+          species: "species_1",
         };
         const result = subject(newTaxon);
-        expect(result).toEqual('Genus_1 species_1');
+        expect(result).toEqual("Genus_1 species_1");
       });
 
-      it('returns genus and species', () => {
+      it("returns genus and species", () => {
         const newTaxon = {
-          taxonRank: 'species',
-          genus: 'Genus_1',
-          specificEpithet: 'Genus_1 species_1'
+          rank: "species",
+          genus: "Genus_1",
+          species: "Genus_1 species_1",
         };
         const result = subject(newTaxon);
-        expect(result).toEqual('Genus_1 species_1');
+        expect(result).toEqual("Genus_1 species_1");
       });
 
-      it('trims extra spaces', () => {
+      it("trims extra spaces", () => {
         const newTaxon = {
-          taxonRank: 'species',
-          genus: ' Genus_1 ',
-          specificEpithet: ' species_1 '
+          rank: "species",
+          genus: " Genus_1 ",
+          species: " species_1 ",
         };
         const result = subject(newTaxon);
-        expect(result).toEqual('Genus_1 species_1');
+        expect(result).toEqual("Genus_1 species_1");
       });
 
-      it('returns undefined when species is undefined', () => {
+      it("returns undefined when species is undefined", () => {
         const newTaxon = {
-          taxonRank: 'species',
-          genus: ' Genus_1 ',
-          specificEpithet: undefined
+          rank: "species",
+          genus: " Genus_1 ",
+          species: undefined,
         };
         const result = subject(newTaxon);
         expect(result).toEqual(undefined);
       });
 
-      it('returns undefined when genus is undefined', () => {
+      it("returns undefined when genus is undefined", () => {
         const newTaxon = {
-          taxonRank: 'species',
+          rank: "species",
           genus: undefined,
-          specificEpithet: 'species_1'
+          species: "species_1",
         };
         const result = subject(newTaxon);
         expect(result).toEqual(undefined);
       });
     });
 
-    describe('when rank is class', () => {
-      it('returns class', () => {
+    describe("when rank is class", () => {
+      it("returns class", () => {
         const newTaxon = {
-          taxonRank: 'class',
-          className: 'Class_1'
+          rank: "class",
+          class: "Class_1",
         };
         const result = subject(newTaxon);
-        expect(result).toEqual('Class_1');
+        expect(result).toEqual("Class_1");
       });
 
-      it('trims extra spaces', () => {
+      it("trims extra spaces", () => {
         const newTaxon = {
-          taxonRank: 'class',
-          className: ' Class_1 '
+          rank: "class",
+          class: " Class_1 ",
         };
         const result = subject(newTaxon);
-        expect(result).toEqual('Class_1');
+        expect(result).toEqual("Class_1");
       });
 
-      it('returns undefined when class is undefined', () => {
+      it("returns undefined when class is undefined", () => {
         const newTaxon = {
-          taxonRank: 'class',
-          className: undefined
+          rank: "class",
+          class: undefined,
         };
         const result = subject(newTaxon);
         expect(result).toEqual(undefined);
       });
     });
 
-    it('returns matching taxonomy for a given rank', () => {
+    it("returns matching taxonomy for a given rank", () => {
       const newTaxon = {
-        taxonRank: 'kingdom',
-        kingdom: 'Kingdom_1'
+        rank: "kingdom",
+        kingdom: "Kingdom_1",
       };
       const result = subject(newTaxon);
-      expect(result).toEqual('Kingdom_1');
+      expect(result).toEqual("Kingdom_1");
     });
 
-    it('trims extra spaces', () => {
+    it("trims extra spaces", () => {
       const newTaxon = {
-        taxonRank: 'kingdom',
-        kingdom: ' Kingdom_1 '
+        rank: "kingdom",
+        kingdom: " Kingdom_1 ",
       };
       const result = subject(newTaxon);
-      expect(result).toEqual('Kingdom_1');
+      expect(result).toEqual("Kingdom_1");
     });
 
-    it('returns undefinded if taxonomy is undefined', () => {
+    it("returns undefinded if taxonomy is undefined", () => {
       const newTaxon = {
-        taxonRank: 'kingdom',
-        kingdom: undefined
+        rank: "kingdom",
+        kingdom: undefined,
       };
       const result = subject(newTaxon);
       expect(result).toEqual(undefined);
     });
   });
 
-  describe('trimObject', () => {
+  describe("trimObject", () => {
     const subject = componentFactory().vm.trimObject;
 
-    it('trims the values for a given object', () => {
+    it("trims the values for a given object", () => {
       var object = {
         a: 1,
-        b: ' b ',
-        c: { c1: ' c ' },
+        b: " b ",
+        c: { c1: " c " },
       };
       const result = subject(object);
       const expected = {
         a: 1,
-        b: 'b',
-        c: { c1: ' c ' }
+        b: "b",
+        c: { c1: " c " },
       };
 
-      expect(result).toEqual(expected)
+      expect(result).toEqual(expected);
     });
 
-    it('does not change the original object', () => {
-      var object = { a: ' a '};
+    it("does not change the original object", () => {
+      var object = { a: " a " };
       subject(object);
 
-      expect(object).toEqual(object)
+      expect(object).toEqual(object);
     });
   });
 });

@@ -1,143 +1,130 @@
-import * as pp_utils from 'services/pp_utils';
+import * as pp_utils from "services/pp_utils";
 
-describe('pp_utils', () => {
-  describe('#capitalizeFirstLetter', () => {
+describe("pp_utils", () => {
+  describe("#capitalizeFirstLetter", () => {
     const subject = pp_utils.capitalizeFirstLetter;
 
-    it('capitalizes first letter in a string', () => {
-      const string = 'abc def'
+    it("capitalizes first letter in a string", () => {
+      const string = "abc def";
 
-      expect(subject(string)).toEqual('Abc def')
-    })
-  })
+      expect(subject(string)).toEqual("Abc def");
+    });
+  });
 
-  describe('#formatLongTaxonString', () => {
+  describe("#formatLongTaxonString", () => {
     const subject = pp_utils.formatLongTaxonString;
-    const taxaGroups = {
-      animals: ['Animals', 'Animalia']
-    }
 
-    it('returns the divison, phylum and class for a taxon', () => {
+    it("returns the kingdom, phylum and class if class follows phylum", () => {
       const taxon = {
         count: 1,
-        division: "Animals",
+        division: "Division",
+        kingdom: "Kingdom",
         phylum: "Phylum",
         class: "Class",
-        source: "ncbi"
-      }
-      const expected = 'Animals: Phylum, Class (eDNA)'
+        order: "Order",
+      };
+      const expected = "Kingdom: Phylum, Class";
 
-      expect(subject(taxon, taxaGroups)).toEqual(expected)
-    })
-  })
+      expect(subject(taxon)).toEqual(expected);
+    });
 
-  describe('#formatChartData', () => {
+    it("returns the kingdom, phylum and order if order follows phylum", () => {
+      const taxon = {
+        count: 1,
+        division: "Division",
+        kingdom: "Kingdom",
+        phylum: "Phylum",
+        order: "Order",
+        family: "Family",
+      };
+      const expected = "Kingdom: Phylum, Order";
+
+      expect(subject(taxon)).toEqual(expected);
+    });
+
+    it("returns the kingdom, phylum and family if family follows phylum", () => {
+      const taxon = {
+        count: 1,
+        division: "Division",
+        kingdom: "Kingdom",
+        phylum: "Phylum",
+        family: "Family",
+        genus: "Genus",
+      };
+      const expected = "Kingdom: Phylum, Family";
+
+      expect(subject(taxon)).toEqual(expected);
+    });
+
+    it("returns the kingdom, phylum and genus if genus follows phylum", () => {
+      const taxon = {
+        count: 1,
+        division: "Division",
+        kingdom: "Kingdom",
+        phylum: "Phylum",
+        genus: "Genus",
+        species: "Species",
+      };
+      const expected = "Kingdom: Phylum, Genus";
+
+      expect(subject(taxon)).toEqual(expected);
+    });
+
+    it("returns the kingdom, phylum and species if species follows phylum", () => {
+      const taxon = {
+        count: 1,
+        division: "Division",
+        kingdom: "Kingdom",
+        phylum: "Phylum",
+        species: "Species",
+      };
+      const expected = "Kingdom: Phylum, Species";
+
+      expect(subject(taxon)).toEqual(expected);
+    });
+  });
+
+  describe("#formatChartData", () => {
     const subject = pp_utils.formatChartData;
 
-    it('returns a hash with keys that chart library requires', () => {
+    it("returns a hash with keys that chart library requires", () => {
       const taxon = {
         count: 1,
-        division: "Animals",
+        division: "Division",
+        kingdom: "Kingdom",
         phylum: "Phylum",
         class: "Class",
-        source: "ncbi"
-      }
-      const taxaGroups = {
-        animals: ['Animals', 'Animalia']
-      }
+        source: "ncbi",
+      };
+
       const expected = {
         value: 1,
-        division: "Animals",
-        name: 'Animals: Phylum, Class (eDNA)',
+        division: "Division",
+        name: "Kingdom: Phylum, Class",
         source: "ncbi",
-        tooltip_name: "Animals: Phylum, Class (eDNA)",
-      }
+        tooltip_name: "Kingdom: Phylum, Class",
+      };
 
-      expect(subject(taxon, taxaGroups)).toEqual(expected)
-    })
-  })
+      expect(subject(taxon)).toEqual(expected);
+    });
+  });
 
-  describe('#sortData', () => {
+  describe("#sortData", () => {
     const subject = pp_utils.sortData;
 
-    it('sorts data by value in asc order', () => {
+    it("sorts data by value in asc order", () => {
       const data = [
-        { value: 1, division: "Animals", name: 'name', source: "ncbi" },
-        { value: 3, division: "Animals", name: 'name', source: "ncbi" },
-        { value: 2, division: "Animals", name: 'name', source: "ncbi" },
-      ]
+        { value: 1, division: "Division", name: "name", source: "ncbi" },
+        { value: 3, division: "Division", name: "name", source: "ncbi" },
+        { value: 2, division: "Division", name: "name", source: "ncbi" },
+      ];
       const expected = [
-        { value: 1, division: "Animals", name: 'name', source: "ncbi" },
-        { value: 2, division: "Animals", name: 'name', source: "ncbi" },
-        { value: 3, division: "Animals", name: 'name', source: "ncbi" },
-      ]
+        { value: 1, division: "Division", name: "name", source: "ncbi" },
+        { value: 2, division: "Division", name: "name", source: "ncbi" },
+        { value: 3, division: "Division", name: "name", source: "ncbi" },
+      ];
 
-      expect(subject(data)).toEqual(expected)
-    })
-  })
-
-  describe('#filterAndSortData', () => {
-    const subject = pp_utils.filterAndSortData
-
-    it('returns an sorted array taxons if filters do not exist', () =>{
-      const data = [
-        { value: 4, division: "Animals", name: 'a', source: "ncbi" },
-        { value: 5, division: "Bacteria", name: 'b', source: "ncbi" },
-        { value: 2, division: "Animalia", name: 'c', source: "gbif" },
-        { value: 1, division: "Animalia", name: 'd', source: "gbif" },
-        { value: 3, division: "Animals", name: 'e', source: "ncbi" },
-      ]
-      const taxaGroups = {
-        animals: ['Animals', 'Animalia'],
-        bacteria: ['Bacteria', 'Viruses', 'Archaea'],
-      }
-      const filters = { taxon_groups: [] }
-      const options = {
-        data,
-        limit: 3,
-        taxaGroups,
-        filters,
-      }
-
-      const expected = [
-        { value: 3, division: "Animals", name: 'e', source: "ncbi" },
-        { value: 4, division: "Animals", name: 'a', source: "ncbi" },
-        { value: 5, division: "Bacteria", name: 'b', source: "ncbi" },
-      ]
-
-      expect(subject(options)).toEqual(expected)
-    })
-
-    it('returns an sorted array of filtered taxons if filters exist', () =>{
-      const data = [
-        { value: 4, division: "Animals", name: 'a', source: "ncbi" },
-        { value: 5, division: "Bacteria", name: 'b', source: "ncbi" },
-        { value: 2, division: "Animalia", name: 'c', source: "gbif" },
-        { value: 1, division: "Animalia", name: 'd', source: "gbif" },
-        { value: 3, division: "Animals", name: 'e', source: "ncbi" },
-      ]
-      const taxaGroups = {
-        animals: ['Animals', 'Animalia'],
-        bacteria: ['Bacteria', 'Viruses', 'Archaea'],
-      }
-      const filters = { taxon_groups: ['animals'] }
-      const options = {
-        data,
-        limit: 3,
-        taxaGroups,
-        filters,
-      }
-
-      const expected = [
-        { value: 2, division: "Animalia", name: 'c', source: "gbif" },
-        { value: 3, division: "Animals", name: 'e', source: "ncbi" },
-        { value: 4, division: "Animals", name: 'a', source: "ncbi" },
-      ]
-
-      expect(subject(options)).toEqual(expected)
-    })
-  })
-})
-
-
-
+      expect(subject(data)).toEqual(expected);
+    });
+  });
+});
