@@ -148,6 +148,8 @@ export default {
       taxonLayer: null,
       showTaxonLayer: true,
       taxonSamplesData: [],
+      initialTaxonSamplesData: [],
+      asvsCounts: [],
 
       searchType: "sites",
       searchMeta: {
@@ -193,18 +195,35 @@ export default {
 
     submitFilters() {
       if (this.searchType == "sites") {
-        let queryString = formatQuerystring(this.store.state.currentFilters);
-        let url = queryString
-          ? `${this.endpoint}?${queryString}`
-          : this.endpoint;
-        this.fetchSamples(url);
+        if (this.store.state.currentFilters.keyword) {
+          this.filterSamplesBackend();
+        } else {
+          this.filterSamplesFrontend();
+        }
         this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
           this.store.state.currentFilters
         );
       } else {
-        // debugger;
-        window.location = `/taxa_search?query=${this.store.state.currentFilters.keyword}`;
+        this.handleTaxaSearch();
       }
+    },
+
+    filterSamplesFrontend() {
+      let filters = this.store.state.currentFilters;
+      let samples = this.initialTaxonSamplesData;
+      this.taxonSamplesData = this.filterSamples(filters, samples);
+
+      this.prepareSamplesDisplay();
+    },
+
+    filterSamplesBackend() {
+      let queryString = formatQuerystring(this.store.state.currentFilters);
+      let url = queryString ? `${this.endpoint}?${queryString}` : this.endpoint;
+      this.fetchSamples(url);
+    },
+
+    handleTaxaSearch() {
+      window.location = `/taxa_search?query=${this.store.state.currentFilters.keyword}`;
     },
 
     //================
@@ -222,7 +241,7 @@ export default {
           gps_precision,
           primers,
           substrate
-        } = sample.attributes;
+        } = sample;
 
         const asvs_count = asvs_counts.find(
           asvs_count => asvs_count.sample_id === id
@@ -250,24 +269,30 @@ export default {
       axios
         .get(url)
         .then(response => {
-          const asvs_counts = response.data.asvs_count;
-          const taxonSamples = response.data.samples.data;
-          this.taxonSamplesCount = taxonSamples.length;
-
-          this.formatTableData(taxonSamples, asvs_counts);
+          this.asvsCounts = response.data.asvs_count;
 
           const mapData = baseMap.formatMapData(response.data);
-          this.taxonSamplesMapData = mapData.taxonSamplesMapData;
-
-          this.removeTaxonLayer();
-          if (this.showTaxonLayer) {
-            this.addTaxonLayer();
+          if (this.initialTaxonSamplesData.length == 0) {
+            this.initialTaxonSamplesData = mapData.taxonSamplesData;
           }
+          this.taxonSamplesData = mapData.taxonSamplesData;
+
+          this.prepareSamplesDisplay();
+
           this.showSpinner = false;
         })
         .catch(e => {
           console.error(e);
         });
+    },
+    prepareSamplesDisplay() {
+      this.formatTableData(this.taxonSamplesData, this.asvsCounts);
+      this.taxonSamplesCount = this.taxonSamplesData.length;
+
+      this.removeTaxonLayer();
+      if (this.showTaxonLayer) {
+        this.addTaxonLayer();
+      }
     }
   }
 };

@@ -114,7 +114,9 @@ export default {
       taxonSamplesCount: null,
       taxonLayer: null,
       showTaxonLayer: true,
-      taxonSamplesData: []
+      taxonSamplesData: [],
+      initialTaxonSamplesData: [],
+      asvsCounts: []
     };
   },
   created() {
@@ -149,12 +151,17 @@ export default {
       this.currentFiltersDisplay = null;
     },
     submitFilters() {
-      let queryString = formatQuerystring(this.store.state.currentFilters);
-      let url = queryString ? `${this.endpoint}?${queryString}` : this.endpoint;
-      this.fetchSamples(url);
+      this.filterSamplesFrontend();
       this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
         this.store.state.currentFilters
       );
+    },
+    filterSamplesFrontend() {
+      let filters = this.store.state.currentFilters;
+      let samples = this.initialTaxonSamplesData;
+      this.taxonSamplesData = this.filterSamples(filters, samples);
+
+      this.prepareSamplesDisplay();
     },
 
     //================
@@ -172,7 +179,7 @@ export default {
           gps_precision,
           primers,
           substrate
-        } = sample.attributes;
+        } = sample;
 
         const asvs_count = asvs_counts.find(
           asvs_count => asvs_count.sample_id === id
@@ -200,24 +207,30 @@ export default {
       axios
         .get(url)
         .then(response => {
-          const asvs_counts = response.data.asvs_count;
-          const taxonSamples = response.data.samples.data;
-          this.taxonSamplesCount = taxonSamples.length;
-
-          this.formatTableData(taxonSamples, asvs_counts);
+          this.asvsCounts = response.data.asvs_count;
 
           const mapData = baseMap.formatMapData(response.data);
+          if (this.initialTaxonSamplesData.length == 0) {
+            this.initialTaxonSamplesData = mapData.taxonSamplesData;
+          }
           this.taxonSamplesData = mapData.taxonSamplesData;
 
-          this.removeTaxonLayer();
-          if (this.showTaxonLayer) {
-            this.addTaxonLayer();
-          }
+          this.prepareSamplesDisplay();
+
           this.showSpinner = false;
         })
         .catch(e => {
           console.error(e);
         });
+    },
+    prepareSamplesDisplay() {
+      this.formatTableData(this.taxonSamplesData, this.asvsCounts);
+      this.taxonSamplesCount = this.taxonSamplesData.length;
+
+      this.removeTaxonLayer();
+      if (this.showTaxonLayer) {
+        this.addTaxonLayer();
+      }
     }
   }
 };

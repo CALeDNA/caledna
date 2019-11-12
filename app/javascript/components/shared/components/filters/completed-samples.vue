@@ -13,7 +13,11 @@
       <i class="fas fa-sliders-h"></i> Filters
     </button>
 
-    <form class="filters-container collapse" id="collapseFilters" @submit.prevent="submitFilters">
+    <form
+      class="filters-container collapse"
+      id="collapseFilters"
+      @submit.prevent="submitFilters"
+    >
       <div class="row">
         <div class="col-sm-6">
           <substrate :store="store" />
@@ -25,7 +29,9 @@
       </div>
 
       <button type="submit" class="btn btn-primary">Update Search</button>
-      <button class="btn btn-primary" @click.prevent="resetFilters">Reset Search</button>
+      <button class="btn btn-default" @click.prevent="resetFilters">
+        Reset Search
+      </button>
     </form>
   </span>
 </template>

@@ -151,11 +151,14 @@ export default {
       baseLayer: null,
       showBaseLayer: false,
       baseSamplesData: [],
+      initialBaseSamplesData: [],
 
       taxonSamplesCount: null,
       taxonLayer: null,
       showTaxonLayer: true,
-      taxonSamplesData: []
+      taxonSamplesData: [],
+      initialTaxonSamplesData: [],
+      asvsCounts: []
     };
   },
   created() {
@@ -182,12 +185,20 @@ export default {
     },
 
     submitFilters() {
-      let queryString = formatQuerystring(this.store.state.currentFilters);
-      let url = queryString ? `${this.endpoint}?${queryString}` : this.endpoint;
-      this.fetchSamples(url);
+      this.filterSamplesFrontend();
       this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
         this.store.state.currentFilters
       );
+    },
+
+    filterSamplesFrontend() {
+      let filters = this.store.state.currentFilters;
+      let samples = this.initialTaxonSamplesData;
+      let baseSamples = this.initialBaseSamplesData;
+      this.taxonSamplesData = this.filterSamples(filters, samples);
+      this.baseSamplesData = this.filterSamples(filters, baseSamples);
+
+      this.prepareSamplesDisplay();
     },
 
     //================
@@ -206,7 +217,7 @@ export default {
           primers,
           substrate,
           taxa
-        } = sample.attributes;
+        } = sample;
 
         const asvs_count = asvs_counts.find(
           asvs_count => asvs_count.sample_id === id
@@ -258,34 +269,38 @@ export default {
       axios
         .get(url)
         .then(response => {
-          const asvs_counts = response.data.asvs_count;
-          const taxonSamples = response.data.samples.data;
-          const baseSamples = response.data.base_samples.data;
+          this.asvsCounts = response.data.asvs_count;
           this.taxon = response.data.taxon.data.attributes;
-          this.taxonSamplesCount = taxonSamples.length;
-          this.baseSamplesCount = baseSamples.length;
-
-          this.formatTableData(taxonSamples, asvs_counts);
 
           const mapData = baseMap.formatMapData(response.data);
+          if (this.initialTaxonSamplesData.length == 0) {
+            this.initialTaxonSamplesData = mapData.taxonSamplesData;
+            this.initialBaseSamplesData = mapData.baseSamplesData;
+          }
           this.taxonSamplesData = mapData.taxonSamplesData;
           this.baseSamplesData = mapData.baseSamplesData;
 
-          this.removeBaseLayer();
-          if (this.showBaseLayer) {
-            this.addBaseLayer();
-          }
-
-          this.removeTaxonLayer();
-          if (this.showTaxonLayer) {
-            this.addTaxonLayer();
-          }
+          this.prepareSamplesDisplay();
 
           this.showSpinner = false;
         })
         .catch(e => {
           console.error(e);
         });
+    },
+    prepareSamplesDisplay() {
+      this.formatTableData(this.taxonSamplesData, this.asvsCounts);
+      this.taxonSamplesCount = this.taxonSamplesData.length;
+      this.baseSamplesCount = this.baseSamplesData.length;
+
+      this.removeBaseLayer();
+      if (this.showBaseLayer) {
+        this.addBaseLayer();
+      }
+      this.removeTaxonLayer();
+      if (this.showTaxonLayer) {
+        this.addTaxonLayer();
+      }
     }
   },
   computed: {
