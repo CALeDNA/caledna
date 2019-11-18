@@ -39,6 +39,7 @@ class UserDashboard < Administrate::BaseDashboard
     uc_campus: Field::String,
     caledna_source: Field::String,
     agree: Field::Boolean,
+    can_contact: Field::Boolean,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -67,6 +68,7 @@ class UserDashboard < Administrate::BaseDashboard
     :uc_campus,
     :caledna_source,
     :agree,
+    :can_contact,
     :event_registrations,
     :sign_in_count,
     :last_sign_in_at,
@@ -94,6 +96,7 @@ class UserDashboard < Administrate::BaseDashboard
     :uc_campus,
     :caledna_source,
     :agree,
+    :can_contact,
     :event_registrations,
   ].freeze
 

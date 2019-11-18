@@ -31,6 +31,7 @@ class ApplicationController < ActionController::Base
       uc_campus
       caledna_source
       agree
+      can_contact
     ]
 
     devise_parameter_sanitizer.permit(:sign_up,

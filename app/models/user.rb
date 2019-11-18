@@ -60,6 +60,8 @@ class User < ApplicationRecord
   ], map: :string
 
   validates :agree, presence: true
+  validates_inclusion_of :can_contact, in: [true, false]
+
   validates :username,
             :email,
             presence: true,
