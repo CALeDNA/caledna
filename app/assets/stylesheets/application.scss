@@ -74,33 +74,23 @@ body {
   min-height: 100%;
   position: relative;
   padding: 0;
-  padding-bottom: 35rem;
+  padding-bottom: 24rem;
 }
 
 footer {
   width: 100%;
   bottom: 0;
   position: absolute;
-  min-height: 28rem;
+  min-height: 19rem;
 }
 
-@media (min-width: 480px) {
+@media (max-width: 768px) {
   #main-wrapper {
-    padding-bottom: 32rem;
+    padding-bottom: 37rem;
   }
 
   footer {
-    min-height: 25rem;
-  }
-}
-
-@media (min-width: 768px) {
-  #main-wrapper {
-    padding-bottom: 19rem;
-  }
-
-  footer {
-    min-height: 12rem;
+    min-height: 29rem;
   }
 }
 
@@ -402,8 +392,11 @@ footer {
     padding: 0.4rem 0;
   }
 
-  .social-media a:link {
-    padding-right: 0.6rem;
+  #social-media-links {
+    padding: 17px 0;
+    a {
+      margin: 0 3px;
+    }
   }
 
   a {
