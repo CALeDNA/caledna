@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_18_153905) do
+ActiveRecord::Schema.define(version: 2019_12_24_161951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -270,6 +270,37 @@ ActiveRecord::Schema.define(version: 2019_11_18_153905) do
     t.index ["kobo_id"], name: "index_field_projects_on_kobo_id", unique: true
   end
 
+  create_table "ggbn_meta", force: :cascade do |t|
+    t.string "technical_contact_name"
+    t.string "technical_contact_email"
+    t.string "technical_contact_address"
+    t.string "content_contact_name"
+    t.string "content_contact_email"
+    t.string "content_contact_address"
+    t.string "dataset_title"
+    t.text "dataset_details"
+    t.string "owner_organization_name"
+    t.string "owner_organization_abbrev"
+    t.string "owner_contact_person"
+    t.string "owner_address"
+    t.string "owner_email"
+    t.text "copyright_details"
+    t.text "terms_of_use_details"
+    t.text "disclaimers_details"
+    t.text "licenses_details"
+    t.string "license_uri"
+    t.text "acknowledgements_details"
+    t.text "citations_details"
+    t.string "source_institution_id"
+    t.string "source_id"
+    t.string "record_basis"
+    t.string "kind_of_unit"
+    t.string "language"
+    t.string "altitude_unit_of_measurement"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "highlights", id: :serial, force: :cascade do |t|
     t.string "notes"
     t.integer "highlightable_id"
@@ -429,20 +460,20 @@ ActiveRecord::Schema.define(version: 2019_11_18_153905) do
     t.integer "sample_id"
     t.index "((metadata ->> 'location'::text))", name: "idx_rps_metadata_location"
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
+    t.index ["sample_id"], name: "research_project_sources_sample_id_idx"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
     t.index ["sourceable_type"], name: "index_research_project_sources_on_sourceable_type"
   end
 
   create_table "research_projects", id: :serial, force: :cascade do |t|
     t.string "name"
-    t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "published", default: false
     t.string "slug"
     t.text "reference_barcode_database"
     t.string "dryad_link"
-    t.string "decontamination_method"
+    t.text "decontamination_method"
     t.string "primers"
     t.jsonb "metadata", default: {}
   end
@@ -501,14 +532,17 @@ ActiveRecord::Schema.define(version: 2019_11_18_153905) do
     t.integer "gps_precision"
     t.string "location"
     t.text "director_notes"
-    t.string "habitat"
-    t.string "depth"
-    t.string "environmental_features"
-    t.string "environmental_settings"
+    t.string "habitat_cd"
+    t.string "depth_cd"
     t.boolean "missing_coordinates", default: false
     t.jsonb "metadata", default: {}
     t.string "primers", default: [], array: true
     t.jsonb "csv_data", default: {}
+    t.string "environmental_features", default: [], array: true
+    t.string "environmental_settings", default: [], array: true
+    t.string "country", default: "United States of America"
+    t.string "country_code", default: "US"
+    t.boolean "has_permit", default: true
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
