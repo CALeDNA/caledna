@@ -6,7 +6,6 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     name: Field::String,
-    description: Field::Text,
     published: Field::Boolean,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -14,14 +13,13 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     user_authors: ProjectAuthorField,
     reference_barcode_database: Field::Text,
     dryad_link: Field::String,
-    decontamination_method: Field::String,
+    decontamination_method: Field::Text,
     primers: Field::String,
     metadata: Field::JSON.with_options(searchable: false),
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
     :name,
-    :description,
     :published,
     :created_at
   ].freeze
@@ -29,7 +27,6 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :name,
     :published,
-    :description,
     :reference_barcode_database,
     :dryad_link,
     :decontamination_method,
@@ -44,7 +41,6 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
     :name,
     :published,
-    :description,
     :reference_barcode_database,
     :dryad_link,
     :decontamination_method,
