@@ -1,0 +1,36 @@
+<%#
+add javascript to auto fiil menu text and slug
+%>
+
+<% content_for(:title) do %>
+  <%= t(
+    "administrate.actions.new_resource",
+    name: display_resource_name(page.resource_name).titleize
+  ) %>
+<% end %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+
+  <div>
+    <%= link_to t("administrate.actions.back"), :back, class: "button" %>
+  </div>
+</header>
+
+<section class="main-content__body">
+  <%= render "form", page: page %>
+</section>
+
+<script>
+(function(){
+
+  document.querySelector('#page_title').addEventListener('keyup', (e) => {
+    var title = e.target.value.trim();
+    document.querySelector('#page_menu_text').value = title;
+    document.querySelector('#page_slug').value = title.toLocaleLowerCase().replace(/ /g, '-');
+  })
+
+})()
+</script>

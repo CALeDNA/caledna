@@ -4,9 +4,7 @@ class Page < ApplicationRecord
   belongs_to :research_project, optional: true
   belongs_to :website
 
-  before_save :set_slug
-
-  validates :website, presence: true
+  validates :website, :body, :title, :slug, presence: true
   validate :unique_slugs
 
   as_enum :menu, %i[
@@ -54,10 +52,5 @@ class Page < ApplicationRecord
           .where(slug: slug)
           .where('research_project_id IS NOT NULL')
     end
-  end
-
-  def set_slug
-    return if try(:slug).present?
-    self.slug = title.parameterize.truncate(80, omission: '')
   end
 end

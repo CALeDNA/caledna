@@ -26,7 +26,6 @@ class PageDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :title,
     :published,
-    :menu_cd,
     :menu_text,
     :slug,
     :display_order,
@@ -41,7 +40,6 @@ class PageDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
     :title,
     :published,
-    :menu_cd,
     :menu_text,
     :display_order,
     :slug,
