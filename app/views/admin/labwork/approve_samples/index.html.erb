@@ -9,7 +9,7 @@
 
 <section class="main-content__body">
 
-  <div class="samples-menu">
+  <div class="approve-samples-menu">
     <div class="btn-group" role="group" >
       <a data-action="approve_samples"  class="batch-action btn btn-default">
         Approve
@@ -37,7 +37,7 @@
       <td><%= link_to sample.field_project.name, admin_field_project_path(sample.field_project) %></td>
       <td>
         <% unless sample.inside_california? %>
-          WARNING: coordinates are not in California.<br>
+          <span class="warning">WARNING: coordinates are not in California.</span><br>
         <%end%>
         lat: <%= sample.latitude %><br>
         long: <%= sample.longitude %><br>
