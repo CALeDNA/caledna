@@ -22,7 +22,7 @@
   </tr>
   <tr>
     <td>Location</td>
-    <td><%= sample.location_display %></td>
+    <td><%= sample.location %></td>
   </tr>
   <tr>
     <td>Collection Date</td>
@@ -43,19 +43,19 @@
   <% if sample.field_project.single_sample_v2_form? %>
     <tr>
       <td>Habitat</td>
-      <td><%= sample.habitat_display %></td>
+      <td><%= sample.habitat %></td>
     </tr>
     <tr>
       <td>Depth of Sample</td>
-      <td><%= sample.depth_display %></td>
+      <td><%= sample.depth %></td>
     </tr>
     <tr>
       <td>Environmental Features</td>
-      <td><%= sample.environmental_features_display %></td>
+      <td><%= sample.environmental_features %></td>
     </tr>
     <tr>
       <td>Environmental Settings</td>
-      <td><%= sample.environmental_settings_display %></td>
+      <td><%= sample.environmental_settings %></td>
     </tr>
   <% end %>
   <tr>
