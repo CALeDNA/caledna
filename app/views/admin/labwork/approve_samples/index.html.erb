@@ -10,16 +10,14 @@
 <section class="main-content__body">
 
   <div class="approve-samples-menu">
-    <div class="btn-group" role="group" >
-      <a data-action="approve_samples"  class="batch-action btn btn-default">
-        Approve
-      </a>
-      <a data-action="change_longitude_sign"  class="batch-action btn btn-default">
-        Change Longitude Sign
-      </a>
-      <%= form_tag admin_labwork_edit_multiple_approvals_path, method: :post do |f| %>
-      <%= submit_tag 'Batch Edit', class: "batch-action btn btn-default" %>
-    </div>
+    <a data-action="approve_samples"  class="js-batch-action btn btn-default">
+      Approve
+    </a>
+    <%= form_tag admin_labwork_edit_multiple_approvals_path, method: :post do |f| %>
+    <%= submit_tag 'Reject', class: "js-batch-action btn btn-default" %>
+    <a data-action="change_longitude_sign"  class="js-batch-action btn btn-default">
+      Change Longitude Sign
+    </a>
   </div>
 
   <table class="no-auto-link">

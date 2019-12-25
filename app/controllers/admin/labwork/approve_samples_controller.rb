@@ -12,7 +12,7 @@ module Admin
       end
 
       def edit_multiple_approvals
-        @samples = Sample.find(params[:batch_ids])
+        @samples = params[:batch_ids] ? Sample.find(params[:batch_ids]) : []
       end
 
       def update_multiple_approvals
