@@ -2,22 +2,6 @@
 
 FactoryBot.define do
   factory :extraction do
-    trait :processing_sample do
-      sample
-      extraction_type
-
-      priority_sequencing false
-      sequence(:sra_url) { |n| "http://example.com/sra_#{n}" }
-      sra_add_date Time.zone.now
-      sequence(:local_fastq_storage_url) { |n| "http://example.com/fastq_#{n}" }
-      local_fastq_storage_add_date Time.zone.now
-      stat_bio_reps_pooled_date Time.zone.now
-      loc_bio_reps_pooled { Faker::Lorem.words(2).join(' ') }
-      bio_reps_pooled_date Time.zone.now
-      protocol_bio_reps_pooled { Faker::Lorem.words(2).join(' ') }
-      changes_protocol_bio_reps_pooled { Faker::Lorem.words(2).join(' ') }
-    end
-
     trait :results_completed do
       sample
       extraction_type

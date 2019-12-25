@@ -1335,7 +1335,7 @@ describe ProcessEdnaResults do
   describe '#find_sample_from_barcode' do
     let(:barcode) { 'K0001-LA-S1' }
     let(:project) { create(:field_project, name: 'unknown') }
-    let(:status) { :processing_sample }
+    let(:status) { :approved }
 
     def subject
       dummy_class.find_sample_from_barcode(barcode, status)

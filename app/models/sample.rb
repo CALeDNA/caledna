@@ -21,7 +21,6 @@ class Sample < ApplicationRecord
   scope :la_river, (lambda do
     where(field_project_id: FieldProject::LA_RIVER.try(:id))
   end)
-  scope :processing_sample, -> { where(status_cd: :processing_sample) }
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do
     where("status_cd  = 'approved' OR  status_cd = 'results_completed'")
@@ -29,8 +28,7 @@ class Sample < ApplicationRecord
   scope :with_coordinates, -> { where('latitude > -1') }
 
   as_enum :status,
-          %i[submitted approved rejected duplicate_barcode assigned
-             processing_sample
+          %i[submitted approved rejected duplicate_barcode
              results_completed processed_invalid_sample],
           map: :string
   as_enum :substrate, KoboValues::SUBSTRATES, map: :string
