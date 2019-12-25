@@ -50,6 +50,7 @@ en:
         substrate_cd: Substrate
         alt_id: "Alt ID"
         kobo_id: "Kobo ID"
+        gps_precision: 'GPS precision'
       field_project:
         kobo_id: "Kobo ID"
       survey_question:

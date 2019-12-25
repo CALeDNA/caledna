@@ -3,13 +3,19 @@
 require "administrate/base_dashboard"
 
 class SampleDashboard < Administrate::BaseDashboard
+  ARRAY_FIELDS = %i[primers environmental_features environmental_settings]
+
   ATTRIBUTE_TYPES = {
+    pg_search_document: Field::HasOne,
     field_project: Field::BelongsTo.with_options(
       order: 'name asc', # order in form dropdown
       searchable: true, # make associated project name searchable
       searchable_field: 'name'
     ),
     kobo_photos: Field::HasMany,
+    extractions: Field::HasMany,
+    asvs: Field::HasMany,
+    research_project_sources: Field::HasMany,
     research_projects: Field::HasMany,
     id: Field::Number,
     kobo_id: Field::Number,
@@ -22,21 +28,23 @@ class SampleDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     collection_date: Field::DateTime,
-    status_cd: Field::String,
-    substrate_cd: Field::String,
-    alt_id: Field::String,
+    status_cd: EnumField,
+    substrate_cd: EnumField,
     altitude: Field::String.with_options(searchable: false),
     gps_precision: Field::Number,
     location: Field::String,
-    elevatr_altitude: Field::String.with_options(searchable: false),
     director_notes: Field::Text,
-    habitat: Field::String,
-    depth: Field::String,
-    environmental_features: Field::String,
-    environmental_settings: Field::String,
+    habitat: EnumField,
+    depth: EnumField,
+    environmental_features: ArrayField,
+    environmental_settings: ArrayField,
     missing_coordinates: Field::Boolean,
     metadata: Field::String.with_options(searchable: false),
-    primers: Field::String,
+    primers: ArrayField,
+    csv_data: Field::String.with_options(searchable: false),
+    country: Field::String,
+    country_code: Field::String,
+    has_permit: Field::Boolean,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -68,8 +76,15 @@ class SampleDashboard < Administrate::BaseDashboard
     :environmental_settings,
     :primers,
     :kobo_photos,
+    :country,
+    :country_code,
+    :has_permit,
+    :kobo_id,
+    :created_at,
+    :updated_at,
     :metadata,
-    :kobo_data
+    :kobo_data,
+    :csv_data,
   ].freeze
 
   FORM_ATTRIBUTES = [
@@ -93,10 +108,16 @@ class SampleDashboard < Administrate::BaseDashboard
     :environmental_settings,
     :primers,
     :kobo_photos,
-    :metadata,
+    :country,
+    :country_code,
+    :has_permit
   ].freeze
 
   def display_resource(sample)
     sample.barcode
+  end
+
+  def permitted_attributes
+    super + ARRAY_FIELDS.map { |f| { f => []} }
   end
 end

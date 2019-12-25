@@ -3,6 +3,7 @@
 class Sample < ApplicationRecord
   include PgSearch
   include InsidePolygon
+
   multisearchable against: %i[
     barcode status_cd location_display field_project_name
     research_projects_names
@@ -32,7 +33,9 @@ class Sample < ApplicationRecord
              processing_sample
              results_completed processed_invalid_sample],
           map: :string
-  as_enum :substrate, %i[soil sediment water other], map: :string
+  as_enum :substrate, KoboValues::SUBSTRATES, map: :string
+  as_enum :habitat, KoboValues::HABITAT, map: :string
+  as_enum :depth, KoboValues::DEPTH, map: :string
 
   def status_display
     status.to_s.tr('_', ' ')

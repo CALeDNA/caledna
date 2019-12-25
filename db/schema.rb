@@ -543,6 +543,8 @@ ActiveRecord::Schema.define(version: 2019_12_24_161951) do
     t.string "country", default: "United States of America"
     t.string "country_code", default: "US"
     t.boolean "has_permit", default: true
+    t.string "environmental_features", default: [], array: true
+    t.string "environmental_settings", default: [], array: true
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
