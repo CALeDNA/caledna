@@ -12,10 +12,11 @@ module ImportCsv
 
       # TODO: find a way to deal with image upload
       CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
-        barcode = row['sample_id']
+        barcode = row['barcode']
         next if Sample.where(barcode: barcode).present?
 
-        sample = Sample.create(create_data_fields(row, barcode))
+        data = create_data_fields(row, barcode)
+        sample = Sample.create(data)
 
         extraction_data = {
           sample: sample
@@ -36,7 +37,8 @@ module ImportCsv
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def create_data_fields(row, barcode)
-      date = DateTime.parse("#{row['sampling_date']}T#{row['sampling_time']}")
+      date =
+        DateTime.parse("#{row['collection_date']}T#{row['collection_time']}")
       {
         barcode: barcode,
         collection_date: date,
@@ -47,11 +49,14 @@ module ImportCsv
         altitude: row['gps_altitude'],
         gps_precision: row['gps_precision'],
         substrate_cd: row['substrate'].downcase,
-        habitat: row['habitat'],
-        depth: row['sampling_depth'],
-        environmental_features: row['environmental_features'],
-        environmental_settings: row['environmental_settings'],
+        habitat_cd: row['habitat'],
+        depth_cd: row['sampling_depth'],
+        environmental_features: row['environmental_features'].split(','),
+        environmental_settings: row['environmental_settings'].split(','),
         field_notes: row['field_notes'],
+        country: row['country'],
+        country_code: row['country_code'],
+        has_permit: row['has_permit'],
         field_project_id: FieldProject.find_by(name: 'unknown').id,
         status_cd: 'approved',
         csv_data: row

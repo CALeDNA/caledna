@@ -44,12 +44,13 @@ describe ImportCsv::SamplesCsv do
 
       it 'creates a sample using csv data' do
         row = CSV.read(file.path, headers: true, col_sep: ';').entries.first
-        date = DateTime.parse("#{row['sampling_date']} #{row['sampling_time']}")
+        date =
+          DateTime.parse("#{row['collection_date']} #{row['collection_time']}")
 
         subject(file, research_project.id)
         sample = Sample.first
 
-        expect(sample.barcode).to eq(row['sample_id'])
+        expect(sample.barcode).to eq(row['barcode'])
         expect(sample.collection_date).to eq(date)
         expect(sample.submission_date).to eq(date)
         expect(sample.location).to eq(row['location'])
@@ -58,13 +59,16 @@ describe ImportCsv::SamplesCsv do
         expect(sample.altitude).to eq(row['gps_altitude'].to_i)
         expect(sample.gps_precision).to eq(row['gps_precision'].to_i)
         expect(sample.substrate_cd).to eq(row['substrate'])
-        expect(sample.habitat).to eq(row['habitat'])
-        expect(sample.depth).to eq(row['sampling_depth'])
+        expect(sample.habitat_cd).to eq(row['habitat'])
+        expect(sample.depth_cd).to eq(row['sampling_depth'])
         expect(sample.environmental_features)
-          .to eq(row['environmental_features'])
+          .to eq(row['environmental_features'].split(','))
         expect(sample.environmental_settings)
-          .to eq(row['environmental_settings'])
+          .to eq(row['environmental_settings'].split(','))
         expect(sample.field_notes).to eq(row['field_notes'])
+        expect(sample.country).to eq(row['country'])
+        expect(sample.country_code).to eq(row['country_code'])
+        expect(sample.has_permit).to eq(true)
         expect(sample.field_project_id).to eq(field_project.id)
         expect(sample.status_cd).to eq('approved')
         expect(sample.csv_data).to eq(row.to_a)
