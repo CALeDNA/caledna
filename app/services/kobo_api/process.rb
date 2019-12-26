@@ -48,6 +48,8 @@ module KoboApi
 
     private
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+
     def project_ids
       FieldProject.pluck(:kobo_id)
     end
@@ -69,7 +71,6 @@ module KoboApi
       Project.find_by(kobo_id: kobo_id)
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def sample_prefixes
       [
         { gps: 'groupA/A1/A1gps', other: 'groupA/A1/A1', tube: 'LA-S1' },
@@ -110,7 +111,9 @@ module KoboApi
       ].compact.join(' ')
       data.location = [
         data.Where_are_you_A_UC_serve_or_in_Yosemite,
-        data.Location
+        data.If_at_a_UC_Natural_R_ve_select_which_one, # UCNR
+        data.Location, # CVMSHCP
+        data.If_at_LA_River_water_which_body_of_water # LA River
       ].compact.join(' ')
       data.field_project_id = field_project_id
 
@@ -124,19 +127,41 @@ module KoboApi
       data.gps = data.Get_the_GPS_Location_e_this_more_accurate
       data.substrate = data.What_type_of_substrate_did_you
       data.field_notes = data._Optional_Regarding_rns_to_share_with_us
-      data.location = [
-        data.Where_are_you_A_UC_serve_or_in_Yosemite,
-        data.Location
-      ].compact.join(' ')
       data.field_project_id = field_project_id
-      data.habitat = data._optional_Describe_ou_are_sampling_from
-      data.depth = data._optional_What_dept_re_your_samples_from
-      data.environmental_features = [
+
+      data.location = [
+        clean_kobo_field(data.Where_are_you_A_UC_serve_or_in_Yosemite,
+                         KoboValues::LOCATION_HASH),
+        clean_kobo_field(data.If_at_a_UC_Natural_R_ve_select_which_one,
+                         KoboValues::UCNR_HASH),
+        clean_kobo_field(data.Location,
+                         KoboValues::CVMSHCP_HASH),
+        clean_kobo_field(data.If_at_LA_River_water_which_body_of_water,
+                         KoboValues::LA_RIVER_HASH)
+      ].compact.join('; ')
+      data.habitat = clean_kobo_field(
+        data._optional_Describe_ou_are_sampling_from,
+        KoboValues::HABITAT_HASH
+      )
+      data.depth = clean_kobo_field(
+        data._optional_What_dept_re_your_samples_from,
+        KoboValues::DEPTH_HASH
+      )
+
+      features = []
+      features << clean_kobo_multi_field(
         data.Choose_from_common_environment,
-        data.If_other_describe_t_nvironmental_feature
-      ].compact.join(' ')
+        KoboValues::ENVIRONMENTAL_FEATURES_HASH
+      )
+      features << clean_kobo_multi_field(
+        data.environment_feature, KoboValues::ENVIRONMENTAL_FEATURES_HASH
+      )
+      features << data.If_other_describe_t_nvironmental_feature
+      data.environmental_features = features.flatten.compact
+
       data.environmental_settings =
-        data.Describe_the_environ_tions_from_this_list
+        clean_kobo_multi_field(data.Describe_the_environ_tions_from_this_list,
+                               KoboValues::ENVIRONMENTAL_SETTINGS_HASH)
 
       sample = save_sample(data, hash_payload)
       save_photos(sample.id, hash_payload)
@@ -181,10 +206,6 @@ module KoboApi
         collection_date: data.Enter_the_sampling_date_and_time,
         submission_date: data._submission_time,
         location: data.location,
-        latitude: data.gps.split.first,
-        longitude: data.gps.split.second,
-        altitude: data.gps.split.third,
-        gps_precision: data.gps.split.fourth,
         substrate: data.substrate,
         field_notes: data.field_notes,
         habitat: data.habitat,
@@ -192,6 +213,15 @@ module KoboApi
         environmental_features: data.environmental_features,
         environmental_settings: data.environmental_settings
       }
+
+      if data.gps.present?
+        sample_data = sample_data.merge(
+          latitude: data.gps.split.first,
+          longitude: data.gps.split.second,
+          altitude: data.gps.split.third,
+          gps_precision: data.gps.split.fourth
+        )
+      end
 
       if non_kobo_barcodes.include?(data.barcode)
         ::Sample.update(sample_data).where(barcode: data.barcode)
@@ -202,10 +232,27 @@ module KoboApi
       end
     end
 
+    def clean_kobo_field(kobo_values, field_hash)
+      return if kobo_values.blank?
+
+      field_hash[kobo_values] || kobo_values
+    end
+
+    def clean_kobo_multi_field(kobo_values, field_hash)
+      return if kobo_values.blank?
+
+      raw_values = kobo_values.split(' ')
+      raw_values.map do |value|
+        field_hash[value] || value
+      end
+    end
+
     def save_photos(sample_id, hash_payload)
       data = OpenStruct.new(hash_payload)
 
       photos_data = data._attachments
+      return if photos_data.blank?
+
       photos_data.map do |photo_data|
         data = OpenStruct.new(photo_data)
 
@@ -221,8 +268,8 @@ module KoboApi
         kobo_photo.save
         fetch_kobo_file_and_attach_to(url, kobo_photo.photo)
       end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
 end
 

@@ -169,6 +169,23 @@ describe KoboApi::Process do
 
     context 'when incoming data has one sample V2' do
       let(:kobo_id) { 1 }
+      let(:habitat_raw) { KoboValues::HABITAT_HASH.keys.first }
+      let(:habitat) { KoboValues::HABITAT.first }
+      let(:depth_raw) { KoboValues::DEPTH_HASH.keys.first }
+      let(:depth) { KoboValues::DEPTH.first }
+      let(:feature_raw) { KoboValues::ENVIRONMENTAL_FEATURES_HASH.keys.first }
+      let(:feature) { KoboValues::ENVIRONMENTAL_FEATURES.first }
+      let(:location_raw) { KoboValues::LOCATION_HASH.keys.first }
+      let(:location) { KoboValues::LOCATION.first }
+      let(:ucnr_raw) { KoboValues::UCNR_HASH.keys.first }
+      let(:ucnr) { KoboValues::UCNR.first }
+      let(:cvmshcp_raw) { KoboValues::CVMSHCP_HASH.keys.second }
+      let(:cvmshcp) { KoboValues::CVMSHCP.second }
+      let(:la_river_raw) { KoboValues::LA_RIVER_HASH.keys.first }
+      let(:la_river) { KoboValues::LA_RIVER.first }
+      let(:settings_raw) { KoboValues::ENVIRONMENTAL_SETTINGS_HASH.keys.first }
+      let(:settings) { KoboValues::ENVIRONMENTAL_SETTINGS.first }
+
       let(:data) do
         {
           'What_is_your_kit_number_e_g_K0021' => 'K2',
@@ -177,13 +194,12 @@ describe KoboApi::Process do
           'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
           'What_type_of_substrate_did_you' => 'soil',
           '_Optional_Regarding_rns_to_share_with_us' => 'notes',
-          'Where_are_you_A_UC_serve_or_in_Yosemite' => 'location',
-          'Location' => 'location2',
-          '_optional_Describe_ou_are_sampling_from' => 'habitat',
-          '_optional_What_dept_re_your_samples_from' => 'depth',
-          'Choose_from_common_environment' => 'features',
-          'If_other_describe_t_nvironmental_feature' => 'features2',
-          'Describe_the_environ_tions_from_this_list' => 'settings',
+          'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
+          'If_at_a_UC_Natural_R_ve_select_which_one' => ucnr_raw,
+          '_optional_Describe_ou_are_sampling_from' => habitat_raw,
+          '_optional_What_dept_re_your_samples_from' => depth_raw,
+          'Choose_from_common_environment' => feature_raw,
+          'Describe_the_environ_tions_from_this_list' => settings_raw,
           'Enter_the_sampling_date_and_time' => '2010-01-01',
           '_submission_time' => '2010-01-02',
           '_id' => 200,
@@ -201,7 +217,8 @@ describe KoboApi::Process do
         expect(sample.field_project_id).to eq(project_id)
         expect(sample.collection_date).to eq('2010-01-01')
         expect(sample.submission_date).to eq('2010-01-02')
-        expect(sample.location).to eq('location location2')
+        expect(sample.location)
+          .to eq("#{location}; #{ucnr}")
         expect(sample.status_cd).to eq('submitted')
         expect(sample.barcode).to eq('K2-LB-S2')
         expect(sample.latitude).to eq(90)
@@ -210,11 +227,78 @@ describe KoboApi::Process do
         expect(sample.gps_precision).to eq(0)
         expect(sample.substrate).to eq(:soil)
         expect(sample.field_notes).to eq('notes')
-        expect(sample.habitat).to eq('habitat')
-        expect(sample.depth).to eq('depth')
-        expect(sample.environmental_features).to eq('features features2')
-        expect(sample.environmental_settings).to eq('settings')
+        expect(sample.habitat_cd).to eq(habitat)
+        expect(sample.depth_cd).to eq(depth)
+        expect(sample.environmental_features).to eq([feature])
+        expect(sample.environmental_settings).to eq([settings])
         expect(sample.kobo_data).to eq(data)
+      end
+
+      it 'handles Coachella Valley locations' do
+        location_raw = KoboValues::LOCATION_HASH.keys.second
+        location = KoboValues::LOCATION.second
+        data = {
+          'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
+          'Location' => cvmshcp_raw
+        }
+
+        expect { subject(project_id, kobo_id, data) }
+          .to change { Sample.count }.by(1)
+        sample = Sample.first
+
+        expect(sample.location).to eq("#{location}; #{cvmshcp}")
+      end
+
+      it 'handles LA River locations' do
+        location_raw = KoboValues::LOCATION_HASH.keys.fourth
+        location = KoboValues::LOCATION.fourth
+        data = {
+          'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
+          'If_at_LA_River_water_which_body_of_water' => la_river_raw
+        }
+
+        expect { subject(project_id, kobo_id, data) }
+          .to change { Sample.count }.by(1)
+        sample = Sample.first
+
+        expect(sample.location).to eq("#{location}; #{la_river}")
+      end
+
+      it 'handles multiple environmental features' do
+        feature2_raw = KoboValues::ENVIRONMENTAL_FEATURES_HASH.keys.second
+        feature2 = KoboValues::ENVIRONMENTAL_FEATURES.second
+        feature3_raw = KoboValues::ENVIRONMENTAL_FEATURES_HASH.keys.third
+        feature3 = KoboValues::ENVIRONMENTAL_FEATURES.third
+
+        data = {
+          'Choose_from_common_environment' => "#{feature_raw} #{feature2_raw}",
+          'environment_feature' => feature3_raw,
+          'If_other_describe_t_nvironmental_feature' => 'custom feature'
+        }
+
+        expect { subject(project_id, kobo_id, data) }
+          .to change { Sample.count }.by(1)
+        sample = Sample.first
+
+        expect(sample.environmental_features)
+          .to eq([feature, feature2, feature3, 'custom feature'])
+      end
+
+      it 'handles multiple environmental settings' do
+        settings2_raw = KoboValues::ENVIRONMENTAL_SETTINGS_HASH.keys.second
+        settings2 = KoboValues::ENVIRONMENTAL_SETTINGS.second
+
+        data = {
+          'Describe_the_environ_tions_from_this_list' =>
+            "#{settings_raw} #{settings2_raw}"
+        }
+
+        expect { subject(project_id, kobo_id, data) }
+          .to change { Sample.count }.by(1)
+        sample = Sample.first
+
+        expect(sample.environmental_settings)
+          .to eq([settings, settings2])
       end
     end
 
@@ -223,9 +307,7 @@ describe KoboApi::Process do
       let(:data) do
         {
           'What_is_your_kit_number_e_g_K0021' => 'K1',
-          'Select_the_match_for_e_dash_on_your_tubes' => 'A1',
-          'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
-          '_attachments' => []
+          'Select_the_match_for_e_dash_on_your_tubes' => 'A1'
         }
       end
 
