@@ -12,9 +12,9 @@ module Admin
     def clean_array_params
       # NOTE: selectize multi adds '' to the array of values.
       SampleDashboard::ARRAY_FIELDS.each do |f|
+        next if params[:sample][f].blank?
         params[:sample][f] = params[:sample][f].reject(&:blank?)
       end
     end
   end
 end
-
