@@ -34,12 +34,13 @@
     </p>
   <% end %>
 
-  <h2>Import taxonomy from eDNA results</h2>
+  <h2>Check taxonomy from eDNA results</h2>
 
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
     <p>
-      <%= link_to 'Import Taxonomy', admin_labwork_import_edna_results_taxa_path %>:
-      Import taxonomy from eDNA results via CSV upload.
+      <%= link_to 'Check Taxonomy', admin_labwork_import_edna_results_taxa_path %>:
+      Check if taxonomy from eDNA results exists in the database. Use CSVs produced by Anacapa, or
+      use <%= link_to "eDNA results CSV", '/csv_templates/eDNA_results_template.csv' %> template.
     </p>
   <% end %>
 

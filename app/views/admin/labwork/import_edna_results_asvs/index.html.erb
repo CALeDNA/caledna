@@ -10,12 +10,34 @@
   <p>Upload CSV to import ASVs from eDNA results.</p>
 
   <%= form_tag admin_labwork_import_edna_results_asvs_path, multipart: true do %>
-    <%= select(:dna_results, :research_project_id, @projects, {include_blank: 'Select research project'}) %>
-    <%= select(:dna_results, :primer, Primer.all.map(&:name), {include_blank: 'Select primer'}) %>
+    <div class="field-unit">
+      <div class="field-unit__label">
+        <label>Research Project</label>
+      </div>
+      <div class="field-unit__field">
+        <%= select(:dna_results, :research_project_id, @projects, {include_blank: 'Select research project'}) %>
+      </div>
+    </div>
+
+    <div class="field-unit">
+      <div class="field-unit__label">
+        <label>Primer</label>
+      </div>
+      <div class="field-unit__field">
+        <%= select(:dna_results, :primer, Primer.all.map(&:name), {include_blank: 'Select primer'}) %>
+      </div>
+    </div>
+    <div class="field-unit">
+      <div class="field-unit__label">
+        <label>eDNA results CSV</label>
+      </div>
+      <div class="field-unit__field">
+        <%= file_field_tag :file %>
+      </div>
+    </div>
 
     <%#= select(:dna_results, :extraction_type_id, @extraction_types, {include_blank: 'Select extraction type'}) %>
     <%= hidden_field(:dna_results, :extraction_type_id, value: ExtractionType.first.id) %>
-    <%= file_field_tag :file %>
     <%= submit_tag "Import" %>
   <% end %>
 </section>
