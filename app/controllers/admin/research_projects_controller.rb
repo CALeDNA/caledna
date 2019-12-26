@@ -2,17 +2,16 @@
 
 module Admin
   class ResearchProjectsController < Admin::ApplicationController
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def create
       authorize_resource(resource)
 
       if resource.save
         create_user_authors
         create_researcher_authors
-        page = create_intro_page(resource)
 
         redirect_to(
-          ['edit', namespace, page],
+          [namespace, resource],
           notice: translate_with_resource('create.success')
         )
       else
@@ -21,7 +20,7 @@ module Admin
         }
       end
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Metrics/MethodLength
     def update
@@ -61,18 +60,6 @@ module Admin
                                      research_project_id: resource.id,
                                      authorable_type: type)
       end
-    end
-
-    def create_intro_page(project)
-      Page.create(research_project: project,
-                  title: 'Introduction',
-                  slug: 'intro',
-                  menu_text: 'Introduction',
-                  body: "Intro for #{project.name}",
-                  published: true,
-                  display_order: 1,
-                  show_map: true,
-                  show_edna_results_metadata: true)
     end
 
     def update_user_authors
@@ -126,6 +113,20 @@ module Admin
           .where(authorable_type: 'Researcher')
           .where(research_project_id: target_resource.id)
           .pluck(:authorable_id)
+      end
+    end
+
+    def resource_params
+      clean_array_params
+      super
+    end
+
+    def clean_array_params
+      # NOTE: selectize multi adds '' to the array of values.
+      ResearchProjectDashboard::ARRAY_FIELDS.each do |f|
+        next if params[:research_project][f].blank?
+        params[:research_project][f] =
+          params[:research_project][f].reject(&:blank?)
       end
     end
   end

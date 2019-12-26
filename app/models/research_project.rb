@@ -11,9 +11,9 @@ class ResearchProject < ApplicationRecord
   has_many :user_authors, through: :research_project_authors,
                           source: :authorable, source_type: 'User'
 
-  before_save :set_slug
-
   validates :slug, uniqueness: true
+  validates :name, presence: true
+  validates :slug, presence: true
 
   scope :published, -> { where(published: true) }
 
@@ -43,12 +43,5 @@ class ResearchProject < ApplicationRecord
       'decontamination_method',
       'primers'
     )
-  end
-
-  private
-
-  def set_slug
-    return if try(:slug).present?
-    self.slug = name.parameterize.truncate(80, omission: '')
   end
 end

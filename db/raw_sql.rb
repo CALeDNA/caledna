@@ -14,4 +14,3 @@ module RawSql
     SQL
   end
 end
-

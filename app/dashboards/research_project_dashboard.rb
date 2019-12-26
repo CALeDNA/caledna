@@ -3,6 +3,8 @@
 require "administrate/base_dashboard"
 
 class ResearchProjectDashboard < Administrate::BaseDashboard
+  ARRAY_FIELDS = %i[primers]
+
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     name: Field::String,
@@ -14,7 +16,8 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     reference_barcode_database: Field::Text,
     dryad_link: Field::String,
     decontamination_method: Field::Text,
-    primers: Field::String,
+    primers: ArrayField,
+    slug: Field::String,
     metadata: Field::JSON.with_options(searchable: false),
   }.freeze
 
@@ -27,6 +30,7 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :name,
     :published,
+    :slug,
     :reference_barcode_database,
     :dryad_link,
     :decontamination_method,
@@ -41,6 +45,7 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
     :name,
     :published,
+    :slug,
     :reference_barcode_database,
     :dryad_link,
     :decontamination_method,
@@ -52,5 +57,9 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
 
   def display_resource(research_project)
     "Research Project: #{research_project.name}"
+  end
+
+  def permitted_attributes
+    super + ARRAY_FIELDS.map { |f| { f => []} }
   end
 end
