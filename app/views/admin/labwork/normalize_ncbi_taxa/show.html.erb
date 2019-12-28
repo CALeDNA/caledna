@@ -1,4 +1,4 @@
-<%= javascript_pack_tag 'auto' %>
+<%= javascript_pack_tag 'normalize_taxa' %>
 
 <% content_for(:title) { 'Normalize taxonomy' } %>
 
@@ -40,10 +40,10 @@
     <% end %>
     <br>
     <%= link_to "Back", :back, class: 'button' %>
-        <div id="create-taxa-form" class="js"></div>
+        <div id="js-autocomplete-normalize-taxa" class="js"></div>
 
   <% else %>
-    <div id="create-taxa-form" class="js"></div>
+    <div id="js-autocomplete-normalize-taxa" class="js"></div>
   <% end %>
 
 </section>

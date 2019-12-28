@@ -9,7 +9,7 @@
       label="rank"
       name="autocomplete"
       :classes="{ input: 'form-control', wrapper: 'input-wrapper'}"
-      :process="processJSON"
+      :process="fetchSuggestions"
       :onSelect="handleSelect"
     >
     </autocomplete>
@@ -179,7 +179,7 @@
       }
     },
     methods: {
-      processJSON(json) {
+      fetchSuggestions(json) {
         const res = json.data.map((record) => record.attributes);
         return res
       },
