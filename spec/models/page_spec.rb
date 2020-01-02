@@ -111,20 +111,6 @@ describe Page do
     end
   end
 
-  describe 'before save: set_slug' do
-    it 'adds a slug using the page title if no slug is given' do
-      page = create(:page, title: 'My Page', slug: nil)
-
-      expect(page.slug).to eq('my-page')
-    end
-
-    it 'does nothing is slug is given' do
-      page = create(:page, title: 'My Page', slug: 'my-slug')
-
-      expect(page.slug).to eq('my-slug')
-    end
-  end
-
   describe '#menu_display' do
     context 'menu_text is available' do
       it 'returns menu_text' do

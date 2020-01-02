@@ -20,20 +20,6 @@ describe ResearchProject do
     end
   end
 
-  describe 'before save: set_slug' do
-    it 'adds a slug using the project name if no slug is given' do
-      project = create(:research_project, name: 'My Project', slug: nil)
-
-      expect(project.slug).to eq('my-project')
-    end
-
-    it 'does nothing is slug is given' do
-      project = create(:research_project, name: 'Project Name', slug: 'my-slug')
-
-      expect(project.slug).to eq('my-slug')
-    end
-  end
-
   describe '#show_pages?' do
     it 'returns true if research project has any published pages' do
       project = create(:research_project)

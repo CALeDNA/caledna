@@ -92,7 +92,6 @@ describe Sample do
       barcodes = %w[K0000-A1 K9999-B2 K1234-C3 K5678-E4 K9012-G5 K4567-K6
                     K8901-L7 K2345-M8 K6789-T9]
       barcodes.each do |barcode|
-        puts barcode
         sample = build(:sample, barcode: barcode)
 
         expect(sample.valid_barcode?).to eq(true)
@@ -102,7 +101,6 @@ describe Sample do
     it 'returns true if barcode is invalid Kxxxx-xx format' do
       barcodes = %w[KOOOO-A1 K000-B2 K0000-A2 K0000-B1 random fooK0000-A1]
       barcodes.each do |barcode|
-        puts barcode
         sample = build(:sample, barcode: barcode)
 
         expect(sample.valid_barcode?).to eq(false)
