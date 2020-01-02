@@ -2,7 +2,7 @@
 
 <nav class="navigation" role="navigation">
   <p>Hi, <%= current_researcher.username %></p>
-  <%= link_to 'Logout', destroy_researcher_session_path, method: :delete,
+  <%= link_to 'Logout', destroy_researcher_session_path,
     class: 'navigation__link navigation' %>
 
   <hr>
