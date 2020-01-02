@@ -68,6 +68,48 @@ describe Sample do
     end
   end
 
+  describe '#valid_barcode?' do
+    it 'returns true if barcode is Kxxxx-Lx-Sx format' do
+      barcodes = %w[K0000-LA-S1 K9999-LB-S1 K1234-LC-S2]
+      barcodes.each do |barcode|
+        sample = build(:sample, barcode: barcode)
+
+        expect(sample.valid_barcode?).to eq(true)
+      end
+    end
+
+    it 'returns false if barcode is invalid Kxxxx-Lx-Sx format' do
+      barcodes = %w[KOOOO-LA-S1 K9999-LD-S1 K1234-LC-S5 K001-LA-S1 random
+                    fooK0000-LA-S1]
+      barcodes.each do |barcode|
+        sample = build(:sample, barcode: barcode)
+
+        expect(sample.valid_barcode?).to eq(false)
+      end
+    end
+
+    it 'returns true if barcode is valid Kxxxx-xx format' do
+      barcodes = %w[K0000-A1 K9999-B2 K1234-C3 K5678-E4 K9012-G5 K4567-K6
+                    K8901-L7 K2345-M8 K6789-T9]
+      barcodes.each do |barcode|
+        puts barcode
+        sample = build(:sample, barcode: barcode)
+
+        expect(sample.valid_barcode?).to eq(true)
+      end
+    end
+
+    it 'returns true if barcode is invalid Kxxxx-xx format' do
+      barcodes = %w[KOOOO-A1 K000-B2 K0000-A2 K0000-B1 random fooK0000-A1]
+      barcodes.each do |barcode|
+        puts barcode
+        sample = build(:sample, barcode: barcode)
+
+        expect(sample.valid_barcode?).to eq(false)
+      end
+    end
+  end
+
   describe '#kobo_data_display' do
     it 'returns empty hash when kobo_data is {}' do
       sample = create(:sample, kobo_data: '{}')

@@ -52,6 +52,11 @@ class Sample < ApplicationRecord
     inside_polygon(point, california)
   end
 
+  def valid_barcode?
+    barcode.match?(/^K\d{4}-L[ABC]-S[123]$/) ||
+      barcode.match?(/^K\d{4}-(A1|B2|C3|E4|G5|K6|L7|M8|T9)$/)
+  end
+
   def ph_display
     return if kobo_data['pH'].blank?
     kobo_data['pH'].tr('_', '.')

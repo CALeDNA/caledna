@@ -37,6 +37,9 @@
         <% unless sample.inside_california? %>
           <span class="warning">WARNING: coordinates are not in California.</span><br>
         <%end%>
+        <% unless sample.valid_barcode? %>
+          <span class="warning">WARNING: barcode is not in right format.</span><br>
+        <%end%>
         lat: <%= sample.latitude %><br>
         long: <%= sample.longitude %><br>
         precision: <%= sample.gps_precision %>
