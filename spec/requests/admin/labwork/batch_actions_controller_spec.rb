@@ -60,13 +60,13 @@ describe 'BatchActionController' do
     include_examples 'can batch edit'
   end
 
-  describe 'when researcher is a lab_manager' do
-    before { login_lab_manager }
+  describe 'when researcher is a esie_postdoc' do
+    before { login_esie_postdoc }
     include_examples 'can batch edit'
   end
 
-  describe 'when researcher is a sample_processor' do
-    before { login_sample_processor }
-    include_examples 'can not batch edit'
+  describe 'when researcher is a researcher' do
+    before { login_researcher }
+    include_examples 'can batch edit'
   end
 end

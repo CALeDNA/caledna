@@ -9,15 +9,11 @@ class AsvPolicy < ApplicationPolicy
     all_roles
   end
 
-  def create?
-    user.director?
-  end
-
   def update?
-    user.director? || user.lab_manager?
+    admin_roles
   end
 
   def destroy?
-    user.director? || user.lab_manager?
+    admin_roles
   end
 end

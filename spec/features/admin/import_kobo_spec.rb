@@ -18,26 +18,32 @@ describe 'Import Kobo' do
     end
   end
 
-  describe 'when researcher is a lab_manager' do
-    before { login_lab_manager }
+  describe 'when researcher is a esie_postdoc' do
+    before { login_esie_postdoc }
 
     describe '#GET import_kobo' do
-      it 'denies access' do
+      it 'display project data and actions for researchers' do
+        create(:field_project, name: 'project name')
         visit admin_labwork_import_kobo_path
 
-        expect(page).to have_content('You cannot perform this action')
+        expect(page).to have_content('project name')
+        expect(page).to have_button('Import Projects')
+        expect(page).to have_button('Import Samples')
       end
     end
   end
 
-  describe 'when researcher is a researcher_processor' do
-    before { login_sample_processor }
+  describe 'when researcher is a researcher' do
+    before { login_researcher }
 
     describe '#GET import_kobo' do
-      it 'denies access' do
+      it 'display project data and actions for researchers' do
+        create(:field_project, name: 'project name')
         visit admin_labwork_import_kobo_path
 
-        expect(page).to have_content('You cannot perform this action')
+        expect(page).to have_content('project name')
+        expect(page).to have_button('Import Projects')
+        expect(page).to have_button('Import Samples')
       end
     end
   end

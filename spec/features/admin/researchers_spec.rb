@@ -47,8 +47,8 @@ describe 'Researchers' do
     end
   end
 
-  describe 'when researcher is a lab_manager' do
-    before { login_lab_manager }
+  describe 'when researcher is a esie_postdoc' do
+    before { login_esie_postdoc }
 
     describe '#GET researchers index page' do
       it 'display researcher data and actions for researchers' do
@@ -73,8 +73,8 @@ describe 'Researchers' do
     end
   end
 
-  describe 'when researcher is a researcher_processor' do
-    before { login_sample_processor }
+  describe 'when researcher is a researcher' do
+    before { login_researcher }
 
     describe '#GET researchers index page' do
       it 'display researcher data and actions for researchers' do
@@ -93,7 +93,7 @@ describe 'Researchers' do
         researcher = create(:researcher, username: 'my name')
         visit admin_researcher_path(id: researcher.id)
 
-        expect(page).to have_content('You cannot perform this action')
+        expect(page).to have_content('Show my name')
       end
     end
   end

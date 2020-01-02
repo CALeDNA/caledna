@@ -23,50 +23,6 @@ describe 'Samples' do
     end
   end
 
-  shared_examples 'allows full write access' do
-    describe '#POST' do
-      it 'does not creates a new sample' do
-        attributes = {
-          barcode: '123',
-          field_project_id: create(:field_project).id
-        }
-        params = { sample: attributes }
-
-        expect { post admin_samples_path, params: params }
-          .to change(Sample, :count).by(0)
-      end
-    end
-
-    describe '#PUT' do
-      it 'updates a sample' do
-        sample = FactoryBot.create(:sample, barcode: '123')
-        params = { id: sample.id, sample: { barcode: 'abc' } }
-        put admin_sample_path(id: sample.id), params: params
-        sample.reload
-
-        expect(sample.barcode).to eq('abc')
-      end
-    end
-
-    describe '#DELETE' do
-      it 'deletes a sample' do
-        sample = FactoryBot.create(:sample)
-
-        expect { delete admin_sample_path(id: sample.id) }
-          .to change(Sample, :count).by(-1)
-      end
-    end
-
-    describe '#GET samples edit page' do
-      it 'redirects to admin root' do
-        sample = create(:sample, barcode: '123')
-        get edit_admin_sample_path(id: sample.id)
-
-        expect(response.status).to eq(200)
-      end
-    end
-  end
-
   shared_examples 'denies create access' do
     describe '#POST' do
       it 'does not create a new sample' do
@@ -112,28 +68,6 @@ describe 'Samples' do
     end
   end
 
-  shared_examples 'denies delete access' do
-    describe '#DELETE' do
-      it 'does not delete a sample' do
-        sample = FactoryBot.create(:sample)
-
-        expect { delete admin_sample_path(id: sample.id) }
-          .to change(Sample, :count).by(0)
-      end
-    end
-  end
-
-  shared_examples 'denies delete access' do
-    describe '#DELETE' do
-      it 'does not delete a sample' do
-        sample = FactoryBot.create(:sample)
-
-        expect { delete admin_sample_path(id: sample.id) }
-          .to change(Sample, :count).by(0)
-      end
-    end
-  end
-
   shared_examples 'denies edit access' do
     describe '#GET samples edit page' do
       it 'returns 302' do
@@ -145,25 +79,49 @@ describe 'Samples' do
     end
   end
 
+  shared_examples 'allows delete access' do
+    describe '#DELETE' do
+      it 'deletes a sample' do
+        sample = FactoryBot.create(:sample)
+
+        expect { delete admin_sample_path(id: sample.id) }
+          .to change(Sample, :count).by(-1)
+      end
+    end
+  end
+
+  shared_examples 'denies delete access' do
+    describe '#DELETE' do
+      it 'does not delete a sample' do
+        sample = FactoryBot.create(:sample)
+
+        expect { delete admin_sample_path(id: sample.id) }
+          .to change(Sample, :count).by(0)
+      end
+    end
+  end
+
   describe 'when researcher is a director' do
     before { login_director }
     include_examples 'allows read access'
-    include_examples 'allows full write access'
+    include_examples 'denies create access'
+    include_examples 'allows edit access'
+    include_examples 'allows delete access'
   end
 
-  describe 'when researcher is a lab_manager' do
-    before { login_lab_manager }
+  describe 'when researcher is a esie_postdoc' do
+    before { login_esie_postdoc }
     include_examples 'allows read access'
     include_examples 'denies create access'
     include_examples 'allows edit access'
     include_examples 'denies delete access'
   end
 
-  describe 'when researcher is a sample_processor' do
-    before { login_sample_processor }
+  describe 'when researcher is a researcher' do
+    before { login_researcher }
     include_examples 'allows read access'
     include_examples 'denies create access'
-    include_examples 'denies edit access'
+    include_examples 'allows edit access'
     include_examples 'denies delete access'
   end
 end

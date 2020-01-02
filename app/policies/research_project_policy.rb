@@ -10,14 +10,14 @@ class ResearchProjectPolicy < ApplicationPolicy
   end
 
   def create?
-    user.director?
+    all_roles
   end
 
   def update?
-    user.director?
+    all_roles
   end
 
   def destroy?
-    user.director?
+    admin_roles
   end
 end

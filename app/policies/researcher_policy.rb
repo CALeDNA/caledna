@@ -10,18 +10,18 @@ class ResearcherPolicy < ApplicationPolicy
   end
 
   def access_show?
-    user.director? || user.lab_manager?
+    all_roles
   end
 
   def create?
-    user.director?
+    admin_roles
   end
 
   def update?
-    user.director?
+    admin_roles
   end
 
   def destroy?
-    user.director?
+    admin_roles
   end
 end

@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 module Labwork
-  class KoboPolicy < Struct.new(:user, :kobo)
+  class KoboPolicy < ApplicationPolicy
     def import_kobo?
-      user.director?
+      all_roles
     end
 
     def import_projects?
-      user.director?
+      all_roles
     end
 
     def import_samples?
-      user.director?
+      all_roles
     end
   end
 end

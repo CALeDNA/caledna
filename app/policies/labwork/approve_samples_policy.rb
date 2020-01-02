@@ -3,11 +3,11 @@
 module Labwork
   class ApproveSamplesPolicy < ApplicationPolicy
     def index?
-      user.director? || user.lab_manager?
+      all_roles
     end
 
     def create?
-      user.director? || user.lab_manager?
+      all_roles
     end
   end
 end

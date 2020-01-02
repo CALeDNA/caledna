@@ -5,44 +5,32 @@ require 'rails_helper'
 describe Labwork::KoboPolicy do
   subject { described_class }
   let(:director) { create(:director) }
-  let(:lab_manager) { create(:lab_manager) }
-  let(:sample_processor) { create(:sample_processor) }
-  let(:non_directors) do
-    [lab_manager, sample_processor]
+  let(:esie_postdoc) { create(:esie_postdoc) }
+  let(:researcher) { create(:researcher) }
+  let(:users) do
+    [director, esie_postdoc, researcher]
   end
 
   permissions :import_kobo? do
-    it 'grants access to directors' do
-      expect(subject).to permit(director)
-    end
-
-    it 'denies access to non-directors' do
-      non_directors.each do |user|
-        expect(subject).to_not permit(user)
+    it 'grant access to all users' do
+      users.each do |user|
+        expect(subject).to permit(user)
       end
     end
   end
 
   permissions :import_projects? do
-    it 'grants access to directors' do
-      expect(subject).to permit(director)
-    end
-
-    it 'denies access to non-directors' do
-      non_directors.each do |user|
-        expect(subject).to_not permit(user)
+    it 'grant access to all users' do
+      users.each do |user|
+        expect(subject).to permit(user)
       end
     end
   end
 
   permissions :import_samples? do
-    it 'grants access to directors' do
-      expect(subject).to permit(director)
-    end
-
-    it 'denies access to non-directors' do
-      non_directors.each do |user|
-        expect(subject).to_not permit(user)
+    it 'grant access to all users' do
+      users.each do |user|
+        expect(subject).to permit(user)
       end
     end
   end

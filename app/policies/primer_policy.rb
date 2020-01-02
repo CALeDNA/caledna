@@ -9,11 +9,15 @@ class PrimerPolicy < ApplicationPolicy
     all_roles
   end
 
+  def create?
+    all_roles
+  end
+
   def update?
     all_roles
   end
 
   def destroy?
-    user.director?
+    admin_roles
   end
 end

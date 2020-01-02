@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   }
 
   require 'sidekiq/web'
-  authenticate :researcher, ->(u) { u.director? } do
+  authenticate :researcher, ->(u) { u.view_sidekiq? } do
     mount Sidekiq::Web => '/sidekiq'
   end
 

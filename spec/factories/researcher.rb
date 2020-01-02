@@ -4,17 +4,18 @@ FactoryBot.define do
   factory :researcher do
     sequence(:email) { |n| "user_#{n}@example.com" }
     password 'password'
+    role :researcher
 
     factory :director do
       role :director
     end
 
-    factory :sample_processor do
-      role :sample_processor
+    factory :esie_postdoc do
+      role :esie_postdoc
     end
 
-    factory :lab_manager do
-      role :lab_manager
+    factory :superadmin do
+      role :superadmin
     end
   end
 end

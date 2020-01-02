@@ -10,6 +10,6 @@ class KoboPhotoPolicy < ApplicationPolicy
   end
 
   def destroy?
-    user.director? || user.lab_manager?
+    admin_roles
   end
 end

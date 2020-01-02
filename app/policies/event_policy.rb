@@ -10,14 +10,14 @@ class EventPolicy < ApplicationPolicy
   end
 
   def create?
-    user.director? || user.lab_manager?
+    all_roles
   end
 
   def update?
-    user.director? || user.lab_manager?
+    all_roles
   end
 
   def destroy?
-    user.director? || user.lab_manager?
+    admin_roles
   end
 end

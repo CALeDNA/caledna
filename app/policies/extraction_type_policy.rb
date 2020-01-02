@@ -2,26 +2,26 @@
 
 class ExtractionTypePolicy < ApplicationPolicy
   def index?
-    user.director?
+    user.superadmin?
   end
 
   def show?
-    user.director?
+    user.superadmin?
   end
 
   def access_show?
-    user.director?
+    user.superadmin?
   end
 
   def create?
-    user.director?
+    user.superadmin?
   end
 
   def update?
-    user.director?
+    user.superadmin?
   end
 
   def destroy?
-    user.director?
+    user.superadmin?
   end
 end

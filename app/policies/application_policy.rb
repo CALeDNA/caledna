@@ -57,7 +57,15 @@ class ApplicationPolicy
 
   private
 
+  def admin_roles
+    user.superadmin? || user.director?
+  end
+
+  def upper_level_roles
+    user.superadmin? || user.director? || user.esie_postdoc?
+  end
+
   def all_roles
-    user.director? || user.lab_manager? || user.sample_processor?
+    user.superadmin? || user.director? || user.esie_postdoc? || user.researcher?
   end
 end

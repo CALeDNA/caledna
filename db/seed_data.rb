@@ -42,30 +42,30 @@ module SeedData
         username: 'Lab Manager Jane'
       )
 
-      processor1 = FactoryBot.create(
-        :sample_processor,
-        email: 'sample_processor@example.com',
+      researcher1 = FactoryBot.create(
+        :researcher,
+        email: 'researcher@example.com',
         password: 'password',
-        username: 'Sample Processor Jane'
+        username: 'Researcher Jane'
       )
 
-      processor2 = FactoryBot.create(
-        :sample_processor,
-        email: 'sample_processor2@example.com',
+      researcher2 = FactoryBot.create(
+        :researcher,
+        email: 'researcher2@example.com',
         password: 'password',
-        username: 'Sample Processor Bob'
+        username: 'Researcher Bob'
       )
     else
       director = Researcher.find_by(role_cd: 'director')
-      processors = Researcher.where(role_cd: 'sample_processor')
-      processor1 = processors.first
-      processor2 = processors.second
+      processors = Researcher.where(role_cd: 'researcher')
+      researcher1 = processors.first
+      researcher2 = processors.second
     end
 
     {
       director: director,
-      processor1: processor1,
-      processor2: processor2
+      researcher1: researcher1,
+      researcher2: researcher2
     }
   end
   # rubocop:enable Metrics/MethodLength

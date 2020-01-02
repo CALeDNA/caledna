@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe 'FieldProjects' do
-  shared_examples 'allows write access' do
+  shared_examples 'allows create and update access' do
     describe '#POST' do
       it 'does not creates a new project' do
         attributes = FactoryBot.attributes_for(:field_project)
@@ -25,15 +25,6 @@ describe 'FieldProjects' do
       end
     end
 
-    describe '#DELETE' do
-      it 'deletes a project' do
-        project = FactoryBot.create(:field_project)
-
-        expect { delete admin_field_project_path(id: project.id) }
-          .to change(FieldProject, :count).by(-1)
-      end
-    end
-
     describe '#GET projects new page' do
       it 'redirects to admin root' do
         get new_admin_field_project_path
@@ -52,51 +43,24 @@ describe 'FieldProjects' do
     end
   end
 
-  shared_examples 'denies write access' do
-    describe '#POST' do
-      it 'does not create a new project' do
-        attributes = FactoryBot.attributes_for(:field_project)
-        params = { field_project: attributes }
+  shared_examples 'allows delete access' do
+    describe '#DELETE' do
+      it 'deletes a project' do
+        project = FactoryBot.create(:field_project)
 
-        expect { post admin_field_projects_path, params: params }
-          .to change(FieldProject, :count).by(0)
+        expect { delete admin_field_project_path(id: project.id) }
+          .to change(FieldProject, :count).by(-1)
       end
     end
+  end
 
-    describe '#PUT' do
-      it 'does not update a project' do
-        project = FactoryBot.create(:field_project, name: 'name1')
-        params = { id: project.id, field_project: { name: 'name2' } }
-        put admin_field_project_path(id: project.id), params: params
-        project.reload
-
-        expect(project.name).to eq('name1')
-      end
-    end
-
+  shared_examples 'denies delete access' do
     describe '#DELETE' do
       it 'does not delete a project' do
         project = FactoryBot.create(:field_project)
 
         expect { delete admin_field_project_path(id: project.id) }
           .to change(FieldProject, :count).by(0)
-      end
-    end
-
-    describe '#GET projects new page' do
-      it 'redirects to admin root' do
-        get new_admin_sample_path
-
-        expect(response).to redirect_to admin_samples_path
-      end
-    end
-
-    describe '#GET projects edit page' do
-      it 'redirects to admin root' do
-        project = create(:field_project, name: 'name1')
-        get edit_admin_field_project_path(id: project.id)
-
-        expect(response).to redirect_to admin_samples_path
       end
     end
   end
@@ -124,18 +88,21 @@ describe 'FieldProjects' do
   describe 'when researcher is a director' do
     before { login_director }
     include_examples 'allows read access'
-    include_examples 'allows write access'
+    include_examples 'allows create and update access'
+    include_examples 'allows delete access'
   end
 
-  describe 'when researcher is a lab_manager' do
-    before { login_lab_manager }
+  describe 'when researcher is a esie_postdoc' do
+    before { login_esie_postdoc }
     include_examples 'allows read access'
-    include_examples 'denies write access'
+    include_examples 'allows create and update access'
+    include_examples 'denies delete access'
   end
 
-  describe 'when researcher is a sample_processor' do
-    before { login_sample_processor }
+  describe 'when researcher is a researcher' do
+    before { login_researcher }
     include_examples 'allows read access'
-    include_examples 'denies write access'
+    include_examples 'allows create and update access'
+    include_examples 'denies delete access'
   end
 end

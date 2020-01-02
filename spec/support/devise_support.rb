@@ -5,12 +5,12 @@ module ValidUserRequestHelper
     login(FactoryBot.create(:director))
   end
 
-  def login_sample_processor
-    login(FactoryBot.create(:sample_processor))
+  def login_researcher
+    login(FactoryBot.create(:researcher))
   end
 
-  def login_lab_manager
-    login(FactoryBot.create(:lab_manager))
+  def login_esie_postdoc
+    login(FactoryBot.create(:esie_postdoc))
   end
 
   def login_user

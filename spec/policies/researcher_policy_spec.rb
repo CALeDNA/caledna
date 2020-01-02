@@ -5,13 +5,13 @@ require 'rails_helper'
 describe ResearcherPolicy do
   subject { described_class }
   let(:director) { create(:director) }
-  let(:lab_manager) { create(:lab_manager) }
-  let(:sample_processor) { create(:sample_processor) }
+  let(:esie_postdoc) { create(:esie_postdoc) }
+  let(:researcher) { create(:researcher) }
   let(:users) do
-    [director, lab_manager, sample_processor]
+    [director, esie_postdoc, researcher]
   end
   let(:non_directors) do
-    [lab_manager, sample_processor]
+    [esie_postdoc, researcher]
   end
 
   permissions :index? do

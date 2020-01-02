@@ -92,13 +92,13 @@ describe 'ImportKobo' do
     include_examples 'allows import access'
   end
 
-  describe 'when researcher is a lab_manager' do
-    before { login_lab_manager }
-    include_examples 'denies import access'
+  describe 'when researcher is a esie_postdoc' do
+    before { login_esie_postdoc }
+    include_examples 'allows import access'
   end
 
-  describe 'when researcher is a sample_processor' do
-    before { login_sample_processor }
-    include_examples 'denies import access'
+  describe 'when researcher is a researcher' do
+    before { login_researcher }
+    include_examples 'allows import access'
   end
 end

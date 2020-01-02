@@ -3,11 +3,11 @@
 module Labwork
   class ImportCsvPolicy < ApplicationPolicy
     def index?
-      user.director?
+      all_roles
     end
 
     def create?
-      user.director?
+      all_roles
     end
   end
 end

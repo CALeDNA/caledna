@@ -2,22 +2,22 @@
 
 class SurveyPolicy < ApplicationPolicy
   def index?
-    user.director?
+    upper_level_roles
   end
 
   def show?
-    user.director?
+    upper_level_roles
   end
 
   def create?
-    user.director? || user.lab_manager?
+    upper_level_roles
   end
 
   def update?
-    user.director? || user.lab_manager?
+    upper_level_roles
   end
 
   def destroy?
-    user.director? || user.lab_manager?
+    upper_level_roles
   end
 end

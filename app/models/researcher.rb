@@ -3,6 +3,8 @@
 class Researcher < ApplicationRecord
   include MultipleLoginFields
 
+  RESEARCHER_ROLES = %i[superadmin director esie_postdoc researcher].freeze
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   # :registerable
@@ -14,16 +16,19 @@ class Researcher < ApplicationRecord
   has_many :research_project_authors, as: :authorable
   has_many :research_projects, through: :research_project_authors
 
-  as_enum :role, %i[sample_processor lab_manager director],
-          map: :string
+  as_enum :role, RESEARCHER_ROLES, map: :string
 
   scope :active, -> { where(active: true) }
-  scope :sample_processors, -> { where(role_cd: :sample_processor) }
 
   def self.select_options
     Researcher.active.all.map { |e| [e.username, e.id] }
   end
 
+  def view_sidekiq?
+    superadmin? || director? || esie_postdoc? || researcher?
+  end
+
+  # NOTE: allow admins to deactive accounts
   def active_for_authentication?
     super && active?
   end

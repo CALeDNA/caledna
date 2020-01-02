@@ -149,16 +149,15 @@ describe 'Researcher' do
     include_examples 'allows write access'
   end
 
-  describe 'when researcher is a lab_manager' do
-    before { login_lab_manager }
+  describe 'when researcher is a esie_postdoc' do
+    before { login_esie_postdoc }
     include_examples 'allows read access'
     include_examples 'denies write access'
   end
 
-  describe 'when researcher is a sample_processor' do
-    before { login_sample_processor }
-    include_examples 'allows read access to #index'
-    include_examples 'denies read access to #show'
+  describe 'when researcher is a researcher' do
+    before { login_researcher }
+    include_examples 'allows read access'
     include_examples 'denies write access'
   end
 end

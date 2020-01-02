@@ -2,22 +2,22 @@
 
 class WebsitePolicy < ApplicationPolicy
   def index?
-    user.director? || user.lab_manager?
+    user.superadmin?
   end
 
   def show?
-    user.director? || user.lab_manager?
+    user.superadmin?
   end
 
   def create?
-    user.director? || user.lab_manager?
+    user.superadmin?
   end
 
   def update?
-    user.director? || user.lab_manager?
+    user.superadmin?
   end
 
   def destroy?
-    user.director? || user.lab_manager?
+    user.superadmin?
   end
 end
