@@ -55,23 +55,23 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: 'labwork/home#index'
-    resources :field_projects
-    resources :research_projects
-    resources :samples
-    resources :kobo_photos
-    resources :extraction_types
-    resources :extractions
     resources :asvs
-    resources :researchers
-    resources :pages
     resources :events
     resources :event_registrations
+    resources :extractions
+    resources :extraction_types
+    resources :field_projects
+    resources :kobo_photos
+    resources :pages
+    resources :primers
+    resources :research_projects
+    resources :researchers
+    resources :samples
     resources :site_news
-    resources :users
     resources :surveys
     resources :survey_responses
+    resources :users
     resources :websites
-    resources :primers
 
     get 'events/:id/download_csv', to: 'events#download_csv',
                                    as: 'event_download_csv'
