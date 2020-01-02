@@ -1,4 +1,4 @@
-<% content_for(:title) { 'Process Labwork' } %>
+<% content_for(:title) { 'Process Samples' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -7,6 +7,10 @@
 </header>
 
 <section class="main-content__body">
+  <h2>Instructions</h2>
+  Instructions on how to import samples and eDNA results are in this
+  <a href="https://docs.google.com/document/d/1HqDkL2UPJXzSA-y1dzg1lNuA2VPbglnMe7QOgkplwq4/edit#heading=h.rs6oss6kjauv">Google Doc</a>.
+
   <h2>Kobo data</h2>
 
   <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
@@ -60,6 +64,10 @@
       use <%= link_to "eDNA results CSV", '/csv_templates/eDNA_results_template.csv' %> template.
     </p>
   <% end %>
+
+  <h2>Import Status</h2>
+  Check the <%= link_to 'status of the CSV imports', admin_labwork_import_csv_status_index_path %>
+
 </section>
 
 <header class="main-content__header" role="banner">
