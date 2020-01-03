@@ -26,7 +26,7 @@ describe ImportCsv::KoboSamplesMetadata do
       it 'returns error message for missing samples' do
         create(:sample, barcode: rows.first['barcode'], status: 'approved')
 
-        message = "#{rows.second['barcode']} are not in the database"
+        message = "#{rows.second['barcode']} not in the database"
         expected = OpenStruct.new(valid?: false, errors: message)
 
         expect(subject(file)).to eq(expected)
@@ -67,6 +67,24 @@ describe ImportCsv::KoboSamplesMetadata do
             .and change { sample2.reload.metadata }
             .from({}).to('field1' => row2['field1'], 'field2' => row2['field2'])
         end
+
+        it 'merges existing and new metadata' do
+          sample1 = create(:sample, barcode: rows.first['barcode'],
+                                    status: 'approved', metadata: { foo: true })
+          sample2 = create(:sample, barcode: rows.second['barcode'],
+                                    status: 'results_completed')
+          row1 = rows.first
+          row2 = rows.second
+
+          subject(file)
+
+          expect(sample1.reload.metadata)
+            .to eq('foo' => true, 'field1' => row1['field1'],
+                   'field2' => row1['field2'])
+
+          expect(sample2.reload.metadata)
+            .to eq('field1' => row2['field1'], 'field2' => row2['field2'])
+        end
       end
 
       context 'and samples are not approved' do
@@ -77,7 +95,7 @@ describe ImportCsv::KoboSamplesMetadata do
                           status: 'submitted')
 
           message = "#{rows.first['barcode']}, #{rows.second['barcode']}" \
-            ' are not in the database'
+            ' not in the database'
           expected = OpenStruct.new(valid?: false, errors: message)
 
           expect(subject(file)).to eq(expected)

@@ -11,7 +11,7 @@ module ImportCsv
 
       invaild_samples = find_invalid_samples(file, delimiter)
       if invaild_samples.present?
-        message = "#{invaild_samples.join(', ')} are not in the database"
+        message = "#{invaild_samples.join(', ')} not in the database"
         return OpenStruct.new(valid?: false, errors: message)
       end
 
@@ -48,7 +48,8 @@ module ImportCsv
       end
 
       sample = Sample.approved.find_by(barcode: barcode)
-      sample.update(metadata: hash)
+      sample.metadata = sample.metadata.merge(hash)
+      sample.save
     end
   end
 end
