@@ -27,10 +27,6 @@ module ImportCsv
     end
     # rubocop:enable Metrics/MethodLength
 
-    def taxon_has_results?(row)
-      row.to_h.except('sum.taxonomy').values.uniq != ['0']
-    end
-
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
     def find_cal_taxon(taxonomy_string)
@@ -56,6 +52,12 @@ module ImportCsv
     end
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+
+    private
+
+    def taxon_has_results?(row)
+      row.to_h.except('sum.taxonomy').values.uniq != ['0']
+    end
 
     def cal_taxon(original_taxonomy)
       sql = 'original_taxonomy_phylum = ? OR ' \
