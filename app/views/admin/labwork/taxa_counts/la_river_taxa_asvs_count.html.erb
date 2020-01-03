@@ -1,0 +1,15 @@
+<% content_for(:title) { 'Update LA River taxa counts' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <p>For each taxa, update the number of LA River samples that contain that taxa.</p>
+
+  <%= simple_form_for :samples, url: admin_labwork_update_la_river_taxa_asvs_count_path, method: :put do |f| %>
+  <%= f.submit 'Update taxa counts' %>
+  <% end %>
+</section>

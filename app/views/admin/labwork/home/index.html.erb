@@ -11,7 +11,9 @@
   Instructions on how to import samples and eDNA results are in this
   <a href="https://docs.google.com/document/d/1HqDkL2UPJXzSA-y1dzg1lNuA2VPbglnMe7QOgkplwq4/edit#heading=h.rs6oss6kjauv">Google Doc</a>.
 
-  <h2>Kobo data</h2>
+  <% if policy('Labwork::Kobo'.to_sym).import_kobo? || policy('Labwork::ApproveSamples'.to_sym).index? %>
+    <h2>Kobo data</h2>
+  <% end %>
 
   <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
     <p>
@@ -27,10 +29,9 @@
     </p>
   <% end %>
 
-
-  <h2>Import samples</h2>
-
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+    <h2>Import samples</h2>
+
     <p>
       <%= link_to 'Import Samples', admin_labwork_import_samples_path %>:
       Add samples for a research project via CSV upload.
@@ -38,7 +39,9 @@
     </p>
   <% end %>
 
-  <h2>Check taxonomy from eDNA results</h2>
+  <% if policy('Labwork::ImportCsv'.to_sym).index? || policy('Labwork::NormalizeTaxon'.to_sym).index? %>
+    <h2>Check taxonomy from eDNA results</h2>
+  <% end %>
 
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
     <p>
@@ -55,13 +58,18 @@
     </p>
   <% end %>
 
-  <h2>Import ASVs from eDNA results</h2>
-
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
+    <h2>Import ASVs from eDNA results</h2>
+
     <p>
       <%= link_to 'Import ASVs', admin_labwork_import_edna_results_asvs_path %>:
       Import ASVs from eDNA results via CSV upload. Use CSVs produced by Anacapa, or
       use <%= link_to "eDNA results CSV", '/csv_templates/eDNA_results_template.csv' %> template.
+    </p>
+
+    <p>
+      <%= link_to 'Update Taxa Counts', admin_labwork_taxa_asvs_count_path %>:
+      For each taxa, update the number of samples that contain that taxa.
     </p>
   <% end %>
 

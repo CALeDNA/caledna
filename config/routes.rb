@@ -104,6 +104,15 @@ Rails.application.routes.draw do
         put 'update_existing' => 'normalize_ncbi_taxa#update_existing'
         put 'update_create' => 'normalize_ncbi_taxa#update_create'
       end
+
+      controller 'taxa_counts' do
+        get 'taxa_asvs_count' => 'taxa_counts#taxa_asvs_count'
+        put 'update_taxa_asvs_count' => 'taxa_counts#update_taxa_asvs_count'
+
+        get 'la_river_taxa_asvs_count' => 'taxa_counts#la_river_taxa_asvs_count'
+        put 'update_la_river_taxa_asvs_count' =>
+          'taxa_counts#update_la_river_taxa_asvs_count'
+      end
     end
 
     controller 'batch_actions' do

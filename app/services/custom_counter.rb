@@ -1,19 +1,22 @@
 # frozen_string_literal: true
 
 module CustomCounter
-  def update_asvs_count
+  def fetch_asv_counts_for(sql)
     conn = ActiveRecord::Base.connection
+    conn.exec_query(sql)
+  end
 
-    results = conn.exec_query(asvs_count_sql)
+  def update_asvs_count
+    results = fetch_asv_counts_for(asvs_count_sql)
+
     results.each do |result|
       update_count(result['taxon_id'], result['count'])
     end
   end
 
   def update_asvs_count_la_river
-    conn = ActiveRecord::Base.connection
+    results = fetch_asv_counts_for(asvs_count_la_river_sql)
 
-    results = conn.exec_query(asvs_count_la_river_sql)
     results.each do |result|
       update_count_la_river(result['taxon_id'], result['count'])
     end
