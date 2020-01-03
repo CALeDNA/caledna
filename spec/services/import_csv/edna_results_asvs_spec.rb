@@ -36,23 +36,15 @@ describe ImportCsv::EdnaResultsAsvs do
     it 'adds pass correct agruments to ImportCsvQueueAsvJob' do
       delimiter = "\t"
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
-      research_project_id = research_project.id
       extraction_type = create(:extraction_type)
-      extraction_type_id = extraction_type.id
-
-      first_row = data.first
-      sample_cells = first_row.headers[1..first_row.headers.size]
-      extractions = dummy_class.get_extractions_from_headers(
-        sample_cells, research_project_id, extraction_type_id
-      )
 
       expect do
         subject(
           file, research_project.id, extraction_type.id, primer
         )
       end
-        .to have_enqueued_job.with(data.to_json, sample_cells, extractions,
-                                   primer)
+        .to have_enqueued_job.with(data.to_json, research_project.id,
+                                   extraction_type.id, primer)
     end
 
     it 'returns valid' do
@@ -71,8 +63,9 @@ describe ImportCsv::EdnaResultsAsvs do
       stub_const('FieldProject::DEFAULT_PROJECT', project)
     end
 
-    def subject(data, sample_cells, extractions, primer)
-      dummy_class.queue_asv_job(data, sample_cells, extractions, primer)
+    def subject(data, research_project_id, extraction_type_id, primer)
+      dummy_class.queue_asv_job(data, research_project_id, extraction_type_id,
+                                primer)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
@@ -96,7 +89,7 @@ describe ImportCsv::EdnaResultsAsvs do
       it 'creates sample & extraction' do
         expect do
           subject(
-            data.to_json, sample_cells, extractions, primer
+            data.to_json, research_project.id, extraction_type.id, primer
           )
         end
           .to change { Sample.count }
@@ -113,7 +106,7 @@ describe ImportCsv::EdnaResultsAsvs do
 
         expect do
           subject(
-            data.to_json, sample_cells, extractions, primer
+            data.to_json, research_project.id, extraction_type.id, primer
           )
         end
           .to change { Sample.count }
@@ -132,7 +125,7 @@ describe ImportCsv::EdnaResultsAsvs do
 
         expect do
           subject(
-            data.to_json, sample_cells, extractions, primer
+            data.to_json, research_project.id, extraction_type.id, primer
           )
         end
           .to change { Sample.count }
@@ -155,7 +148,7 @@ describe ImportCsv::EdnaResultsAsvs do
       it 'does not add ImportCsvCreateAsvJob to queue' do
         expect do
           subject(
-            data.to_json, sample_cells, extractions, primer
+            data.to_json, research_project.id, extraction_type.id, primer
           )
         end
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
@@ -175,7 +168,7 @@ describe ImportCsv::EdnaResultsAsvs do
       it 'does not add ImportCsvCreateAsvJob to queue' do
         expect do
           subject(
-            data.to_json, sample_cells, extractions, primer
+            data.to_json, research_project.id, extraction_type.id, primer
           )
         end
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
@@ -195,7 +188,7 @@ describe ImportCsv::EdnaResultsAsvs do
       it 'adds ImportCsvCreateAsvJob to queue' do
         expect do
           subject(
-            data.to_json, sample_cells, extractions, primer
+            data.to_json, research_project.id, extraction_type.id, primer
           )
         end
           .to have_enqueued_job(ImportCsvCreateAsvJob)

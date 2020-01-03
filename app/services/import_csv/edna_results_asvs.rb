@@ -6,27 +6,29 @@ module ImportCsv
     include ProcessEdnaResults
     include CsvUtils
 
-    # rubocop:disable Metrics/MethodLength
     def import_csv(file, research_project_id, extraction_type_id, primer)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
-      first_row = data.first
-      sample_cells = first_row.headers[1..first_row.headers.size]
-      extractions = get_extractions_from_headers(
-        sample_cells, research_project_id, extraction_type_id
-      )
-
       ImportCsvQueueAsvJob.perform_later(
-        data.to_json, sample_cells, extractions, primer
+        data.to_json, research_project_id, extraction_type_id, primer
       )
 
       OpenStruct.new(valid?: true, errors: nil)
     end
-    # rubocop:enable Metrics/MethodLength
 
-    def queue_asv_job(data, sample_cells, extractions, primer)
-      JSON.parse(data).each do |row|
+    # rubocop:disable Metrics/MethodLength
+    def queue_asv_job(data_json, research_project_id, extraction_type_id,
+                      primer)
+      data = JSON.parse(data_json)
+      headers = data.first
+      raw_sample_barcodes = headers[1..headers.size]
+
+      extractions = get_extractions_from_headers(
+        raw_sample_barcodes, research_project_id, extraction_type_id
+      )
+
+      data.each do |row|
         next if row.first == 'sum.taxonomy'
         taxonomy_string = row.first
         next if invalid_taxon?(taxonomy_string)
@@ -34,9 +36,10 @@ module ImportCsv
         cal_taxon = find_cal_taxon_from_string(taxonomy_string)
         next if cal_taxon.blank?
 
-        create_asvs(row, sample_cells, extractions, cal_taxon, primer)
+        create_asvs(row, raw_sample_barcodes, extractions, cal_taxon, primer)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Metrics/MethodLength
     def get_extractions_from_headers(
