@@ -56,6 +56,8 @@ en:
       survey_question:
         type_cd: Type
         content: ""
+      event_registration:
+        status_cd: Status
   # NOTE: adding attributes because error message turns canonicalName
   # into "Canonicalname"
   attributes:

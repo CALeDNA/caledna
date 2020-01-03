@@ -19,6 +19,7 @@ class SurveyResponseDashboard < Administrate::BaseDashboard
     :user,
     :total_score,
     :passed,
+    :updated_at,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [

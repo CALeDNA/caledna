@@ -17,6 +17,7 @@ class KoboPhotoDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :sample,
     :photo,
+    :updated_at,
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES

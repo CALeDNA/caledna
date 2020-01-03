@@ -19,6 +19,7 @@ class EventDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :name,
     :start_date,
+    :updated_at,
   ].freeze
 
    SHOW_PAGE_ATTRIBUTES = [

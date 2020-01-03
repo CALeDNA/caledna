@@ -49,10 +49,10 @@ class SampleDashboard < Administrate::BaseDashboard
 
   COLLECTION_ATTRIBUTES = [
     :barcode,
-    :latitude,
-    :longitude,
     :status_cd,
     :field_project,
+    :research_projects,
+    :updated_at,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [

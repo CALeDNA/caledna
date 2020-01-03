@@ -21,12 +21,13 @@ class FieldProjectDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :name,
     :samples,
-    :last_import_date,
     :published,
+    :last_import_date,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
     :name,
+    :published,
     :description,
     :image,
     :kobo_id,
@@ -34,15 +35,14 @@ class FieldProjectDashboard < Administrate::BaseDashboard
     :updated_at,
     :last_import_date,
     :kobo_payload,
-    :published,
   ].freeze
 
   FORM_ATTRIBUTES = [
     :name,
+    :published,
     :description,
     :image,
     :kobo_id,
-    :published,
   ].freeze
 
   def display_resource(project)

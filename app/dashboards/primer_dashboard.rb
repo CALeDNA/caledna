@@ -13,6 +13,7 @@ class PrimerDashboard < Administrate::BaseDashboard
 
   COLLECTION_ATTRIBUTES = [
     :name,
+    :updated_at,
   ].freeze
 
    SHOW_PAGE_ATTRIBUTES = [

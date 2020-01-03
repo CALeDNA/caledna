@@ -45,7 +45,7 @@ class UserDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :username,
     :email,
-    :created_at
+    :updated_at
   ].freeze
 
     SHOW_PAGE_ATTRIBUTES = [

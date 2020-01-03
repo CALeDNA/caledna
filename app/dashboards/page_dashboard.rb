@@ -11,7 +11,10 @@ class PageDashboard < Administrate::BaseDashboard
     updated_at: Field::DateTime,
     display_order: Field::Number,
     slug: Field::String,
-    research_project: Field::BelongsTo,
+    research_project: Field::BelongsTo.with_options(
+      searchable: true,
+      searchable_field: 'name',
+    ),
     menu_text: Field::String,
     show_map: Field::Boolean,
     show_edna_results_metadata: Field::Boolean,
@@ -19,8 +22,9 @@ class PageDashboard < Administrate::BaseDashboard
 
   COLLECTION_ATTRIBUTES = [
     :title,
-    :published,
     :research_project,
+    :published,
+    :updated_at,
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [

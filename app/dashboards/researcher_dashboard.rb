@@ -28,7 +28,9 @@ class ResearcherDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
     email
     username
-    created_at
+    role_cd
+    active
+    updated_at
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = %i[
