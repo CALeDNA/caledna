@@ -9,6 +9,7 @@ module Admin
         authorize 'Labwork::Kobo'.to_sym, :import_kobo?
 
         @projects = ::FieldProject.published.where.not(kobo_id: nil)
+                                  .order('last_import_date DESC')
       end
 
       def import_projects
