@@ -14,7 +14,7 @@ describe 'Field Projects' do
         expect(page).to have_content('name1')
         expect(page).to have_content('Edit')
         expect(page).to have_content('Destroy')
-        expect(page).not_to have_content('New field project')
+        expect(page).to have_content('New field project')
       end
     end
 

@@ -31,13 +31,9 @@ describe FieldProjectPolicy do
   end
 
   permissions :create? do
-    it 'grants access to directors' do
-      expect(subject).to_not permit(director)
-    end
-
-    it 'denies access to non-directors' do
-      non_directors.each do |user|
-        expect(subject).to_not permit(user)
+    it 'grants access to all users' do
+      users.each do |user|
+        expect(subject).to permit(user)
       end
     end
   end
