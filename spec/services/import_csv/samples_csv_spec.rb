@@ -8,37 +8,26 @@ describe ImportCsv::SamplesCsv do
   describe('#import_csv') do
     include ActiveJob::TestHelper
 
-    def subject(file, research_project_id)
-      dummy_class.import_csv(file, research_project_id)
+    def subject(file, field_project_id)
+      dummy_class.import_csv(file, field_project_id)
     end
 
     let(:csv) { './spec/fixtures/import_csv/samples.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
-    let(:research_project) { create(:research_project) }
-    let!(:field_project) { create(:field_project, name: 'unknown') }
+    let(:field_project) { create(:field_project, name: 'foo') }
 
     context 'sample exists' do
       let!(:sample) { create(:sample, barcode: 'K9999-A1') }
 
       it 'does not create sample' do
-        expect { subject(file, research_project.id) }
+        expect { subject(file, field_project.id) }
           .to change { Sample.count }.by(0)
-      end
-
-      it 'does not create extraction' do
-        expect { subject(file, research_project.id) }
-          .to change { Extraction.count }.by(0)
-      end
-
-      it 'does not create research project source' do
-        expect { subject(file, research_project.id) }
-          .to change { ResearchProjectSource.count }.by(0)
       end
     end
 
     context 'sample does not exists' do
       it 'creates a sample' do
-        expect { subject(file, research_project.id) }
+        expect { subject(file, field_project.id) }
           .to change { Sample.count }.by(1)
       end
 
@@ -47,7 +36,7 @@ describe ImportCsv::SamplesCsv do
         date =
           DateTime.parse("#{row['collection_date']} #{row['collection_time']}")
 
-        subject(file, research_project.id)
+        subject(file, field_project.id)
         sample = Sample.first
 
         expect(sample.barcode).to eq(row['barcode'])
@@ -71,17 +60,7 @@ describe ImportCsv::SamplesCsv do
         expect(sample.has_permit).to eq(true)
         expect(sample.field_project_id).to eq(field_project.id)
         expect(sample.status_cd).to eq('approved')
-        expect(sample.csv_data).to eq(row.to_a)
-      end
-
-      it 'creates a extraction' do
-        expect { subject(file, research_project.id) }
-          .to change { Extraction.count }.by(1)
-      end
-
-      it 'create a research project source' do
-        expect { subject(file, research_project.id) }
-          .to change { ResearchProjectSource.count }.by(1)
+        expect(sample.csv_data).to eq(row.to_h)
       end
     end
   end

@@ -8,7 +8,7 @@ module Admin
       def index
         authorize 'Labwork::ImportCsv'.to_sym, :index?
 
-        @projects = ResearchProject.all.collect { |p| [p.name, p.id] }
+        @projects = FieldProject.all.collect { |p| [p.name, p.id] }
       end
 
       def create
@@ -25,7 +25,7 @@ module Admin
       end
 
       def create_params
-        params.require(:research_project).permit(:id)
+        params.require(:field_project).permit(:id)
       end
     end
   end

@@ -6,8 +6,7 @@ module ImportCsv
     include CsvUtils
     include ProcessFileUploads
 
-    # rubocop:disable Metrics/MethodLength
-    def import_csv(file, research_project_id)
+    def import_csv(file, field_project_id)
       delimiter = delimiter_detector(file)
 
       # TODO: find a way to deal with image upload
@@ -15,28 +14,15 @@ module ImportCsv
         barcode = row['barcode']
         next if Sample.where(barcode: barcode).present?
 
-        data = create_data_fields(row, barcode)
-        sample = Sample.create(data)
-
-        extraction_data = {
-          sample: sample
-        }
-        extraction = Extraction.create(extraction_data)
-
-        sourceable_data = {
-          sourceable: extraction,
-          sample: sample,
-          research_project_id: research_project_id
-        }
-        ResearchProjectSource.create(sourceable_data)
+        data = create_data_fields(row, barcode, field_project_id)
+        Sample.create(data)
       end
     end
-    # rubocop:enable  Metrics/MethodLength
 
     private
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def create_data_fields(row, barcode)
+    def create_data_fields(row, barcode, field_project_id)
       date =
         DateTime.parse("#{row['collection_date']}T#{row['collection_time']}")
       {
@@ -57,9 +43,9 @@ module ImportCsv
         country: row['country'],
         country_code: row['country_code'],
         has_permit: row['has_permit'],
-        field_project_id: FieldProject.find_by(name: 'unknown').id,
+        field_project_id: field_project_id,
         status_cd: 'approved',
-        csv_data: row
+        csv_data: row.to_h
       }
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
