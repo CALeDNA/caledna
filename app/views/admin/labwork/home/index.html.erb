@@ -11,8 +11,10 @@
   Instructions on how to import samples and eDNA results are in this
   <a href="https://docs.google.com/document/d/1HqDkL2UPJXzSA-y1dzg1lNuA2VPbglnMe7QOgkplwq4/edit#heading=h.rs6oss6kjauv">Google Doc</a>.
 
+  <%# ----------------------------------------- %>
+
   <% if policy('Labwork::Kobo'.to_sym).import_kobo? || policy('Labwork::ApproveSamples'.to_sym).index? %>
-    <h2>Kobo data</h2>
+    <h2>Import Kobo data</h2>
   <% end %>
 
   <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
@@ -29,6 +31,17 @@
     </p>
   <% end %>
 
+  <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
+    <p>
+      <%= link_to 'Import Additional Metadata', admin_labwork_import_kobo_samples_metadata_path %>:
+      Import additional metadata for Kobo samples via CSV upload. Use
+      <%= link_to "Kobo samples metadata CSV", '/csv_templates/kobo_samples_metadata_template.csv' %> template.
+
+    </p>
+  <% end %>
+
+  <%# ----------------------------------------- %>
+
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
     <h2>Import samples</h2>
 
@@ -38,6 +51,8 @@
       Use <%= link_to "Samples CSV", '/csv_templates/samples_metadata_template.csv' %> template.
     </p>
   <% end %>
+
+  <%# ----------------------------------------- %>
 
   <% if policy('Labwork::ImportCsv'.to_sym).index? || policy('Labwork::NormalizeTaxon'.to_sym).index? %>
     <h2>Check taxonomy from eDNA results</h2>
@@ -58,6 +73,8 @@
     </p>
   <% end %>
 
+  <%# ----------------------------------------- %>
+
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
     <h2>Import ASVs from eDNA results</h2>
 
@@ -73,10 +90,14 @@
     </p>
   <% end %>
 
+  <%# ----------------------------------------- %>
+
   <h2>Import Status</h2>
   Check the <%= link_to 'status of the CSV imports', admin_labwork_import_csv_status_index_path %>
 
 </section>
+
+<%# ----------------------------------------- %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -85,6 +106,9 @@
 </header>
 
 <section class="main-content__body">
+  <p>
+    <%= link_to "Kobo samples metadata CSV", '/csv_templates/kobo_samples_metadata_template.csv' %>
+  </p>
   <p>
     <%= link_to "Samples CSV", '/csv_templates/samples_template.csv' %>
   </p>
