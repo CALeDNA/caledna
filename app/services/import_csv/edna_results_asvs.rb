@@ -6,15 +6,46 @@ module ImportCsv
     include ProcessEdnaResults
     include CsvUtils
 
+    # rubocop:disable Metrics/MethodLength
     def import_csv(file, research_project_id, extraction_type_id, primer)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
+
+      barcodes = convert_headers_to_barcodes(data)
+      samples = find_samples_from_barcodes(barcodes)
+
+      if samples[:invaild_barcodes].present?
+        message = "#{samples[:invaild_barcodes].join(', ')} not in the database"
+        return OpenStruct.new(valid?: false, errors: message)
+      end
 
       ImportCsvQueueAsvJob.perform_later(
         data.to_json, research_project_id, extraction_type_id, primer
       )
 
       OpenStruct.new(valid?: true, errors: nil)
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    def convert_headers_to_barcodes(data)
+      first_row = data.first
+      raw_sample_barcodes = first_row.headers[1..first_row.headers.size]
+
+      raw_sample_barcodes.map do |raw_barcode|
+        convert_raw_barcode(raw_barcode)
+      end.compact
+    end
+
+    def find_samples_from_barcodes(barcodes)
+      invaild_barcodes = []
+      valid_samples = []
+
+      barcodes.each do |barcode|
+        sample = Sample.approved.find_by(barcode: barcode)
+        sample.present? ? valid_samples << sample : invaild_barcodes << barcode
+      end
+
+      { invaild_barcodes: invaild_barcodes, valid_samples: valid_samples }
     end
 
     # rubocop:disable Metrics/MethodLength

@@ -23,35 +23,60 @@ describe ImportCsv::EdnaResultsAsvs do
     let(:extraction_type) { create(:extraction_type) }
     let(:research_project) { create(:research_project) }
     let(:primer) { '12S' }
+    let(:csv_barcode1) { 'K0001-LA-S1' }
 
-    it 'adds ImportCsvQueueAsvJob to queue' do
-      expect do
-        subject(
-          file, research_project.id, extraction_type.id, primer
-        )
+    context 'when barcodes in CSV match samples in the database' do
+      before(:each) do
+        create(:sample, barcode: csv_barcode1, status: 'approved')
       end
-        .to have_enqueued_job(ImportCsvQueueAsvJob)
+
+      it 'adds ImportCsvQueueAsvJob to queue' do
+        expect do
+          subject(
+            file, research_project.id, extraction_type.id, primer
+          )
+        end
+          .to have_enqueued_job(ImportCsvQueueAsvJob)
+      end
+
+      it 'adds pass correct agruments to ImportCsvQueueAsvJob' do
+        delimiter = "\t"
+        data = CSV.read(file.path, headers: true, col_sep: delimiter)
+        extraction_type = create(:extraction_type)
+
+        expect do
+          subject(
+            file, research_project.id, extraction_type.id, primer
+          )
+        end
+          .to have_enqueued_job.with(data.to_json, research_project.id,
+                                     extraction_type.id, primer)
+      end
+
+      it 'returns valid' do
+        results = subject(file, research_project.id, extraction_type.id, primer)
+        expect(results.valid?).to eq(true)
+      end
     end
 
-    it 'adds pass correct agruments to ImportCsvQueueAsvJob' do
-      delimiter = "\t"
-      data = CSV.read(file.path, headers: true, col_sep: delimiter)
-      extraction_type = create(:extraction_type)
-
-      expect do
-        subject(
-          file, research_project.id, extraction_type.id, primer
-        )
+    context 'when barcodes in CSV do not match samples in the database' do
+      before(:each) do
+        create(:sample, barcode: 'K9999-A1', status: 'approved')
       end
-        .to have_enqueued_job.with(data.to_json, research_project.id,
-                                   extraction_type.id, primer)
-    end
 
-    it 'returns valid' do
-      expect(
-        subject(file, research_project.id, extraction_type.id, primer).valid?
-      )
-        .to eq(true)
+      it 'does not add ImportCsvQueueAsvJob to queue' do
+        expect do
+          subject(file, research_project.id, extraction_type.id, primer)
+        end
+          .to_not have_enqueued_job(ImportCsvQueueAsvJob)
+      end
+
+      it 'returns error message' do
+        results = subject(file, research_project.id, extraction_type.id, primer)
+        message = "#{csv_barcode1} not in the database"
+        expect(results.valid?).to eq(false)
+        expect(results.errors).to eq(message)
+      end
     end
   end
 
@@ -84,6 +109,7 @@ describe ImportCsv::EdnaResultsAsvs do
         sample_cells, research_project.id, extraction_type.id
       )
     end
+    let(:csv_barcode1) { 'K0001-LA-S1' }
 
     context 'when matching sample does not exists' do
       it 'creates sample & extraction' do
@@ -101,7 +127,7 @@ describe ImportCsv::EdnaResultsAsvs do
 
     context 'when matching extraction does not exists' do
       it 'creates extraction' do
-        create(:sample, barcode: 'K0001-LA-S1')
+        create(:sample, barcode: csv_barcode1)
         create(:sample, barcode: 'forest')
 
         expect do
