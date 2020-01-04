@@ -50,7 +50,7 @@ module ImportCsv
       sample_cells.each do |cell|
         next if cell.nil?
 
-        barcode = convert_header_to_barcode(cell)
+        barcode = convert_raw_barcode(cell)
         next if barcode.nil?
 
         extraction = find_extraction_from_barcode(barcode,

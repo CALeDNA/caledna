@@ -5,9 +5,9 @@ require 'rails_helper'
 describe ProcessEdnaResults do
   let(:dummy_class) { Class.new { extend ProcessEdnaResults } }
 
-  describe '#convert_header_to_barcode' do
+  describe '#convert_raw_barcode' do
     def subject(header)
-      dummy_class.convert_header_to_barcode(header)
+      dummy_class.convert_raw_barcode(header)
     end
 
     it 'converts kit.number header' do

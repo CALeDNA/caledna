@@ -267,7 +267,7 @@ module ProcessEdnaResults
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-  def convert_header_to_barcode(cell)
+  def convert_raw_barcode(cell)
     sample = cell.split('_').last
     parts = sample.split('.')
 
