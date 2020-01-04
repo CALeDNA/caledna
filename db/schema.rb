@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_03_174452) do
+ActiveRecord::Schema.define(version: 2020_01_04_171731) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -40,13 +40,14 @@ ActiveRecord::Schema.define(version: 2020_01_03_174452) do
   create_table "asvs", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "extraction_id"
     t.integer "taxonID"
     t.text "primers", default: [], array: true
     t.integer "sample_id"
     t.integer "count", default: 0
     t.jsonb "counts", default: {}
-    t.index ["extraction_id"], name: "index_asvs_on_extraction_id"
+    t.integer "research_project_id"
+    t.string "primer"
+    t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
   end
@@ -183,76 +184,6 @@ ActiveRecord::Schema.define(version: 2020_01_03_174452) do
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["source"], name: "index_external_resources_on_source"
-  end
-
-  create_table "extraction_types", id: :serial, force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "extractions", id: :serial, force: :cascade do |t|
-    t.integer "sample_id"
-    t.integer "extraction_type_id"
-    t.integer "processor_id"
-    t.string "priority_sequencing_cd"
-    t.boolean "prepub_share", default: false
-    t.string "prepub_share_group"
-    t.boolean "prepub_filter_sensitive_info", default: false
-    t.string "sra_url"
-    t.integer "sra_adder_id"
-    t.datetime "sra_add_date"
-    t.string "local_fastq_storage_url"
-    t.integer "local_fastq_storage_adder_id"
-    t.datetime "local_fastq_storage_add_date"
-    t.datetime "stat_bio_reps_pooled_date"
-    t.string "loc_bio_reps_pooled"
-    t.datetime "bio_reps_pooled_date"
-    t.string "protocol_bio_reps_pooled"
-    t.string "changes_protocol_bio_reps_pooled"
-    t.datetime "stat_dna_extraction_date"
-    t.string "loc_dna_extracts"
-    t.datetime "dna_extraction_date"
-    t.string "protocol_dna_extraction"
-    t.string "changes_protocol_dna_extraction"
-    t.string "metabarcoding_primers", default: [], array: true
-    t.datetime "stat_barcoding_pcr_done_date"
-    t.integer "barcoding_pcr_number_of_replicates"
-    t.string "reamps_needed"
-    t.datetime "stat_barcoding_pcr_pooled_date"
-    t.datetime "stat_barcoding_pcr_bead_cleaned_date"
-    t.string "brand_beads_cd"
-    t.string "cleaned_concentration"
-    t.string "loc_stored"
-    t.string "select_indices_cd"
-    t.string "index_1_name"
-    t.string "index_2_name"
-    t.datetime "stat_index_pcr_done_date"
-    t.datetime "stat_index_pcr_bead_cleaned_date"
-    t.string "index_brand_beads_cd"
-    t.string "index_cleaned_concentration"
-    t.string "index_loc_stored"
-    t.datetime "stat_libraries_pooled_date"
-    t.string "loc_libraries_pooled"
-    t.datetime "stat_sequenced_date"
-    t.string "intended_sequencing_depth_per_barcode"
-    t.string "sequencing_platform"
-    t.text "assoc_field_blank"
-    t.text "assoc_extraction_blank"
-    t.text "assoc_pcr_blank"
-    t.text "sample_processor_notes"
-    t.text "lab_manager_notes"
-    t.text "director_notes"
-    t.string "status_cd"
-    t.string "sum_taxonomy_example"
-    t.boolean "priority_sequencing"
-    t.datetime "created_at", default: "2018-04-23 16:12:39", null: false
-    t.datetime "updated_at", default: "2018-04-23 16:12:39", null: false
-    t.index ["extraction_type_id"], name: "index_extractions_on_extraction_type_id"
-    t.index ["local_fastq_storage_adder_id"], name: "index_extractions_on_local_fastq_storage_adder_id"
-    t.index ["processor_id"], name: "index_extractions_on_processor_id"
-    t.index ["sample_id"], name: "index_extractions_on_sample_id"
-    t.index ["sra_adder_id"], name: "index_extractions_on_sra_adder_id"
   end
 
   create_table "field_projects", id: :serial, force: :cascade do |t|
@@ -694,12 +625,6 @@ ActiveRecord::Schema.define(version: 2020_01_03_174452) do
     t.string "name", null: false
   end
 
-  add_foreign_key "asvs", "extractions"
-  add_foreign_key "extractions", "extraction_types"
-  add_foreign_key "extractions", "researchers", column: "local_fastq_storage_adder_id"
-  add_foreign_key "extractions", "researchers", column: "processor_id"
-  add_foreign_key "extractions", "researchers", column: "sra_adder_id"
-  add_foreign_key "extractions", "samples"
   add_foreign_key "kobo_photos", "samples"
   add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
   add_foreign_key "research_project_authors", "research_projects"
