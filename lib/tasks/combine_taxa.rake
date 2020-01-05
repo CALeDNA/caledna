@@ -78,6 +78,7 @@ namespace :combine_taxa do
 
   desc 'use this sql to create unique taxa csv in Postico'
   task create_unique_found_taxa: :environment do
+    project
     <<-SQL
       SELECT
       'gbif' AS source, taxonkey AS taxon_id, NULL AS cal_division_id,
@@ -109,9 +110,9 @@ namespace :combine_taxa do
       rank AS taxon_rank
       FROM asvs
       JOIN research_project_sources
-      ON asvs.extraction_id = research_project_sources.sourceable_id
+      ON asvs.sample_id = research_project_sources.sourceable_id
       AND research_project_id = 4
-      AND sourceable_type = 'Extraction'
+      AND sourceable_type = 'Sample'
       JOIN ncbi_nodes
       ON ncbi_nodes.taxon_id = asvs."taxonID"
       ORDER BY superkingdom, kingdom, phylum,
