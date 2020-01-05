@@ -5,9 +5,9 @@ class AddTimestamps < ActiveRecord::Migration[5.0]
     CalTaxon.find_each do |t|
       t.update(created_at: Time.zone.now, created_at: Time.zone.now)
     end
-    Extraction.find_each do |e|
-      e.update(created_at: Time.zone.now, created_at: Time.zone.now)
-    end
+    # Extraction.find_each do |e|
+    #   e.update(created_at: Time.zone.now, created_at: Time.zone.now)
+    # end
   end
 
   def down
