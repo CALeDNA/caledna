@@ -58,8 +58,6 @@ Rails.application.routes.draw do
     resources :asvs
     resources :events
     resources :event_registrations
-    resources :extractions
-    resources :extraction_types
     resources :field_projects
     resources :kobo_photos
     resources :pages
