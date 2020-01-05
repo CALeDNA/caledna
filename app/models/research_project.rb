@@ -17,10 +17,6 @@ class ResearchProject < ApplicationRecord
 
   scope :published, -> { where(published: true) }
 
-  def extractions
-    research_project_sources.where(sourceable_type: 'Extraction')
-  end
-
   def project_pages
     @project_pages ||= pages.published
                             .order('display_order ASC NULLS LAST') || []

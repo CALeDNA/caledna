@@ -11,9 +11,8 @@ class Sample < ApplicationRecord
 
   belongs_to :field_project
   has_many :kobo_photos
-  has_many :extractions
   has_many :asvs
-  has_many :research_project_sources, foreign_key: 'sample_id'
+  has_many :research_project_sources, as: :sourceable
   has_many :research_projects, through: :research_project_sources
 
   validate :unique_approved_barcodes

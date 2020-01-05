@@ -12,7 +12,6 @@ class Researcher < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable,
          :invitable, invite_for: 2.weeks
 
-  has_many :extractions, dependent: :destroy, foreign_key: :processor_id
   has_many :research_project_authors, as: :authorable
   has_many :research_projects, through: :research_project_authors
 
