@@ -4,21 +4,19 @@ class CalTaxon < ApplicationRecord
   TAXON_RANK = %w[
     superkingdom kingdom phylum class order family genus species
   ].freeze
-  TAXON_STATUS = ['accepted', 'doubtful', 'heterotypic synonym',
-                  'homotypic synonym', 'synonym'].freeze
 
-  validates :taxonRank, inclusion: { in: TAXON_RANK }
+  validates :taxon_rank, inclusion: { in: TAXON_RANK }
 
   def name
-    original_hierarchy[taxonRank.to_s]
+    hierarchy[taxon_rank.to_s]
   end
 
   def original_taxonomy
-    original_taxonomy_phylum || original_taxonomy_superkingdom
+    original_taxonomy_string
   end
 
   def taxa
-    original_taxonomy
+    original_taxonomy_string
       .split(';')
       .select { |i| i != 'NA' && i.present? }
   end
@@ -41,33 +39,5 @@ class CalTaxon < ApplicationRecord
 
   def query
     taxa.last
-  end
-
-  def h_kingdom
-    original_hierarchy['kingdom']
-  end
-
-  def h_phylum
-    original_hierarchy['phylum']
-  end
-
-  def h_class_name
-    original_hierarchy['class']
-  end
-
-  def h_order
-    original_hierarchy['order']
-  end
-
-  def h_family
-    original_hierarchy['family']
-  end
-
-  def h_genus
-    original_hierarchy['genus']
-  end
-
-  def h_species
-    original_hierarchy['species']
   end
 end

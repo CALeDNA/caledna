@@ -11,22 +11,23 @@
 <section class="main-content__body">
 
   <p>
-    rank: <%= @cal_taxon.taxonRank %><br>
+    rank: <%= @cal_taxon.taxon_rank %><br>
     taxon: <%= @cal_taxon.name %><br>
-    raw test result: <%= @cal_taxon.complete_taxonomy %><br>
+    taxonomy string: <%= @cal_taxon.original_taxonomy_string %><br>
   </p>
 
   <table class="no-auto-link">
     <tr>
       <td>
         <ul>
-          <li>kingdom: <%= @cal_taxon.h_kingdom %></li>
-          <li>phylum: <%= @cal_taxon.h_phylum if @cal_taxon.h_phylum %></li>
-          <li>class: <%= @cal_taxon.h_class_name if @cal_taxon.h_class_name %></li>
-          <li>order: <%= @cal_taxon.h_order if @cal_taxon.h_order %></li>
-          <li>family: <%= @cal_taxon.h_family if @cal_taxon.h_family %></li>
-          <li>genus: <%= @cal_taxon.h_genus if @cal_taxon.h_genus %></li>
-          <li>species: <%= @cal_taxon.h_species if @cal_taxon.h_species %></li>
+          <li>superkingdom: <%= @cal_taxon.hierarchy['superkingdom'] %></li>
+          <li>kingdom: <%= @cal_taxon.hierarchy['kingdom'] %></li>
+          <li>phylum: <%= @cal_taxon.hierarchy['phylum'] %></li>
+          <li>class: <%= @cal_taxon.hierarchy['class'] %></li>
+          <li>order: <%= @cal_taxon.hierarchy['order'] %></li>
+          <li>family: <%= @cal_taxon.hierarchy['family'] %></li>
+          <li>genus: <%= @cal_taxon.hierarchy['genus'] %></li>
+          <li>species: <%= @cal_taxon.hierarchy['species'] %></li>
         </ul>
       </td>
     </tr>

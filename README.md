@@ -18,6 +18,7 @@ $ yarn
 $ bin/rails s
 
 # optionally run sidekiq
+$ redis-cli flushall
 $ bundle exec sidekiq -q default -q mailer
 ```
 

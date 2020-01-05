@@ -155,27 +155,12 @@ namespace :ncbi do
   task update_cal_taxon: :environment do
     puts 'update cal_taxon...'
     CalTaxon.where(exact_gbif_match: false).all.each do |taxon|
-      results = find_taxon_from_string_phylum(taxon.original_taxonomy)
+      results = format_cal_taxon_data_from_string(taxon.original_taxonomy)
 
       if results[:taxon_id].blank? && results[:rank].present?
-        update_data = {
-          taxonRank: results[:rank],
-          original_hierarchy: results[:original_hierarchy],
-          original_taxonomy: results[:original_taxonomy],
-          complete_taxonomy: results[:complete_taxonomy],
-          normalized: false,
-          exact_gbif_match: false
-        }
+        update_data = results.merge(normalized: false, ignore: false)
       elsif results[:taxon_id].present? && results[:rank].present?
-        update_data = {
-          taxonRank: results[:rank],
-          original_hierarchy: results[:original_hierarchy],
-          original_taxonomy: results[:original_taxonomy],
-          complete_taxonomy: results[:complete_taxonomy],
-          normalized: true,
-          exact_gbif_match: true,
-          taxonID: results[:taxon_id]
-        }
+        update_data = results.merge(normalized: true, ignore: false)
       end
 
       taxon.attributes = update_data

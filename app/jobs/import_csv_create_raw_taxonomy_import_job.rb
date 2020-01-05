@@ -5,8 +5,7 @@ class ImportCsvCreateRawTaxonomyImportJob < ApplicationJob
 
   queue_as :default
 
-  def perform(taxonomy_string, research_project_id, primer, notes)
-    create_raw_taxonomy_import(taxonomy_string, research_project_id, primer,
-                               notes)
+  def perform(taxonomy_string, research_project_id, primer)
+    create_raw_taxonomy_import(taxonomy_string, research_project_id, primer)
   end
 end

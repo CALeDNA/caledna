@@ -7,8 +7,8 @@ module Admin
         authorize 'Labwork::NormalizeTaxon'.to_sym, :index?
 
         @taxa = CalTaxon.where(normalized: false)
-                        .where(accepted: false)
-                        .order(:taxonRank, :complete_taxonomy)
+                        .where(ignore: false)
+                        .order(:taxon_rank, :clean_taxonomy_string)
                         .page params[:page]
       end
 
@@ -23,9 +23,9 @@ module Admin
       def update_existing
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
 
-        cal_taxon.taxonID = update_existing_params[:taxon_id]
+        cal_taxon.taxon_id = update_existing_params[:taxon_id]
         cal_taxon.normalized = true
-        cal_taxon.accepted = true
+        cal_taxon.ignore = false
 
         if cal_taxon.save(validate: false)
           redirect_to admin_labwork_normalize_ncbi_taxa_path
@@ -66,7 +66,7 @@ module Admin
 
       def suggestions
         canonical_name =
-          cal_taxon.original_hierarchy[cal_taxon.taxonRank].downcase
+          cal_taxon.hierarchy[cal_taxon.taxon_rank].downcase
 
         @suggestions ||=
           NcbiNode.where("lower(canonical_name) = '#{canonical_name}'")
@@ -82,11 +82,9 @@ module Admin
       def update_cal_taxon_params
         {
           normalized: true,
-          accepted: true,
-          exact_gbif_match: false,
-          taxonID: raw_params[:taxon_id],
-          taxonRank: raw_params[:rank],
-          datasetID: raw_params[:dataset_id]
+          ignored: false,
+          taxon_id: raw_params[:taxon_id],
+          taxon_rank: raw_params[:rank]
         }
       end
 

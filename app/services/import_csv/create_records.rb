@@ -3,6 +3,7 @@
 module ImportCsv
   module CreateRecords
     include CustomCounter
+    include ProcessEdnaResults
 
     def create_asv(attributes)
       asv = Asv.where(attributes).first_or_create
@@ -29,12 +30,11 @@ module ImportCsv
     end
 
     def create_raw_taxonomy_import(taxonomy_string, research_project_id,
-                                   primer, notes)
+                                   primer)
       attributes = {
         taxonomy_string: taxonomy_string,
         research_project_id: research_project_id,
-        primer: primer,
-        notes: notes
+        primer: primer
       }
       raw_taxon = RawTaxonomyImport.where(attributes)
       return if raw_taxon.present?

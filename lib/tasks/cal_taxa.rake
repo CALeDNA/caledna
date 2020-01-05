@@ -5,7 +5,7 @@ namespace :cal_taxa do
     sql =  <<-SQL
     update cal_taxa
     set original_taxonomy_superkingdom =
-      coalesce(original_hierarchy ->> 'superkingdom', '') ||
+      coalesce(hierarchy ->> 'superkingdom', '') ||
       ';' || original_taxonomy_phylum
     where cal_taxa.original_taxonomy_superkingdom is null;
     SQL

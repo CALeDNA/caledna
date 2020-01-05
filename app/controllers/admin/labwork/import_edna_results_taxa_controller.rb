@@ -12,7 +12,7 @@ module Admin
 
       def create
         authorize 'Labwork::ImportCsv'.to_sym, :create?
-        results = import_csv(file, research_project_id, primer, notes)
+        results = import_csv(file, research_project_id, primer)
         if results.valid?
           flash[:success] = 'Importing taxonomies...'
           redirect_to admin_labwork_import_csv_status_index_path
@@ -40,15 +40,10 @@ module Admin
         create_params[:primer]
       end
 
-      def notes
-        create_params[:notes]
-      end
-
       def create_params
         params.require(:dna_results).permit(
           :research_project_id,
-          :primer,
-          :notes
+          :primer
         )
       end
     end

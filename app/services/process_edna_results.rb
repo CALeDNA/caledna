@@ -13,64 +13,48 @@ module ProcessEdnaResults
   end
 
   # rubocop:disable Metrics/MethodLength
-  def find_taxon_from_string_phylum(taxonomy_string)
-    rank = get_taxon_rank_phylum(taxonomy_string)
-    hierarchy = get_hierarchy_phylum(taxonomy_string, rank)
+  def format_cal_taxon_data_from_string(taxonomy_string)
+    rank = get_taxon_rank(taxonomy_string)
+    hierarchy = get_hierarchy(taxonomy_string)
 
     raise TaxaError, 'rank not found' if rank.blank?
     raise TaxaError, 'hierarchy not found' if hierarchy.blank?
 
-    taxon = find_exact_taxon(hierarchy, rank) || nil
-    complete_taxonomy = get_complete_taxon_string(taxonomy_string)
+    taxa = find_taxa_by_hierarchy(hierarchy, rank)
+    taxon_id = taxa&.count == 1 ? taxa.first.taxon_id : nil
+
     {
-      taxon_hierarchy: taxon.try(:hierarchy),
-      taxon_id: taxon.try(:taxon_id),
-      rank: rank,
-      original_hierarchy: hierarchy,
-      complete_taxonomy: complete_taxonomy,
-      original_taxonomy_phylum: taxonomy_string
+      taxon_id: taxon_id,
+      taxon_rank: rank,
+      hierarchy: hierarchy,
+      original_taxonomy_string: taxonomy_string,
+      clean_taxonomy_string: remove_na(taxonomy_string)
     }
   end
   # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength
-  def find_taxon_from_string_superkingdom(taxonomy_string)
-    rank = get_taxon_rank_superkingdom(taxonomy_string)
-    hierarchy = get_hierarchy_superkingdom(taxonomy_string, rank)
+  def find_taxa_by_hierarchy(hierarchy, target_rank)
+    sql = ["rank = '#{target_rank}'"]
+    ranks = %i[superkingdom kingdom phylum class order family genus species]
+    ranks.each do |rank|
+      next if hierarchy[rank].blank?
+      sql << "hierarchy_names ->> '#{rank}' = '#{hierarchy[rank]}'"
+    end
+    sql = sql.join(' AND ')
 
-    raise TaxaError, 'rank not found' if rank.blank?
-    raise TaxaError, 'hierarchy not found' if hierarchy.blank?
-
-    taxon = find_exact_taxon(hierarchy, rank) || nil
-    {
-      taxon_hierarchy: taxon.try(:hierarchy),
-      taxon_id: taxon.try(:taxon_id),
-      rank: rank,
-      original_hierarchy: hierarchy,
-      complete_taxonomy: taxonomy_string,
-      original_taxonomy_superkingdom: taxonomy_string,
-      original_taxonomy_phylum:
-        convert_superkingdom_taxonomy_string(taxonomy_string)
-    }
-  end
-  # rubocop:enable Metrics/MethodLength
-
-  def convert_superkingdom_taxonomy_string(string)
-    return ';;;;;' if string == ';;;;;;'
-    string.gsub(/^.*?;/, '')
+    NcbiNode.where(sql)
   end
 
   def find_cal_taxon_from_string(string)
-    rank = if phylum_taxonomy_string?(string)
-             get_taxon_rank_phylum(string)
+    clean_string = remove_na(string)
+    rank = if phylum_taxonomy_string?(clean_string)
+             get_taxon_rank_phylum(clean_string)
            else
-             get_taxon_rank_superkingdom(string)
+             get_taxon_rank_superkingdom(clean_string)
            end
-    sql = 'original_taxonomy_phylum = ? OR ' \
-      'original_taxonomy_superkingdom = ?'
-    CalTaxon.where(sql, string, string)
-            .where(taxonRank: rank)
-            .where(normalized: true).first
+
+    CalTaxon.where(clean_taxonomy_string: clean_string)
+            .where(taxon_rank: rank).first
   end
 
   def phylum_taxonomy_string?(string)
@@ -90,43 +74,42 @@ module ProcessEdnaResults
     return 'unknown' if string == 'NA'
     return 'unknown' if string == ';;;;;'
 
-    taxa = string.split(';', -1)
-    if taxa_present(taxa[5])
+    clean_taxonomy = remove_na(string)
+    taxa = clean_taxonomy.split(';', -1)
+    if taxa[5].present?
       'species'
-    elsif taxa_present(taxa[4])
+    elsif taxa[4].present?
       'genus'
-    elsif taxa_present(taxa[3])
+    elsif taxa[3].present?
       'family'
-    elsif taxa_present(taxa[2])
+    elsif taxa[2].present?
       'order'
-    elsif taxa_present(taxa[1])
+    elsif taxa[1].present?
       'class'
-    elsif taxa_present(taxa[0])
+    elsif taxa[0].present?
       'phylum'
     else
       'unknown'
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def get_hierarchy_phylum(string, rank)
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def get_hierarchy_phylum(string)
     hierarchy = {}
     return hierarchy if string == 'NA'
     return hierarchy if string == ';;;;;'
 
-    taxa = string.split(';', -1)
-    hierarchy[:species] = taxa[5] if taxa_present(taxa[5])
-    hierarchy[:genus] = taxa[4] if taxa_present(taxa[4])
-    hierarchy[:family] = taxa[3] if taxa_present(taxa[3])
-    hierarchy[:order] = taxa[2] if taxa_present(taxa[2])
-    hierarchy[:class] = taxa[1] if taxa_present(taxa[1])
-    hierarchy[:phylum] = taxa[0] if taxa_present(taxa[0])
-
-    taxon = find_exact_taxon(hierarchy, rank, skip_kingdom: true)
-
-    kingdom_superkingdom = get_kingdom_superkingdom(taxon)
-    hierarchy[:kingdom] = kingdom_superkingdom[:kingdom]
-    hierarchy[:superkingdom] = kingdom_superkingdom[:superkingdom]
-
+    clean_taxonomy = remove_na(string)
+    taxa = clean_taxonomy.split(';', -1)
+    hierarchy[:species] = taxa[5] if taxa[5].present?
+    hierarchy[:genus] = taxa[4] if taxa[4].present?
+    hierarchy[:family] = taxa[3] if taxa[3].present?
+    hierarchy[:order] = taxa[2] if taxa[2].present?
+    hierarchy[:class] = taxa[1] if taxa[1].present?
+    hierarchy[:phylum] = taxa[0] if taxa[0].present?
     hierarchy
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -138,44 +121,45 @@ module ProcessEdnaResults
     return 'unknown' if string == 'NA'
     return 'unknown' if string == ';;;;;;'
 
-    taxa = string.split(';', -1)
-    if taxa_present(taxa[6])
+    clean_taxonomy = remove_na(string)
+    taxa = clean_taxonomy.split(';', -1)
+    if taxa[6].present?
       'species'
-    elsif taxa_present(taxa[5])
+    elsif taxa[5].present?
       'genus'
-    elsif taxa_present(taxa[4])
+    elsif taxa[4].present?
       'family'
-    elsif taxa_present(taxa[3])
+    elsif taxa[3].present?
       'order'
-    elsif taxa_present(taxa[2])
+    elsif taxa[2].present?
       'class'
-    elsif taxa_present(taxa[1])
+    elsif taxa[1].present?
       'phylum'
-    elsif taxa_present(taxa[0])
+    elsif taxa[0].present?
       'superkingdom'
     else
       'unknown'
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def get_hierarchy_superkingdom(string, rank)
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def get_hierarchy_superkingdom(string)
     hierarchy = {}
     return hierarchy if string == 'NA'
     return hierarchy if string == ';;;;;;'
 
-    taxa = string.split(';', -1)
-    hierarchy[:species] = taxa[6] if taxa_present(taxa[6])
-    hierarchy[:genus] = taxa[5] if taxa_present(taxa[5])
-    hierarchy[:family] = taxa[4] if taxa_present(taxa[4])
-    hierarchy[:order] = taxa[3] if taxa_present(taxa[3])
-    hierarchy[:class] = taxa[2] if taxa_present(taxa[2])
-    hierarchy[:phylum] = taxa[1] if taxa_present(taxa[1])
-    hierarchy[:superkingdom] = taxa[0] if taxa_present(taxa[0])
-
-    taxon = find_exact_taxon(hierarchy, rank, skip_kingdom: true)
-
-    hierarchy[:kingdom] = get_kingdom(taxon) if taxon
-
+    clean_taxonomy = remove_na(string)
+    taxa = clean_taxonomy.split(';', -1)
+    hierarchy[:species] = taxa[6] if taxa[6].present?
+    hierarchy[:genus] = taxa[5] if taxa[5].present?
+    hierarchy[:family] = taxa[4] if taxa[4].present?
+    hierarchy[:order] = taxa[3] if taxa[3].present?
+    hierarchy[:class] = taxa[2] if taxa[2].present?
+    hierarchy[:phylum] = taxa[1] if taxa[1].present?
+    hierarchy[:superkingdom] = taxa[0] if taxa[0].present?
     hierarchy
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
@@ -230,26 +214,6 @@ module ProcessEdnaResults
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-  def find_exact_taxon(hierarchy, rank, skip_kingdom: false)
-    unique_taxon_names = %w[species order class phylum kingdom superkingdom]
-
-    if unique_taxon_names.include?(rank)
-      get_unique_taxon(hierarchy, rank)
-    elsif rank == 'genus'
-      get_genus(hierarchy, skip_kingdom)
-    elsif rank == 'family'
-      get_family(hierarchy)
-    end
-  end
-
-  def get_kingdom_superkingdom(taxon)
-    return {} if taxon.blank?
-    {
-      kingdom: get_kingdom(taxon),
-      superkingdom: get_superkingdom(taxon)
-    }
-  end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
@@ -363,99 +327,42 @@ module ProcessEdnaResults
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def find_canonical_taxon_from_string(taxonomy_string)
+    new_string = remove_na(taxonomy_string)
+    new_string.split(';').last
+  end
+
+  def remove_na(taxonomy_string)
     new_string = taxonomy_string.dup
     new_string.gsub!(/;NA;/, ';;') while new_string.include?(';NA;')
     new_string.gsub!(/;NA$/, ';')
-    new_string.split(';').last
+    new_string.gsub!(/^NA;/, ';')
+    new_string
   end
 
   private
 
-  # NOTE: lineage is ["id", "name", "rank"]
+  def get_taxon_rank(taxonomy_string)
+    if phylum_taxonomy_string?(taxonomy_string)
+      get_taxon_rank_phylum(taxonomy_string)
+    else
+      get_taxon_rank_superkingdom(taxonomy_string)
+    end
+  end
+
+  def get_hierarchy(taxonomy_string)
+    if phylum_taxonomy_string?(taxonomy_string)
+      get_hierarchy_phylum(taxonomy_string)
+    else
+      get_hierarchy_superkingdom(taxonomy_string)
+    end
+  end
+
   def get_kingdom(taxon)
-    taxon.lineage.select { |l| l.third == 'kingdom' }.first.try(:second)
+    taxon.hierarchy_names['kingdom']
   end
 
   def get_superkingdom(taxon)
-    taxon.lineage.select { |l| l.third == 'superkingdom' }.first.try(:second)
-  end
-
-  def taxa_present(taxa)
-    taxa.present? && taxa != 'NA'
-  end
-
-  #  NOTE: family names are unique to phylums
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-  def get_family(hierarchy)
-    taxon_name = hierarchy[:family].downcase
-
-    query = NcbiNode.joins(:ncbi_names)
-                    .where("lower(\"name\") = \'#{taxon_name}\'")
-                    .where(rank: 'family')
-
-    if hierarchy[:phylum].present?
-      # NOTE: this code searches nested arrays for name and rank
-      # 100 grabs 100 nested arrays from lineage
-      # [2,3] grabs 2nd item (name) and 3rd item (rank) from each nested array
-      sql = "'{#{hierarchy[:phylum]},phylum}'::text[] <@ lineage[100][2:3]"
-      query = query.where(sql)
-    else
-      sql = "'{phylum}'::text[] <@ lineage[100][2:3]"
-      query = query.where.not(sql)
-    end
-
-    return if query.size > 1
-    query.take
-  end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-
-  #  NOTE: genus names are unique to kingdom, phylum, class, order, family
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-  def get_genus(hierarchy, skip_kingdom = false)
-    taxon_name = hierarchy[:genus].downcase
-
-    query = NcbiNode.joins(:ncbi_names)
-                    .where("lower(\"name\") = \'#{taxon_name}\'")
-                    .where(rank: 'genus')
-    if hierarchy[:kingdom].present?
-      sql = "'{#{hierarchy[:kingdom]},kingdom}'::text[] <@ lineage[100][2:3]"
-      query = query.where(sql)
-    elsif skip_kingdom == false
-      sql = "'{kingdom}'::text[] <@ lineage[100][2:3]"
-      query = query.where.not(sql)
-    end
-
-    query = format_lineage_query('phylum', hierarchy, query)
-    query = format_lineage_query('class', hierarchy, query)
-    query = format_lineage_query('order', hierarchy, query)
-    query = format_lineage_query('family', hierarchy, query)
-
-    return if query.size > 1
-    query.take
-  end
-  # rubocop:enable Metrics/MethodLength,  Metrics/AbcSize
-
-  def format_lineage_query(rank, hierarchy, query)
-    if hierarchy[rank.to_sym].present?
-      sql = "'{#{hierarchy[rank.to_sym]},#{rank}}'::text[] <@ lineage[100][2:3]"
-      query.where(sql)
-    else
-      sql = "'{#{rank}}'::text[] <@ lineage[100][2:3]"
-      query.where.not(sql)
-    end
-  end
-
-  def get_unique_taxon(hierarchy, rank)
-    taxon_name = hierarchy[rank.to_sym].downcase
-    # NOTE: escape single quotes in sql query by using two single quotes
-    taxon_name.gsub!("'", "''") if taxon_name.include?("'")
-
-    taxa = NcbiNode.joins(:ncbi_names)
-                   .where("lower(\"name\") = '#{taxon_name}'")
-                   .where(rank: rank)
-    return if taxa.size > 1
-    # NOTE: ".first" calls order on primary key, ".take" does not
-    taxa.take
+    taxon.hierarchy_names['superkingdom']
   end
 end
 

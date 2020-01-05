@@ -13,8 +13,8 @@ describe ImportCsv::EdnaResultsTaxa do
       stub_const('FieldProject::DEFAULT_PROJECT', project)
     end
 
-    def subject(file, research_project_id, primer, notes)
-      dummy_class.import_csv(file, research_project_id, primer, notes)
+    def subject(file, research_project_id, primer)
+      dummy_class.import_csv(file, research_project_id, primer)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
@@ -26,7 +26,7 @@ describe ImportCsv::EdnaResultsTaxa do
     it 'adds ImportCsvQueueAsvJob to queue' do
       expect do
         subject(
-          file, research_project.id, primer, notes
+          file, research_project.id, primer
         )
       end
         .to have_enqueued_job(ImportCsvFindCalTaxonJob).exactly(3).times
@@ -35,7 +35,7 @@ describe ImportCsv::EdnaResultsTaxa do
     it 'adds ImportCsvCreateRawTaxonomyImportJob to queue' do
       expect do
         subject(
-          file, research_project.id, primer, notes
+          file, research_project.id, primer
         )
       end
         .to have_enqueued_job(ImportCsvCreateRawTaxonomyImportJob)
@@ -45,7 +45,7 @@ describe ImportCsv::EdnaResultsTaxa do
     it 'passes taxonomy string as arguement' do
       expect do
         subject(
-          file, research_project.id, primer, notes
+          file, research_project.id, primer
         )
       end
         .to have_enqueued_job
@@ -55,7 +55,7 @@ describe ImportCsv::EdnaResultsTaxa do
 
     it 'returns valid' do
       expect(
-        subject(file, research_project.id, primer, notes).valid?
+        subject(file, research_project.id, primer).valid?
       )
         .to eq(true)
     end
@@ -71,62 +71,88 @@ describe ImportCsv::EdnaResultsTaxa do
     context 'when taxonomy string is phylum format' do
       let(:taxonomy_string) { 'P;C;O;F;G;S' }
 
-      it 'adds ImportCsvCreateCalTaxonJob to queue' do
-        expect do
-          subject(taxonomy_string)
+      context 'when CalTaxon matches taxonomy string' do
+        it 'adds does not ImportCsvCreateCalTaxonJob to queue' do
+          create(:cal_taxon, clean_taxonomy_string: taxonomy_string,
+                             original_taxonomy_string: taxonomy_string)
+
+          expect do
+            subject(taxonomy_string)
+          end
+            .to_not have_enqueued_job(ImportCsvCreateCalTaxonJob)
         end
-          .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
       end
 
-      it 'passes correct arguements to job' do
-        arguements = {
-          taxonRank: 'species',
-          original_hierarchy: {
-            species: 'S', genus: 'G', family: 'F', order: 'O',
-            class: 'C', phylum: 'P', kingdom: nil, superkingdom: nil
-          },
-          original_taxonomy_phylum: 'P;C;O;F;G;S',
-          original_taxonomy_superkingdom: nil,
-          complete_taxonomy: ';;P;C;O;F;G;S',
-          normalized: false,
-          exact_gbif_match: false
-        }
-
-        expect do
-          subject(taxonomy_string)
+      context 'when CalTaxon does not matches taxonomy string' do
+        it 'adds ImportCsvCreateCalTaxonJob to queue' do
+          expect do
+            subject(taxonomy_string)
+          end
+            .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
         end
-          .to have_enqueued_job.with(arguements).exactly(1).times
+
+        it 'passes correct arguements to job' do
+          arguements = {
+            taxon_id: nil,
+            taxon_rank: 'species',
+            hierarchy: {
+              species: 'S', genus: 'G', family: 'F', order: 'O',
+              class: 'C', phylum: 'P'
+            },
+            original_taxonomy_string: taxonomy_string,
+            clean_taxonomy_string: taxonomy_string,
+            normalized: false
+          }
+
+          expect do
+            subject(taxonomy_string)
+          end
+            .to have_enqueued_job.with(arguements).exactly(1).times
+        end
       end
     end
 
     context 'when taxonomy string is superkingdom format' do
       let(:taxonomy_string) { 'SK;P;C;O;F;G;S' }
 
-      it 'adds ImportCsvCreateCalTaxonJob to queue' do
-        expect do
-          subject(taxonomy_string)
+      context 'when CalTaxon matches taxonomy string' do
+        it 'adds does not ImportCsvCreateCalTaxonJob to queue' do
+          create(:cal_taxon, clean_taxonomy_string: taxonomy_string,
+                             original_taxonomy_string: taxonomy_string)
+
+          expect do
+            subject(taxonomy_string)
+          end
+            .to_not have_enqueued_job(ImportCsvCreateCalTaxonJob)
         end
-          .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
       end
 
-      it 'passes correct arguements to job' do
-        arguements = {
-          taxonRank: 'species',
-          original_hierarchy: {
-            species: 'S', genus: 'G', family: 'F', order: 'O',
-            class: 'C', phylum: 'P', superkingdom: 'SK'
-          },
-          original_taxonomy_phylum: 'P;C;O;F;G;S',
-          original_taxonomy_superkingdom: 'SK;P;C;O;F;G;S',
-          complete_taxonomy: 'SK;P;C;O;F;G;S',
-          normalized: false,
-          exact_gbif_match: false
-        }
-
-        expect do
-          subject(taxonomy_string)
+      context 'when CalTaxon does not match taxonomy string' do
+        it 'adds ImportCsvCreateCalTaxonJob to queue' do
+          expect do
+            subject(taxonomy_string)
+          end
+            .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
         end
-          .to have_enqueued_job.with(arguements).exactly(1).times
+
+        it 'passes correct arguements to job' do
+          arguements = {
+            taxon_id: nil,
+            taxon_rank: 'species',
+            hierarchy: {
+              species: 'S', genus: 'G', family: 'F', order: 'O',
+              class: 'C', phylum: 'P', superkingdom: 'SK'
+            },
+            original_taxonomy_string: taxonomy_string,
+            clean_taxonomy_string: taxonomy_string,
+            normalized: false
+          }
+
+          expect do
+            subject(taxonomy_string)
+          end
+            .to have_enqueued_job.with(arguements).exactly(1).times
+        end
       end
     end
   end

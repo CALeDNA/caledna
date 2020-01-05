@@ -42,7 +42,7 @@ module ImportCsv
         cal_taxon = find_cal_taxon_from_string(taxonomy_string)
         next if cal_taxon.blank?
 
-        asv_attributes[:taxonID] = cal_taxon.taxonID
+        asv_attributes[:taxon_id] = cal_taxon.taxon_id
         create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
       end
     end
