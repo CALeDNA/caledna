@@ -8,7 +8,7 @@ class AsvDashboard < Administrate::BaseDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
-    extraction: Field::BelongsTo,
+    research_project: Field::BelongsTo,
     sample: Field::BelongsTo.with_options(
       searchable: true,
       searchable_field: 'barcode',
@@ -23,6 +23,7 @@ class AsvDashboard < Administrate::BaseDashboard
     updated_at: Field::DateTime,
     taxonID: Field::Number,
     primers: Field::Text,
+    primer: Field::String,
     count: Field::Number,
     counts: Field::String.with_options(searchable: false),
   }.freeze
@@ -35,6 +36,9 @@ class AsvDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :sample,
     :ncbi_node,
+    :research_project,
+    :primer,
+    :conut
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -42,12 +46,12 @@ class AsvDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :sample,
     :ncbi_node,
+    :taxonID,
+    :research_project,
+    :primer,
+    :count,
     :created_at,
     :updated_at,
-    :taxonID,
-    :primers,
-    :count,
-    :counts,
   ].freeze
 
   # FORM_ATTRIBUTES
@@ -56,9 +60,9 @@ class AsvDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = [
     :sample,
     :taxonID,
+    :research_project,
     :primers,
     :count,
-    :counts,
   ].freeze
 
   # Overwrite this method to customize how asvs are displayed

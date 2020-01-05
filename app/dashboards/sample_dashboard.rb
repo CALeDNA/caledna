@@ -13,7 +13,6 @@ class SampleDashboard < Administrate::BaseDashboard
       searchable_field: 'name'
     ),
     kobo_photos: Field::HasMany,
-    extractions: Field::HasMany,
     asvs: Field::HasMany,
     research_project_sources: Field::HasMany,
     research_projects: Field::HasMany,
