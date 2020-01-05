@@ -276,10 +276,9 @@ describe 'Samples' do
 
       it 'returns the number of associated asvs for asv count' do
         sample = create(:sample, :results_completed)
-        extraction = create(:extraction, sample: sample)
-        create(:asv, sample: sample, extraction: extraction)
-        create(:asv, sample: sample, extraction: extraction)
-        create(:asv, sample: sample, extraction: extraction)
+        create(:asv, sample: sample)
+        create(:asv, sample: sample)
+        create(:asv, sample: sample)
 
         get api_v1_sample_path(id: sample.id)
         data = JSON.parse(response.body)

@@ -10,11 +10,10 @@ describe 'ResearchProjects' do
                                primers: ['12s'])
       sample = create(:sample, id: sample_id, substrate: substrate,
                                status: status, primers: primers)
-      extraction = create(:extraction, sample: sample)
-      create(:asv, sample: sample, extraction: extraction)
-      create(:asv, sample: sample, extraction: extraction)
-      create(:asv, sample: sample, extraction: extraction)
-      create(:research_project_source, sourceable: extraction, sample: sample,
+      create(:asv, sample: sample)
+      create(:asv, sample: sample)
+      create(:asv, sample: sample)
+      create(:research_project_source, sourceable: sample, sample: sample,
                                        research_project: project)
     end
 

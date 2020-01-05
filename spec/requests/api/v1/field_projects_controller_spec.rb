@@ -77,10 +77,9 @@ describe 'FieldProjecs' do
       it 'returns the number of associated asvs for asv count' do
         project = create(:field_project, id: target_id)
         sample = create(:sample, :results_completed, field_project: project)
-        extraction = create(:extraction, sample: sample)
-        create(:asv, sample: sample, extraction: extraction)
-        create(:asv, sample: sample, extraction: extraction)
-        create(:asv, sample: sample, extraction: extraction)
+        create(:asv, sample: sample)
+        create(:asv, sample: sample)
+        create(:asv, sample: sample)
 
         get api_v1_field_project_path(id: target_id)
         data = JSON.parse(response.body)
