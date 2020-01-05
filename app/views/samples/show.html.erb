@@ -3,9 +3,6 @@
 <ul class="nav nav-tabs" role="tablist">
   <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
   <li role="presentation"><a href="#fieldwork_details" aria-controls="fieldwork_details" role="tab" data-toggle="tab">Fieldwork</a></li>
-  <% if @sample.extractions.first && @sample.extractions.first.local_fastq_storage_url.present? %>
-    <li role="presentation"><a href="#labwork_details" aria-controls="labwork_details" role="tab" data-toggle="tab">Labwork</a></li>
-  <% end %>
   <% if @sample.status == :results_completed %>
     <li role="presentation"><a href="#organisms" aria-controls="organisms" role="tab" data-toggle="tab">DNA Results</a></li>
     <li role="presentation"><a href="#organisms_list" aria-controls="organisms_list" role="tab" data-toggle="tab">DNA Results List</a></li>
@@ -25,11 +22,6 @@
   <div role="tabpanel" class="tab-pane" id="fieldwork_details">
     <%= render partial: "fieldwork_details", locals: { sample: @sample } %>
   </div>
-  <% if @sample.extractions.first && @sample.extractions.first.local_fastq_storage_url.present? %>
-    <div role="tabpanel" class="tab-pane" id="labwork_details">
-      <%= render partial: "labwork_details", locals: { sample: @sample } %>
-    </div>
-  <% end %>
   <% if @sample.status == :results_completed %>
     <div role="tabpanel" class="tab-pane" id="organisms">
       <%= render partial: "organisms_chart",

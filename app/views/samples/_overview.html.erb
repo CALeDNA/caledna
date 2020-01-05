@@ -40,13 +40,6 @@
     <td>Collection Date</td>
     <td><%= long_date(sample.submission_date) %></td>
   </tr>
-
-  <% sample.extractions.each do |extraction| %>
-    <tr>
-      <td>DNA Results Completed Date</td>
-      <td><%= long_date(extraction.stat_dna_extraction_date) %></td>
-    </tr>
-  <% end %>
 </table>
 
 <div class="row">
