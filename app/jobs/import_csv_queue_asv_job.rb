@@ -5,8 +5,7 @@ class ImportCsvQueueAsvJob < ApplicationJob
 
   queue_as :default
 
-  def perform(data_json, research_project_id, extraction_type_id, primer)
-    queue_asv_job(data_json, research_project_id, extraction_type_id,
-                  primer)
+  def perform(data_json, barcodes, samples_data, asv_attributes)
+    queue_asv_job(data_json, barcodes, samples_data, asv_attributes)
   end
 end

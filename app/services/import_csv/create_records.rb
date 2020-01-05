@@ -4,29 +4,19 @@ module ImportCsv
   module CreateRecords
     include CustomCounter
 
-    def create_asv(cell, extraction, cal_taxon, count, primer)
-      attributes = {
-        extraction_id: extraction.id, sample: extraction.sample,
-        taxonID: cal_taxon.taxonID
-      }
+    def create_asv(attributes)
       asv = Asv.where(attributes).first_or_create
 
-      raise ImportError, "ASV #{cell}: #{asv.errors}" unless asv.valid?
-
-      return if asv.primers.include?(primer)
-      asv.primers << primer
-      asv.counts[primer] = count
-      asv.save
+      return asv if asv.valid?
+      raise ImportError, "ASV #{attributes[:sample_id]}: #{asv.errors}"
     end
 
-    def create_research_project_source(sourceable, research_project_id)
+    def create_research_project_source(sourceable_id, type, research_project_id)
       attributes = {
-        sourceable: sourceable,
+        sourceable_id: sourceable_id,
+        sourceable_type: type,
         research_project_id: research_project_id
       }
-      if sourceable.is_a?(Extraction)
-        attributes[:sample_id] = sourceable.sample.id
-      end
 
       project = ResearchProjectSource.where(attributes).first_or_create
 

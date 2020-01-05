@@ -36,8 +36,6 @@
       </div>
     </div>
 
-    <%#= select(:dna_results, :extraction_type_id, @extraction_types, {include_blank: 'Select extraction type'}) %>
-    <%= hidden_field(:dna_results, :extraction_type_id, value: ExtractionType.first.id) %>
     <%= submit_tag "Import" %>
   <% end %>
 </section>

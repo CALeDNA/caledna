@@ -5,7 +5,7 @@ class ImportCsvCreateResearchProjectSourceJob < ApplicationJob
 
   queue_as :default
 
-  def perform(sourceable, research_project_id)
-    create_research_project_source(sourceable, research_project_id)
+  def perform(sourceable_id, type, research_project_id)
+    create_research_project_source(sourceable_id, type, research_project_id)
   end
 end

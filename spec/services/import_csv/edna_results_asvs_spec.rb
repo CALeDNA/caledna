@@ -13,28 +13,26 @@ describe ImportCsv::EdnaResultsAsvs do
       stub_const('FieldProject::DEFAULT_PROJECT', project)
     end
 
-    def subject(file, research_project_id, extraction_type_id, primer)
-      dummy_class.import_csv(file, research_project_id, extraction_type_id,
-                             primer)
+    def subject(file, research_project_id, primer)
+      dummy_class.import_csv(file, research_project_id, primer)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
-    let(:extraction_type) { create(:extraction_type) }
     let(:research_project) { create(:research_project) }
     let(:primer) { '12S' }
     let(:csv_barcode1) { 'K0001-LA-S1' }
+    let(:csv_barcode2) { 'K0001-LA-S2' }
 
     context 'when barcodes in CSV match samples in the database' do
       before(:each) do
-        create(:sample, barcode: csv_barcode1, status: 'approved')
+        create(:sample, barcode: csv_barcode1, status: 'approved', id: 999)
+        create(:sample, barcode: csv_barcode2, status: 'approved', id: 888)
       end
 
       it 'adds ImportCsvQueueAsvJob to queue' do
         expect do
-          subject(
-            file, research_project.id, extraction_type.id, primer
-          )
+          subject(file, research_project.id, primer)
         end
           .to have_enqueued_job(ImportCsvQueueAsvJob)
       end
@@ -42,19 +40,20 @@ describe ImportCsv::EdnaResultsAsvs do
       it 'adds pass correct agruments to ImportCsvQueueAsvJob' do
         delimiter = "\t"
         data = CSV.read(file.path, headers: true, col_sep: delimiter)
-        extraction_type = create(:extraction_type)
 
         expect do
-          subject(
-            file, research_project.id, extraction_type.id, primer
-          )
+          subject(file, research_project.id, primer)
         end
-          .to have_enqueued_job.with(data.to_json, research_project.id,
-                                     extraction_type.id, primer)
+          .to have_enqueued_job.with(
+            data.to_json,
+            [nil, nil, csv_barcode1, csv_barcode2],
+            { csv_barcode1 => 999,  csv_barcode2 => 888 },
+            research_project_id: research_project.id, primer: primer
+          )
       end
 
       it 'returns valid' do
-        results = subject(file, research_project.id, extraction_type.id, primer)
+        results = subject(file, research_project.id, primer)
         expect(results.valid?).to eq(true)
       end
     end
@@ -66,14 +65,14 @@ describe ImportCsv::EdnaResultsAsvs do
 
       it 'does not add ImportCsvQueueAsvJob to queue' do
         expect do
-          subject(file, research_project.id, extraction_type.id, primer)
+          subject(file, research_project.id, primer)
         end
           .to_not have_enqueued_job(ImportCsvQueueAsvJob)
       end
 
       it 'returns error message' do
-        results = subject(file, research_project.id, extraction_type.id, primer)
-        message = "#{csv_barcode1} not in the database"
+        results = subject(file, research_project.id, primer)
+        message = "#{csv_barcode1}, #{csv_barcode2} not in the database"
         expect(results.valid?).to eq(false)
         expect(results.errors).to eq(message)
       end
@@ -88,78 +87,21 @@ describe ImportCsv::EdnaResultsAsvs do
       stub_const('FieldProject::DEFAULT_PROJECT', project)
     end
 
-    def subject(data, research_project_id, extraction_type_id, primer)
-      dummy_class.queue_asv_job(data, research_project_id, extraction_type_id,
-                                primer)
+    def subject
+      asv_attributes =
+        { research_project_id: research_project.id, primer: primer }
+      barcodes = dummy_class.convert_header_row_to_barcodes(data)
+      samples_data =
+        dummy_class.find_samples_from_barcodes(barcodes)[:valid_data]
+      dummy_class.queue_asv_job(data.to_json, barcodes, samples_data, asv_attributes)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
-    let(:extraction_type) { create(:extraction_type) }
     let(:research_project) { create(:research_project) }
     let(:primer) { '12S' }
-    let(:delimiter) { "\t" }
-    let(:data) { CSV.read(file.path, headers: true, col_sep: delimiter) }
-    let(:sample_cells) do
-      first_row = data.first
-      first_row.headers[1..first_row.headers.size]
-    end
-    let(:extractions) do
-      dummy_class.get_extractions_from_headers(
-        sample_cells, research_project.id, extraction_type.id
-      )
-    end
+    let(:data) { CSV.read(file.path, headers: true, col_sep: "\t") }
     let(:csv_barcode1) { 'K0001-LA-S1' }
-
-    context 'when matching sample does not exists' do
-      it 'creates sample & extraction' do
-        expect do
-          subject(
-            data.to_json, research_project.id, extraction_type.id, primer
-          )
-        end
-          .to change { Sample.count }
-          .by(1)
-          .and change { Extraction.count }
-          .by(1)
-      end
-    end
-
-    context 'when matching extraction does not exists' do
-      it 'creates extraction' do
-        create(:sample, barcode: csv_barcode1)
-        create(:sample, barcode: 'forest')
-
-        expect do
-          subject(
-            data.to_json, research_project.id, extraction_type.id, primer
-          )
-        end
-          .to change { Sample.count }
-          .by(0)
-          .and change { Extraction.count }
-          .by(1)
-      end
-    end
-
-    context 'when matching sample exists' do
-      it 'does not create sample or extraction' do
-        sample = create(:sample, barcode: 'K0001-LA-S1')
-        sample2 = create(:sample, barcode: 'forest')
-        create(:extraction, sample: sample, extraction_type: extraction_type)
-        create(:extraction, sample: sample2, extraction_type: extraction_type)
-
-        expect do
-          subject(
-            data.to_json, research_project.id, extraction_type.id, primer
-          )
-        end
-          .to change { Sample.count }
-          .by(0)
-          .and change { Extraction.count }
-          .by(0)
-      end
-    end
 
     context 'when matching taxon does not exist' do
       before(:each) do
@@ -173,11 +115,16 @@ describe ImportCsv::EdnaResultsAsvs do
 
       it 'does not add ImportCsvCreateAsvJob to queue' do
         expect do
-          subject(
-            data.to_json, research_project.id, extraction_type.id, primer
-          )
+          subject
         end
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
+      end
+
+      it 'does not add ImportCsvCreateResearchProjectSourceJob to queue' do
+        expect do
+          subject
+        end
+          .to_not have_enqueued_job(ImportCsvCreateResearchProjectSourceJob)
       end
     end
 
@@ -193,11 +140,16 @@ describe ImportCsv::EdnaResultsAsvs do
 
       it 'does not add ImportCsvCreateAsvJob to queue' do
         expect do
-          subject(
-            data.to_json, research_project.id, extraction_type.id, primer
-          )
+          subject
         end
           .to_not have_enqueued_job(ImportCsvCreateAsvJob)
+      end
+
+      it 'does not add ImportCsvCreateResearchProjectSourceJob to queue' do
+        expect do
+          subject
+        end
+          .to_not have_enqueued_job(ImportCsvCreateResearchProjectSourceJob)
       end
     end
 
@@ -213,12 +165,36 @@ describe ImportCsv::EdnaResultsAsvs do
 
       it 'adds ImportCsvCreateAsvJob to queue' do
         expect do
-          subject(
-            data.to_json, research_project.id, extraction_type.id, primer
-          )
+          subject
         end
-          .to have_enqueued_job(ImportCsvCreateAsvJob)
+          .to have_enqueued_job(ImportCsvCreateAsvJob).exactly(2).times
       end
+
+      it 'does add ImportCsvCreateResearchProjectSourceJob to queue' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job(ImportCsvCreateResearchProjectSourceJob)
+          .exactly(2).times
+      end
+    end
+  end
+
+  describe '#convert_header_row_to_barcodes' do
+    def subject(data)
+      dummy_class.convert_header_row_to_barcodes(data)
+    end
+
+    let(:csv_barcode1) { 'K0001-LA-S1' }
+    let(:csv_barcode2) { 'K0001-LA-S2' }
+
+    it 'converts the CSV headers into barcodes' do
+      csv = './spec/fixtures/import_csv/dna_results_tabs.csv'
+      file = fixture_file_upload(csv, 'text/csv')
+      delimiter = "\t"
+      data = CSV.read(file.path, headers: true, col_sep: delimiter)
+
+      expect(subject(data)).to eq([nil, nil, csv_barcode1, csv_barcode2])
     end
   end
 end

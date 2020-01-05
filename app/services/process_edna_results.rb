@@ -195,20 +195,6 @@ module ProcessEdnaResults
     string
   end
 
-  def find_extraction_from_barcode(barcode, extraction_type_id, status)
-    sample = find_sample_from_barcode(barcode, status)
-
-    extraction =
-      Extraction
-      .where(sample_id: sample.id, extraction_type_id: extraction_type_id)
-      .first_or_create
-
-    unless extraction.valid?
-      raise TaxaError, "Extraction #{barcode} not created"
-    end
-    extraction
-  end
-
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def find_sample_from_barcode(barcode, status)
