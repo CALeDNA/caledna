@@ -24,9 +24,9 @@ module ResearchProjectService
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
           JOIN research_project_sources
-            ON asvs.extraction_id = research_project_sources.sourceable_id
-          WHERE sourceable_type = 'Extraction'
-          AND research_project_id = #{project.id}
+            ON asvs.sample_id = research_project_sources.sourceable_id
+          WHERE sourceable_type = 'Sample'
+          AND research_project_sources.research_project_id = #{project.id}
           AND ncbi_nodes.hierarchy_names ->> '#{taxon_rank}' IS NOT NULL
           #{taxon_group_filters}
           GROUP BY

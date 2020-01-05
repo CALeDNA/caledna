@@ -23,8 +23,8 @@ module ResearchProjectService
         <<-SQL
           FROM asvs
           JOIN research_project_sources
-          ON sourceable_id = asvs.extraction_id
-          AND (research_project_sources.sourceable_type = 'Extraction')
+          ON sourceable_id = asvs.sample_id
+          AND (research_project_sources.sourceable_type = 'Sample')
           AND (research_project_sources.research_project_id = #{project.id})
           JOIN ncbi_nodes
           ON ncbi_nodes.taxon_id = asvs."taxonID"

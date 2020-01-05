@@ -16,7 +16,7 @@ module ResearchProjectService
       def river_sites
         @river_sites ||= begin
           ResearchProjectSource
-            .where(sourceable_type: 'Extraction')
+            .where(sourceable_type: 'Sample')
             .where(research_project: project)
             .joins(:sample)
         end

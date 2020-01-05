@@ -23,12 +23,12 @@ module ResearchProjectService
           JOIN samples
             ON asvs.sample_id = samples.id
           JOIN research_project_sources
-            ON research_project_sources.sourceable_id = asvs.extraction_id
+            ON research_project_sources.sourceable_id = asvs.sample_id
           LEFT JOIN external_resources
             ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
           LEFT JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
-          WHERE sourceable_type = 'Extraction'
+          WHERE sourceable_type = 'Sample'
           AND research_project_id = $1
           AND (
             ncbi_nodes.hierarchy_names ->> 'kingdom' = 'Metazoa'
