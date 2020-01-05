@@ -51,9 +51,9 @@ module ResearchProjectService
             ON asvs."taxonID" = combine_taxa.caledna_taxon_id
             AND (combine_taxa.source = 'ncbi' OR combine_taxa.source = 'bold')
           JOIN research_project_sources
-            ON asvs.extraction_id = research_project_sources.sourceable_id
-          WHERE sourceable_type = 'Extraction'
-          AND research_project_id = #{project.id}
+            ON asvs.sample_id = research_project_sources.sourceable_id
+          WHERE sourceable_type = 'Sample'
+          AND research_project_sources.research_project_id = #{project.id}
           AND combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
           #{taxon_group_filters_sql2}
           GROUP BY combine_taxa.kingdom,

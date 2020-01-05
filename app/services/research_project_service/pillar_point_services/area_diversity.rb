@@ -116,11 +116,11 @@ module ResearchProjectService
             JOIN ncbi_nodes
             ON asvs."taxonID" = ncbi_nodes.taxon_id
             JOIN research_project_sources
-            ON research_project_sources.sourceable_id = asvs.extraction_id
+            ON research_project_sources.sourceable_id = asvs.sample_id
             JOIN samples
             ON asvs.sample_id = samples.id
-            WHERE sourceable_type = 'Extraction'
-            AND research_project_id = #{project.id}
+            WHERE sourceable_type = 'Sample'
+            AND research_project_sources.research_project_id = #{project.id}
             AND rank = 'species'
           SQL
 

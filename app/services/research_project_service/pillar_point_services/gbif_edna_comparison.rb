@@ -135,7 +135,7 @@ module ResearchProjectService
             AND gbif_ct.source = 'gbif'
           JOIN  research_project_sources
             ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
-            AND research_project_id = 4
+            AND research_project_id = #{project.id}
             AND sourceable_type = 'GbifOccurrence'
             AND metadata ->> 'location' != 'Montara SMR'
           LEFT JOIN combine_taxa AS edna_ct

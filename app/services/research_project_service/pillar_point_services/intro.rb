@@ -35,9 +35,9 @@ module ResearchProjectService
           Asv
           .select('DISTINCT("taxonID")')
           .joins(
-            'JOIN research_project_sources ON sourceable_id = extraction_id'
+            'JOIN research_project_sources ON sourceable_id = sample_id'
           )
-          .where("research_project_sources.sourceable_type = 'Extraction'")
+          .where("research_project_sources.sourceable_type = 'Sample'")
           .where('research_project_sources.research_project_id = ?', project.id)
           .count
 

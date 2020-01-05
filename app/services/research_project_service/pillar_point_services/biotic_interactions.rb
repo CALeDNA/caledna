@@ -54,11 +54,11 @@ module ResearchProjectService
           SELECT  unnest(string_to_array(full_taxonomy_string, ';'))
           FROM research_project_sources
           JOIN asvs
-          ON asvs.extraction_id = research_project_sources.sourceable_id
+          ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
           ON ncbi_nodes.taxon_id = asvs."taxonID"
           WHERE research_project_id = #{project.id}
-          AND sourceable_type = 'Extraction'
+          AND sourceable_type = 'Sample'
         ) as edna_match;
         SQL
 
@@ -112,11 +112,11 @@ module ResearchProjectService
           (SELECT unnest(string_to_array(full_taxonomy_string, ';'))
           FROM research_project_sources
           JOIN asvs
-          ON asvs.extraction_id = research_project_sources.sourceable_id
+          ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
           ON ncbi_nodes.taxon_id = asvs."taxonID"
           WHERE research_project_id = #{project.id}
-          AND sourceable_type = 'Extraction'
+          AND sourceable_type = 'Sample'
           INTERSECT
           SELECT ("targetTaxonName")
           FROM external.globi_interactions
@@ -167,11 +167,11 @@ module ResearchProjectService
           (SELECT unnest(string_to_array(full_taxonomy_string, ';'))
           FROM research_project_sources
           JOIN asvs
-          ON asvs.extraction_id = research_project_sources.sourceable_id
+          ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
           ON ncbi_nodes.taxon_id = asvs."taxonID"
           WHERE research_project_id = #{project.id}
-          AND sourceable_type = 'Extraction'
+          AND sourceable_type = 'Sample'
           INTERSECT
           SELECT ("sourceTaxonName")
           FROM external.globi_interactions

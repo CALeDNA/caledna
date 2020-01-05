@@ -33,9 +33,9 @@ module ResearchProjectService
           samples.status_cd AS status
           FROM asvs
           JOIN research_project_sources
-          ON research_project_sources.sourceable_id = asvs.extraction_id
-          AND sourceable_type = 'Extraction'
-          AND research_project_id = 4
+          ON research_project_sources.sourceable_id = asvs.sample_id
+          AND sourceable_type = 'Sample'
+          AND research_project_id = #{project.id}
           JOIN samples
           ON asvs.sample_id = samples.id
           JOIN combine_taxa
@@ -63,7 +63,7 @@ module ResearchProjectService
           ON research_project_sources.sourceable_id =
           external.gbif_occurrences.gbifid
           AND (research_project_sources.sourceable_type = 'GbifOccurrence')
-          AND (research_project_sources.research_project_id = 4)
+          AND (research_project_sources.research_project_id = #{project.id})
           AND (metadata ->> 'location' != 'Montara SMR')
           JOIN combine_taxa
           ON external.gbif_occurrences.taxonkey = combine_taxa.source_taxon_id

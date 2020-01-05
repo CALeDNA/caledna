@@ -72,7 +72,7 @@ namespace :research_project_pillar_point do
     project = ResearchProject.find_by(name: 'Pillar Point')
 
     sources = ResearchProjectSource.where(
-      research_project: project, sourceable_type: 'Extraction'
+      research_project: project, sourceable_type: 'Sample'
     )
 
     sources.each do |source|
