@@ -11,7 +11,7 @@ describe UpdateSamples do
     end
 
     context 'sample does not have primers' do
-      it 'add one primer to sample from asv' do
+      xit 'add one primer to sample from asv' do
         sample = create(:sample, primers: [])
         extraction = create(:extraction, sample: sample)
         asv = create(:asv, sample: sample, extraction: extraction,
@@ -21,11 +21,9 @@ describe UpdateSamples do
         expect(sample.reload.primers).to eq(['a'])
       end
 
-      it 'add multiple primers to sample from asv' do
+      xit 'add multiple primers to sample from asv' do
         sample = create(:sample, primers: [])
-        extraction = create(:extraction, sample: sample)
-        asv = create(:asv, sample: sample, extraction: extraction,
-                           primers: %w[a b])
+        asv = create(:asv, sample: sample, primers: %w[a b])
 
         subject(asv)
         expect(sample.reload.primers).to match_array(%w[a b])
@@ -33,7 +31,7 @@ describe UpdateSamples do
     end
 
     context 'sample has primers' do
-      it 'appends one primer to sample from asv' do
+      xit 'appends one primer to sample from asv' do
         sample = create(:sample, primers: ['a'])
         extraction = create(:extraction, sample: sample)
         asv = create(:asv, sample: sample, extraction: extraction,
@@ -43,7 +41,7 @@ describe UpdateSamples do
         expect(sample.reload.primers).to match_array(%w[a b])
       end
 
-      it 'appends multiple primers to sample from asv' do
+      xit 'appends multiple primers to sample from asv' do
         sample = create(:sample, primers: ['a'])
         extraction = create(:extraction, sample: sample)
         asv = create(:asv, sample: sample, extraction: extraction,
@@ -53,7 +51,7 @@ describe UpdateSamples do
         expect(sample.reload.primers).to match_array(%w[a b c])
       end
 
-      it 'ignores duplicate primers' do
+      xit 'ignores duplicate primers' do
         sample = create(:sample, primers: %w[a b])
         extraction = create(:extraction, sample: sample)
         asv = create(:asv, sample: sample, extraction: extraction,
@@ -63,7 +61,7 @@ describe UpdateSamples do
         expect(sample.reload.primers).to match_array(%w[a b])
       end
 
-      it 'handles a combination of new and duplicate primers' do
+      xit 'handles a combination of new and duplicate primers' do
         sample = create(:sample, primers: %w[a c])
         extraction = create(:extraction, sample: sample)
         asv = create(:asv, sample: sample, extraction: extraction,
@@ -74,7 +72,7 @@ describe UpdateSamples do
       end
     end
 
-    it 'clean up primers' do
+    xit 'clean up primers' do
       sample = create(:sample, primers: [])
       extraction = create(:extraction, sample: sample)
       asv = create(:asv, sample: sample, extraction: extraction,
