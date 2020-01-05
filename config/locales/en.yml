@@ -25,6 +25,7 @@ en:
       long: "%b %d, %Y"
       short: "%b %d"
       long_datetime: "%a %b %d, %Y %l:%M %P"
+      default: "%m/%d/%Y, %l:%M %P"
   activerecord:
     models:
       survey_question: Question
