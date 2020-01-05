@@ -38,7 +38,7 @@ class AsvDashboard < Administrate::BaseDashboard
     :ncbi_node,
     :research_project,
     :primer,
-    :conut
+    :count
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES

@@ -47,7 +47,7 @@ describe ImportCsv::EdnaResultsAsvs do
           .to have_enqueued_job.with(
             data.to_json,
             [nil, nil, csv_barcode1, csv_barcode2],
-            { csv_barcode1 => 999,  csv_barcode2 => 888 },
+            { csv_barcode1 => 999, csv_barcode2 => 888 },
             research_project_id: research_project.id, primer: primer
           )
       end
@@ -93,7 +93,8 @@ describe ImportCsv::EdnaResultsAsvs do
       barcodes = dummy_class.convert_header_row_to_barcodes(data)
       samples_data =
         dummy_class.find_samples_from_barcodes(barcodes)[:valid_data]
-      dummy_class.queue_asv_job(data.to_json, barcodes, samples_data, asv_attributes)
+      dummy_class.queue_asv_job(data.to_json, barcodes, samples_data,
+                                asv_attributes)
     end
 
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }

@@ -6,7 +6,7 @@ module ImportCsv
     include ProcessEdnaResults
     include CsvUtils
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file, research_project_id, primer)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
@@ -29,9 +29,8 @@ module ImportCsv
 
       OpenStruct.new(valid?: true, errors: nil)
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-    # rubocop:disable Metrics/MethodLength
     def queue_asv_job(data_json, barcodes, samples_data, asv_attributes)
       data = JSON.parse(data_json)
       data.each do |row|
@@ -47,14 +46,12 @@ module ImportCsv
         create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     def convert_header_row_to_barcodes(data)
       data.first.headers.map do |raw_barcode|
         convert_raw_barcode(raw_barcode)
       end
     end
-
 
     # rubocop:disable Metrics/MethodLength
     def find_samples_from_barcodes(barcodes)
@@ -76,6 +73,7 @@ module ImportCsv
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
       barcodes.each.with_index do |barcode, i|
         next if barcode.blank?
@@ -94,6 +92,7 @@ module ImportCsv
         )
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end
 
