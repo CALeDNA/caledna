@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 class ResearchProjectsController < ApplicationController
+  include CustomPagination
+
   def index
-    @projects = Kaminari.paginate_array(projects.to_a).page(params[:page])
+    @projects = projects
   end
 
   def show
-    redirect_show if project.show_pages?
+    redirect_show if project&.show_pages?
     @project = project
   end
 
@@ -32,15 +34,34 @@ class ResearchProjectsController < ApplicationController
     AND latitude IS NOT NULL
     AND longitude IS NOT NULL
     GROUP BY research_projects.id
-    ORDER BY research_projects.name;
+    ORDER BY research_projects.name
+    LIMIT $1 OFFSET $2;
     SQL
   end
 
   def projects
     @projects ||= begin
-      records = ActiveRecord::Base.connection.exec_query(projects_sql)
-      records.map { |r| OpenStruct.new(r) }
+      bindings = [[nil, limit], [nil, offset]]
+      raw_records = conn.exec_query(projects_sql, 'q', bindings)
+      records = raw_records.map { |r| OpenStruct.new(r) }
+      add_pagination_methods(records)
+      records
     end
+  end
+
+  def count_sql
+    <<-SQL
+    SELECT COUNT(DISTINCT(research_projects.id))
+    FROM research_projects
+    JOIN research_project_sources
+      ON research_projects.id =
+    research_project_sources.research_project_id
+    JOIN samples
+      ON research_project_sources.sample_id = samples.id
+    WHERE samples.status_cd = 'results_completed'
+    AND latitude IS NOT NULL
+    AND longitude IS NOT NULL;
+    SQL
   end
 
   # =======================
