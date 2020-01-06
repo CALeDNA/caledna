@@ -576,9 +576,23 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.string "name", null: false
   end
 
+  add_foreign_key "asvs", "research_projects"
+  add_foreign_key "asvs", "samples"
+  add_foreign_key "event_registrations", "events"
+  add_foreign_key "event_registrations", "users"
+  add_foreign_key "events", "field_projects"
+  add_foreign_key "kobo_photos", "samples"
   add_foreign_key "kobo_photos", "samples"
   add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
+  add_foreign_key "pages", "research_projects"
+  add_foreign_key "pages", "websites"
   add_foreign_key "research_project_authors", "research_projects"
   add_foreign_key "research_project_sources", "research_projects"
   add_foreign_key "samples", "field_projects"
+  add_foreign_key "site_news", "websites"
+  add_foreign_key "survey_answers", "survey_questions"
+  add_foreign_key "survey_answers", "survey_responses"
+  add_foreign_key "survey_options", "survey_questions"
+  add_foreign_key "survey_questions", "surveys"
+  add_foreign_key "survey_responses", "surveys"
 end
