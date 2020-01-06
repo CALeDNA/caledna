@@ -14,12 +14,6 @@ module ImportCsv
         taxonomy_string = row[row.headers.first]
         next if invalid_taxon?(taxonomy_string)
 
-        if taxon_has_results?(row)
-          ImportCsvCreateRawTaxonomyImportJob.perform_later(
-            taxonomy_string, research_project_id, primer
-          )
-        end
-
         source_data = "#{research_project_id}|#{primer}"
         ImportCsvFindCalTaxonJob.perform_later(taxonomy_string, source_data)
       end

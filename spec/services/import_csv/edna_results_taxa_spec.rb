@@ -32,16 +32,6 @@ describe ImportCsv::EdnaResultsTaxa do
         .to have_enqueued_job(ImportCsvFindCalTaxonJob).exactly(3).times
     end
 
-    it 'adds ImportCsvCreateRawTaxonomyImportJob to queue' do
-      expect do
-        subject(
-          file, research_project.id, primer
-        )
-      end
-        .to have_enqueued_job(ImportCsvCreateRawTaxonomyImportJob)
-        .exactly(2).times
-    end
-
     it 'passes correct as arguement' do
       source = "#{research_project.id}|#{primer}"
       expect do
