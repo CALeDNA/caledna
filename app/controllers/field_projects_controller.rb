@@ -5,7 +5,7 @@ class FieldProjectsController < ApplicationController
     @projects =
       FieldProject
       .published
-      .where('id IN (SELECT DISTINCT(field_project_id) from samples)')
+      .where(where_sql)
       .order(:name)
       .page(params[:page])
   end
@@ -15,6 +15,16 @@ class FieldProjectsController < ApplicationController
   end
 
   private
+
+  def where_sql
+    <<-SQL
+    id IN (
+      SELECT DISTINCT(field_project_id)
+      FROM samples
+      WHERE status_cd = 'approved' OR status_cd = 'results_completed'
+    )
+    SQL
+  end
 
   def project_id
     params[:id]
