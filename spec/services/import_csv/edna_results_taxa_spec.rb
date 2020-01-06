@@ -42,15 +42,17 @@ describe ImportCsv::EdnaResultsTaxa do
         .exactly(2).times
     end
 
-    it 'passes taxonomy string as arguement' do
+    it 'passes correct as arguement' do
+      source = "#{research_project.id}|#{primer}"
       expect do
         subject(
           file, research_project.id, primer
         )
       end
         .to have_enqueued_job
-        .with('Phylum;Class;Order;Family;Genus;').exactly(1).times
-        .with('Phylum;Class;Order;Family;Genus;Genus species').exactly(1).times
+        .with('Phylum;Class;Order;Family;Genus;', source).exactly(1).times
+        .with('Phylum;Class;Order;Family;Genus;Genus species', source)
+        .exactly(1).times
     end
 
     it 'returns valid' do
@@ -64,9 +66,10 @@ describe ImportCsv::EdnaResultsTaxa do
   describe('#find_cal_taxon') do
     include ActiveJob::TestHelper
 
-    def subject(taxonomy_string)
-      dummy_class.find_cal_taxon(taxonomy_string)
+    def subject(taxonomy_string, attributes)
+      dummy_class.find_cal_taxon(taxonomy_string, attributes)
     end
+    let(:source_data) { '1|12S' }
 
     context 'when taxonomy string is phylum format' do
       let(:taxonomy_string) { 'P;C;O;F;G;S' }
@@ -77,7 +80,7 @@ describe ImportCsv::EdnaResultsTaxa do
                              original_taxonomy_string: taxonomy_string)
 
           expect do
-            subject(taxonomy_string)
+            subject(taxonomy_string, source_data)
           end
             .to_not have_enqueued_job(ImportCsvCreateCalTaxonJob)
         end
@@ -86,7 +89,7 @@ describe ImportCsv::EdnaResultsTaxa do
       context 'when CalTaxon does not matches taxonomy string' do
         it 'adds ImportCsvCreateCalTaxonJob to queue' do
           expect do
-            subject(taxonomy_string)
+            subject(taxonomy_string, source_data)
           end
             .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
         end
@@ -101,11 +104,12 @@ describe ImportCsv::EdnaResultsTaxa do
             },
             original_taxonomy_string: taxonomy_string,
             clean_taxonomy_string: taxonomy_string,
-            normalized: false
+            normalized: false,
+            sources: [source_data]
           }
 
           expect do
-            subject(taxonomy_string)
+            subject(taxonomy_string, source_data)
           end
             .to have_enqueued_job.with(arguements).exactly(1).times
         end
@@ -121,7 +125,7 @@ describe ImportCsv::EdnaResultsTaxa do
                              original_taxonomy_string: taxonomy_string)
 
           expect do
-            subject(taxonomy_string)
+            subject(taxonomy_string, source_data)
           end
             .to_not have_enqueued_job(ImportCsvCreateCalTaxonJob)
         end
@@ -130,7 +134,7 @@ describe ImportCsv::EdnaResultsTaxa do
       context 'when CalTaxon does not match taxonomy string' do
         it 'adds ImportCsvCreateCalTaxonJob to queue' do
           expect do
-            subject(taxonomy_string)
+            subject(taxonomy_string, source_data)
           end
             .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
         end
@@ -145,14 +149,32 @@ describe ImportCsv::EdnaResultsTaxa do
             },
             original_taxonomy_string: taxonomy_string,
             clean_taxonomy_string: taxonomy_string,
-            normalized: false
+            normalized: false,
+            sources: [source_data]
           }
 
           expect do
-            subject(taxonomy_string)
+            subject(taxonomy_string, source_data)
           end
             .to have_enqueued_job.with(arguements).exactly(1).times
         end
+      end
+    end
+
+    context 'when CalTaxon exists' do
+      let(:taxonomy_string) { 'P;C;O;F;G;S' }
+
+      it 'appends source data' do
+        old_source = '99|16S'
+        taxon = create(:cal_taxon, original_taxonomy_string: taxonomy_string,
+                                   sources: [old_source])
+
+        expect do
+          subject(taxonomy_string, source_data)
+        end
+          .to change { taxon.reload.sources }
+          .from([old_source])
+          .to([old_source, source_data])
       end
     end
   end

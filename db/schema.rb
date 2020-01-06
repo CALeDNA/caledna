@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_04_204235) do
+ActiveRecord::Schema.define(version: 2020_01_06_121831) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -46,6 +47,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.jsonb "counts", default: {}
     t.integer "research_project_id"
     t.string "primer"
+    t.datetime "discarded_at"
     t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
@@ -61,6 +63,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.boolean "ignore", default: false
     t.string "original_taxonomy_string"
     t.string "clean_taxonomy_string"
+    t.text "sources", default: [], array: true
     t.index ["clean_taxonomy_string"], name: "index_cal_taxa_on_clean_taxonomy_string"
     t.index ["ignore"], name: "index_cal_taxa_on_ignore"
   end
@@ -114,6 +117,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.string "status_cd"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["event_id"], name: "index_event_registrations_on_event_id"
     t.index ["user_id", "event_id"], name: "index_event_registrations_on_user_id_and_event_id", unique: true
     t.index ["user_id"], name: "index_event_registrations_on_user_id"
@@ -129,6 +133,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.bigint "field_project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["field_project_id"], name: "index_events_on_field_project_id"
   end
 
@@ -147,9 +152,9 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "iucn_status"
     t.string "source"
     t.string "col_id"
     t.string "wikispecies_id"
@@ -179,6 +184,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.datetime "last_import_date"
     t.string "date_range"
     t.boolean "published", default: true
+    t.datetime "discarded_at"
     t.index ["kobo_id"], name: "index_field_projects_on_kobo_id", unique: true
   end
 
@@ -232,6 +238,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.datetime "updated_at", null: false
     t.integer "height"
     t.integer "width"
+    t.datetime "discarded_at"
     t.index ["sample_id"], name: "index_kobo_photos_on_sample_id"
   end
 
@@ -279,18 +286,14 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.integer "asvs_count_5", default: 0
     t.integer "asvs_count_la_river", default: 0
     t.integer "asvs_count_la_river_5", default: 0
-    t.string "kingdom_r"
-    t.string "phylum_r"
-    t.string "class_r"
-    t.string "order_r"
     t.string "common_names"
-    t.index "((hierarchy_names -> 'class'::text))", name: "ncbi_nodes_expr_idx1"
-    t.index "((hierarchy_names -> 'order'::text))", name: "ncbi_nodes_expr_idx2"
-    t.index "((hierarchy_names -> 'phylum'::text))", name: "ncbi_nodes_expr_idx"
+    t.index "((hierarchy_names ->> 'class'::text))", name: "index_ncbi_nodes_on_hierarchy_names_class"
+    t.index "((hierarchy_names ->> 'order'::text))", name: "index_ncbi_nodes_on_hierarchy_names_order"
+    t.index "((hierarchy_names ->> 'phylum'::text))", name: "index_ncbi_nodes_on_hierarchy_names_phylum"
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "idx_taxa_search", using: :gin
     t.index "lower((canonical_name)::text) text_pattern_ops", name: "canonical_name_prefix"
     t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
-    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "boo"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["asvs_count_5"], name: "index_ncbi_nodes_on_asvs_count_5"
     t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"
@@ -299,10 +302,13 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
     t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
     t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
-    t.index ["kingdom_r"], name: "index_ncbi_nodes_on_kingdom_r"
+    t.index ["hierarchy_names"], name: "index_ncbi_nodes_on_hierarchy_names", using: :gin
+    t.index ["ids"], name: "idx_ncbi_nodes_ids", using: :gin
+    t.index ["ids"], name: "index_ncbi_nodes_on_ids", using: :gin
     t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
+    t.index ["short_taxonomy_string"], name: "ncbi_nodes_short_taxonomy_string_idx"
   end
 
   create_table "pages", id: :serial, force: :cascade do |t|
@@ -319,6 +325,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.bigint "website_id"
     t.boolean "show_map"
     t.boolean "show_edna_results_metadata"
+    t.datetime "discarded_at"
     t.index ["display_order"], name: "index_pages_on_display_order"
     t.index ["slug"], name: "index_pages_on_slug"
     t.index ["website_id"], name: "index_pages_on_website_id"
@@ -340,16 +347,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.text "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "raw_taxonomy_imports", force: :cascade do |t|
-    t.string "name"
-    t.string "taxonomy_string"
-    t.string "primer"
-    t.bigint "research_project_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["research_project_id"], name: "index_raw_taxonomy_imports_on_research_project_id"
+    t.datetime "discarded_at"
   end
 
   create_table "research_project_authors", force: :cascade do |t|
@@ -358,6 +356,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.integer "authorable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["authorable_id"], name: "index_research_project_authors_on_authorable_id"
     t.index ["research_project_id"], name: "index_research_project_authors_on_research_project_id"
   end
@@ -367,12 +366,13 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.integer "sourceable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "sample_id"
     t.string "sourceable_type"
     t.jsonb "metadata", default: {}
+    t.integer "sample_id"
+    t.datetime "discarded_at"
     t.index "((metadata ->> 'location'::text))", name: "idx_rps_metadata_location"
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
-    t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
+    t.index ["sample_id"], name: "research_project_sources_sample_id_idx"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
     t.index ["sourceable_type"], name: "index_research_project_sources_on_sourceable_type"
   end
@@ -388,6 +388,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.text "decontamination_method"
     t.jsonb "metadata", default: {}
     t.string "primers", default: [], array: true
+    t.datetime "discarded_at"
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|
@@ -418,11 +419,11 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.string "unlock_token"
     t.datetime "locked_at"
     t.string "orcid"
+    t.datetime "discarded_at"
     t.index ["email"], name: "index_researchers_on_email", unique: true
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
@@ -456,6 +457,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.boolean "has_permit", default: true
     t.string "environmental_features", default: [], array: true
     t.string "environmental_settings", default: [], array: true
+    t.datetime "discarded_at"
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
@@ -472,6 +474,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.datetime "published_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["website_id"], name: "index_site_news_on_website_id"
   end
 
@@ -482,6 +485,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "score", default: 0
+    t.datetime "discarded_at"
     t.index ["survey_question_id"], name: "index_survey_answers_on_survey_question_id"
     t.index ["survey_response_id"], name: "index_survey_answers_on_survey_response_id"
   end
@@ -492,6 +496,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.boolean "accepted_answer", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "discarded_at"
     t.index ["survey_question_id"], name: "index_survey_options_on_survey_question_id"
   end
 
@@ -502,6 +507,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "order_number"
+    t.datetime "discarded_at"
     t.index ["survey_id"], name: "index_survey_questions_on_survey_id"
   end
 
@@ -512,6 +518,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.datetime "updated_at", null: false
     t.integer "total_score", default: 0
     t.boolean "passed", default: false
+    t.datetime "discarded_at"
     t.index ["survey_id"], name: "index_survey_responses_on_survey_id"
     t.index ["user_id"], name: "index_survey_responses_on_user_id"
   end
@@ -523,7 +530,40 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.string "slug"
     t.text "description"
     t.integer "passing_score", default: 0
+    t.datetime "discarded_at"
     t.index ["slug"], name: "index_surveys_on_slug"
+  end
+
+  create_table "taxa", primary_key: "taxonID", id: :integer, default: nil, force: :cascade do |t|
+    t.string "datasetID", limit: 255
+    t.integer "parentNameUsageID"
+    t.integer "acceptedNameUsageID"
+    t.integer "originalNameUsageID"
+    t.text "scientificName"
+    t.text "scientificNameAuthorship"
+    t.string "canonicalName", limit: 255
+    t.string "genericName", limit: 255
+    t.string "specificEpithet", limit: 255
+    t.string "infraspecificEpithet", limit: 255
+    t.string "taxonRank", limit: 255
+    t.string "nameAccordingTo", limit: 255
+    t.text "namePublishedIn"
+    t.string "taxonomicStatus", limit: 255
+    t.string "nomenclaturalStatus", limit: 255
+    t.string "taxonRemarks", limit: 255
+    t.string "kingdom", limit: 255
+    t.string "phylum", limit: 255
+    t.string "className", limit: 255
+    t.string "order", limit: 255
+    t.string "family", limit: 255
+    t.string "genus", limit: 255
+    t.jsonb "hierarchy", default: {}
+    t.integer "asvs_count", default: 0
+    t.integer "rank_order"
+    t.string "iucn_status", limit: 255
+    t.integer "iucn_taxonid"
+    t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix"
+    t.index ["taxonID"], name: "taxon_pkey", unique: true
   end
 
   create_table "uploads", force: :cascade do |t|
@@ -566,6 +606,7 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
     t.string "caledna_source"
     t.boolean "agree", null: false
     t.boolean "can_contact", default: false, null: false
+    t.datetime "discarded_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -581,7 +622,6 @@ ActiveRecord::Schema.define(version: 2020_01_04_204235) do
   add_foreign_key "event_registrations", "events"
   add_foreign_key "event_registrations", "users"
   add_foreign_key "events", "field_projects"
-  add_foreign_key "kobo_photos", "samples"
   add_foreign_key "kobo_photos", "samples"
   add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
   add_foreign_key "pages", "research_projects"

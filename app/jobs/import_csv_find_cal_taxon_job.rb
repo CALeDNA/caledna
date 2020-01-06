@@ -5,7 +5,7 @@ class ImportCsvFindCalTaxonJob < ApplicationJob
 
   queue_as :default
 
-  def perform(taxonomy_string)
-    find_or_create_cal_taxon(taxonomy_string)
+  def perform(taxonomy_string, asv_attributes)
+    find_cal_taxon(taxonomy_string, asv_attributes)
   end
 end

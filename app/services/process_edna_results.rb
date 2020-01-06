@@ -20,8 +20,8 @@ module ProcessEdnaResults
     raise TaxaError, 'rank not found' if rank.blank?
     raise TaxaError, 'hierarchy not found' if hierarchy.blank?
 
-    taxa = find_taxa_by_hierarchy(hierarchy, rank)
-    taxon_id = taxa&.count == 1 ? taxa.first.taxon_id : nil
+    taxa = find_taxa_by_hierarchy(hierarchy, rank).to_a
+    taxon_id = taxa&.size == 1 ? taxa.first.taxon_id : nil
 
     {
       taxon_id: taxon_id,
@@ -34,13 +34,16 @@ module ProcessEdnaResults
   # rubocop:enable Metrics/MethodLength
 
   def find_taxa_by_hierarchy(hierarchy, target_rank)
-    sql = ["rank = '#{target_rank}'"]
+    clauses = []
     ranks = %i[superkingdom kingdom phylum class order family genus species]
     ranks.each do |rank|
       next if hierarchy[rank].blank?
-      sql << "hierarchy_names ->> '#{rank}' = '#{hierarchy[rank]}'"
+      clauses << '"' + rank.to_s + '": "' +
+                 hierarchy[rank].gsub("'", "''") + '"'
     end
-    sql = sql.join(' AND ')
+    sql = "rank = '#{target_rank}' AND  hierarchy_names @> '{"
+    sql += clauses.join(', ')
+    sql += "}'"
 
     NcbiNode.where(sql)
   end

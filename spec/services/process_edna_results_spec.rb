@@ -841,6 +841,16 @@ describe ProcessEdnaResults do
 
         expect(subject(hierarchy, rank)).to eq([taxa])
       end
+
+      it 'handles strings with single quotes' do
+        hierarchy = {
+          genus: 'Genus', species: "Species 'name'"
+        }
+        rank = 'species'
+        taxa = create(:ncbi_node, hierarchy_names: hierarchy, rank: rank)
+
+        expect(subject(hierarchy, rank)).to eq([taxa])
+      end
     end
 
     it 'returns empty array when rank does not match' do
