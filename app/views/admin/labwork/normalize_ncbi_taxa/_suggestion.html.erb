@@ -1,3 +1,9 @@
+<% if suggestion.ncbi_id %>
+  NCBI ID: <%= link_to suggestion.taxon_id, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{suggestion.taxon_id}" %>
+<% end%>
+<% if suggestion.bold_id %>
+  BOLD ID: <%= suggestion.bold_id %>
+<% end%>
 <% if suggestion.lineage.present? %>
 <ol>
   <% suggestion.lineage && suggestion.lineage.each do |lineage|%>

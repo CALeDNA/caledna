@@ -37,6 +37,21 @@ class CalTaxon < ApplicationRecord
     "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?name=#{query}"
   end
 
+  def sources_display
+    return if sources.blank?
+    sources.map do |source|
+      id, primer = source.split('|')
+      next if primer.blank?
+
+      project = ResearchProject.where(id: id)
+      next if project.blank?
+
+      "#{project.first.name} - #{primer}"
+    end.compact.join(', ')
+  end
+
+  private
+
   def query
     taxa.last
   end
