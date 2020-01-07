@@ -10,19 +10,34 @@ module ImportCsv
       delimiter = delimiter_detector(file)
 
       # TODO: find a way to deal with image upload
-      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
-        barcode = row['barcode']
-        next if Sample.where(barcode: barcode).present?
+      invalid_barcodes = find_invalid_barcodes(file, delimiter)
+      if invalid_barcodes.present?
+        message = "#{invalid_barcodes.join(', ')} already exists"
+        return OpenStruct.new(valid?: false, errors: message)
+      end
 
-        data = create_data_fields(row, barcode, field_project_id)
+      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
+        data = create_data_fields(row, field_project_id)
         Sample.create(data)
       end
+      OpenStruct.new(valid?: true, errors: nil)
     end
 
     private
 
+    def find_invalid_barcodes(file, delimiter)
+      invalid_barcodes = []
+      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
+        barcode = row['barcode']
+        sample = Sample.approved.find_by(barcode: barcode)
+        invalid_barcodes << barcode if sample.present?
+      end
+      invalid_barcodes
+    end
+
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def create_data_fields(row, barcode, field_project_id)
+    def create_data_fields(row, field_project_id)
+      barcode = row['barcode']
       date =
         DateTime.parse("#{row['collection_date']}T#{row['collection_time']}")
       {
@@ -37,8 +52,10 @@ module ImportCsv
         substrate_cd: row['substrate'].downcase,
         habitat_cd: row['habitat'],
         depth_cd: row['sampling_depth'],
-        environmental_features: row['environmental_features'].split(','),
-        environmental_settings: row['environmental_settings'].split(','),
+        environmental_features:
+          convert_comma_separated_string(row['environmental_features']),
+        environmental_settings:
+          convert_comma_separated_string(row['environmental_settings']),
         field_notes: row['field_notes'],
         country: row['country'],
         country_code: row['country_code'],
@@ -49,5 +66,9 @@ module ImportCsv
       }
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+    def convert_comma_separated_string(string)
+      string.split(',').map(&:strip)
+    end
   end
 end

@@ -7,7 +7,7 @@
 </header>
 
 <section class="main-content__body">
-  <p>Upload CSV to add samples for a research project.</p>
+  <p>Upload CSV to add samples to a field project.</p>
 
   <%= form_tag admin_labwork_import_samples_path, multipart: true do %>
     <div class="field-unit">
@@ -15,7 +15,7 @@
         <label>Field Project</label>
       </div>
       <div class="field-unit__field">
-        <%= select(:field_project, :id, @projects, {include_blank: 'Select field project'}) %>
+        <%= select(:samples, :field_project_id, @projects, {include_blank: 'Select field project'}) %>
       </div>
     </div>
     <div class="field-unit">

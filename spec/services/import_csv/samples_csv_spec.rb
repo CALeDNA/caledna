@@ -15,23 +15,30 @@ describe ImportCsv::SamplesCsv do
     let(:csv) { './spec/fixtures/import_csv/samples.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
     let(:field_project) { create(:field_project, name: 'foo') }
+    let(:barcode1) { 'K9999-A1' }
 
-    context 'sample exists' do
-      let!(:sample) { create(:sample, barcode: 'K9999-A1') }
+    context 'when barcodes already exists' do
+      let!(:sample) { create(:sample, barcode: barcode1, status: 'approved') }
 
-      it 'does not create sample' do
+      it 'does not create samples' do
         expect { subject(file, field_project.id) }
           .to change { Sample.count }.by(0)
       end
+
+      it 'returns error message' do
+        results = subject(file, field_project.id)
+        expect(results.valid?).to eq(false)
+        expect(results.errors).to eq("#{barcode1} already exists")
+      end
     end
 
-    context 'sample does not exists' do
-      it 'creates a sample' do
+    context 'when barcodes do not exist' do
+      it 'creates samples' do
         expect { subject(file, field_project.id) }
-          .to change { Sample.count }.by(1)
+          .to change { Sample.count }.by(2)
       end
 
-      it 'creates a sample using csv data' do
+      it 'creates samples using csv data' do
         row = CSV.read(file.path, headers: true, col_sep: ';').entries.first
         date =
           DateTime.parse("#{row['collection_date']} #{row['collection_time']}")
@@ -51,9 +58,9 @@ describe ImportCsv::SamplesCsv do
         expect(sample.habitat_cd).to eq(row['habitat'])
         expect(sample.depth_cd).to eq(row['sampling_depth'])
         expect(sample.environmental_features)
-          .to eq(row['environmental_features'].split(','))
+          .to eq(['Enclosed water', 'Reef'])
         expect(sample.environmental_settings)
-          .to eq(row['environmental_settings'].split(','))
+          .to eq(['Near (<5m) buildings', 'On farm'])
         expect(sample.field_notes).to eq(row['field_notes'])
         expect(sample.country).to eq(row['country'])
         expect(sample.country_code).to eq(row['country_code'])
@@ -61,6 +68,11 @@ describe ImportCsv::SamplesCsv do
         expect(sample.field_project_id).to eq(field_project.id)
         expect(sample.status_cd).to eq('approved')
         expect(sample.csv_data).to eq(row.to_h)
+      end
+
+      it 'returns valid' do
+        results = subject(file, field_project.id)
+        expect(results.valid?).to eq(true)
       end
     end
   end

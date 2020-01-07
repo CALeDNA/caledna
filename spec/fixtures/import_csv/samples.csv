@@ -1,2 +1,3 @@
 barcode;collection_date;collection_time;location;latitude;longitude;gps_altitude;gps_precision;substrate;habitat;sampling_depth;environmental_features;environmental_settings;light;pH;moisture;field_notes;country;country_code;has_permit
-K9999-A1;2019-07-02;13:30;Yosemite;34.100001;-118.300001;0;10;soil;Fully submerged;Top layer;Enclosed water,Reef;On roadside;;;;my notes;United States;US;true
+K9999-A1;2019-07-02;13:30;Yosemite;34.100001;-118.300001;0;10;soil;Fully submerged;Submerged >50m; Enclosed water,  Reef ;Near (<5m) buildings, On farm;;;;my notes;United States;US;true
+K9999-A2;2019-07-03;11:30;Yosemite;34.200001;-118.400001;0;10;sediment;Terrestrial habitat, not submerged;Top layer (top 3cm) soil or sediment;Basin/wash, Rock mound;On garden, On manmade landscape;;;;my notes 2;United States;US;true
