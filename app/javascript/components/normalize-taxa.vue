@@ -2,6 +2,11 @@
   <div>
     <h2>Search Existing Taxa</h2>
 
+    <p>
+      If the taxon from the taxonomy string is not in the database, you need to
+      add new taxa to the the CALeDNA database.
+    </p>
+
     <autocomplete
       :url='getTaxaRoute'
       param='query'

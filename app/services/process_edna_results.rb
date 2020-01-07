@@ -33,6 +33,7 @@ module ProcessEdnaResults
   end
   # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def find_taxa_by_hierarchy(hierarchy, target_rank)
     clauses = []
     ranks = %i[superkingdom kingdom phylum class order family genus species]
@@ -47,6 +48,7 @@ module ProcessEdnaResults
 
     NcbiNode.where(sql)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def find_cal_taxon_from_string(string)
     clean_string = remove_na(string)

@@ -6,7 +6,6 @@ module ImportCsv
     include ProcessEdnaResults
     include CsvUtils
 
-    # rubocop:disable Metrics/MethodLength
     def import_csv(file, research_project_id, primer)
       delimiter = delimiter_detector(file)
 
@@ -20,7 +19,6 @@ module ImportCsv
 
       OpenStruct.new(valid?: true, errors: nil)
     end
-    # rubocop:enable Metrics/MethodLength
 
     def find_cal_taxon(taxonomy_string, source_data)
       cal_taxon =

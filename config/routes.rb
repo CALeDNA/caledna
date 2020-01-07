@@ -101,6 +101,7 @@ Rails.application.routes.draw do
       resources :normalize_ncbi_taxa, only: %i[index show] do
         put 'update_existing' => 'normalize_ncbi_taxa#update_existing'
         put 'update_create' => 'normalize_ncbi_taxa#update_create'
+        put 'update_with_id' => 'normalize_ncbi_taxa#update_with_id'
       end
 
       controller 'taxa_counts' do

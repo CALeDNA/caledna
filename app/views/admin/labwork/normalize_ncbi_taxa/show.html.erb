@@ -34,18 +34,61 @@
     </tr>
   </table>
 
+  <h2>Suggested Taxa</h2>
+
   <% if @suggestions.present? %>
-    <h2>Choose Existing Taxa</h2>
+    <p>Here are some suggested taxa that might match the taxonomy string.</p>
 
     <% @suggestions.each do |suggestion| %>
       <%= render 'suggestion', suggestion: suggestion %>
     <% end %>
-    <br>
-    <%= link_to "Back", :back, class: 'button' %>
-        <div id="js-autocomplete-normalize-taxa" class="js"></div>
-
   <% else %>
-    <div id="js-autocomplete-normalize-taxa" class="js"></div>
+    <p>No taxa matches the taxonomy string.</p>
   <% end %>
 
+  <hr>
+
+  <h2>Manually set taxon ID</h2>
+
+  <p>
+    You can manually set taxon ID for the taxonomy string. Search for the
+    taxa at <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi">NCBI</a>
+    or <a href="http://boldsystems.org/index.php/TaxBrowser_Home">BOLD</a> and enter
+    in the taxon ID.
+  </p>
+
+  <%= simple_form_for :normalize_ncbi_taxon,
+    url: admin_labwork_normalize_ncbi_taxon_update_with_id_path(@cal_taxon),
+    method: :put do |f| %>
+
+    <div class="field-unit">
+      <div class="field-unit__label">
+        <label>Taxonomy Source</label>
+      </div>
+      <div class="field-unit__field">
+        <%= f.input_field :source, collection: ['NCBI', 'BOLD'] %>
+      </div>
+    </div>
+
+    <div class="field-unit">
+      <div class="field-unit__label">
+        <label>Taxon ID</label>
+      </div>
+      <div class="field-unit__field">
+         <%= f.input_field :source_id %>
+      </div>
+    </div>
+
+    <div class="field-unit">
+      <div class="field-unit__label">
+      </div>
+      <div class="field-unit__field">
+         <%= f.submit 'Submit' %>
+      </div>
+    </div>
+  <% end %>
+
+  <hr>
+
+  <div id="js-autocomplete-normalize-taxa" class="js"></div>
 </section>
