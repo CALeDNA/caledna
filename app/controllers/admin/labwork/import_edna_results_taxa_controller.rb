@@ -16,16 +16,20 @@ module Admin
         authorize 'Labwork::ImportCsv'.to_sym, :create?
         results = import_csv(file, research_project_id, primer)
         if results.valid?
-          project = ResearchProject.find(research_project_id)
-          flash[:success] =
-            "Importing taxonomies for #{project.name}, #{primer}..."
-          redirect_to admin_labwork_import_csv_status_index_path
+          handle_success
         else
           handle_error(results)
         end
       end
 
       private
+
+      def handle_success
+        project = ResearchProject.find(research_project_id)
+        flash[:success] =
+          "Importing taxonomies for #{project.name}, #{primer}..."
+        redirect_to admin_labwork_import_csv_status_index_path
+      end
 
       def handle_error(results)
         flash[:error] = results.errors

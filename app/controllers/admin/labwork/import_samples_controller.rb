@@ -14,18 +14,34 @@ module Admin
       def create
         authorize 'Labwork::ImportCsv'.to_sym, :create?
 
-        import_csv(params[:file], research_project_id)
-        redirect_to admin_root_path, notice: 'Samples imported.'
+        results = import_csv(params[:file], field_project_id)
+        if results.valid?
+          handle_success
+        else
+          handle_error(results)
+        end
       end
 
       private
 
-      def research_project_id
-        create_params[:id]
+      def handle_success
+        project = FieldProject.find(field_project_id)
+        flash[:success] =
+          "Imported samples for #{project.name}."
+        redirect_to admin_root_path
+      end
+
+      def handle_error(results)
+        flash[:error] = results.errors
+        redirect_to admin_labwork_import_samples_path
+      end
+
+      def field_project_id
+        create_params[:field_project_id]
       end
 
       def create_params
-        params.require(:field_project).permit(:id)
+        params.require(:samples).permit(:field_project_id)
       end
     end
   end
