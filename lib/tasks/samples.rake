@@ -1,6 +1,27 @@
 # frozen_string_literal: true
 
 namespace :samples do
+  task delete_duplicate_submitted_samples: :environment do
+    puts 'begin delete_duplicate_samples...'
+    dup_samples = Sample.where(status_cd: 'submitted')
+                        .group(:kobo_id)
+                        .group(:kobo_data)
+                        .having('count(*) > 1')
+
+    kobo_ids = dup_samples.pluck(:kobo_id)
+    kobo_ids.each do |id|
+      puts id
+      samples = Sample.where(kobo_id: id)
+      count = samples.count
+
+      extra_samples = samples.limit(count - 1)
+      extra_samples.each do |sample|
+        KoboPhoto.where(sample_id: sample.id).destroy_all
+        sample.destroy
+      end
+    end
+  end
+
   task import_coordinates: :environment do
     require 'csv'
     require_relative '../../app/services/import_csv/update_coordinates'
