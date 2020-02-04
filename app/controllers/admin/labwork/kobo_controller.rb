@@ -30,10 +30,14 @@ module Admin
         authorize 'Labwork::Kobo'.to_sym, :import_samples?
 
         hash_data = ::KoboApi::Connect.project(project.kobo_id).parsed_response
-        results_count =
-          import_kobo_samples(project.id, project.kobo_id, hash_data)
+        if hash_data.class == Hash && hash_data['detail'] == 'Not found.'
+          flash[:error] = 'Field Project not found in Kobo'
+        else
+          results_count =
+            import_kobo_samples(project.id, project.kobo_id, hash_data)
 
-        flash[:success] = "Importing #{results_count} samples"
+          flash[:success] = "Importing #{results_count} samples"
+        end
         redirect_to action: 'import_kobo'
       rescue SocketError
         flash[:error] = 'Could not get new data from Kobo API.'
