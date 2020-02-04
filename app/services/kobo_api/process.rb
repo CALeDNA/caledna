@@ -46,9 +46,32 @@ module KoboApi
       end
     end
 
-    private
-
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def save_photos(sample_id, hash_payload)
+      data = OpenStruct.new(hash_payload)
+
+      photos_data = data._attachments
+      return if photos_data.blank?
+
+      photos_data.map do |photo_data|
+        data = OpenStruct.new(photo_data)
+
+        url = "#{ENV.fetch('KOBO_MEDIA_URL')}#{data.filename}"
+        filename = data.filename.split('/').last
+        kobo_photo = ::KoboPhoto.new(
+          file_name: filename,
+          source_url: url,
+          kobo_payload: data,
+          sample_id: sample_id
+        )
+
+        kobo_photo.save
+        fetch_kobo_file_and_attach_to(url, kobo_photo.photo)
+      end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+    end
+
+    private
 
     def project_ids
       FieldProject.pluck(:kobo_id)
@@ -71,6 +94,7 @@ module KoboApi
       Project.find_by(kobo_id: kobo_id)
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def sample_prefixes
       [
         { gps: 'groupA/A1/A1gps', other: 'groupA/A1/A1', tube: 'LA-S1' },
@@ -246,30 +270,7 @@ module KoboApi
         field_hash[value] || value
       end
     end
-
-    def save_photos(sample_id, hash_payload)
-      data = OpenStruct.new(hash_payload)
-
-      photos_data = data._attachments
-      return if photos_data.blank?
-
-      photos_data.map do |photo_data|
-        data = OpenStruct.new(photo_data)
-
-        url = "#{ENV.fetch('KOBO_MEDIA_URL')}#{data.filename}"
-        filename = data.filename.split('/').last
-        kobo_photo = ::KoboPhoto.new(
-          file_name: filename,
-          source_url: url,
-          kobo_payload: data,
-          sample_id: sample_id
-        )
-
-        kobo_photo.save
-        fetch_kobo_file_and_attach_to(url, kobo_photo.photo)
-      end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-    end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
 end
 

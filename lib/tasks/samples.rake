@@ -1,6 +1,23 @@
 # frozen_string_literal: true
 
 namespace :samples do
+  # In late October 2019, we started saving Kobo Photos to AWS. Discovered in
+  # Feb 2020 that saving to AWS was broken, so need to redo KoboPhotos.
+  task fix_broken_photo_import: :environment do
+    include KoboApi::Process
+
+    date = '2019-10-30'
+    samples = Sample.where("created_at > '#{date}'")
+    ids = samples.pluck(:id)
+
+    KoboPhoto.where(sample_id: ids).destroy_all
+
+    samples.each do |sample|
+      puts sample.id
+      save_photos(sample.id, sample.kobo_data)
+    end
+  end
+
   task delete_duplicate_submitted_samples: :environment do
     puts 'begin delete_duplicate_samples...'
     dup_samples = Sample.where(status_cd: 'submitted')
