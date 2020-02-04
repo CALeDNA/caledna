@@ -42,9 +42,10 @@
         <%end%>
         lat: <%= sample.latitude %><br>
         long: <%= sample.longitude %><br>
-        precision: <%= sample.gps_precision %>
+        precision: <%= sample.gps_precision %><br>
+        notes: <%= sample.field_notes %>
       </td>
-      <td>
+      <td width="200px">
         <% sample.kobo_photos.each do |kobo_photo| %>
           <%= link_to admin_kobo_photo_path(kobo_photo) do %>
             <%= image_tag(kobo_photo.photo) if kobo_photo.photo.attachment %>
