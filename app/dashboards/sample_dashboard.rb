@@ -27,7 +27,7 @@ class SampleDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     collection_date: Field::DateTime,
-    status_cd: EnumField,
+    status_cd: EnumField.with_options(searchable: true),
     substrate_cd: EnumField,
     altitude: Field::String.with_options(searchable: false),
     gps_precision: Field::Number,
@@ -50,7 +50,6 @@ class SampleDashboard < Administrate::BaseDashboard
     :barcode,
     :status_cd,
     :field_project,
-    :research_projects,
     :updated_at,
   ].freeze
 
