@@ -4,6 +4,8 @@ class Sample < ApplicationRecord
   include PgSearch
   include InsidePolygon
 
+  REJECTED_STATUS = %i[rejected duplicate_barcode field_blanks].freeze
+
   multisearchable against: %i[
     barcode status_cd location field_project_name
     research_projects_names
@@ -27,8 +29,12 @@ class Sample < ApplicationRecord
   scope :with_coordinates, -> { where('latitude > -1') }
 
   as_enum :status,
-          %i[submitted approved rejected duplicate_barcode
-             results_completed processed_invalid_sample],
+          %i[
+            submitted
+            approved
+            results_completed
+            processed_invalid_sample
+          ] + REJECTED_STATUS,
           map: :string
   as_enum :substrate, KoboValues::SUBSTRATES, map: :string
   as_enum :habitat, KoboValues::HABITAT, map: :string

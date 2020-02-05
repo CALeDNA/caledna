@@ -16,7 +16,7 @@
 
   <%= fields_for :sample do |f| %>
     <%= render_admin_field(:select, :status_cd, form: f,
-      select_options: enum_field_values(:status_cd, Sample.statuses) )%>
+      select_options: Sample::REJECTED_STATUS )%>
     <%= render_admin_field(:text, :director_notes, form: f )%>
   <% end%>
   <div class="form-actions">
