@@ -76,11 +76,11 @@
   <%# ----------------------------------------- %>
 
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
-    <h2>Import ASVs from eDNA results</h2>
+    <h2>Import Taxonomy tables with read counts from eDNA results</h2>
 
     <p>
-      <%= link_to 'Import ASVs', admin_labwork_import_edna_results_asvs_path %>:
-      Import ASVs from eDNA results via CSV upload. Use CSVs produced by Anacapa, or
+      <%= link_to 'Import Taxonomy Tables', admin_labwork_import_edna_results_asvs_path %>:
+      Import taxonomy tables with read counts from eDNA results via CSV upload. Use CSVs produced by Anacapa, or
       use <%= link_to "eDNA results CSV", '/csv_templates/eDNA_results_template.csv' %> template.
     </p>
 
