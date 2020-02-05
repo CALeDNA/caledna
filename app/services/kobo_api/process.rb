@@ -121,7 +121,7 @@ module KoboApi
         e_data = data.Select_the_match_for_e_dash_on_your_tubes.try(:upcase)
         barcode = "#{kit_number}-#{e_data}"
       end
-      barcode
+      barcode.upcase
     end
 
     def process_single_sample_v1(field_project_id, hash_payload)

@@ -318,6 +318,18 @@ describe KoboApi::Process do
         sample = Sample.first
         expect(sample.barcode).to eq('K1-A1')
       end
+
+      it 'uses uppercase for barcodes' do
+        data = {
+          'What_is_your_kit_number_e_g_K0021' => 'k1',
+          'Select_the_match_for_e_dash_on_your_tubes' => 'a1'
+        }
+        expect { subject(project_id, kobo_id, data) }
+          .to change { Sample.count }.by(1)
+
+        sample = Sample.first
+        expect(sample.barcode).to eq('K1-A1')
+      end
     end
 
     context 'when incoming data has multiple samples' do
