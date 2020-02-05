@@ -32,6 +32,9 @@ class KoboPhotoDashboard < Administrate::BaseDashboard
   ].freeze
 
   FORM_ATTRIBUTES = [
+    :sample,
+    :file_name,
+    :photo,
   ].freeze
 
   def permitted_attributes
