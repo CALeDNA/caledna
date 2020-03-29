@@ -25,7 +25,7 @@
   <%= suggestion.attributes %>
 <% end %>
 
-<%= simple_form_for :normalize_ncbi_taxon, url: admin_labwork_normalize_ncbi_taxon_update_existing_path(@cal_taxon), method: :put do |f| %>
+<%= simple_form_for :normalize_ncbi_taxon, url: admin_labwork_normalize_ncbi_taxon_update_existing_path(@result_taxon), method: :put do |f| %>
   <%= f.hidden_field :taxon_id, value: suggestion.taxon_id  %>
   <%= f.submit 'Use this taxon' %>
 <% end %>

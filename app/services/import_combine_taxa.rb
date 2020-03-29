@@ -47,13 +47,13 @@ module ImportCombineTaxa
     end
   end
 
-  def find_cal_taxon(original_taxonomy)
+  def find_result_taxon(original_taxonomy)
     taxonomy = original_taxonomy
 
     sql = 'original_taxonomy_phylum = ? OR ' \
       'original_taxonomy_superkingdom = ?'
 
-    CalTaxon.where(sql, taxonomy, taxonomy).first
+    ResultTaxon.where(sql, taxonomy, taxonomy).first
   end
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength

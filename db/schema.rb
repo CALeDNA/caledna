@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_05_221158) do
+ActiveRecord::Schema.define(version: 2020_03_29_222945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,21 +49,6 @@ ActiveRecord::Schema.define(version: 2020_02_05_221158) do
     t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxonID"], name: "index_asvs_on_taxonID"
-  end
-
-  create_table "cal_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "ignore", default: false
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "sources", default: [], array: true
-    t.index ["clean_taxonomy_string"], name: "index_cal_taxa_on_clean_taxonomy_string"
-    t.index ["ignore"], name: "index_cal_taxa_on_ignore"
   end
 
   create_table "combine_taxa", force: :cascade do |t|
@@ -410,6 +395,21 @@ ActiveRecord::Schema.define(version: 2020_02_05_221158) do
     t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
+  end
+
+  create_table "result_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "ignore", default: false
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "sources", default: [], array: true
+    t.index ["clean_taxonomy_string"], name: "index_result_taxa_on_clean_taxonomy_string"
+    t.index ["ignore"], name: "index_result_taxa_on_ignore"
   end
 
   create_table "samples", id: :serial, force: :cascade do |t|

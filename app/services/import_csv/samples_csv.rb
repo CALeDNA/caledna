@@ -6,6 +6,7 @@ module ImportCsv
     include CsvUtils
     include ProcessFileUploads
 
+    # rubocop:disable Metrics/MethodLength
     def import_csv(file, field_project_id)
       delimiter = delimiter_detector(file)
 
@@ -22,6 +23,7 @@ module ImportCsv
       end
       OpenStruct.new(valid?: true, errors: nil)
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 

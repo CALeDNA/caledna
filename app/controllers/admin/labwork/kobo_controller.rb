@@ -25,7 +25,7 @@ module Admin
         redirect_to action: 'import_kobo'
       end
 
-      # rubocop:disable Metrics/AbcSize
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def import_samples
         authorize 'Labwork::Kobo'.to_sym, :import_samples?
 
@@ -43,7 +43,7 @@ module Admin
         flash[:error] = 'Could not get new data from Kobo API.'
         redirect_to action: 'import_kobo'
       end
-      # rubocop:enable Metrics/AbcSize
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       private
 

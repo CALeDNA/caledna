@@ -29,7 +29,7 @@ describe ImportCsv::EdnaResultsTaxa do
           file, research_project.id, primer
         )
       end
-        .to have_enqueued_job(ImportCsvFindCalTaxonJob).exactly(3).times
+        .to have_enqueued_job(ImportCsvFindResultTaxonJob).exactly(3).times
     end
 
     it 'passes correct as arguement' do
@@ -53,35 +53,36 @@ describe ImportCsv::EdnaResultsTaxa do
     end
   end
 
-  describe('#find_cal_taxon') do
+  describe('#find_result_taxon') do
     include ActiveJob::TestHelper
 
     def subject(taxonomy_string, attributes)
-      dummy_class.find_cal_taxon(taxonomy_string, attributes)
+      dummy_class.find_result_taxon(taxonomy_string, attributes)
     end
     let(:source_data) { '1|12S' }
 
     context 'when taxonomy string is phylum format' do
       let(:taxonomy_string) { 'P;C;O;F;G;S' }
 
-      context 'when CalTaxon matches taxonomy string' do
-        it 'adds does not ImportCsvCreateCalTaxonJob to queue' do
-          create(:cal_taxon, clean_taxonomy_string: taxonomy_string,
-                             original_taxonomy_string: taxonomy_string)
+      context 'when ResultTaxon matches taxonomy string' do
+        it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
+          create(:result_taxon, clean_taxonomy_string: taxonomy_string,
+                                original_taxonomy_string: taxonomy_string)
 
           expect do
             subject(taxonomy_string, source_data)
           end
-            .to_not have_enqueued_job(ImportCsvCreateCalTaxonJob)
+            .to_not have_enqueued_job(ImportCsvCreateResultTaxonJob)
         end
       end
 
-      context 'when CalTaxon does not matches taxonomy string' do
-        it 'adds ImportCsvCreateCalTaxonJob to queue' do
+      context 'when ResultTaxon does not matches taxonomy string' do
+        it 'adds ImportCsvCreateResultTaxonJob to queue' do
           expect do
             subject(taxonomy_string, source_data)
           end
-            .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
+            .to have_enqueued_job(ImportCsvCreateResultTaxonJob)
+            .exactly(1).times
         end
 
         it 'passes correct arguements to job' do
@@ -109,24 +110,25 @@ describe ImportCsv::EdnaResultsTaxa do
     context 'when taxonomy string is superkingdom format' do
       let(:taxonomy_string) { 'SK;P;C;O;F;G;S' }
 
-      context 'when CalTaxon matches taxonomy string' do
-        it 'adds does not ImportCsvCreateCalTaxonJob to queue' do
-          create(:cal_taxon, clean_taxonomy_string: taxonomy_string,
-                             original_taxonomy_string: taxonomy_string)
+      context 'when ResultTaxon matches taxonomy string' do
+        it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
+          create(:result_taxon, clean_taxonomy_string: taxonomy_string,
+                                original_taxonomy_string: taxonomy_string)
 
           expect do
             subject(taxonomy_string, source_data)
           end
-            .to_not have_enqueued_job(ImportCsvCreateCalTaxonJob)
+            .to_not have_enqueued_job(ImportCsvCreateResultTaxonJob)
         end
       end
 
-      context 'when CalTaxon does not match taxonomy string' do
-        it 'adds ImportCsvCreateCalTaxonJob to queue' do
+      context 'when ResultTaxon does not match taxonomy string' do
+        it 'adds ImportCsvCreateResultTaxonJob to queue' do
           expect do
             subject(taxonomy_string, source_data)
           end
-            .to have_enqueued_job(ImportCsvCreateCalTaxonJob).exactly(1).times
+            .to have_enqueued_job(ImportCsvCreateResultTaxonJob)
+            .exactly(1).times
         end
 
         it 'passes correct arguements to job' do
@@ -151,13 +153,13 @@ describe ImportCsv::EdnaResultsTaxa do
       end
     end
 
-    context 'when CalTaxon exists' do
+    context 'when ResultTaxon exists' do
       let(:taxonomy_string) { 'P;C;O;F;G;S' }
 
       it 'appends source data' do
         old_source = '99|16S'
-        taxon = create(:cal_taxon, original_taxonomy_string: taxonomy_string,
-                                   sources: [old_source])
+        taxon = create(:result_taxon, original_taxonomy_string: taxonomy_string,
+                                      sources: [old_source])
 
         expect do
           subject(taxonomy_string, source_data)

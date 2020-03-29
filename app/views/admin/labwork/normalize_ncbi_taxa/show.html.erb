@@ -11,24 +11,24 @@
 <section class="main-content__body">
 
   <p>
-    rank: <%= @cal_taxon.taxon_rank %><br>
-    taxon: <%= @cal_taxon.name %><br>
-    taxonomy string: <%= @cal_taxon.original_taxonomy_string %><br>
-    sources: <%= @cal_taxon.sources_display %><br>
+    rank: <%= @result_taxon.taxon_rank %><br>
+    taxon: <%= @result_taxon.name %><br>
+    taxonomy string: <%= @result_taxon.original_taxonomy_string %><br>
+    sources: <%= @result_taxon.sources_display %><br>
   </p>
 
   <table class="no-auto-link">
     <tr>
       <td>
         <ul>
-          <li>superkingdom: <%= @cal_taxon.hierarchy['superkingdom'] %></li>
-          <li>kingdom: <%= @cal_taxon.hierarchy['kingdom'] %></li>
-          <li>phylum: <%= @cal_taxon.hierarchy['phylum'] %></li>
-          <li>class: <%= @cal_taxon.hierarchy['class'] %></li>
-          <li>order: <%= @cal_taxon.hierarchy['order'] %></li>
-          <li>family: <%= @cal_taxon.hierarchy['family'] %></li>
-          <li>genus: <%= @cal_taxon.hierarchy['genus'] %></li>
-          <li>species: <%= @cal_taxon.hierarchy['species'] %></li>
+          <li>superkingdom: <%= @result_taxon.hierarchy['superkingdom'] %></li>
+          <li>kingdom: <%= @result_taxon.hierarchy['kingdom'] %></li>
+          <li>phylum: <%= @result_taxon.hierarchy['phylum'] %></li>
+          <li>class: <%= @result_taxon.hierarchy['class'] %></li>
+          <li>order: <%= @result_taxon.hierarchy['order'] %></li>
+          <li>family: <%= @result_taxon.hierarchy['family'] %></li>
+          <li>genus: <%= @result_taxon.hierarchy['genus'] %></li>
+          <li>species: <%= @result_taxon.hierarchy['species'] %></li>
         </ul>
       </td>
     </tr>
@@ -58,7 +58,7 @@
   </p>
 
   <%= simple_form_for :normalize_ncbi_taxon,
-    url: admin_labwork_normalize_ncbi_taxon_update_with_id_path(@cal_taxon),
+    url: admin_labwork_normalize_ncbi_taxon_update_with_id_path(@result_taxon),
     method: :put do |f| %>
 
     <div class="field-unit">

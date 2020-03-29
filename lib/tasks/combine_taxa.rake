@@ -303,19 +303,19 @@ namespace :combine_taxa do
     append_header(path, output_file)
 
     CSV.foreach(path, headers: true, col_sep: "\t") do |row|
-      cal_taxon = find_cal_taxon(row['sum.taxonomy'])
-      puts cal_taxon&.taxonID || row['sum.taxonomy']
+      result_taxon = find_result_taxon(row['sum.taxonomy'])
+      puts result_taxon&.taxonID || row['sum.taxonomy']
 
-      if cal_taxon.present?
-        taxon = NcbiNode.find(cal_taxon.taxonID)
+      if result_taxon.present?
+        taxon = NcbiNode.find(result_taxon.taxonID)
         taxon_id = taxon.ncbi_id || taxon.bold_id
         source = taxon.ncbi_id.present? ? 'ncbi' : 'bold'
       end
 
       CSV.open(output_file, 'a+') do |csv|
-        if cal_taxon.present?
+        if result_taxon.present?
           combine_taxon =
-            CombineTaxon.where(caledna_taxon_id: cal_taxon.taxonID)
+            CombineTaxon.where(caledna_taxon_id: result_taxon.taxonID)
                         .where("source ='ncbi' or source='bold'")
                         .first
 
@@ -324,7 +324,7 @@ namespace :combine_taxa do
             csv << [source, taxon_id, combine_taxon.short_taxonomy_string] +
                    row.to_h.values
           else
-            csv << ['', '', "no Ruggerio conversion #{cal_taxon.taxonID}"] +
+            csv << ['', '', "no Ruggerio conversion #{result_taxon.taxonID}"] +
                    row.to_h.values
           end
           # rubocop:enable Style/ConditionalAssignment

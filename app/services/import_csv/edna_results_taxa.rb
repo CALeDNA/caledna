@@ -14,23 +14,23 @@ module ImportCsv
         next if invalid_taxon?(taxonomy_string)
 
         source_data = "#{research_project_id}|#{primer}"
-        ImportCsvFindCalTaxonJob.perform_later(taxonomy_string, source_data)
+        ImportCsvFindResultTaxonJob.perform_later(taxonomy_string, source_data)
       end
 
       OpenStruct.new(valid?: true, errors: nil)
     end
 
-    def find_cal_taxon(taxonomy_string, source_data)
-      cal_taxon =
-        CalTaxon.find_by(original_taxonomy_string: taxonomy_string)
+    def find_result_taxon(taxonomy_string, source_data)
+      result_taxon =
+        ResultTaxon.find_by(original_taxonomy_string: taxonomy_string)
 
-      if cal_taxon.present?
-        cal_taxon.sources << source_data
-        cal_taxon.save
+      if result_taxon.present?
+        result_taxon.sources << source_data
+        result_taxon.save
         return
       end
 
-      create_cal_taxon_from(taxonomy_string, source_data)
+      create_result_taxon_from(taxonomy_string, source_data)
     end
 
     private
@@ -39,8 +39,8 @@ module ImportCsv
       row.to_h.except('sum.taxonomy').values.uniq != ['0']
     end
 
-    def create_cal_taxon_from(taxonomy_string, source_data)
-      results = format_cal_taxon_data_from_string(taxonomy_string)
+    def create_result_taxon_from(taxonomy_string, source_data)
+      results = format_result_taxon_data_from_string(taxonomy_string)
 
       if results[:taxon_id].blank?
         create_data = results.merge(normalized: false)
@@ -50,7 +50,7 @@ module ImportCsv
                              .merge(sources: [source_data])
       end
 
-      ImportCsvCreateCalTaxonJob.perform_later(create_data)
+      ImportCsvCreateResultTaxonJob.perform_later(create_data)
     end
   end
 end

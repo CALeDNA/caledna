@@ -13,7 +13,7 @@ module ProcessEdnaResults
   end
 
   # rubocop:disable Metrics/MethodLength
-  def format_cal_taxon_data_from_string(taxonomy_string)
+  def format_result_taxon_data_from_string(taxonomy_string)
     rank = get_taxon_rank(taxonomy_string)
     hierarchy = get_hierarchy(taxonomy_string)
 
@@ -50,7 +50,7 @@ module ProcessEdnaResults
   end
   # rubocop:enable Metrics/MethodLength
 
-  def find_cal_taxon_from_string(string)
+  def find_result_taxon_from_string(string)
     clean_string = remove_na(string)
     rank = if phylum_taxonomy_string?(clean_string)
              get_taxon_rank_phylum(clean_string)
@@ -58,8 +58,8 @@ module ProcessEdnaResults
              get_taxon_rank_superkingdom(clean_string)
            end
 
-    CalTaxon.where(clean_taxonomy_string: clean_string)
-            .where(taxon_rank: rank).first
+    ResultTaxon.where(clean_taxonomy_string: clean_string)
+               .where(taxon_rank: rank).first
   end
 
   def phylum_taxonomy_string?(string)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CalTaxon < ApplicationRecord
+class ResultTaxon < ApplicationRecord
   TAXON_RANK = %w[
     superkingdom kingdom phylum class order family genus species
   ].freeze

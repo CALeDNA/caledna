@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-namespace :cal_taxa do
+namespace :result_taxa do
   task update_missing_superkingdom_string: :environment do
     sql =  <<-SQL
-    update cal_taxa
+    update result_taxa
     set original_taxonomy_superkingdom =
       coalesce(hierarchy ->> 'superkingdom', '') ||
       ';' || original_taxonomy_phylum
-    where cal_taxa.original_taxonomy_superkingdom is null;
+    where result_taxa.original_taxonomy_superkingdom is null;
     SQL
 
     ActiveRecord::Base.connection.execute(sql)
@@ -35,17 +35,18 @@ namespace :cal_taxa do
 
     sql = "hierarchy ->> 'class' = 'Oomycetes' OR " \
           " hierarchy ->> 'class' = 'Florideophyceae'"
-    cal_taxa = CalTaxon.where(sql).where(normalized: false)
+    result_taxa = ResultTaxon.where(sql).where(normalized: false)
 
-    cal_taxa.each do |cal_taxon|
+    result_taxa.each do |result_taxon|
       ncbi_taxa =
-        find_taxa_by_hierarchy(cal_taxon.hierarchy, cal_taxon.taxon_rank)
+        find_taxa_by_hierarchy(result_taxon.hierarchy, result_taxon.taxon_rank)
       next unless ncbi_taxa.to_a.size == 1
 
-      puts "#{cal_taxon.original_taxonomy_string} - #{ncbi_taxa.first.taxon_id}"
-      cal_taxon.taxon_id = ncbi_taxa.first.taxon_id
-      cal_taxon.normalized = true
-      cal_taxon.save
+      puts "#{result_taxon.original_taxonomy_string} - " \
+        "#{ncbi_taxa.first.taxon_id}"
+      result_taxon.taxon_id = ncbi_taxa.first.taxon_id
+      result_taxon.normalized = true
+      result_taxon.save
     end
   end
 end

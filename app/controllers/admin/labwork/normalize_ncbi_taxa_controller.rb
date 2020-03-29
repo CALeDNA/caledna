@@ -6,16 +6,16 @@ module Admin
       def index
         authorize 'Labwork::NormalizeTaxon'.to_sym, :index?
 
-        @taxa = CalTaxon.where(normalized: false)
-                        .where(ignore: false)
-                        .order(:taxon_rank, :clean_taxonomy_string)
-                        .page params[:page]
+        @taxa = ResultTaxon.where(normalized: false)
+                           .where(ignore: false)
+                           .order(:taxon_rank, :clean_taxonomy_string)
+                           .page params[:page]
       end
 
       def show
         authorize 'Labwork::NormalizeTaxon'.to_sym, :show?
 
-        @cal_taxon = cal_taxon
+        @result_taxon = result_taxon
         @suggestions = suggestions.present? ? suggestions : more_suggestions
       end
 
@@ -23,11 +23,11 @@ module Admin
       def update_existing
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
 
-        cal_taxon.taxon_id = update_existing_params[:taxon_id]
-        cal_taxon.normalized = true
-        cal_taxon.ignore = false
+        result_taxon.taxon_id = update_existing_params[:taxon_id]
+        result_taxon.normalized = true
+        result_taxon.ignore = false
 
-        if cal_taxon.save(validate: false)
+        if result_taxon.save(validate: false)
           redirect_to admin_labwork_normalize_ncbi_taxa_path
         else
           handle_error_id('Could not save the suggeted taxon.')
@@ -40,8 +40,8 @@ module Admin
         taxon = find_taxa_with_source_id
         return handle_error_id('No taxa matches the ID') if taxon.blank?
 
-        cal_taxon_attr(taxon)
-        if cal_taxon.save
+        result_taxon_attr(taxon)
+        if result_taxon.save
           redirect_to admin_labwork_normalize_ncbi_taxa_path
         else
           handle_error_id('Could not save taxon ID')
@@ -53,7 +53,7 @@ module Admin
       def update_create
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
         ActiveRecord::Base.transaction do
-          cal_taxon.update!(update_cal_taxon_params)
+          result_taxon.update!(update_result_taxon_params)
           NcbiNode.create!(create_params)
         end
         render json: { status: :ok }
@@ -72,15 +72,15 @@ module Admin
       # update_with_id
       # ==================
 
-      def cal_taxon_attr(taxon)
-        cal_taxon.taxon_id = taxon.taxon_id
-        cal_taxon.normalized = true
+      def result_taxon_attr(taxon)
+        result_taxon.taxon_id = taxon.taxon_id
+        result_taxon.normalized = true
       end
 
       def handle_error_id(message)
         flash[:error] = message
 
-        redirect_to admin_labwork_normalize_ncbi_taxon_path(cal_taxon)
+        redirect_to admin_labwork_normalize_ncbi_taxon_path(result_taxon)
       end
 
       def find_taxa_with_source_id
@@ -112,7 +112,7 @@ module Admin
       # update_create
       # ==================
 
-      def update_cal_taxon_params
+      def update_result_taxon_params
         {
           normalized: true,
           ignored: false,
@@ -122,7 +122,7 @@ module Admin
       end
 
       def create_params
-        raw_params.except(:cal_taxon_id, :dataset_id)
+        raw_params.except(:result_taxon_id, :dataset_id)
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -132,7 +132,7 @@ module Admin
           :parent_taxon_id,
           :rank,
           :canonical_name,
-          :cal_taxon_id,
+          :result_taxon_id,
           :division_id,
           :cal_division_id,
           :dataset_id,
@@ -149,24 +149,24 @@ module Admin
 
       def suggestions
         canonical_name =
-          cal_taxon.hierarchy[cal_taxon.taxon_rank].downcase
+          result_taxon.hierarchy[result_taxon.taxon_rank].downcase
 
         @suggestions ||=
           NcbiNode.where("lower(canonical_name) = '#{canonical_name}'")
       end
 
       def more_suggestions
-        species = cal_taxon.original_taxonomy.split(';').last.downcase
+        species = result_taxon.original_taxonomy.split(';').last.downcase
         @more_suggestions ||= NcbiNode.where(
           "lower(REPLACE(canonical_name, '''', '')) = '#{species}'"
         )
       end
 
-      def cal_taxon
-        @cal_taxon ||= begin
-          id = params[:id] || raw_params[:cal_taxon_id] ||
+      def result_taxon
+        @result_taxon ||= begin
+          id = params[:id] || raw_params[:result_taxon_id] ||
                params[:normalize_ncbi_taxon_id]
-          CalTaxon.find(id)
+          ResultTaxon.find(id)
         end
       end
     end

@@ -196,9 +196,9 @@ describe ProcessEdnaResults do
     end
   end
 
-  describe '#format_cal_taxon_data_from_string' do
+  describe '#format_result_taxon_data_from_string' do
     def subject(string)
-      dummy_class.format_cal_taxon_data_from_string(string)
+      dummy_class.format_result_taxon_data_from_string(string)
     end
 
     let(:id) { 100 }
@@ -1221,9 +1221,9 @@ describe ProcessEdnaResults do
     end
   end
 
-  describe '#find_cal_taxon_from_string' do
+  describe '#find_result_taxon_from_string' do
     def subject(string)
-      dummy_class.find_cal_taxon_from_string(string)
+      dummy_class.find_result_taxon_from_string(string)
     end
 
     def clean_string(string)
@@ -1231,37 +1231,37 @@ describe ProcessEdnaResults do
     end
 
     context 'phylum taxonomy string' do
-      it 'handles complete taxonomy strings and returns matching CalTaxon' do
+      it 'handles complete taxonomy strings and returns matching ResultTaxon' do
         taxonomy_string = 'Phylum;Class;Order;Family;Genus;Species'
         clean_string = clean_string(taxonomy_string)
         rank = 'species'
-        taxa = create(:cal_taxon, clean_taxonomy_string: clean_string,
-                                  normalized: true, taxon_rank: rank)
+        taxa = create(:result_taxon, clean_taxonomy_string: clean_string,
+                                     normalized: true, taxon_rank: rank)
 
         expect(subject(taxonomy_string)).to eq(taxa)
       end
 
-      it 'handles blank ranks and returns matching CalTaxon' do
+      it 'handles blank ranks and returns matching ResultTaxon' do
         taxonomy_string = 'Phylum;;Order;Family;;Species'
         clean_string = clean_string(taxonomy_string)
         rank = 'species'
-        taxa = create(:cal_taxon, clean_taxonomy_string: clean_string,
-                                  normalized: true, taxon_rank: rank)
+        taxa = create(:result_taxon, clean_taxonomy_string: clean_string,
+                                     normalized: true, taxon_rank: rank)
 
         expect(subject(taxonomy_string)).to eq(taxa)
       end
 
-      it 'handles NA and returns matching CalTaxon' do
+      it 'handles NA and returns matching ResultTaxon' do
         taxonomy_string = 'NA;NA;Order;Family;NA;Species'
         clean_string = clean_string(taxonomy_string)
         rank = 'species'
-        taxa = create(:cal_taxon, clean_taxonomy_string: clean_string,
-                                  normalized: true, taxon_rank: rank)
+        taxa = create(:result_taxon, clean_taxonomy_string: clean_string,
+                                     normalized: true, taxon_rank: rank)
 
         expect(subject(taxonomy_string)).to eq(taxa)
       end
 
-      it 'taxonomy string with same cleaned string returns the same CalTaxon' do
+      it 'taxonomy string with same cleaned string returns same ResultTaxon' do
         taxonomy_string1 = 'Phylum;NA;Order;;;'
         taxonomy_string2 = 'Phylum;;Order;;;'
         taxonomy_string3 = 'Phylum;NA;Order;NA;NA;'
@@ -1269,8 +1269,8 @@ describe ProcessEdnaResults do
         clean_string = 'Phylum;;Order;;;'
         rank = 'order'
 
-        taxa = create(:cal_taxon, clean_taxonomy_string: clean_string,
-                                  normalized: true, taxon_rank: rank)
+        taxa = create(:result_taxon, clean_taxonomy_string: clean_string,
+                                     normalized: true, taxon_rank: rank)
         expect(subject(taxonomy_string1)).to eq(taxa)
         expect(subject(taxonomy_string2)).to eq(taxa)
         expect(subject(taxonomy_string3)).to eq(taxa)
@@ -1279,32 +1279,32 @@ describe ProcessEdnaResults do
     end
 
     context 'superkingdom taxonomy string' do
-      it 'handles complete taxonomy strings and returns matching CalTaxon' do
+      it 'handles complete taxonomy strings and returns matching ResultTaxon' do
         taxonomy_string = 'Superkingdom;Phylum;Class;Order;Family;Genus;Species'
         clean_string = clean_string(taxonomy_string)
         rank = 'species'
-        taxa = create(:cal_taxon, clean_taxonomy_string: clean_string,
-                                  normalized: true, taxon_rank: rank)
+        taxa = create(:result_taxon, clean_taxonomy_string: clean_string,
+                                     normalized: true, taxon_rank: rank)
 
         expect(subject(taxonomy_string)).to eq(taxa)
       end
 
-      it 'handles blank ranks and returns matching CalTaxon' do
+      it 'handles blank ranks and returns matching ResultTaxon' do
         taxonomy_string = ';Phylum;;Order;Family;;Species'
         clean_string = clean_string(taxonomy_string)
         rank = 'species'
-        taxa = create(:cal_taxon, clean_taxonomy_string: clean_string,
-                                  normalized: true, taxon_rank: rank)
+        taxa = create(:result_taxon, clean_taxonomy_string: clean_string,
+                                     normalized: true, taxon_rank: rank)
 
         expect(subject(taxonomy_string)).to eq(taxa)
       end
 
-      it 'handles NA and returns matching CalTaxon' do
+      it 'handles NA and returns matching ResultTaxon' do
         taxonomy_string = 'NA;NA;;Order;Family;NA;Species'
         clean_string = clean_string(taxonomy_string)
         rank = 'species'
-        taxa = create(:cal_taxon, clean_taxonomy_string: clean_string,
-                                  normalized: true, taxon_rank: rank)
+        taxa = create(:result_taxon, clean_taxonomy_string: clean_string,
+                                     normalized: true, taxon_rank: rank)
 
         expect(subject(taxonomy_string)).to eq(taxa)
       end

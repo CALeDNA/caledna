@@ -190,8 +190,8 @@ namespace :research_project_pillar_point do
         asv.update(taxonID: taxon[:ncbi_id])
       end
 
-      cal_taxon = CalTaxon.where(taxonID: taxon[:taxon_id])
-      cal_taxon.update(taxonID: taxon[:ncbi_id], exact_gbif_match: true)
+      result_taxon = ResultTaxon.where(taxonID: taxon[:taxon_id])
+      result_taxon.update(taxonID: taxon[:ncbi_id], exact_gbif_match: true)
 
       NcbiNode.where(taxon_id: taxon[:taxon_id]).destroy_all
 

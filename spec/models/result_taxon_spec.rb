@@ -2,16 +2,17 @@
 
 require 'rails_helper'
 
-describe CalTaxon, type: :model do
+describe ResultTaxon, type: :model do
   describe 'validations' do
     it 'passes when taxon rank is valid' do
-      should validate_inclusion_of(:taxon_rank).in_array(CalTaxon::TAXON_RANK)
+      should validate_inclusion_of(:taxon_rank)
+        .in_array(ResultTaxon::TAXON_RANK)
     end
   end
 
   describe '#sources_display' do
     it 'returns nil if no sources' do
-      taxon = create(:cal_taxon, sources: [])
+      taxon = create(:result_taxon, sources: [])
 
       expect(taxon.sources_display).to eq(nil)
     end
@@ -19,21 +20,21 @@ describe CalTaxon, type: :model do
     it 'returns research project names and primers when sources is valid' do
       create(:research_project, id: 100, name: 'name1')
       create(:research_project, id: 200, name: 'name2')
-      taxon = create(:cal_taxon, sources: ['100|p1', '200|p2'])
+      taxon = create(:result_taxon, sources: ['100|p1', '200|p2'])
 
       expect(taxon.sources_display).to eq('name1 - p1, name2 - p2')
     end
 
     it 'ignores sources that has invalid project id' do
       create(:research_project, id: 100, name: 'name1')
-      taxon = create(:cal_taxon, sources: ['100|p1', '999|foo'])
+      taxon = create(:result_taxon, sources: ['100|p1', '999|foo'])
 
       expect(taxon.sources_display).to eq('name1 - p1')
     end
 
     it 'ignores sources that have wrong format' do
       create(:research_project, id: 100, name: 'name1')
-      taxon = create(:cal_taxon, sources: ['100|p1', '100p2'])
+      taxon = create(:result_taxon, sources: ['100|p1', '100p2'])
 
       expect(taxon.sources_display).to eq('name1 - p1')
     end

@@ -105,9 +105,9 @@ describe ImportCsv::EdnaResultsAsvs do
     let(:csv_barcode1) { 'K0001-LA-S1' }
 
     context 'when matching taxon does not exist' do
-      let!(:cal_taxon) do
+      let!(:result_taxon) do
         create(
-          :cal_taxon,
+          :result_taxon,
           clean_taxonomy_string: 'Foo',
           taxon_rank: 'phylum',
           normalized: true
@@ -130,9 +130,9 @@ describe ImportCsv::EdnaResultsAsvs do
     end
 
     context 'when matching taxon does exist with no reads' do
-      let!(:cal_taxon) do
+      let!(:result_taxon) do
         create(
-          :cal_taxon,
+          :result_taxon,
           clean_taxonomy_string: data[0]['sum.taxonomy'],
           taxon_rank: 'family',
           normalized: true
@@ -155,9 +155,9 @@ describe ImportCsv::EdnaResultsAsvs do
     end
 
     context 'when matching taxon does exist with reads' do
-      let!(:cal_taxon) do
+      let!(:result_taxon) do
         create(
-          :cal_taxon,
+          :result_taxon,
           clean_taxonomy_string: data[1]['sum.taxonomy'],
           taxon_rank: 'genus',
           normalized: true

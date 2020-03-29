@@ -39,10 +39,10 @@ module ImportCsv
         taxonomy_string = row.first
         next if invalid_taxon?(taxonomy_string)
 
-        cal_taxon = find_cal_taxon_from_string(taxonomy_string)
-        next if cal_taxon.blank?
+        result_taxon = find_result_taxon_from_string(taxonomy_string)
+        next if result_taxon.blank?
 
-        asv_attributes[:taxon_id] = cal_taxon.taxon_id
+        asv_attributes[:taxon_id] = result_taxon.taxon_id
         create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
       end
     end

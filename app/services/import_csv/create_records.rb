@@ -25,8 +25,8 @@ module ImportCsv
       raise ImportError, 'ResearchProjectSource not created'
     end
 
-    def create_cal_taxon(data)
-      CalTaxon.create(data)
+    def create_result_taxon(data)
+      ResultTaxon.create(data)
     end
 
     private

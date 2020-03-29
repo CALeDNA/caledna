@@ -151,11 +151,11 @@ namespace :ncbi do
     create_hierarchy_names_info
   end
 
-  desc 'update cal_taxon'
-  task update_cal_taxon: :environment do
-    puts 'update cal_taxon...'
-    CalTaxon.where(exact_gbif_match: false).all.each do |taxon|
-      results = format_cal_taxon_data_from_string(taxon.original_taxonomy)
+  desc 'update result_taxon'
+  task update_result_taxon: :environment do
+    puts 'update result_taxon...'
+    ResultTaxon.where(exact_gbif_match: false).all.each do |taxon|
+      results = format_result_taxon_data_from_string(taxon.original_taxonomy)
 
       if results[:taxon_id].blank? && results[:rank].present?
         update_data = results.merge(normalized: false, ignore: false)
