@@ -24,7 +24,7 @@
         <label>Primer</label>
       </div>
       <div class="field-unit__field">
-        <%= select(:dna_results, :primer, Primer.all.map(&:name), {include_blank: 'Select primer'}) %>
+        <%= select(:dna_results, :primer_id, @primers, {include_blank: 'Select primer'}) %>
       </div>
     </div>
     <div class="field-unit">

@@ -20,7 +20,7 @@ describe ImportCsv::EdnaResultsAsvs do
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
     let(:research_project) { create(:research_project) }
-    let(:primer) { '12S' }
+    let(:primer) { 1 }
     let(:csv_barcode1) { 'K0001-LA-S1' }
     let(:csv_barcode2) { 'K0001-LA-S2' }
 
@@ -48,7 +48,7 @@ describe ImportCsv::EdnaResultsAsvs do
             data.to_json,
             [nil, nil, csv_barcode1, csv_barcode2],
             { csv_barcode1 => 999, csv_barcode2 => 888 },
-            research_project_id: research_project.id, primer: primer
+            research_project_id: research_project.id, primer_id: primer
           )
       end
 

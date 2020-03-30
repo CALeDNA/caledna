@@ -7,7 +7,7 @@ module ImportCsv
     include CsvUtils
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def import_csv(file, research_project_id, primer)
+    def import_csv(file, research_project_id, primer_id)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
@@ -21,7 +21,7 @@ module ImportCsv
 
       asv_attributes = {
         research_project_id: research_project_id,
-        primer: primer
+        primer_id: primer_id
       }
       ImportCsvQueueAsvJob.perform_later(
         data.to_json, barcodes, samples[:valid_data], asv_attributes
