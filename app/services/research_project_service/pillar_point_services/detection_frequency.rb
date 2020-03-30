@@ -48,7 +48,7 @@ module ResearchProjectService
           'ncbi' AS source
           FROM combine_taxa
           JOIN asvs
-            ON asvs."taxonID" = combine_taxa.caledna_taxon_id
+            ON asvs.taxon_id = combine_taxa.caledna_taxon_id
             AND (combine_taxa.source = 'ncbi' OR combine_taxa.source = 'bold')
           JOIN research_project_sources
             ON asvs.sample_id = research_project_sources.sourceable_id

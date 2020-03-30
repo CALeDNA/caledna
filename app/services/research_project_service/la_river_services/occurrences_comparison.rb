@@ -27,7 +27,7 @@ module ResearchProjectService
           AND (research_project_sources.sourceable_type = 'Sample')
           AND (research_project_sources.research_project_id = #{project.id})
           JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs."taxonID"
+          ON ncbi_nodes.taxon_id = asvs.taxon_id
           JOIN ncbi_divisions
           ON ncbi_divisions.id = ncbi_nodes.cal_division_id
           GROUP BY ncbi_divisions.name
@@ -46,7 +46,7 @@ module ResearchProjectService
 
       def cal_division_unique_stats
         sql = <<-SQL
-          SELECT ncbi_divisions.name AS category, COUNT(DISTINCT("taxonID"))
+          SELECT ncbi_divisions.name AS category, COUNT(DISTINCT(taxon_id))
           #{cal_division_sql}
         SQL
 

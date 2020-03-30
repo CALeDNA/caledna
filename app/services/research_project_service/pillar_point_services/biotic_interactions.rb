@@ -56,7 +56,7 @@ module ResearchProjectService
           JOIN asvs
           ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs."taxonID"
+          ON ncbi_nodes.taxon_id = asvs.taxon_id
           WHERE research_project_id = #{project.id}
           AND sourceable_type = 'Sample'
         ) as edna_match;
@@ -114,7 +114,7 @@ module ResearchProjectService
           JOIN asvs
           ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs."taxonID"
+          ON ncbi_nodes.taxon_id = asvs.taxon_id
           WHERE research_project_id = #{project.id}
           AND sourceable_type = 'Sample'
           INTERSECT
@@ -169,7 +169,7 @@ module ResearchProjectService
           JOIN asvs
           ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs."taxonID"
+          ON ncbi_nodes.taxon_id = asvs.taxon_id
           WHERE research_project_id = #{project.id}
           AND sourceable_type = 'Sample'
           INTERSECT

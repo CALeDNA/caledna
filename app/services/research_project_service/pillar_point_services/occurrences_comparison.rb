@@ -28,7 +28,7 @@ module ResearchProjectService
             AND (research_project_sources.research_project_id =
             #{conn.quote(project.id)})
           JOIN combine_taxa
-            ON asvs."taxonID" = combine_taxa.caledna_taxon_id
+            ON asvs.taxon_id = combine_taxa.caledna_taxon_id
             AND (source = 'ncbi' OR source = 'bold')
           GROUP BY kingdom
           ORDER BY kingdom;
@@ -46,7 +46,7 @@ module ResearchProjectService
 
       def cal_division_unique_stats
         sql = <<-SQL
-          SELECT kingdom as category, COUNT(DISTINCT("taxonID"))
+          SELECT kingdom as category, COUNT(DISTINCT(taxon_id))
           #{cal_division_sql}
         SQL
 

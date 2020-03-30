@@ -24,14 +24,14 @@ module CustomCounter
 
   def get_sample_ids(taxon_id)
     asvs = Asv.where("ids @> '{?}'", taxon_id)
-              .joins('JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes.taxon_id')
+              .joins('JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id')
               .select('DISTINCT(sample_id)')
     asvs.map(&:sample_id)
   end
 
   def get_sample_ids_la_river(taxon_id)
     asvs = Asv.where("ids @> '{?}'", taxon_id)
-              .joins('JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes.taxon_id')
+              .joins('JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id')
               .joins('JOIN samples ON samples.id = asvs.sample_id')
               .select('DISTINCT(sample_id)')
               .where('samples.field_project_id = ?',
@@ -46,7 +46,7 @@ module CustomCounter
       SELECT taxon_id, count(*) FROM (
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
-        JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
+        JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id
         JOIN samples ON samples.id = asvs.sample_id
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
@@ -68,7 +68,7 @@ module CustomCounter
       SELECT taxon_id, count(*) FROM (
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
-        JOIN ncbi_nodes ON asvs."taxonID" = ncbi_nodes."taxon_id"
+        JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id
         JOIN samples ON samples.id = asvs.sample_id
         AND samples.field_project_id = #{FieldProject::LA_RIVER.id}
         GROUP BY unnest(ncbi_nodes.ids) , sample_id

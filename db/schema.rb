@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_29_222945) do
+ActiveRecord::Schema.define(version: 2020_03_30_052417) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,16 +39,18 @@ ActiveRecord::Schema.define(version: 2020_03_29_222945) do
   create_table "asvs", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "taxonID"
+    t.integer "taxon_id"
     t.text "primers", default: [], array: true
     t.integer "sample_id"
     t.integer "count", default: 0
     t.jsonb "counts", default: {}
     t.integer "research_project_id"
     t.string "primer"
+    t.bigint "primer_id"
+    t.index ["primer_id"], name: "index_asvs_on_primer_id"
     t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
-    t.index ["taxonID"], name: "index_asvs_on_taxonID"
+    t.index ["taxon_id"], name: "index_asvs_on_taxon_id"
   end
 
   create_table "combine_taxa", force: :cascade do |t|
@@ -561,6 +563,7 @@ ActiveRecord::Schema.define(version: 2020_03_29_222945) do
     t.string "name", null: false
   end
 
+  add_foreign_key "asvs", "primers"
   add_foreign_key "asvs", "research_projects"
   add_foreign_key "asvs", "samples"
   add_foreign_key "event_registrations", "events"

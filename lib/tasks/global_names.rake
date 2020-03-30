@@ -7,10 +7,10 @@ namespace :global_names do
 
     inat_taxa =
       InatObservation
-      .select(:scientificName, :taxonID)
+      .select(:scientificName, :taxon_id)
       .joins(:research_project_sources)
       .where("research_project_sources.sourceable_type = 'InatObservation'")
-      .group(:scientificName, :taxonID)
+      .group(:scientificName, :taxon_id)
 
     inat_taxa.each do |taxon|
       results = global_names_api.names(taxon.scientificName)
@@ -254,11 +254,11 @@ namespace :global_names do
     source_ids = ExternalResource::GLOBAL_NAMES_SOURCE_IDS.join('|')
 
     join_sql = <<-SQL
-      LEFT JOIN external_resources ON inat_observations."taxonID" =
+      LEFT JOIN external_resources ON inat_observations."taxon_id" =
       external_resources.inaturalist_id
     SQL
     inat_obs =
-      InatObservation.select('DISTINCT inat_observations."taxonID", species')
+      InatObservation.select('DISTINCT inat_observations."taxon_id", species')
                      .joins(join_sql)
                      .where('external_resources.id IS NULL')
 
@@ -266,7 +266,7 @@ namespace :global_names do
       results = global_names_api.names(inat_ob.species, source_ids)
 
       create_external_resource(
-        results: results, taxon_id: inat_ob.taxonID,
+        results: results, taxon_id: inat_ob.taxon_id,
         id_name: 'inaturalist_id'
       )
     end

@@ -20,7 +20,7 @@ module ResearchProjectService
           'ncbi' AS source
           FROM ncbi_nodes
           JOIN asvs
-            ON asvs."taxonID" = ncbi_nodes.taxon_id
+            ON asvs.taxon_id = ncbi_nodes.taxon_id
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
           JOIN research_project_sources

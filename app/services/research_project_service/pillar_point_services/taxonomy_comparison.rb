@@ -55,7 +55,7 @@ module ResearchProjectService
           SELECT combine_taxa.kingdom, combine_taxa.#{combine_taxon_rank_field}
           FROM combine_taxa
           LEFT JOIN asvs
-            ON asvs."taxonID" = combine_taxa.caledna_taxon_id
+            ON asvs.taxon_id = combine_taxa.caledna_taxon_id
           JOIN research_project_sources
             ON asvs.sample_id = research_project_sources.sourceable_id
             AND research_project_sources.research_project_id = #{project.id}

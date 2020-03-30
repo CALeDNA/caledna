@@ -19,7 +19,7 @@ module Api
 
       def organism_count
         @organism_count ||= begin
-          sql = 'SELECT COUNT(DISTINCT("taxonID")) from asvs'
+          sql = 'SELECT COUNT(DISTINCT(taxon_id)) from asvs;'
           ActiveRecord::Base.connection.execute(sql)
         end
       end

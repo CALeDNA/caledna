@@ -19,7 +19,7 @@ module ResearchProjectService
           ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images
           FROM asvs
           JOIN ncbi_nodes
-            ON asvs."taxonID" = ncbi_nodes.taxon_id
+            ON asvs.taxon_id = ncbi_nodes.taxon_id
           JOIN samples
             ON asvs.sample_id = samples.id
           JOIN research_project_sources

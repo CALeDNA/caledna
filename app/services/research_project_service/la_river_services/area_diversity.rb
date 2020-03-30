@@ -85,7 +85,7 @@ module ResearchProjectService
         sql_string = area_diversity_cal_sql
 
         sql = <<-SQL
-        SELECT COUNT(DISTINCT("taxonID")) FROM (
+        SELECT COUNT(DISTINCT(taxon_id)) FROM (
           #{sql_string}
         ) AS foo
         SQL
@@ -97,7 +97,7 @@ module ResearchProjectService
         sql_array = types.map { |t| sample_type(t) }
         sql_string = sql_array.join(' INTERSECT ')
         sql_string = <<-SQL
-        SELECT COUNT(DISTINCT("taxonID")) FROM (
+        SELECT COUNT(DISTINCT(taxon_id)) FROM (
           #{sql_string}
         ) AS foo
         SQL
@@ -129,7 +129,7 @@ module ResearchProjectService
         sql_string += pa_sql
 
         sql = <<-SQL
-        SELECT COUNT(DISTINCT("taxonID")) FROM (
+        SELECT COUNT(DISTINCT(taxon_id)) FROM (
           #{sql_string}
         ) AS foo
         SQL
@@ -141,7 +141,7 @@ module ResearchProjectService
         sql_array = locations.map { |l| pa_area_diversity_cal_location(l) }
         sql_string = sql_array.join(' INTERSECT ')
         sql_string = <<-SQL
-        SELECT COUNT(DISTINCT("taxonID")) FROM (
+        SELECT COUNT(DISTINCT(taxon_id)) FROM (
           #{sql_string}
         ) AS foo
         SQL
@@ -163,10 +163,10 @@ module ResearchProjectService
 
       def area_diversity_cal_sql
         sql = <<-SQL
-          SELECT asvs."taxonID"
+          SELECT asvs.taxon_id
           FROM asvs
           JOIN ncbi_nodes
-          ON asvs."taxonID" = ncbi_nodes.taxon_id
+          ON asvs.taxon_id = ncbi_nodes.taxon_id
           JOIN research_project_sources
           ON research_project_sources.sourceable_id = asvs.sample_id
           JOIN ncbi_divisions
@@ -196,7 +196,7 @@ module ResearchProjectService
       def taxa_total
         sql_string = area_diversity_cal_sql
         sql_string = <<-SQL
-        SELECT COUNT(DISTINCT("taxonID")) FROM (
+        SELECT COUNT(DISTINCT(taxon_id)) FROM (
           #{sql_string}
         ) AS foo
         SQL
@@ -208,7 +208,7 @@ module ResearchProjectService
         sql_array = locations.map { |l| area_diversity_cal_location(l) }
         sql_string = sql_array.join(' INTERSECT ')
         sql_string = <<-SQL
-        SELECT COUNT(DISTINCT("taxonID")) FROM (
+        SELECT COUNT(DISTINCT(taxon_id)) FROM (
           #{sql_string}
         ) AS foo
         SQL

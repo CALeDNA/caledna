@@ -47,7 +47,7 @@
 
     <% taxon.synonyms.each do |synonym|%>
       <tr>
-        <td><%= link_to synonym.name, taxon_path(taxonID: synonym.taxon_id) %></td>
+        <td><%= link_to synonym.name, taxon_path(taxon_id: synonym.taxon_id) %></td>
         <td><%= synonym.name_class %></td>
       </tr>
     <% end %>

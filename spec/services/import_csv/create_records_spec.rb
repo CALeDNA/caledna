@@ -46,7 +46,7 @@ describe ImportCsv::CreateRecords do
     let(:attributes) do
       {
         sample_id: sample.id,
-        taxonID: taxon.taxon_id,
+        taxon_id: taxon.taxon_id,
         primer: primer,
         research_project_id: research_project.id,
         count: count
@@ -64,7 +64,7 @@ describe ImportCsv::CreateRecords do
         asv = Asv.last
 
         expect(asv.sample).to eq(sample)
-        expect(asv.taxonID).to eq(taxon.id)
+        expect(asv.taxon_id).to eq(taxon.id)
         expect(asv.primer).to eq(primer)
         expect(asv.count).to eq(count)
         expect(asv.research_project).to eq(research_project)
@@ -73,7 +73,7 @@ describe ImportCsv::CreateRecords do
 
     context 'asv already exists' do
       it 'does not create asv' do
-        create(:asv, sample: sample, taxonID: taxon.id, primer: primer,
+        create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
                      count: count, research_project: research_project)
 
         expect { subject(attributes) }

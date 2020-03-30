@@ -114,7 +114,7 @@ namespace :combine_taxa do
       AND research_project_id = 4
       AND sourceable_type = 'Sample'
       JOIN ncbi_nodes
-      ON ncbi_nodes.taxon_id = asvs."taxonID"
+      ON ncbi_nodes.taxon_id = asvs.taxon_id
       ORDER BY superkingdom, kingdom, phylum,
       class,  "order",  family,  genus, species;
     SQL
@@ -304,10 +304,10 @@ namespace :combine_taxa do
 
     CSV.foreach(path, headers: true, col_sep: "\t") do |row|
       result_taxon = find_result_taxon(row['sum.taxonomy'])
-      puts result_taxon&.taxonID || row['sum.taxonomy']
+      puts result_taxon&.taxon_id || row['sum.taxonomy']
 
       if result_taxon.present?
-        taxon = NcbiNode.find(result_taxon.taxonID)
+        taxon = NcbiNode.find(result_taxon.taxon_id)
         taxon_id = taxon.ncbi_id || taxon.bold_id
         source = taxon.ncbi_id.present? ? 'ncbi' : 'bold'
       end
@@ -315,7 +315,7 @@ namespace :combine_taxa do
       CSV.open(output_file, 'a+') do |csv|
         if result_taxon.present?
           combine_taxon =
-            CombineTaxon.where(caledna_taxon_id: result_taxon.taxonID)
+            CombineTaxon.where(caledna_taxon_id: result_taxon.taxon_id)
                         .where("source ='ncbi' or source='bold'")
                         .first
 
@@ -324,7 +324,7 @@ namespace :combine_taxa do
             csv << [source, taxon_id, combine_taxon.short_taxonomy_string] +
                    row.to_h.values
           else
-            csv << ['', '', "no Ruggerio conversion #{result_taxon.taxonID}"] +
+            csv << ['', '', "no Ruggerio conversion #{result_taxon.taxon_id}"] +
                    row.to_h.values
           end
           # rubocop:enable Style/ConditionalAssignment

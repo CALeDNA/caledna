@@ -124,7 +124,7 @@ module AsvTreeFormatter
 
   def fetch_asv_tree
     @fetch_asv_tree ||= begin
-      NcbiNode.joins('join asvs on asvs."taxonID" = ncbi_nodes.taxon_id')
+      NcbiNode.joins('join asvs on asvs.taxon_id = ncbi_nodes.taxon_id')
               .joins(:ncbi_division)
               .where('cal_division_id IS NOT NULL')
               .select('ncbi_divisions.name as domain')

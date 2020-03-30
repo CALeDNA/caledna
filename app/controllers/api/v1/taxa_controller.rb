@@ -54,9 +54,9 @@ module Api
             .select(:latitude).select(:longitude).select(:substrate_cd)
             .select(:primers).select(:gps_precision).select(:location)
             .select('array_agg( "ncbi_nodes"."canonical_name"|| ' \
-              "' | ' ||taxon_id) AS taxa")
+              "' | ' ||ncbi_nodes.taxon_id) AS taxa")
             .joins('JOIN asvs on asvs.sample_id = samples.id')
-            .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs."taxonID"')
+            .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs.taxon_id')
             .where('ids @> ?', "{#{params[:id]}}")
             .group(:id)
         end

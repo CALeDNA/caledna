@@ -56,7 +56,7 @@ describe 'Taxa' do
 
       sample = create(:sample, status: status, substrate_cd: substrate,
                                primers: primers.split('|'))
-      create(:asv, sample: sample, taxonID: taxon.taxon_id)
+      create(:asv, sample: sample, taxon_id: taxon.taxon_id)
       sample
     end
 
@@ -104,8 +104,8 @@ describe 'Taxa' do
       taxon2 = create(:ncbi_node, ids: [1, target_id], id: target_id)
 
       sample1 = create(:sample, :results_completed)
-      create(:asv, sample: sample1, taxonID: taxon1.taxon_id)
-      create(:asv, sample: sample1, taxonID: taxon2.taxon_id)
+      create(:asv, sample: sample1, taxon_id: taxon1.taxon_id)
+      create(:asv, sample: sample1, taxon_id: taxon2.taxon_id)
 
       get api_v1_taxon_path(id: target_id)
       samples, asvs_count, base_samples = parse_response(response)

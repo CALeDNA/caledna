@@ -185,13 +185,13 @@ namespace :research_project_pillar_point do
     ]
 
     taxa.each do |taxon|
-      asvs = Asv.where(taxonID: taxon[:taxon_id])
+      asvs = Asv.where(taxon_id: taxon[:taxon_id])
       asvs.each do |asv|
-        asv.update(taxonID: taxon[:ncbi_id])
+        asv.update(taxon_id: taxon[:ncbi_id])
       end
 
-      result_taxon = ResultTaxon.where(taxonID: taxon[:taxon_id])
-      result_taxon.update(taxonID: taxon[:ncbi_id], exact_gbif_match: true)
+      result_taxon = ResultTaxon.where(taxon_id: taxon[:taxon_id])
+      result_taxon.update(taxon_id: taxon[:ncbi_id], exact_gbif_match: true)
 
       NcbiNode.where(taxon_id: taxon[:taxon_id]).destroy_all
 

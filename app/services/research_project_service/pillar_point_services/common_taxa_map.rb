@@ -39,7 +39,7 @@ module ResearchProjectService
           JOIN samples
           ON asvs.sample_id = samples.id
           JOIN combine_taxa
-          ON asvs."taxonID" = combine_taxa.caledna_taxon_id
+          ON asvs.taxon_id = combine_taxa.caledna_taxon_id
           AND combine_taxa.#{rank} = '#{taxon}'
           AND (source = 'ncbi' OR source = 'bold');
         SQL

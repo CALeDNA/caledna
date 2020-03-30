@@ -25,8 +25,8 @@ class SamplesController < ApplicationController
       ncbi_nodes.taxon_id, iucn_status,
       ncbi_divisions.name AS division_name, rank,
       common_names
-      FROM "ncbi_nodes"
-      JOIN "asvs" ON "asvs"."taxonID" = "ncbi_nodes"."taxon_id"
+      FROM ncbi_nodes
+      JOIN asvs ON asvs.taxon_id = ncbi_nodes.taxon_id
       JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
       LEFT JOIN external_resources

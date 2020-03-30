@@ -25,9 +25,9 @@ module ResearchProjectService
       def distinct_taxa(sites)
         sites
           .joins('JOIN asvs ON asvs.sample_id = samples.id')
-          .joins('JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs."taxonID"')
+          .joins('JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id')
           .where('cal_division_id IS NOT NULL')
-          .select('DISTINCT(asvs."taxonID")')
+          .select('DISTINCT(asvs.taxon_id)')
       end
 
       def maywood_stats

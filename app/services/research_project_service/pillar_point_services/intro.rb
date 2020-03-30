@@ -33,7 +33,7 @@ module ResearchProjectService
           ResearchProjectSource.cal.where(research_project: project).count
         unique_organisms =
           Asv
-          .select('DISTINCT("taxonID")')
+          .select('DISTINCT(taxon_id)')
           .joins(
             'JOIN research_project_sources ON sourceable_id = sample_id'
           )

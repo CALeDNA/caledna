@@ -21,7 +21,7 @@ class AsvDashboard < Administrate::BaseDashboard
     id: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
-    taxonID: Field::Number,
+    taxon_id: Field::Number,
     primers: Field::Text,
     primer: Field::String,
     count: Field::Number,
@@ -46,7 +46,7 @@ class AsvDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = [
     :sample,
     :ncbi_node,
-    :taxonID,
+    :taxon_id,
     :research_project,
     :primer,
     :count,
@@ -59,7 +59,7 @@ class AsvDashboard < Administrate::BaseDashboard
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = [
     :sample,
-    :taxonID,
+    :taxon_id,
     :research_project,
     :primers,
     :count,

@@ -29,7 +29,7 @@ module Admin
         project = ResearchProject.find(research_project_id)
         primer = Primer.find(primer_id)
         flash[:success] =
-          "Importing ASVs for #{project.name}, #{primer}..."
+          "Importing ASVs for #{project.name}, #{primer.name}..."
         redirect_to admin_labwork_import_csv_status_index_path
       end
 
