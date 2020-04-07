@@ -140,9 +140,10 @@ module AsvTreeFormatter
 
   def fetch_asv_tree_for_research_project(project_id)
     fetch_asv_tree.joins('join research_project_sources ON ' \
-                         'research_project_sources.sample_id = asvs.sample_id')
+                  'research_project_sources.sourceable_id = asvs.sample_id')
                   .where('research_project_sources.research_project_id = ?',
                          project_id)
+                  .where("research_project_sources.sourceable_type = 'Sample'")
   end
 
   private

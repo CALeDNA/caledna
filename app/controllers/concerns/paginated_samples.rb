@@ -58,9 +58,10 @@ module PaginatedSamples
     @research_project_samples ||= begin
       Sample.results_completed.with_coordinates.order(:created_at)
             .joins('JOIN research_project_sources ' \
-              'ON samples.id = research_project_sources.sample_id')
+              'ON samples.id = research_project_sources.sourceable_id')
             .where('research_project_sources.research_project_id = ?',
                    project_id)
+            .where("research_project_sources.sourceable_type = 'Sample'")
     end
   end
 end

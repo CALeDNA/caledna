@@ -28,9 +28,10 @@ module FilterCompletedSamples
     @research_project_samples ||= begin
       completed_samples
         .joins('JOIN research_project_sources ' \
-          'ON samples.id = research_project_sources.sample_id')
+          'ON samples.id = research_project_sources.sourceable_id')
         .where('research_project_sources.research_project_id = ?',
                project.id)
+        .where("research_project_sources.sourceable_type = 'Sample'")
     end
   end
 

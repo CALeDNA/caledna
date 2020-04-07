@@ -29,10 +29,11 @@ class ResearchProjectsController < ApplicationController
       ON research_projects.id =
     research_project_sources.research_project_id
     JOIN samples
-      ON research_project_sources.sample_id = samples.id
+      ON research_project_sources.sourceable_id = samples.id
     WHERE samples.status_cd = 'results_completed'
     AND latitude IS NOT NULL
     AND longitude IS NOT NULL
+    AND sourceable_type = 'Sample'
     GROUP BY research_projects.id
     ORDER BY research_projects.name
     LIMIT $1 OFFSET $2;
@@ -54,13 +55,13 @@ class ResearchProjectsController < ApplicationController
     SELECT COUNT(DISTINCT(research_projects.id))
     FROM research_projects
     JOIN research_project_sources
-      ON research_projects.id =
-    research_project_sources.research_project_id
+      ON research_projects.id = research_project_sources.research_project_id
     JOIN samples
-      ON research_project_sources.sample_id = samples.id
+      ON research_project_sources.sourceable_id = samples.id
     WHERE samples.status_cd = 'results_completed'
     AND latitude IS NOT NULL
-    AND longitude IS NOT NULL;
+    AND longitude IS NOT NULL
+    AND sourceable_type = 'Sample';
     SQL
   end
 
