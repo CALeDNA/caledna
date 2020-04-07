@@ -111,7 +111,7 @@ namespace :combine_taxa do
       FROM asvs
       JOIN research_project_sources
       ON asvs.sample_id = research_project_sources.sourceable_id
-      AND research_project_id = 4
+      AND research_project_sources.research_project_id = 4
       AND sourceable_type = 'Sample'
       JOIN ncbi_nodes
       ON ncbi_nodes.taxon_id = asvs.taxon_id

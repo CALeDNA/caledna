@@ -29,7 +29,7 @@ module ResearchProjectService
           LEFT JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
           WHERE sourceable_type = 'Sample'
-          AND research_project_id = $1
+          AND research_project_sources.research_project_id = $1
           AND (
             ncbi_nodes.hierarchy_names ->> 'kingdom' = 'Metazoa'
             OR hierarchy_names ->> 'phylum' = 'Streptophyta'

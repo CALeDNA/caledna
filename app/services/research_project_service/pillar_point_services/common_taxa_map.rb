@@ -35,7 +35,7 @@ module ResearchProjectService
           JOIN research_project_sources
           ON research_project_sources.sourceable_id = asvs.sample_id
           AND sourceable_type = 'Sample'
-          AND research_project_id = #{project.id}
+          AND research_project_sources.research_project_id = #{project.id}
           JOIN samples
           ON asvs.sample_id = samples.id
           JOIN combine_taxa

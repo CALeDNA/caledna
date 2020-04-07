@@ -35,7 +35,7 @@ module ResearchProjectService
           Asv
           .select('DISTINCT(taxon_id)')
           .joins(
-            'JOIN research_project_sources ON sourceable_id = sample_id'
+            'JOIN research_project_sources ON sourceable_id = asvs.sample_id'
           )
           .where("research_project_sources.sourceable_type = 'Sample'")
           .where('research_project_sources.research_project_id = ?', project.id)

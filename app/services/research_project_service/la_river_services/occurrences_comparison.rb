@@ -46,7 +46,7 @@ module ResearchProjectService
 
       def cal_division_unique_stats
         sql = <<-SQL
-          SELECT ncbi_divisions.name AS category, COUNT(DISTINCT(taxon_id))
+          SELECT ncbi_divisions.name AS category, COUNT(DISTINCT(asvs.taxon_id))
           #{cal_division_sql}
         SQL
 

@@ -57,7 +57,7 @@ module ResearchProjectService
           ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
           ON ncbi_nodes.taxon_id = asvs.taxon_id
-          WHERE research_project_id = #{project.id}
+          WHERE research_project_sources.research_project_id = #{project.id}
           AND sourceable_type = 'Sample'
         ) as edna_match;
         SQL
@@ -115,7 +115,7 @@ module ResearchProjectService
           ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
           ON ncbi_nodes.taxon_id = asvs.taxon_id
-          WHERE research_project_id = #{project.id}
+          WHERE research_project_sources.research_project_id = #{project.id}
           AND sourceable_type = 'Sample'
           INTERSECT
           SELECT ("targetTaxonName")
@@ -129,7 +129,7 @@ module ResearchProjectService
           JOIN external.gbif_occurrences
           ON external.gbif_occurrences.gbifid =
             research_project_sources.sourceable_id
-          WHERE research_project_id = #{project.id}
+          WHERE research_project_sources.research_project_id = #{project.id}
           AND sourceable_type = 'GbifOccurrence'
           AND metadata ->> 'location' != 'Montara SMR'
           INTERSECT
@@ -170,7 +170,7 @@ module ResearchProjectService
           ON asvs.sample_id = research_project_sources.sourceable_id
           JOIN ncbi_nodes
           ON ncbi_nodes.taxon_id = asvs.taxon_id
-          WHERE research_project_id = #{project.id}
+          WHERE research_project_sources.research_project_id = #{project.id}
           AND sourceable_type = 'Sample'
           INTERSECT
           SELECT ("sourceTaxonName")
@@ -184,7 +184,7 @@ module ResearchProjectService
           JOIN external.gbif_occurrences
           ON external.gbif_occurrences.gbifid =
             research_project_sources.sourceable_id
-          WHERE research_project_id = #{project.id}
+          WHERE research_project_sources.research_project_id = #{project.id}
           AND sourceable_type = 'GbifOccurrence'
           AND metadata ->> 'location' != 'Montara SMR'
           INTERSECT
