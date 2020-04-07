@@ -6,17 +6,17 @@
     <% PagesHelper.get_involved_citizen_scientist.each do |page| %>
       <li><%= link_to page[:title], page[:slug] %></li>
     <% end %>
-    <li><a href="http://www.ucedna.com/kit-training/">How to Collect Samples</a>
-    <li><a href="http://www.ucedna.com/safety-training-quiz/">Safety and Kit Training Quizzes</a>
+    <li><a href="https://www.ucedna.com/kit-training/">How to Collect Samples</a>
+    <li><a href="https://www.ucedna.com/safety-training-quiz/">Safety and Kit Training Quizzes</a>
   </ul>
 <% elsif page.menu_cd == 'get_involved_researcher' ||  page.slug == 'data_analysis_researchers' %>
   <ul class="submenu">
     <li><%= link_to 'Intro', data_analysis_researchers_path  %></li>
-    <li><a href="http://www.ucedna.com/software/">Our Software</a>
+    <li><a href="https://www.ucedna.com/software/">Our Software</a>
   </ul>
 <% elsif page.menu_cd == 'get_involved_researcher' ||  page.slug == 'data_analysis_for_researchers' %>
   <ul class="submenu">
     <li><%= link_to 'Intro', data_analysis_for_researchers_path  %></li>
-    <li><a href="http://www.ucedna.com/software/">Our Software</a>
+    <li><a href="https://www.ucedna.com/software/">Our Software</a>
   </ul>
 <% end %>

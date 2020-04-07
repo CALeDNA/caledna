@@ -49,7 +49,7 @@
       <b>GBIF</b>
       <% CombineTaxonHelper.convert_taxa_string(taxon['gbif_taxa']).each do |taxon| %>
         <p><%= taxon[:taxonomy_string] %></p>
-        <p>GBIF ID: <%= link_to taxon[:id], "http://gbif.org/species/#{taxon[:id]}" %></p>
+        <p>GBIF ID: <%= link_to taxon[:id], "https://gbif.org/species/#{taxon[:id]}" %></p>
       <% end %>
 
       <%  if taxon['ncbi_taxa'] != '{NULL}' %>
