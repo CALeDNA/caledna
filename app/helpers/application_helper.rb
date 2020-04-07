@@ -65,13 +65,13 @@ module ApplicationHelper
   end
 
   def news_active?
-    paths = [events_path]
+    paths = []
     dropdown_active?(paths)
   end
 
   # rubocop:disable Naming/AccessorMethodName
   def get_involved_active?
-    paths = []
+    paths = [events_path]
     dropdown_active?(paths)
   end
   # rubocop:enable Naming/AccessorMethodName
