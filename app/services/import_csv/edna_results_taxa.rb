@@ -8,14 +8,15 @@ module ImportCsv
 
     def import_csv(file, research_project_id, primer)
       delimiter = delimiter_detector(file)
+      data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
-      CSV.foreach(file.path, headers: true, col_sep: delimiter) do |row|
-        taxonomy_string = row[row.headers.first]
-        next if invalid_taxon?(taxonomy_string)
-
-        source_data = "#{research_project_id}|#{primer}"
-        ImportCsvFindResultTaxonJob.perform_later(taxonomy_string, source_data)
+      first_result = data.entries.first['sum.taxonomy']
+      if invalid_taxon?(first_result)
+        return OpenStruct.new(valid?: false,
+                              errors: "#{first_result} is invalid format")
       end
+
+      find_result_taxa(data, research_project_id, primer)
 
       OpenStruct.new(valid?: true, errors: nil)
     end
@@ -24,7 +25,7 @@ module ImportCsv
       result_taxon =
         ResultTaxon.find_by(original_taxonomy_string: taxonomy_string)
 
-      if result_taxon.present?
+      if result_taxon.present? && !result_taxon.sources.include?(source_data)
         result_taxon.sources << source_data
         result_taxon.save
         return
@@ -35,8 +36,12 @@ module ImportCsv
 
     private
 
-    def taxon_has_results?(row)
-      row.to_h.except('sum.taxonomy').values.uniq != ['0']
+    def find_result_taxa(data, research_project_id, primer)
+      data.entries.each do |row|
+        source_data = "#{research_project_id}|#{primer}"
+        taxonomy_string = row['sum.taxonomy']
+        ImportCsvFindResultTaxonJob.perform_later(taxonomy_string, source_data)
+      end
     end
 
     def create_result_taxon_from(taxonomy_string, source_data)
