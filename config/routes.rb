@@ -93,7 +93,7 @@ Rails.application.routes.draw do
       end
 
       resources :import_csv_status, only: %i[index] # Sidekiq dashboard
-      resources :import_samples, only: %i[index create]
+      resources :import_samples_research_metadata, only: %i[index create]
       resources :import_edna_results_asvs, only: %i[index create]
       resources :import_edna_results_taxa, only: %i[index create]
       resources :import_kobo_field_data, only: %i[index create]

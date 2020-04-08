@@ -1,4 +1,4 @@
-<% content_for(:title) { 'Import samples' } %>
+<% content_for(:title) { 'Import samples metadata' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -7,20 +7,20 @@
 </header>
 
 <section class="main-content__body">
-  <p>Upload CSV to add samples to a field project.</p>
+  <p>Upload CSV to add samples metadata for a research project.</p>
 
-  <%= form_tag admin_labwork_import_samples_path, multipart: true do %>
+  <%= form_tag admin_labwork_import_samples_research_metadata_path, multipart: true do %>
     <div class="field-unit">
       <div class="field-unit__label">
-        <label>Field Project</label>
+        <label>Research Project</label>
       </div>
       <div class="field-unit__field">
-        <%= select(:samples, :field_project_id, @projects, {include_blank: 'Select field project'}) %>
+        <%= select(:samples, :research_project_id, @projects, {include_blank: 'Select research project'}) %>
       </div>
     </div>
     <div class="field-unit">
       <div class="field-unit__label">
-        <label>Samples CSV</label>
+        <label>Samples Metadata CSV</label>
       </div>
       <div class="field-unit__field">
         <%= file_field_tag :file %>

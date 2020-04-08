@@ -344,12 +344,12 @@ module ProcessEdnaResults
     new_string
   end
 
-  def process_barcodes_for_csv_table(data)
+  def process_barcodes_for_csv_table(data, barcode_field)
     existing_barcodes = []
     new_barcodes = []
 
     data.entries.each do |row|
-      barcode = row['barcode']
+      barcode = row[barcode_field]
       next if barcode.blank?
 
       sample = Sample.find_by(barcode: barcode)

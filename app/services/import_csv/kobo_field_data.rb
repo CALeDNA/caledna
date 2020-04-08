@@ -12,7 +12,7 @@ module ImportCsv
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
       existing_barcodes =
-        process_barcodes_for_csv_table(data)[:existing_barcodes]
+        process_barcodes_for_csv_table(data, 'barcode')[:existing_barcodes]
       if existing_barcodes.present?
         message = "#{existing_barcodes.join(', ')} already in the database"
         return OpenStruct.new(valid?: false, errors: message)
