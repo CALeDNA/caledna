@@ -7,9 +7,6 @@ class FieldProject < ApplicationRecord
   LA_RIVER = FieldProject.find_by(name: 'Los Angeles River')
 
   has_one_attached :image
-
-  validates :kobo_id, uniqueness: true
-
   has_many :samples, dependent: :destroy
   has_many :events
 
