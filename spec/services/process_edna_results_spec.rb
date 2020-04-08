@@ -1310,4 +1310,46 @@ describe ProcessEdnaResults do
       end
     end
   end
+
+  describe '#process_barcodes_for_csv_table' do
+    def subject(csv_data)
+      dummy_class.process_barcodes_for_csv_table(csv_data)
+    end
+
+    let(:csv) { './spec/fixtures/import_csv/samples.csv' }
+    let(:file) { fixture_file_upload(csv, 'text/csv') }
+    let(:csv_data) do
+      delimiter = ';'
+      CSV.read(file.path, headers: true, col_sep: delimiter)
+    end
+    let(:barcode1) { 'K9999-A1' }
+    let(:barcode2) { 'K9999-A2' }
+
+    context 'when csv data has mix of existing and new barcodes' do
+      it 'returns hash of existing and new barcodes' do
+        create(:sample, barcode: barcode1)
+        expected = { existing_barcodes: [barcode1], new_barcodes: [barcode2] }
+
+        expect(subject(csv_data)).to eq(expected)
+      end
+    end
+
+    context 'when csv data only has existing barcodes' do
+      it 'returns hash of existing barcodes' do
+        create(:sample, barcode: barcode1)
+        create(:sample, barcode: barcode2)
+        expected = { existing_barcodes: [barcode1, barcode2], new_barcodes: [] }
+
+        expect(subject(csv_data)).to eq(expected)
+      end
+    end
+
+    context 'when csv data only has new barcodes' do
+      it 'returns hash of new barcodes' do
+        expected = { existing_barcodes: [], new_barcodes: [barcode1, barcode2] }
+
+        expect(subject(csv_data)).to eq(expected)
+      end
+    end
+  end
 end

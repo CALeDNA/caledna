@@ -344,6 +344,20 @@ module ProcessEdnaResults
     new_string
   end
 
+  def process_barcodes_for_csv_table(data)
+    existing_barcodes = []
+    new_barcodes = []
+
+    data.entries.each do |row|
+      barcode = row['barcode']
+      next if barcode.blank?
+
+      sample = Sample.find_by(barcode: barcode)
+      sample.present? ? existing_barcodes << barcode : new_barcodes << barcode
+    end
+    { existing_barcodes: existing_barcodes, new_barcodes: new_barcodes }
+  end
+
   private
 
   def get_taxon_rank(taxonomy_string)

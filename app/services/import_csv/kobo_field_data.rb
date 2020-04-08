@@ -4,15 +4,17 @@ module ImportCsv
   module KoboFieldData
     require 'csv'
     include CsvUtils
+    include ProcessEdnaResults
 
     # TODO: find a way to deal with image upload
     def import_csv(file, field_project_id)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
-      existing_samples = find_existing_samples(data)
-      if existing_samples.present?
-        message = "#{existing_samples.join(', ')} already in the database"
+      existing_barcodes =
+        process_barcodes_for_csv_table(data)[:existing_barcodes]
+      if existing_barcodes.present?
+        message = "#{existing_barcodes.join(', ')} already in the database"
         return OpenStruct.new(valid?: false, errors: message)
       end
 
@@ -22,20 +24,10 @@ module ImportCsv
 
     private
 
-    def find_existing_samples(data)
-      existing_samples = []
-      data.entries.each do |row|
-        barcode = row['barcode']
-        raise ImportError, 'Barcode missing' if barcode.blank?
-
-        sample = Sample.find_by(barcode: barcode)
-        existing_samples << barcode if sample.present?
-      end
-      existing_samples
-    end
-
     def create_samples(data, field_project_id)
       data.entries.each do |row|
+        next if row['barcode'].blank?
+
         sample_data = process_sample(row, field_project_id)
         Sample.create(sample_data)
       end
@@ -52,13 +44,13 @@ module ImportCsv
         longitude: row['longitude'],
         altitude: row['gps_altitude'],
         gps_precision: row['gps_precision'],
-        substrate_cd: row['substrate'],
+        substrate_cd: row['substrate'].downcase,
         habitat_cd: row['habitat'],
         depth_cd: row['sampling_depth'],
         environmental_features:
-          row['environmental_features'].split(',').map(&:strip),
+          convert_comma_separated_string(row['environmental_features']),
         environmental_settings:
-          row['environmental_settings'].split(',').map(&:strip),
+          convert_comma_separated_string(row['environmental_settings']),
         field_notes: row['field_notes'],
         country: row['country'],
         country_code: row['country_code'],
@@ -69,6 +61,10 @@ module ImportCsv
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def convert_comma_separated_string(string)
+      string.split(',').map(&:strip)
+    end
   end
 end
 
