@@ -1,7 +1,7 @@
 <% content_for(:title) { 'Process Samples' } %>
 <%
-  samples_metadata = link_to("Additional Sample Metadata CSV", '/csv_templates/additional_sample_metadata_template.csv')
   samples_kobo = link_to("Field Samples CSV (Kobo style)", '/csv_templates/field_samples_template.csv')
+  samples_metadata = link_to("Additional Sample Metadata CSV", '/csv_templates/additional_sample_metadata_template.csv')
   edna_results = link_to("eDNA Results CSV", '/csv_templates/eDNA_results_template.csv')
 %>
 
@@ -19,7 +19,7 @@
   <%# ----------------------------------------- %>
 
   <% if policy('Labwork::Kobo'.to_sym).import_kobo? || policy('Labwork::ApproveSamples'.to_sym).index? %>
-    <h2>Import Kobo data</h2>
+    <h2>Import Kobo field data</h2>
   <% end %>
 
   <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
@@ -38,8 +38,8 @@
 
   <% if policy('Labwork::Kobo'.to_sym).import_kobo? %>
     <p>
-      <%= link_to 'Import Additional Metadata', admin_labwork_import_kobo_samples_metadata_path %>:
-      Import additional metadata for Kobo samples via CSV upload. Use <%= samples_kobo %> template.
+      <%= link_to 'Import Field Samples', admin_labwork_import_kobo_field_data_path %>:
+      Import field samples (Kobo-style) via CSV upload. Use <%= samples_kobo %> template.
 
     </p>
   <% end %>
@@ -47,11 +47,11 @@
   <%# ----------------------------------------- %>
 
   <% if policy('Labwork::ImportCsv'.to_sym).index? %>
-    <h2>Import samples</h2>
+    <h2>Import samples metadata</h2>
 
     <p>
-      <%= link_to 'Import Samples', admin_labwork_import_samples_path %>:
-      Add samples to a field project via CSV upload. Use <%= samples_metadata %> template.
+      <%= link_to 'Import Samples Metadata', admin_labwork_import_samples_path %>:
+      Import samples metadata for research project via CSV upload. Use <%= samples_metadata %> template.
     </p>
   <% end %>
 
