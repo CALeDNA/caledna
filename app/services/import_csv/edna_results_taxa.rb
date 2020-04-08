@@ -48,12 +48,11 @@ module ImportCsv
       results = format_result_taxon_data_from_string(taxonomy_string)
 
       if results[:taxon_id].blank?
-        create_data = results.merge(normalized: false)
-                             .merge(sources: [source_data])
+        data = { normalized: false, exact_match: false, sources: [source_data] }
       elsif results[:taxon_id].present?
-        create_data = results.merge(normalized: true)
-                             .merge(sources: [source_data])
+        data = { normalized: true, exact_match: true, sources: [source_data] }
       end
+      create_data = results.merge(data)
 
       ImportCsvCreateResultTaxonJob.perform_later(create_data)
     end

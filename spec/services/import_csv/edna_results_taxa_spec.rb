@@ -61,14 +61,7 @@ describe ImportCsv::EdnaResultsTaxa do
   describe('#find_result_taxon') do
     include ActiveJob::TestHelper
 
-    def subject(taxonomy_string, attributes)
-      dummy_class.find_result_taxon(taxonomy_string, attributes)
-    end
-    let(:source_data) { '1|primer1' }
-
-    context 'when taxonomy string is phylum format' do
-      let(:taxonomy_string) { 'P;C;O;F;G;S' }
-
+    shared_examples 'find result taxon' do
       context 'when ResultTaxon matches taxonomy string' do
         it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
           create(:result_taxon, clean_taxonomy_string: taxonomy_string,
@@ -110,63 +103,119 @@ describe ImportCsv::EdnaResultsTaxa do
             .to have_enqueued_job(ImportCsvCreateResultTaxonJob)
             .exactly(1).times
         end
+      end
+    end
 
-        it 'passes correct arguements to job' do
-          arguements = {
-            taxon_id: nil,
-            taxon_rank: 'species',
-            hierarchy: {
-              species: 'S', genus: 'G', family: 'F', order: 'O',
-              class: 'C', phylum: 'P'
-            },
-            original_taxonomy_string: taxonomy_string,
-            clean_taxonomy_string: taxonomy_string,
-            normalized: false,
-            sources: [source_data]
-          }
+    def subject(taxonomy_string, attributes)
+      dummy_class.find_result_taxon(taxonomy_string, attributes)
+    end
+    let(:source_data) { '1|primer1' }
 
-          expect { subject(taxonomy_string, source_data) }
-            .to have_enqueued_job.with(arguements).exactly(1).times
+    context 'when taxonomy string is phylum format' do
+      let(:taxonomy_string) { 'P;C;O;F;G;S' }
+      include_examples 'find result taxon'
+
+      context 'when ResultTaxon does not matches taxonomy string' do
+        context 'and taxon is in the database' do
+          it 'passes correct arguements to job' do
+            hierarchy_names = { phylum: 'P', class: 'C', order: 'O',
+                                family: 'F', genus: 'G', species: 'S' }
+            taxon = create(:ncbi_node, hierarchy_names: hierarchy_names,
+                                       rank: 'species')
+
+            arguements = {
+              taxon_id: taxon.taxon_id,
+              taxon_rank: 'species',
+              hierarchy: {
+                species: 'S', genus: 'G', family: 'F', order: 'O',
+                class: 'C', phylum: 'P'
+              },
+              original_taxonomy_string: taxonomy_string,
+              clean_taxonomy_string: taxonomy_string,
+              normalized: true,
+              exact_match: true,
+              sources: [source_data]
+            }
+
+            expect { subject(taxonomy_string, source_data) }
+              .to have_enqueued_job.with(arguements).exactly(1).times
+          end
+        end
+
+        context 'and taxon is not in the database' do
+          it 'passes correct arguements to job' do
+            arguements = {
+              taxon_id: nil,
+              taxon_rank: 'species',
+              hierarchy: {
+                species: 'S', genus: 'G', family: 'F', order: 'O',
+                class: 'C', phylum: 'P'
+              },
+              original_taxonomy_string: taxonomy_string,
+              clean_taxonomy_string: taxonomy_string,
+              normalized: false,
+              exact_match: false,
+              sources: [source_data]
+            }
+
+            expect { subject(taxonomy_string, source_data) }
+              .to have_enqueued_job.with(arguements).exactly(1).times
+          end
         end
       end
     end
 
     context 'when taxonomy string is superkingdom format' do
       let(:taxonomy_string) { 'SK;P;C;O;F;G;S' }
+      include_examples 'find result taxon'
 
-      context 'when ResultTaxon matches taxonomy string' do
-        it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
-          create(:result_taxon, clean_taxonomy_string: taxonomy_string,
-                                original_taxonomy_string: taxonomy_string)
+      context 'when ResultTaxon does not matches taxonomy string' do
+        context 'and taxon is in the database' do
+          it 'passes correct arguements to job' do
+            hierarchy_names = { phylum: 'P', class: 'C', order: 'O',
+                                family: 'F', genus: 'G', species: 'S',
+                                superkingdom: 'SK' }
+            taxon = create(:ncbi_node, hierarchy_names: hierarchy_names,
+                                       rank: 'species')
 
-          expect { subject(taxonomy_string, source_data) }
-            .to_not have_enqueued_job(ImportCsvCreateResultTaxonJob)
+            arguements = {
+              taxon_id: taxon.taxon_id,
+              taxon_rank: 'species',
+              hierarchy: {
+                species: 'S', genus: 'G', family: 'F', order: 'O',
+                class: 'C', phylum: 'P', superkingdom: 'SK'
+              },
+              original_taxonomy_string: taxonomy_string,
+              clean_taxonomy_string: taxonomy_string,
+              normalized: true,
+              exact_match: true,
+              sources: [source_data]
+            }
+
+            expect { subject(taxonomy_string, source_data) }
+              .to have_enqueued_job.with(arguements).exactly(1).times
+          end
         end
-      end
 
-      context 'when ResultTaxon does not match taxonomy string' do
-        it 'adds ImportCsvCreateResultTaxonJob to queue' do
-          expect { subject(taxonomy_string, source_data) }
-            .to have_enqueued_job(ImportCsvCreateResultTaxonJob)
-            .exactly(1).times
-        end
+        context 'and taxon is not in the database' do
+          it 'passes correct arguements to job' do
+            arguements = {
+              taxon_id: nil,
+              taxon_rank: 'species',
+              hierarchy: {
+                species: 'S', genus: 'G', family: 'F', order: 'O',
+                class: 'C', phylum: 'P', superkingdom: 'SK'
+              },
+              original_taxonomy_string: taxonomy_string,
+              clean_taxonomy_string: taxonomy_string,
+              normalized: false,
+              exact_match: false,
+              sources: [source_data]
+            }
 
-        it 'passes correct arguements to job' do
-          arguements = {
-            taxon_id: nil,
-            taxon_rank: 'species',
-            hierarchy: {
-              species: 'S', genus: 'G', family: 'F', order: 'O',
-              class: 'C', phylum: 'P', superkingdom: 'SK'
-            },
-            original_taxonomy_string: taxonomy_string,
-            clean_taxonomy_string: taxonomy_string,
-            normalized: false,
-            sources: [source_data]
-          }
-
-          expect { subject(taxonomy_string, source_data) }
-            .to have_enqueued_job.with(arguements).exactly(1).times
+            expect { subject(taxonomy_string, source_data) }
+              .to have_enqueued_job.with(arguements).exactly(1).times
+          end
         end
       end
     end
