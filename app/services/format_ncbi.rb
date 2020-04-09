@@ -85,7 +85,7 @@ module FormatNcbi
     result.each do |node|
       name = node['canonical_name']
       rank = node['rank']
-      id = node['taxon_id']
+      id = node['ncbi_id']
 
       ids = "{#{id}}"
       node['ids'] = ids
@@ -139,15 +139,15 @@ module FormatNcbi
 
   def sql_select_root_node
     <<-SQL
-    SELECT taxon_id, parent_taxon_id, rank, ids, canonical_name
+    SELECT ncbi_id, parent_taxon_id, rank, ids, canonical_name
     FROM ncbi_nodes
-    WHERE parent_taxon_id = 1 AND taxon_id != 1;
+    WHERE parent_taxon_id = 1 AND ncbi_id != 1;
     SQL
   end
 
   def sql_select_node
     <<-SQL
-    SELECT taxon_id, parent_taxon_id, rank, ids, canonical_name
+    SELECT ncbi_id, parent_taxon_id, rank, ids, canonical_name
     FROM ncbi_nodes
     WHERE parent_taxon_id = $1;
     SQL
@@ -157,9 +157,9 @@ module FormatNcbi
     @ncbi_nodes ||= Arel::Table.new('ncbi_nodes')
   end
 
-  def update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy, hierarchy_names, taxon_id)
+  def update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy, hierarchy_names, ncbi_id)
     update_manager = Arel::UpdateManager.new
-    update_manager.table(ncbi_nodes).where(ncbi_nodes[:taxon_id].eq(taxon_id))
+    update_manager.table(ncbi_nodes).where(ncbi_nodes[:ncbi_id].eq(ncbi_id))
     update_manager.set(
       [
         [ncbi_nodes[:ids], ids],
@@ -176,13 +176,13 @@ module FormatNcbi
   end
 
   def create_taxa_tree_for(parent_node)
-    child_nodes = exec(sql_select_node, [[nil, parent_node['taxon_id']]])
+    child_nodes = exec(sql_select_node, [[nil, parent_node['ncbi_id']]])
     return if child_nodes.count.zero?
 
     child_nodes.each do |child|
       name = child['canonical_name']
       rank = child['rank']
-      id = child['taxon_id']
+      id = child['ncbi_id']
 
       ids = parent_node['ids'].gsub('}', ",#{id}}")
       child['ids'] = ids

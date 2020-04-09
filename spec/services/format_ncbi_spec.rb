@@ -296,34 +296,34 @@ describe FormatNcbi do
     end
     let!(:node1) do
       create(:ncbi_node, rank: 'rank1', canonical_name: 'name1',
-                         parent_taxon_id: 1)
+                         parent_taxon_id: 1, ncbi_id: 100)
     end
     let!(:node2) do
       create(:ncbi_node, rank: 'rank2', canonical_name: 'name2',
-                         parent_taxon_id: node1.taxon_id)
+                         parent_taxon_id: node1.ncbi_id, ncbi_id: 200)
     end
     let!(:node3) do
       create(:ncbi_node, rank: 'rank3', canonical_name: 'name3',
-                         parent_taxon_id: node2.taxon_id)
+                         parent_taxon_id: node2.ncbi_id, ncbi_id: 300)
     end
 
     let!(:node4) do
       create(:ncbi_node, rank: 'rank4', canonical_name: 'name4',
-                         parent_taxon_id: node1.taxon_id)
+                         parent_taxon_id: node1.ncbi_id, ncbi_id: 400)
     end
     let!(:node5) do
       create(:ncbi_node, rank: 'rank5', canonical_name: 'name5',
-                         parent_taxon_id: node4.taxon_id)
+                         parent_taxon_id: node4.ncbi_id, ncbi_id: 500)
     end
 
     context 'when node is a non-root node' do
       it 'adds ids' do
         subject
-        id1 = node1.reload.taxon_id
-        id2 = node2.reload.taxon_id
-        id3 = node3.reload.taxon_id
-        id4 = node4.reload.taxon_id
-        id5 = node5.reload.taxon_id
+        id1 = node1.reload.ncbi_id
+        id2 = node2.reload.ncbi_id
+        id3 = node3.reload.ncbi_id
+        id4 = node4.reload.ncbi_id
+        id5 = node5.reload.ncbi_id
 
         expect(node1.ids).to eq([id1])
         expect(node2.ids).to eq([id1, id2])
