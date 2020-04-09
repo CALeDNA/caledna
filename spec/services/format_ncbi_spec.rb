@@ -290,9 +290,9 @@ describe FormatNcbi do
     end
   end
 
-  describe 'create_ids' do
+  describe 'create_taxa_tree' do
     def subject
-      dummy_class.create_ids
+      dummy_class.create_taxa_tree
     end
     let!(:node1) do
       create(:ncbi_node, rank: 'rank1', canonical_name: 'name1',
@@ -319,17 +319,53 @@ describe FormatNcbi do
     context 'when node is a non-root node' do
       it 'adds ids' do
         subject
-        id1 = node1.taxon_id.to_s
-        id2 = node2.taxon_id.to_s
-        id3 = node3.taxon_id.to_s
-        id4 = node4.taxon_id.to_s
-        id5 = node5.taxon_id.to_s
+        id1 = node1.reload.taxon_id
+        id2 = node2.reload.taxon_id
+        id3 = node3.reload.taxon_id
+        id4 = node4.reload.taxon_id
+        id5 = node5.reload.taxon_id
 
-        expect(node1.reload.ids).to eq([id1])
-        expect(node2.reload.ids).to eq([id1, id2])
-        expect(node3.reload.ids).to eq([id1, id2, id3])
-        expect(node4.reload.ids).to eq([id1, id4])
-        expect(node5.reload.ids).to eq([id1, id4, id5])
+        expect(node1.ids).to eq([id1])
+        expect(node2.ids).to eq([id1, id2])
+        expect(node3.ids).to eq([id1, id2, id3])
+        expect(node4.ids).to eq([id1, id4])
+        expect(node5.ids).to eq([id1, id4, id5])
+
+        expect(node1.ranks).to eq(['rank1'])
+        expect(node2.ranks).to eq(%w[rank1 rank2])
+        expect(node3.ranks).to eq(%w[rank1 rank2 rank3])
+        expect(node4.ranks).to eq(%w[rank1 rank4])
+        expect(node5.ranks).to eq(%w[rank1 rank4 rank5])
+
+        expect(node1.names).to eq(['name1'])
+        expect(node2.names).to eq(%w[name1 name2])
+        expect(node3.names).to eq(%w[name1 name2 name3])
+        expect(node4.names).to eq(%w[name1 name4])
+        expect(node5.names).to eq(%w[name1 name4 name5])
+
+        expect(node1.full_taxonomy_string).to eq('name1')
+        expect(node2.full_taxonomy_string).to eq('name1|name2')
+        expect(node3.full_taxonomy_string).to eq('name1|name2|name3')
+        expect(node4.full_taxonomy_string).to eq('name1|name4')
+        expect(node5.full_taxonomy_string).to eq('name1|name4|name5')
+
+        expect(node1.hierarchy).to eq('rank1' => id1)
+        expect(node2.hierarchy).to eq('rank1' => id1, 'rank2' => id2)
+        expect(node3.hierarchy)
+          .to eq('rank1' => id1, 'rank2' => id2, 'rank3' => id3)
+        expect(node4.hierarchy).to eq('rank1' => id1, 'rank4' => id4)
+        expect(node5.hierarchy)
+          .to eq('rank1' => id1, 'rank4' => id4, 'rank5' => id5)
+
+        expect(node1.hierarchy_names).to eq('rank1' => 'name1')
+        expect(node2.hierarchy_names)
+          .to eq('rank1' => 'name1', 'rank2' => 'name2')
+        expect(node3.hierarchy_names)
+          .to eq('rank1' => 'name1', 'rank2' => 'name2', 'rank3' => 'name3')
+        expect(node4.hierarchy_names)
+          .to eq('rank1' => 'name1', 'rank4' => 'name4')
+        expect(node5.hierarchy_names)
+          .to eq('rank1' => 'name1', 'rank4' => 'name4', 'rank5' => 'name5')
       end
     end
 

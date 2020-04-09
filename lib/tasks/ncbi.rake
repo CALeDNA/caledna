@@ -37,10 +37,12 @@ namespace :ncbi do
     create_taxonomy_strings
   end
 
-  desc 'create ids'
-  task create_ids: :environment do
-    puts 'create ids...'
-    create_ids
+  desc 'create taxa tree'
+  task create_taxa_tree: :environment do
+    puts 'create taxa tree...'
+    puts Time.zone.now
+    create_taxa_tree
+    puts Time.zone.now
   end
 
   desc 'create common names'

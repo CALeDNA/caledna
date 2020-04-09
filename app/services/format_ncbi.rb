@@ -44,7 +44,6 @@ module FormatNcbi
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def create_alt_names
     sql = "name_class = 'common name' OR " \
       "name_class = 'genbank common name' OR " \
@@ -60,9 +59,7 @@ module FormatNcbi
       ActiveRecord::Base.connection.execute(sql)
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength
   def create_common_names
     sql = <<-SQL
       name_class = 'common name' OR
@@ -81,15 +78,36 @@ module FormatNcbi
       conn.exec_query(sql, 'q', binding)
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
-  def create_ids
-    nodes = NcbiNode.where('parent_taxon_id = 1 AND taxon_id != 1')
-    nodes.each do |node|
-      node.ids = []
-      node.ids << node.taxon_id
-      node.save
-      create_ids_for(node)
+  def create_taxa_tree
+    result = exec(sql_select_root_node)
+
+    result.each do |node|
+      name = node['canonical_name']
+      rank = node['rank']
+      id = node['taxon_id']
+
+      ids = "{#{id}}"
+      node['ids'] = ids
+
+      ranks = "{#{rank}}"
+      node['ranks'] = ranks
+
+      names = "{#{name}}"
+      node['names'] = names
+
+      taxa_string = name
+      node['full_taxonomy_string'] = taxa_string
+
+      hierarchy = "{\"#{rank}\" : #{id}}"
+      node['hierarchy'] = hierarchy
+
+      hierarchy_names = "{\"#{rank}\" : \"#{name}\"}"
+      node['hierarchy_names'] = hierarchy_names
+
+      update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy, hierarchy_names, id)
+
+      create_taxa_tree_for(node)
     end
   end
 
@@ -103,23 +121,99 @@ module FormatNcbi
     node.rank != 'no rank'
   end
 
-  def create_ids_for(parent_node)
-    child_nodes = NcbiNode.where(parent_taxon_id: parent_node.taxon_id)
-    return if child_nodes.blank?
-
-    child_nodes.each do |child|
-      ids = create_ids_array(parent_node, child)
-      child.ids = ids
-      child.save
-
-      create_ids_for(child)
+  def exec(sql, binding = nil)
+    if binding.present?
+      ActiveRecord::Base.connection.exec_query(sql, 'q', binding)
+    else
+      ActiveRecord::Base.connection.exec_query(sql)
     end
   end
 
-  def create_ids_array(parent_node, child)
-    ids = parent_node.ids.dup
-    ids << child.taxon_id
+  def append_array(field, value)
+    field.gsub('}', ",#{value}}")
   end
+
+  # ===================
+  # create ids
+  # ===================
+
+  def sql_select_root_node
+    <<-SQL
+    SELECT taxon_id, parent_taxon_id, rank, ids, canonical_name
+    FROM ncbi_nodes
+    WHERE parent_taxon_id = 1 AND taxon_id != 1;
+    SQL
+  end
+
+  def sql_select_node
+    <<-SQL
+    SELECT taxon_id, parent_taxon_id, rank, ids, canonical_name
+    FROM ncbi_nodes
+    WHERE parent_taxon_id = $1;
+    SQL
+  end
+
+  def ncbi_nodes
+    @ncbi_nodes ||= Arel::Table.new('ncbi_nodes')
+  end
+
+  def update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy, hierarchy_names, taxon_id)
+    update_manager = Arel::UpdateManager.new
+    update_manager.table(ncbi_nodes).where(ncbi_nodes[:taxon_id].eq(taxon_id))
+    update_manager.set(
+      [
+        [ncbi_nodes[:ids], ids],
+        [ncbi_nodes[:ranks], ranks],
+        [ncbi_nodes[:names], names],
+        [ncbi_nodes[:full_taxonomy_string], taxa_string],
+        [ncbi_nodes[:hierarchy], hierarchy],
+        [ncbi_nodes[:hierarchy_names], hierarchy_names]
+      ]
+    )
+    sql = update_manager.to_sql
+
+    exec(sql)
+  end
+
+  def create_taxa_tree_for(parent_node)
+    child_nodes = exec(sql_select_node, [[nil, parent_node['taxon_id']]])
+    return if child_nodes.count.zero?
+
+    child_nodes.each do |child|
+      name = child['canonical_name']
+      rank = child['rank']
+      id = child['taxon_id']
+
+      ids = parent_node['ids'].gsub('}', ",#{id}}")
+      child['ids'] = ids
+
+      ranks = append_array(parent_node['ranks'], rank)
+      child['ranks'] = ranks
+
+      names = append_array(parent_node['names'], name)
+      child['names'] = names
+
+      taxa_string = parent_node['full_taxonomy_string'] + '|' + name
+      child['full_taxonomy_string'] = taxa_string
+
+      hierarchy = append_array(parent_node['hierarchy'], "\"#{rank}\" : #{id}")
+      child['hierarchy'] = hierarchy
+
+      hierarchy_names = append_array(
+        parent_node['hierarchy_names'], "\"#{rank}\" : \"#{name}\""
+      )
+      child['hierarchy_names'] = hierarchy_names
+
+      update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy,
+                            hierarchy_names, id)
+
+      create_taxa_tree_for(child)
+    end
+  end
+
+  # ===================
+  #
+  # ===================
 
   def create_taxonomy_string(parent_node)
     child_nodes = NcbiNode.where(parent_taxon_id: parent_node.taxon_id)
