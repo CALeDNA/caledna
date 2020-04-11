@@ -89,16 +89,6 @@ class NcbiNode < ApplicationRecord
     hierarchy_names['phylum']
   end
 
-  # rubocop:disable Naming/MethodName
-  def taxonRank
-    rank
-  end
-
-  def canonicalName
-    canonical_name
-  end
-  # rubocop:enable Naming/MethodName
-
   # rubocop:disable Metrics/AbcSize
   def taxonomy_string
     if respond_to?(:division_name)
@@ -183,14 +173,6 @@ class NcbiNode < ApplicationRecord
 
     pages[page_id]['extract']
   end
-
-  # rubocop:disable Naming/MethodName
-  # no-op methods to match gbif taxonomy
-  def taxonomicStatus; end
-
-  # no-op methods to match gbif taxonomy
-  def acceptedNameUsageID; end
-  # rubocop:enable Naming/MethodName
 
   def asvs_count_display
     asvs_count

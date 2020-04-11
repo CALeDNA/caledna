@@ -7,34 +7,10 @@ namespace :ncbi do
   include FormatNcbi
   include ProcessEdnaResults
 
-  desc 'create canonical name'
-  task create_canonical_name: :environment do
-    puts 'create canonical name...'
-    create_canonical_name
-  end
-
   desc 'create alt_names'
   task create_alt_names: :environment do
     puts 'create alt_names...'
     create_alt_names
-  end
-
-  desc 'create lineage info'
-  task create_lineage_info: :environment do
-    puts 'create lineage info...'
-    create_lineage_info
-  end
-
-  desc 'create citations nodes'
-  task create_citations_nodes: :environment do
-    puts 'create citations nodes...'
-    create_citations_nodes
-  end
-
-  desc 'create taxonomy strings'
-  task create_taxonomy_strings: :environment do
-    puts 'create taxonomy strings...'
-    create_taxonomy_strings
   end
 
   desc 'create taxa tree'
@@ -145,12 +121,6 @@ namespace :ncbi do
       NcbiNode.where("hierarchy_names ->> 'order' = '#{order}'")
               .update(cal_division_id: chromista.id)
     end
-  end
-
-  desc 'create hierarchy_names'
-  task hierarchy_names: :environment do
-    puts 'create hierarchy_names...'
-    create_hierarchy_names_info
   end
 
   desc 'update result_taxon'
