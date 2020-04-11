@@ -79,37 +79,32 @@ module FormatNcbi
     end
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def create_taxa_tree
-    result = exec(sql_select_root_node)
+    nodes = NcbiNode.where('parent_taxon_id = 1 AND ncbi_id != 1')
 
-    result.each do |node|
-      name = node['canonical_name']
-      rank = node['rank']
-      id = node['ncbi_id']
+    nodes.each do |node|
+      name = node.canonical_name
+      rank = node.rank
+      id = node.ncbi_id
 
-      ids = "{#{id}}"
-      node['ids'] = ids
+      node.ids << id
+      node.ranks << rank
+      node.names << name
+      node.full_taxonomy_string = name
 
-      ranks = "{#{rank}}"
-      node['ranks'] = ranks
+      if valid_rank?(node)
+        node.hierarchy = { rank => id }
+        node.hierarchy_names = { rank => name }
+      end
 
-      names = "{#{name}}"
-      node['names'] = names
-
-      taxa_string = name
-      node['full_taxonomy_string'] = taxa_string
-
-      hierarchy = "{\"#{rank}\" : #{id}}"
-      node['hierarchy'] = hierarchy
-
-      hierarchy_names = "{\"#{rank}\" : \"#{name}\"}"
-      node['hierarchy_names'] = hierarchy_names
-
-      update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy, hierarchy_names, id)
+      raise(StandardError, 'invalid NcbiNode') unless node.valid?
+      node.save
 
       create_taxa_tree_for(node)
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
 
@@ -121,95 +116,34 @@ module FormatNcbi
     node.rank != 'no rank'
   end
 
-  def exec(sql, binding = nil)
-    if binding.present?
-      ActiveRecord::Base.connection.exec_query(sql, 'q', binding)
-    else
-      ActiveRecord::Base.connection.exec_query(sql)
-    end
-  end
-
-  def append_array(field, value)
-    field.gsub('}', ",#{value}}")
-  end
-
-  # ===================
-  # create ids
-  # ===================
-
-  def sql_select_root_node
-    <<-SQL
-    SELECT ncbi_id, parent_taxon_id, rank, ids, canonical_name
-    FROM ncbi_nodes
-    WHERE parent_taxon_id = 1 AND ncbi_id != 1;
-    SQL
-  end
-
-  def sql_select_node
-    <<-SQL
-    SELECT ncbi_id, parent_taxon_id, rank, ids, canonical_name
-    FROM ncbi_nodes
-    WHERE parent_taxon_id = $1;
-    SQL
-  end
-
-  def ncbi_nodes
-    @ncbi_nodes ||= Arel::Table.new('ncbi_nodes')
-  end
-
-  def update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy, hierarchy_names, ncbi_id)
-    update_manager = Arel::UpdateManager.new
-    update_manager.table(ncbi_nodes).where(ncbi_nodes[:ncbi_id].eq(ncbi_id))
-    update_manager.set(
-      [
-        [ncbi_nodes[:ids], ids],
-        [ncbi_nodes[:ranks], ranks],
-        [ncbi_nodes[:names], names],
-        [ncbi_nodes[:full_taxonomy_string], taxa_string],
-        [ncbi_nodes[:hierarchy], hierarchy],
-        [ncbi_nodes[:hierarchy_names], hierarchy_names]
-      ]
-    )
-    sql = update_manager.to_sql
-
-    exec(sql)
-  end
-
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def create_taxa_tree_for(parent_node)
-    child_nodes = exec(sql_select_node, [[nil, parent_node['ncbi_id']]])
-    return if child_nodes.count.zero?
+    child_nodes = NcbiNode.where(parent_taxon_id: parent_node.ncbi_id)
+    return if child_nodes.blank?
 
-    child_nodes.each do |child|
-      name = child['canonical_name']
-      rank = child['rank']
-      id = child['ncbi_id']
+    child_nodes.each do |node|
+      name = node.canonical_name
+      rank = node.rank
+      id = node.ncbi_id
 
-      ids = parent_node['ids'].gsub('}', ",#{id}}")
-      child['ids'] = ids
+      node.ids = parent_node.ids.dup << id
+      node.ranks = parent_node.ranks.dup << rank
+      node.names = parent_node.names.dup << name
+      node.full_taxonomy_string = parent_node.full_taxonomy_string. + '|' + name
 
-      ranks = append_array(parent_node['ranks'], rank)
-      child['ranks'] = ranks
-
-      names = append_array(parent_node['names'], name)
-      child['names'] = names
-
-      taxa_string = parent_node['full_taxonomy_string'] + '|' + name
-      child['full_taxonomy_string'] = taxa_string
-
-      hierarchy = append_array(parent_node['hierarchy'], "\"#{rank}\" : #{id}")
-      child['hierarchy'] = hierarchy
-
-      hierarchy_names = append_array(
-        parent_node['hierarchy_names'], "\"#{rank}\" : \"#{name}\""
-      )
-      child['hierarchy_names'] = hierarchy_names
+      if valid_rank?(node)
+        node.hierarchy = parent_node.hierarchy.merge(rank => id)
+        node.hierarchy_names = parent_node.hierarchy_names.merge(rank => name)
+      end
 
       update_node_taxa_tree(ids, ranks, names, taxa_string, hierarchy,
-                            hierarchy_names, id)
+      raise(StandardError, 'invalid NcbiNode') unless node.valid?
+      node.save
 
-      create_taxa_tree_for(child)
+      create_taxa_tree_for(node)
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   # ===================
   #
