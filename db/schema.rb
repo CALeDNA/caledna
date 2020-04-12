@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_09_061837) do
+ActiveRecord::Schema.define(version: 2020_04_11_180353) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -128,6 +128,31 @@ ActiveRecord::Schema.define(version: 2020_04_09_061837) do
     t.index ["kobo_id"], name: "index_field_projects_on_kobo_id", unique: true
   end
 
+  create_table "foo", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
+    t.integer "parent_taxon_id"
+    t.string "rank"
+    t.string "canonical_name"
+    t.integer "division_id"
+    t.integer "cal_division_id"
+    t.text "full_taxonomy_string"
+    t.integer "ids", default: [], array: true
+    t.text "ranks", default: [], array: true
+    t.text "names", default: [], array: true
+    t.jsonb "hierarchy_names", default: {}
+    t.jsonb "hierarchy", default: {}
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.string "source", default: "ncbi"
+    t.bigint "ncbi_version_id"
+    t.string "alt_names"
+    t.string "common_names"
+    t.integer "asvs_count"
+    t.integer "asvs_count_la_river"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["taxon_id"], name: "foo1_pkey", unique: true
+  end
+
   create_table "ggbn_meta", force: :cascade do |t|
     t.string "technical_contact_name"
     t.string "technical_contact_email"
@@ -196,6 +221,7 @@ ActiveRecord::Schema.define(version: 2020_04_09_061837) do
     t.bigint "ncbi_version_id"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["name_class"], name: "index_ncbi_names_on_name_class"
     t.index ["ncbi_version_id"], name: "index_ncbi_names_on_ncbi_version_id"
     t.index ["taxon_id"], name: "index_ncbi_names_on_taxon_id"
   end
@@ -222,9 +248,20 @@ ActiveRecord::Schema.define(version: 2020_04_09_061837) do
     t.integer "asvs_count_la_river"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "full_text_search_idx", using: :gin
+    t.index "lower((canonical_name)::text) text_pattern_ops", name: "name_autocomplete_idx"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
+    t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
+    t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"
+    t.index ["bold_id"], name: "index_ncbi_nodes_on_bold_id"
+    t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
+    t.index ["hierarchy"], name: "index_ncbi_nodes_on_hierarchy", using: :gin
+    t.index ["hierarchy_names"], name: "index_ncbi_nodes_on_hierarchy_names", using: :gin
+    t.index ["ids"], name: "index_ncbi_nodes_on_ids", using: :gin
     t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
     t.index ["ncbi_version_id"], name: "index_ncbi_nodes_on_ncbi_version_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
+    t.index ["rank"], name: "index_ncbi_nodes_on_rank"
   end
 
   create_table "pages", id: :serial, force: :cascade do |t|
@@ -602,38 +639,6 @@ ActiveRecord::Schema.define(version: 2020_04_09_061837) do
     t.index ["slug"], name: "index_surveys_on_slug"
   end
 
-  create_table "taxa", primary_key: "taxonID", id: :integer, default: nil, force: :cascade do |t|
-    t.string "datasetID", limit: 255
-    t.integer "parentNameUsageID"
-    t.integer "acceptedNameUsageID"
-    t.integer "originalNameUsageID"
-    t.text "scientificName"
-    t.text "scientificNameAuthorship"
-    t.string "canonicalName", limit: 255
-    t.string "genericName", limit: 255
-    t.string "specificEpithet", limit: 255
-    t.string "infraspecificEpithet", limit: 255
-    t.string "taxonRank", limit: 255
-    t.string "nameAccordingTo", limit: 255
-    t.text "namePublishedIn"
-    t.string "taxonomicStatus", limit: 255
-    t.string "nomenclaturalStatus", limit: 255
-    t.string "taxonRemarks", limit: 255
-    t.string "kingdom", limit: 255
-    t.string "phylum", limit: 255
-    t.string "className", limit: 255
-    t.string "order", limit: 255
-    t.string "family", limit: 255
-    t.string "genus", limit: 255
-    t.jsonb "hierarchy", default: {}
-    t.integer "asvs_count", default: 0
-    t.integer "rank_order"
-    t.string "iucn_status", limit: 255
-    t.integer "iucn_taxonid"
-    t.index "lower((\"canonicalName\")::text) text_pattern_ops", name: "canonicalname_prefix"
-    t.index ["taxonID"], name: "taxon_pkey", unique: true
-  end
-
   create_table "uploads", force: :cascade do |t|
     t.string "filename"
     t.datetime "created_at", null: false
@@ -691,6 +696,7 @@ ActiveRecord::Schema.define(version: 2020_04_09_061837) do
   add_foreign_key "event_registrations", "events"
   add_foreign_key "event_registrations", "users"
   add_foreign_key "events", "field_projects"
+  add_foreign_key "foo", "external.ncbi_versions", column: "ncbi_version_id", name: "foo_ncbi_version_id_fkey"
   add_foreign_key "kobo_photos", "samples"
   add_foreign_key "ncbi_names", "external.ncbi_versions", column: "ncbi_version_id"
   add_foreign_key "ncbi_nodes", "external.ncbi_versions", column: "ncbi_version_id"
