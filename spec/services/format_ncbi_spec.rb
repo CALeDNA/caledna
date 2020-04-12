@@ -92,7 +92,7 @@ describe FormatNcbi do
     end
 
     let!(:node4) do
-      create(:ncbi_node, rank: 'rank4', canonical_name: 'name4',
+      create(:ncbi_node, rank: 'no rank', canonical_name: 'no name4',
                          parent_taxon_id: node1.ncbi_id, ncbi_id: 400)
     end
     let!(:node5) do
@@ -118,28 +118,28 @@ describe FormatNcbi do
         expect(node1.ranks).to eq(['rank1'])
         expect(node2.ranks).to eq(%w[rank1 rank2])
         expect(node3.ranks).to eq(%w[rank1 rank2 rank3])
-        expect(node4.ranks).to eq(%w[rank1 rank4])
-        expect(node5.ranks).to eq(%w[rank1 rank4 rank5])
+        expect(node4.ranks).to eq(['rank1', 'no rank'])
+        expect(node5.ranks).to eq(['rank1', 'no rank', 'rank5'])
 
         expect(node1.names).to eq(['name1'])
         expect(node2.names).to eq(%w[name1 name2])
         expect(node3.names).to eq(%w[name1 name2 name3])
-        expect(node4.names).to eq(%w[name1 name4])
-        expect(node5.names).to eq(%w[name1 name4 name5])
+        expect(node4.names).to eq(['name1', 'no name4'])
+        expect(node5.names).to eq(['name1', 'no name4', 'name5'])
 
         expect(node1.full_taxonomy_string).to eq('name1')
         expect(node2.full_taxonomy_string).to eq('name1|name2')
         expect(node3.full_taxonomy_string).to eq('name1|name2|name3')
-        expect(node4.full_taxonomy_string).to eq('name1|name4')
-        expect(node5.full_taxonomy_string).to eq('name1|name4|name5')
+        expect(node4.full_taxonomy_string).to eq('name1|no name4')
+        expect(node5.full_taxonomy_string).to eq('name1|no name4|name5')
 
         expect(node1.hierarchy).to eq('rank1' => id1)
         expect(node2.hierarchy).to eq('rank1' => id1, 'rank2' => id2)
         expect(node3.hierarchy)
           .to eq('rank1' => id1, 'rank2' => id2, 'rank3' => id3)
-        expect(node4.hierarchy).to eq('rank1' => id1, 'rank4' => id4)
+        expect(node4.hierarchy).to eq('rank1' => id1)
         expect(node5.hierarchy)
-          .to eq('rank1' => id1, 'rank4' => id4, 'rank5' => id5)
+          .to eq('rank1' => id1, 'rank5' => id5)
 
         expect(node1.hierarchy_names).to eq('rank1' => 'name1')
         expect(node2.hierarchy_names)
@@ -147,9 +147,9 @@ describe FormatNcbi do
         expect(node3.hierarchy_names)
           .to eq('rank1' => 'name1', 'rank2' => 'name2', 'rank3' => 'name3')
         expect(node4.hierarchy_names)
-          .to eq('rank1' => 'name1', 'rank4' => 'name4')
+          .to eq('rank1' => 'name1')
         expect(node5.hierarchy_names)
-          .to eq('rank1' => 'name1', 'rank4' => 'name4', 'rank5' => 'name5')
+          .to eq('rank1' => 'name1','rank5' => 'name5')
       end
     end
 

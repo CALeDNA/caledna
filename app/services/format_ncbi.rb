@@ -83,6 +83,11 @@ module FormatNcbi
     node.rank != 'no rank'
   end
 
+  def append_array(field, value)
+    copy = field.dup
+    copy << value
+  end
+
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def create_taxa_tree_for(parent_node)
     child_nodes = NcbiNode.where(parent_taxon_id: parent_node.ncbi_id)
@@ -93,14 +98,17 @@ module FormatNcbi
       rank = node.rank
       id = node.ncbi_id
 
-      node.ids = parent_node.ids.dup << id
-      node.ranks = parent_node.ranks.dup << rank
-      node.names = parent_node.names.dup << name
+      node.ids = append_array(parent_node.ids, id)
+      node.ranks = append_array(parent_node.ranks, rank)
+      node.names = append_array(parent_node.names, name)
       node.full_taxonomy_string = parent_node.full_taxonomy_string. + '|' + name
 
       if valid_rank?(node)
         node.hierarchy = parent_node.hierarchy.merge(rank => id)
         node.hierarchy_names = parent_node.hierarchy_names.merge(rank => name)
+      else
+        node.hierarchy = parent_node.hierarchy
+        node.hierarchy_names = parent_node.hierarchy_names
       end
 
       raise(StandardError, 'invalid NcbiNode') unless node.valid?
