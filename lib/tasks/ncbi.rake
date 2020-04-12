@@ -10,7 +10,9 @@ namespace :ncbi do
   desc 'create alt_names'
   task create_alt_names: :environment do
     puts 'create alt_names...'
+    puts Time.zone.now
     create_alt_names
+    puts Time.zone.now
   end
 
   desc 'create taxa tree'
@@ -24,7 +26,9 @@ namespace :ncbi do
   desc 'create common names'
   task create_common_names: :environment do
     puts 'create_common_names...'
+    puts Time.zone.now
     create_common_names
+    puts Time.zone.now
   end
 
   desc 'add ncbi_id to ncbi_nodes to handle BOLD'

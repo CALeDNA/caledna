@@ -16,7 +16,7 @@ module FormatNcbi
       sql = <<-SQL
         UPDATE ncbi_nodes
         SET alt_names = coalesce($1 || ' | ' || alt_names, $1)
-        WHERE taxon_id = $2
+        WHERE ncbi_id = $2
       SQL
       binding = [[nil, clean_name], [nil, name.taxon_id]]
 

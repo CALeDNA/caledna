@@ -1,6 +1,10 @@
 
 ```bash
 bin/rake ncbi:create_taxa_tree
+
+bin/rake ncbi:create_alt_names
+
+ncbi:create_common_names
  ```
 
 2020-04-10 04:01:16 UTC
