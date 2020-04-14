@@ -62,6 +62,10 @@ describe ImportCsv::EdnaResultsTaxa do
     include ActiveJob::TestHelper
 
     shared_examples 'find result taxon' do
+      let!(:ncbi_version_id) { create(:ncbi_version, id: 1).id }
+      let(:ncbi_id) { 20 }
+      let(:bold_id) { 30 }
+
       context 'when ResultTaxon matches taxonomy string' do
         it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
           create(:result_taxon, clean_taxonomy_string: taxonomy_string,
@@ -76,10 +80,10 @@ describe ImportCsv::EdnaResultsTaxa do
             old_source = '2|primer2'
             taxon =
               create(:result_taxon, original_taxonomy_string: taxonomy_string,
-                                    sources: [old_source])
+                                    result_sources: [old_source])
 
             expect { subject(taxonomy_string, source_data) }
-              .to change { taxon.reload.sources }
+              .to change { taxon.reload.result_sources }
               .from([old_source])
               .to([old_source, source_data])
           end
@@ -89,10 +93,10 @@ describe ImportCsv::EdnaResultsTaxa do
           it 'does not append source data' do
             taxon =
               create(:result_taxon, original_taxonomy_string: taxonomy_string,
-                                    sources: [source_data])
+                                    result_sources: [source_data])
 
             expect { subject(taxonomy_string, source_data) }
-              .to_not(change { taxon.reload.sources })
+              .to_not(change { taxon.reload.result_sources })
           end
         end
       end
@@ -121,7 +125,9 @@ describe ImportCsv::EdnaResultsTaxa do
             hierarchy_names = { phylum: 'P', class: 'C', order: 'O',
                                 family: 'F', genus: 'G', species: 'S' }
             taxon = create(:ncbi_node, hierarchy_names: hierarchy_names,
-                                       rank: 'species')
+                                       rank: 'species', ncbi_id: ncbi_id,
+                                       bold_id: bold_id,
+                                       ncbi_version_id: ncbi_version_id)
 
             arguements = {
               taxon_id: taxon.taxon_id,
@@ -132,9 +138,12 @@ describe ImportCsv::EdnaResultsTaxa do
               },
               original_taxonomy_string: taxonomy_string,
               clean_taxonomy_string: taxonomy_string,
+              ncbi_id: ncbi_id,
+              bold_id: bold_id,
+              ncbi_version_id: ncbi_version_id,
               normalized: true,
               exact_match: true,
-              sources: [source_data]
+              result_sources: [source_data]
             }
 
             expect { subject(taxonomy_string, source_data) }
@@ -153,9 +162,12 @@ describe ImportCsv::EdnaResultsTaxa do
               },
               original_taxonomy_string: taxonomy_string,
               clean_taxonomy_string: taxonomy_string,
+              ncbi_id: nil,
+              bold_id: nil,
+              ncbi_version_id: nil,
               normalized: false,
               exact_match: false,
-              sources: [source_data]
+              result_sources: [source_data]
             }
 
             expect { subject(taxonomy_string, source_data) }
@@ -176,7 +188,9 @@ describe ImportCsv::EdnaResultsTaxa do
                                 family: 'F', genus: 'G', species: 'S',
                                 superkingdom: 'SK' }
             taxon = create(:ncbi_node, hierarchy_names: hierarchy_names,
-                                       rank: 'species')
+                                       rank: 'species', ncbi_id: ncbi_id,
+                                       bold_id: bold_id,
+                                       ncbi_version_id: ncbi_version_id)
 
             arguements = {
               taxon_id: taxon.taxon_id,
@@ -187,9 +201,12 @@ describe ImportCsv::EdnaResultsTaxa do
               },
               original_taxonomy_string: taxonomy_string,
               clean_taxonomy_string: taxonomy_string,
+              ncbi_id: ncbi_id,
+              bold_id: bold_id,
+              ncbi_version_id: ncbi_version_id,
               normalized: true,
               exact_match: true,
-              sources: [source_data]
+              result_sources: [source_data]
             }
 
             expect { subject(taxonomy_string, source_data) }
@@ -208,9 +225,10 @@ describe ImportCsv::EdnaResultsTaxa do
               },
               original_taxonomy_string: taxonomy_string,
               clean_taxonomy_string: taxonomy_string,
+              ncbi_id: nil, bold_id: nil, ncbi_version_id: nil,
               normalized: false,
               exact_match: false,
-              sources: [source_data]
+              result_sources: [source_data]
             }
 
             expect { subject(taxonomy_string, source_data) }

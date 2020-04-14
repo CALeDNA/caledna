@@ -202,6 +202,9 @@ describe ProcessEdnaResults do
     end
 
     let(:id) { 100 }
+    let(:ncbi_id) { 200 }
+    let(:bold_id) { 300 }
+    let(:ncbi_version_id) { create(:ncbi_version, id: 1).id }
 
     it 'returns a hash of taxon info when all ranks are present' do
       string = 'Phylum;Class;Order;Family;Genus;Species'
@@ -217,12 +220,17 @@ describe ProcessEdnaResults do
       }
 
       create(:ncbi_node, canonical_name: 'Species', rank: 'species',
-                         hierarchy_names: hierarchy_names, taxon_id: id)
+                         hierarchy_names: hierarchy_names, taxon_id: id,
+                         ncbi_id: ncbi_id, bold_id: bold_id,
+                         ncbi_version_id: ncbi_version_id)
       results = subject(string)
 
       expect(results[:original_taxonomy_string]).to eq(string)
       expect(results[:clean_taxonomy_string]).to eq(string)
       expect(results[:taxon_id]).to eq(id)
+      expect(results[:ncbi_id]).to eq(ncbi_id)
+      expect(results[:bold_id]).to eq(bold_id)
+      expect(results[:ncbi_version_id]).to eq(ncbi_version_id)
       expect(results[:taxon_rank]).to eq('species')
       expect(results[:hierarchy]).to include(
         phylum: 'Phylum', class: 'Class',
@@ -243,12 +251,17 @@ describe ProcessEdnaResults do
         species: 'Species'
       }
       create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
-                         hierarchy_names: hierarchy_names, taxon_id: id)
+                         hierarchy_names: hierarchy_names, taxon_id: id,
+                         ncbi_id: ncbi_id, bold_id: bold_id,
+                         ncbi_version_id: ncbi_version_id)
       results = subject(string)
 
       expect(results[:original_taxonomy_string]).to eq(string)
       expect(results[:clean_taxonomy_string]).to eq(string)
       expect(results[:taxon_id]).to eq(id)
+      expect(results[:ncbi_id]).to eq(ncbi_id)
+      expect(results[:bold_id]).to eq(bold_id)
+      expect(results[:ncbi_version_id]).to eq(ncbi_version_id)
       expect(results[:taxon_rank]).to eq('genus')
       expect(results[:hierarchy]).to include(
         class: 'Class', order: 'Order', genus: 'Genus'
@@ -266,12 +279,17 @@ describe ProcessEdnaResults do
         species: 'Species'
       }
       create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
-                         hierarchy_names: hierarchy_names, taxon_id: id)
+                         hierarchy_names: hierarchy_names, taxon_id: id,
+                         ncbi_id: ncbi_id, bold_id: bold_id,
+                         ncbi_version_id: ncbi_version_id)
       results = subject(string)
 
       expect(results[:original_taxonomy_string]).to eq(string)
       expect(results[:clean_taxonomy_string]).to eq(';Class;Order;;Genus;')
       expect(results[:taxon_id]).to eq(id)
+      expect(results[:ncbi_id]).to eq(ncbi_id)
+      expect(results[:bold_id]).to eq(bold_id)
+      expect(results[:ncbi_version_id]).to eq(ncbi_version_id)
       expect(results[:taxon_rank]).to eq('genus')
       expect(results[:hierarchy]).to include(
         class: 'Class', order: 'Order', genus: 'Genus'
@@ -287,12 +305,17 @@ describe ProcessEdnaResults do
       }
 
       create(:ncbi_node, canonical_name: 'Phylum2', rank: 'phylum',
-                         hierarchy_names: hierarchy_names, taxon_id: id)
+                         hierarchy_names: hierarchy_names, taxon_id: id,
+                         ncbi_id: ncbi_id, bold_id: bold_id,
+                         ncbi_version_id: ncbi_version_id)
       results = subject(string)
 
       expect(results[:original_taxonomy_string]).to eq(string)
       expect(results[:clean_taxonomy_string]).to eq(string)
       expect(results[:taxon_id]).to eq(nil)
+      expect(results[:ncbi_id]).to eq(nil)
+      expect(results[:bold_id]).to eq(nil)
+      expect(results[:ncbi_version_id]).to eq(nil)
       expect(results[:taxon_rank]).to eq('phylum')
       expect(results[:hierarchy]).to include(
         phylum: 'Phylum'
@@ -309,15 +332,20 @@ describe ProcessEdnaResults do
 
       create(:ncbi_node, canonical_name: 'Family', rank: 'family',
                          hierarchy_names: hierarchy_names.merge(phylum: 'Phy1'),
-                         taxon_id: 101)
+                         taxon_id: 101, ncbi_id: ncbi_id, bold_id: bold_id,
+                         ncbi_version_id: ncbi_version_id)
       create(:ncbi_node, canonical_name: 'Family', rank: 'family',
                          hierarchy_names: hierarchy_names.merge(phylum: 'Phy2'),
-                         taxon_id: 102)
+                         taxon_id: 102, ncbi_id: ncbi_id, bold_id: bold_id,
+                         ncbi_version_id: ncbi_version_id)
       results = subject(string)
 
       expect(results[:original_taxonomy_string]).to eq(string)
       expect(results[:clean_taxonomy_string]).to eq(string)
       expect(results[:taxon_id]).to eq(nil)
+      expect(results[:ncbi_id]).to eq(nil)
+      expect(results[:bold_id]).to eq(nil)
+      expect(results[:ncbi_version_id]).to eq(nil)
       expect(results[:taxon_rank]).to eq('family')
       expect(results[:hierarchy]).to include(
         family: 'Family'
@@ -1313,7 +1341,7 @@ describe ProcessEdnaResults do
 
   describe '#process_barcodes_for_csv_table' do
     def subject(csv_data)
-      dummy_class.process_barcodes_for_csv_table(csv_data)
+      dummy_class.process_barcodes_for_csv_table(csv_data, 'barcode')
     end
 
     let(:csv) { './spec/fixtures/import_csv/samples.csv' }

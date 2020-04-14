@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_11_180353) do
+ActiveRecord::Schema.define(version: 2020_04_14_205331) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -57,7 +56,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.string "status_cd"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "discarded_at"
     t.index ["event_id"], name: "index_event_registrations_on_event_id"
     t.index ["user_id", "event_id"], name: "index_event_registrations_on_user_id_and_event_id", unique: true
     t.index ["user_id"], name: "index_event_registrations_on_user_id"
@@ -73,7 +71,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.bigint "field_project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "discarded_at"
     t.index ["field_project_id"], name: "index_events_on_field_project_id"
   end
 
@@ -92,9 +89,9 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
+    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "iucn_status"
     t.string "source"
     t.string "col_id"
     t.string "wikispecies_id"
@@ -124,33 +121,7 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.datetime "last_import_date"
     t.string "date_range"
     t.boolean "published", default: true
-    t.datetime "discarded_at"
     t.index ["kobo_id"], name: "index_field_projects_on_kobo_id", unique: true
-  end
-
-  create_table "foo", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
-    t.integer "parent_taxon_id"
-    t.string "rank"
-    t.string "canonical_name"
-    t.integer "division_id"
-    t.integer "cal_division_id"
-    t.text "full_taxonomy_string"
-    t.integer "ids", default: [], array: true
-    t.text "ranks", default: [], array: true
-    t.text "names", default: [], array: true
-    t.jsonb "hierarchy_names", default: {}
-    t.jsonb "hierarchy", default: {}
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.string "source", default: "ncbi"
-    t.bigint "ncbi_version_id"
-    t.string "alt_names"
-    t.string "common_names"
-    t.integer "asvs_count"
-    t.integer "asvs_count_la_river"
-    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.index ["taxon_id"], name: "foo1_pkey", unique: true
   end
 
   create_table "ggbn_meta", force: :cascade do |t|
@@ -203,7 +174,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.datetime "updated_at", null: false
     t.integer "height"
     t.integer "width"
-    t.datetime "discarded_at"
     t.index ["sample_id"], name: "index_kobo_photos_on_sample_id"
   end
 
@@ -278,7 +248,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.bigint "website_id"
     t.boolean "show_map"
     t.boolean "show_edna_results_metadata"
-    t.datetime "discarded_at"
     t.index ["display_order"], name: "index_pages_on_display_order"
     t.index ["slug"], name: "index_pages_on_slug"
     t.index ["website_id"], name: "index_pages_on_website_id"
@@ -300,7 +269,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.text "reference"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "discarded_at"
   end
 
   create_table "research_project_authors", force: :cascade do |t|
@@ -309,7 +277,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.integer "authorable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "discarded_at"
     t.index ["authorable_id"], name: "index_research_project_authors_on_authorable_id"
     t.index ["research_project_id"], name: "index_research_project_authors_on_research_project_id"
   end
@@ -319,13 +286,12 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.integer "sourceable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "sample_id"
     t.string "sourceable_type"
     t.jsonb "metadata", default: {}
-    t.integer "sample_id"
-    t.datetime "discarded_at"
     t.index "((metadata ->> 'location'::text))", name: "idx_rps_metadata_location"
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
-    t.index ["sample_id"], name: "research_project_sources_sample_id_idx"
+    t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
     t.index ["sourceable_type"], name: "index_research_project_sources_on_sourceable_type"
   end
@@ -341,7 +307,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.text "decontamination_method"
     t.jsonb "metadata", default: {}
     t.string "primers", default: [], array: true
-    t.datetime "discarded_at"
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|
@@ -372,16 +337,16 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.string "unlock_token"
     t.datetime "locked_at"
     t.string "orcid"
-    t.datetime "discarded_at"
     t.index ["email"], name: "index_researchers_on_email", unique: true
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
 
-  create_table "result_taxa", id: :serial, force: :cascade do |t|
+  create_table "result_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
     t.string "taxon_rank"
     t.jsonb "hierarchy"
     t.boolean "normalized"
@@ -396,141 +361,10 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.integer "ncbi_id"
     t.integer "bold_id"
     t.integer "ncbi_version_id"
-    t.string "canonical_name"
     t.index ["clean_taxonomy_string"], name: "index_result_taxa_on_clean_taxonomy_string"
     t.index ["clean_taxonomy_string"], name: "result_taxa_clean_taxonomy_string_idx", unique: true
     t.index ["ignore"], name: "index_result_taxa_on_ignore"
     t.index ["taxon_id"], name: "index_result_taxa_on_taxon_id"
-  end
-
-  create_table "result_taxa_v2", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "ignore"
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "result_sources", array: true
-    t.boolean "exact_match"
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.integer "ncbi_version_id"
-  end
-
-  create_table "result_taxa_v3", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "ignore"
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "result_sources", array: true
-    t.boolean "exact_match"
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.integer "ncbi_version_id"
-  end
-
-  create_table "result_taxa_v4", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "ignore"
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "result_sources", array: true
-    t.boolean "exact_match"
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.integer "ncbi_version_id"
-  end
-
-  create_table "result_taxa_v5", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "ignore"
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "result_sources", array: true
-    t.boolean "exact_match"
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.integer "ncbi_version_id"
-    t.string "canonical_name"
-  end
-
-  create_table "result_taxa_v6", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "ignore"
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "result_sources", array: true
-    t.boolean "exact_match"
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.integer "ncbi_version_id"
-    t.string "canonical_name"
-  end
-
-  create_table "result_taxa_v7", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "ignore"
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "result_sources", array: true
-    t.boolean "exact_match"
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.integer "ncbi_version_id"
-    t.string "canonical_name"
-  end
-
-  create_table "result_taxa_v8", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "taxon_rank"
-    t.jsonb "hierarchy"
-    t.boolean "normalized"
-    t.integer "taxon_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "ignore"
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.text "result_sources", array: true
-    t.boolean "exact_match"
-    t.integer "ncbi_id"
-    t.integer "bold_id"
-    t.integer "ncbi_version_id"
-    t.string "canonical_name"
   end
 
   create_table "samples", id: :serial, force: :cascade do |t|
@@ -562,7 +396,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.boolean "has_permit", default: true
     t.string "environmental_features", default: [], array: true
     t.string "environmental_settings", default: [], array: true
-    t.datetime "discarded_at"
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
@@ -579,7 +412,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.datetime "published_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "discarded_at"
     t.index ["website_id"], name: "index_site_news_on_website_id"
   end
 
@@ -590,7 +422,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "score", default: 0
-    t.datetime "discarded_at"
     t.index ["survey_question_id"], name: "index_survey_answers_on_survey_question_id"
     t.index ["survey_response_id"], name: "index_survey_answers_on_survey_response_id"
   end
@@ -601,7 +432,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.boolean "accepted_answer", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "discarded_at"
     t.index ["survey_question_id"], name: "index_survey_options_on_survey_question_id"
   end
 
@@ -612,7 +442,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "order_number"
-    t.datetime "discarded_at"
     t.index ["survey_id"], name: "index_survey_questions_on_survey_id"
   end
 
@@ -623,7 +452,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.datetime "updated_at", null: false
     t.integer "total_score", default: 0
     t.boolean "passed", default: false
-    t.datetime "discarded_at"
     t.index ["survey_id"], name: "index_survey_responses_on_survey_id"
     t.index ["user_id"], name: "index_survey_responses_on_user_id"
   end
@@ -635,7 +463,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.string "slug"
     t.text "description"
     t.integer "passing_score", default: 0
-    t.datetime "discarded_at"
     t.index ["slug"], name: "index_surveys_on_slug"
   end
 
@@ -679,7 +506,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
     t.string "caledna_source"
     t.boolean "agree", null: false
     t.boolean "can_contact", default: false, null: false
-    t.datetime "discarded_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -696,7 +522,6 @@ ActiveRecord::Schema.define(version: 2020_04_11_180353) do
   add_foreign_key "event_registrations", "events"
   add_foreign_key "event_registrations", "users"
   add_foreign_key "events", "field_projects"
-  add_foreign_key "foo", "external.ncbi_versions", column: "ncbi_version_id", name: "foo_ncbi_version_id_fkey"
   add_foreign_key "kobo_photos", "samples"
   add_foreign_key "ncbi_names", "external.ncbi_versions", column: "ncbi_version_id"
   add_foreign_key "ncbi_nodes", "external.ncbi_versions", column: "ncbi_version_id"

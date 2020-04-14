@@ -25,8 +25,9 @@ module ImportCsv
       result_taxon =
         ResultTaxon.find_by(original_taxonomy_string: taxonomy_string)
 
-      if result_taxon.present? && !result_taxon.sources.include?(source_data)
-        result_taxon.sources << source_data
+      if result_taxon.present? &&
+         !result_taxon.result_sources.include?(source_data)
+        result_taxon.result_sources << source_data
         result_taxon.save
         return
       end
@@ -48,9 +49,11 @@ module ImportCsv
       results = format_result_taxon_data_from_string(taxonomy_string)
 
       if results[:taxon_id].blank?
-        data = { normalized: false, exact_match: false, sources: [source_data] }
+        data = { normalized: false, exact_match: false,
+                 result_sources: [source_data] }
       elsif results[:taxon_id].present?
-        data = { normalized: true, exact_match: true, sources: [source_data] }
+        data = { normalized: true, exact_match: true,
+                 result_sources: [source_data] }
       end
       create_data = results.merge(data)
 

@@ -12,7 +12,7 @@ module ProcessEdnaResults
     false
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def format_result_taxon_data_from_string(taxonomy_string)
     rank = get_taxon_rank(taxonomy_string)
     hierarchy = get_hierarchy(taxonomy_string)
@@ -20,18 +20,32 @@ module ProcessEdnaResults
     raise TaxaError, 'rank not found' if rank.blank?
     raise TaxaError, 'hierarchy not found' if hierarchy.blank?
 
-    taxa = find_taxa_by_hierarchy(hierarchy, rank).to_a
-    taxon_id = taxa&.size == 1 ? taxa.first.taxon_id : nil
+    taxon_data = taxon_data_from_string(taxonomy_string, rank, hierarchy)
 
+    taxa = find_taxa_by_hierarchy(hierarchy, rank).to_a
+    if taxa&.size == 1
+      taxon = taxa.first
+      taxon_data[:taxon_id] = taxon.taxon_id
+      taxon_data[:ncbi_id] = taxon.ncbi_id
+      taxon_data[:bold_id] = taxon.bold_id
+      taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
+    end
+    taxon_data
+  end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+  def taxon_data_from_string(taxonomy_string, rank, hierarchy)
     {
-      taxon_id: taxon_id,
+      taxon_id: nil,
       taxon_rank: rank,
       hierarchy: hierarchy,
       original_taxonomy_string: taxonomy_string,
-      clean_taxonomy_string: remove_na(taxonomy_string)
+      clean_taxonomy_string: remove_na(taxonomy_string),
+      ncbi_id: nil,
+      bold_id: nil,
+      ncbi_version_id: nil
     }
   end
-  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength
   def find_taxa_by_hierarchy(hierarchy, target_rank)
