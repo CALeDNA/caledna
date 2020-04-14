@@ -67,8 +67,8 @@ class Create2020NcbiTables < ActiveRecord::Migration[5.2]
       t.string :alt_names
       t.string :common_names
 
-      t.integer :asvs_count
-      t.integer :asvs_count_la_river
+      t.integer :asvs_count, default: 0
+      t.integer :asvs_count_la_river, default: 0
 
       t.timestamps default: -> { 'CURRENT_TIMESTAMP' }
     end

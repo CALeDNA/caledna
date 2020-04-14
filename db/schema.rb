@@ -214,8 +214,8 @@ ActiveRecord::Schema.define(version: 2020_04_14_205331) do
     t.bigint "ncbi_version_id"
     t.string "alt_names"
     t.string "common_names"
-    t.integer "asvs_count"
-    t.integer "asvs_count_la_river"
+    t.integer "asvs_count", default: 0
+    t.integer "asvs_count_la_river", default: 0
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "full_text_search_idx", using: :gin
