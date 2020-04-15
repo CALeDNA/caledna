@@ -305,7 +305,7 @@ export default {
   },
   computed: {
     taxonDisplayName() {
-      let name = this.taxon.canonicalName;
+      let name = this.taxon.canonical_name;
       if (this.taxon.common_names) {
         name += ` (${this.taxon.common_names.split("|").join(", ")})`;
       }

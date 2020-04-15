@@ -40,7 +40,7 @@ describe ImportCsv::CreateRecords do
 
     let(:sample) { create(:sample) }
     let(:taxon) { create(:ncbi_node, asvs_count: 0, taxon_id: 1, ids: [1]) }
-    let(:primer) { '12S' }
+    let(:primer) { create(:primer) }
     let(:research_project) { create(:research_project) }
     let(:count) { 10 }
     let(:attributes) do

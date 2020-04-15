@@ -7,7 +7,7 @@ class FieldProject < ApplicationRecord
   LA_RIVER = FieldProject.find_by(name: 'Los Angeles River')
 
   has_one_attached :image
-  has_many :samples, dependent: :destroy
+  has_many :samples
   has_many :events
 
   scope :published, -> { where(published: true) }

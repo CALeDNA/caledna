@@ -13,14 +13,7 @@
   <% end %>
 </table>
 
-<% if taxon.taxonomicStatus %>
-  <p>Taxonomic status: <%= taxon.taxonomicStatus %></p>
-<% end %>
-<% if taxon.acceptedNameUsageID %>
-  <p>Accepted name: <%= link_to taxon.accepted_taxon.canonicalName, taxon_path(taxon.accepted_taxon) %></p>
-<% end %>
-
-<% if taxon.vernaculars.present? %>
+<% if taxon.common_names.present? %>
   <h3>Common Names</h3>
   <table class="table table-condensed ">
     <tr>
@@ -28,10 +21,10 @@
       <th>Type</th>
     </tr>
 
-    <% taxon.vernaculars.each do |vernacular|%>
+    <% taxon.common_names.each do |common_name|%>
       <tr>
-        <td><%= vernacular.name %></td>
-        <td><%= vernacular.name_class %></td>
+        <td><%= common_name.name %></td>
+        <td><%= common_name.name_class %></td>
       </tr>
     <% end %>
   </table>

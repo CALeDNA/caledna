@@ -3,7 +3,7 @@
 <div class="row">
   <div class="col-md-6">
     <% if taxon.image.present? %>
-      <%= image_tag taxon.image.url, alt: taxon.canonicalName, width: 350, class: 'taxa-hero-image' %><br>
+      <%= image_tag taxon.image.url, alt: taxon.canonical_name, width: 350, class: 'taxa-hero-image' %><br>
       <p class='data-source'>
         Image Source: <%=  taxon.image.attribution %>
         via <%= link_to taxon.image.source, taxon.image.url %>
@@ -79,7 +79,7 @@
 <% if @total_records.zero? %>
   <div class="panel panel-default">
     <div class="panel-body">
-      <%= taxon.canonicalName %> has not been detected in any CALeDNA sites.
+      <%= taxon.canonical_name %> has not been detected in any CALeDNA sites.
     </div>
   </div>
   <%= render partial: "gbif_occurrence_map", locals: { taxon: taxon } %>

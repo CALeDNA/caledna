@@ -2,5 +2,5 @@
 
 class BasicTaxonSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :common_names, :canonicalName
+  attributes :common_names, :canonical_name
 end

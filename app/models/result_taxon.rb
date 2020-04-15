@@ -38,8 +38,8 @@ class ResultTaxon < ApplicationRecord
   end
 
   def sources_display
-    return if sources.blank?
-    sources.map do |source|
+    return if result_sources.blank?
+    result_sources.map do |source|
       id, primer = source.split('|')
       next if primer.blank?
 

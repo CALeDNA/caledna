@@ -11,7 +11,7 @@ describe FormatNcbi do
     end
 
     it 'adds one name to alt_name when there is one related name' do
-      node = create(:ncbi_node, taxon_id: 1)
+      node = create(:ncbi_node, ncbi_id: 1)
       create(:ncbi_name, taxon_id: 1, name: 'name', name_class: 'synonym')
       subject
 
@@ -19,7 +19,7 @@ describe FormatNcbi do
     end
 
     it 'adds multiple names to alt_name when there arme many related names' do
-      node = create(:ncbi_node, taxon_id: 1)
+      node = create(:ncbi_node, ncbi_id: 1)
       create(:ncbi_name, taxon_id: 1, name: 'name1', name_class: 'synonym')
       create(:ncbi_name, taxon_id: 1, name: 'name2', name_class: 'synonym')
       subject
@@ -28,7 +28,7 @@ describe FormatNcbi do
     end
 
     it 'appends new name to alt_name when alt_name has content' do
-      node = create(:ncbi_node, taxon_id: 1, alt_names: 'name1')
+      node = create(:ncbi_node, ncbi_id: 1, alt_names: 'name1')
       create(:ncbi_name, taxon_id: 1, name: 'name2', name_class: 'synonym')
       create(:ncbi_name, taxon_id: 1, name: 'name3', name_class: 'synonym')
       subject
@@ -37,7 +37,7 @@ describe FormatNcbi do
     end
 
     it 'does not change alt_name when name_class is invalid' do
-      node = create(:ncbi_node, taxon_id: 1)
+      node = create(:ncbi_node, ncbi_id: 1)
       create(:ncbi_name, taxon_id: 1, name: 'name', name_class: 'random')
       subject
 
@@ -45,8 +45,8 @@ describe FormatNcbi do
     end
 
     it 'ignores names for other taxons' do
-      node = create(:ncbi_node, taxon_id: 1)
-      create(:ncbi_node, taxon_id: 2)
+      node = create(:ncbi_node, ncbi_id: 1)
+      create(:ncbi_node, ncbi_id: 2)
       create(:ncbi_name, taxon_id: 2, name: 'name', name_class: 'synonym')
       subject
 
@@ -54,10 +54,10 @@ describe FormatNcbi do
     end
 
     it 'updates multiple ncbi_nodes' do
-      node1 = create(:ncbi_node, taxon_id: 1)
+      node1 = create(:ncbi_node, ncbi_id: 1)
       create(:ncbi_name, taxon_id: 1, name: 'name1', name_class: 'synonym')
 
-      node2 = create(:ncbi_node, taxon_id: 2)
+      node2 = create(:ncbi_node, ncbi_id: 2)
       create(:ncbi_name, taxon_id: 2, name: 'name2', name_class: 'synonym')
       subject
 
@@ -66,7 +66,7 @@ describe FormatNcbi do
     end
 
     it 'removes quotes before adding to alt_name' do
-      node = create(:ncbi_node, taxon_id: 1)
+      node = create(:ncbi_node, ncbi_id: 1)
       create(:ncbi_name, taxon_id: 1, name: "name 'a'", name_class: 'synonym')
       subject
 
@@ -149,7 +149,7 @@ describe FormatNcbi do
         expect(node4.hierarchy_names)
           .to eq('rank1' => 'name1')
         expect(node5.hierarchy_names)
-          .to eq('rank1' => 'name1','rank5' => 'name5')
+          .to eq('rank1' => 'name1', 'rank5' => 'name5')
       end
     end
 

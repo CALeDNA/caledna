@@ -99,10 +99,6 @@ class NcbiNode < ApplicationRecord
   end
   # rubocop:enable Metrics/AbcSize
 
-  def vernaculars
-    ncbi_names.vernaculars.where(taxon_id: taxon_id)
-  end
-
   def synonyms
     ncbi_names.synonyms
   end

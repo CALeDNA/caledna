@@ -4,7 +4,7 @@
         <%= image_tag TaxaHelper.kingdom_icon(@taxon.ncbi_division&.name), class: 'kingdom-icon' %>
         <%= @taxon.ncbi_division&.name %> &raquo;
       <% end %>
-      <%= @taxon.taxonRank %>: <%= @taxon.canonicalName %>
+      <%= @taxon.rank %>: <%= @taxon.canonical_name %>
     </h1>
   <h2><%= @taxon.common_names_display(parenthesis: false, truncate: false) if @taxon.common_names.present? %></h2>
 </div>
