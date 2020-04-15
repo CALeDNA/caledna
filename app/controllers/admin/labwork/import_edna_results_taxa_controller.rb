@@ -7,9 +7,9 @@ module Admin
 
       def index
         authorize 'Labwork::ImportCsv'.to_sym, :index?
-        @projects = ResearchProject.published.order(:name)
+        @projects = ResearchProject.order(:name)
                                    .collect { |p| [p.name, p.id] }
-        @primers = Primer.all.order(:name).collect(&:name)
+        @primers = Primer.order(:name).collect(&:name)
       end
 
       def create

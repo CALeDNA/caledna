@@ -8,7 +8,7 @@ module Admin
       def index
         authorize 'Labwork::ImportCsv'.to_sym, :index?
         @field_projects =
-          FieldProject.order(:name).all.collect { |p| [p.name, p.id] }
+          FieldProject.order(:name).collect { |p| [p.name, p.id] }
       end
 
       def create
