@@ -21,6 +21,14 @@ namespace :mass_delete do
     end
   end
 
+  # https://rubyinrails.com/2019/07/12/postgres-reset-sequence-to-max-id-in-rails/
+  task reset_sequence: :environment do
+    conn.tables.each do |table|
+      puts table
+      conn.reset_pk_sequence!(table)
+    end
+  end
+
   def truncate(table)
     sql = "TRUNCATE TABLE #{table} RESTART IDENTITY CASCADE;"
 
