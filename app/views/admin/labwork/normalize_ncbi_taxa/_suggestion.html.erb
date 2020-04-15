@@ -1,16 +1,11 @@
 <% if suggestion.ncbi_id %>
-  NCBI ID: <%= link_to suggestion.taxon_id, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{suggestion.taxon_id}" %>
+  NCBI ID: <%= link_to suggestion.ncbi_id, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{suggestion.ncbi_id}" %>
 <% end%>
 <% if suggestion.bold_id %>
   BOLD ID: <%= suggestion.bold_id %>
 <% end%>
-<% if suggestion.lineage.present? %>
-<ol>
-  <% suggestion.lineage && suggestion.lineage.each do |lineage|%>
-    <li><%= lineage.third %>: <%= lineage.second  %></li>
-  <% end %>
-</ol>
-<% elsif suggestion.hierarchy_names.present? %>
+
+<% if suggestion.hierarchy_names.present? %>
 <ol>
   <li>superkingdom: <%= suggestion.hierarchy_names['superkingdom'] %></li>
   <li>kingdom: <%= suggestion.hierarchy_names['kingdom'] %></li>

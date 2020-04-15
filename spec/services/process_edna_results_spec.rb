@@ -206,6 +206,32 @@ describe ProcessEdnaResults do
     let(:bold_id) { 300 }
     let(:ncbi_version_id) { create(:ncbi_version, id: 1).id }
 
+    it 'returns a hash of info if string is all NA or ;;' do
+      results = subject(';NA;;NA;;NA;')
+
+      expect(results[:original_taxonomy_string]).to eq(';NA;;NA;;NA;')
+      expect(results[:clean_taxonomy_string]).to eq(';;;;;;')
+      expect(results[:taxon_id]).to eq(nil)
+      expect(results[:ncbi_id]).to eq(nil)
+      expect(results[:bold_id]).to eq(nil)
+      expect(results[:ncbi_version_id]).to eq(nil)
+      expect(results[:taxon_rank]).to eq('unknown')
+      expect(results[:hierarchy]).to eq({})
+    end
+
+    it 'returns a hash of info if string is NA' do
+      results = subject('NA')
+
+      expect(results[:original_taxonomy_string]).to eq('NA')
+      expect(results[:clean_taxonomy_string]).to eq('NA')
+      expect(results[:taxon_id]).to eq(nil)
+      expect(results[:ncbi_id]).to eq(nil)
+      expect(results[:bold_id]).to eq(nil)
+      expect(results[:ncbi_version_id]).to eq(nil)
+      expect(results[:taxon_rank]).to eq('unknown')
+      expect(results[:hierarchy]).to eq({})
+    end
+
     it 'returns a hash of taxon info when all ranks are present' do
       string = 'Phylum;Class;Order;Family;Genus;Species'
       hierarchy_names = {
@@ -1217,6 +1243,18 @@ describe ProcessEdnaResults do
       string = 'superkingdom;NA;NA;NA;NA;NA;NA'
 
       expect(subject(string)).to eq('superkingdom')
+    end
+
+    it 'returns NA if string is NA' do
+      string = 'NA'
+
+      expect(subject(string)).to eq('NA')
+    end
+
+    it 'returns semicolons if string is combination of NA and ;;' do
+      string = 'NA;;NA;NA;;;NA'
+
+      expect(subject(string)).to eq(';;;;;;')
     end
   end
 

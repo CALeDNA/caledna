@@ -5,8 +5,6 @@ class ResultTaxon < ApplicationRecord
     superkingdom kingdom phylum class order family genus species
   ].freeze
 
-  validates :taxon_rank, inclusion: { in: TAXON_RANK }
-
   def name
     hierarchy[taxon_rank.to_s]
   end

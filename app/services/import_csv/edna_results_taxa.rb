@@ -28,10 +28,11 @@ module ImportCsv
       result_taxon =
         ResultTaxon.find_by(original_taxonomy_string: taxonomy_string)
 
-      if result_taxon.present? &&
-         !result_taxon.result_sources.include?(source_data)
-        result_taxon.result_sources << source_data
-        result_taxon.save
+      if result_taxon.present?
+        unless result_taxon.result_sources.include?(source_data)
+          result_taxon.result_sources << source_data
+          result_taxon.save
+        end
         return
       end
 
@@ -44,6 +45,7 @@ module ImportCsv
       data.entries.each do |row|
         source_data = "#{research_project_id}|#{primer}"
         taxonomy_string = row['sum.taxonomy']
+
         # ImportCsvUpdateOrCreateResultTaxonJob calls
         # update_or_create_result_taxon
         ImportCsvUpdateOrCreateResultTaxonJob.perform_later(
@@ -63,6 +65,7 @@ module ImportCsv
                  result_sources: [source_data] }
       end
       create_data = results.merge(data)
+
       # ImportCsvCreateResultTaxonJob calls create_result_taxon
       ImportCsvCreateResultTaxonJob.perform_later(create_data)
     end

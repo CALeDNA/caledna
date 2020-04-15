@@ -3,13 +3,6 @@
 require 'rails_helper'
 
 describe ResultTaxon, type: :model do
-  describe 'validations' do
-    it 'passes when taxon rank is valid' do
-      should validate_inclusion_of(:taxon_rank)
-        .in_array(ResultTaxon::TAXON_RANK)
-    end
-  end
-
   describe '#sources_display' do
     it 'returns nil if no sources' do
       taxon = create(:result_taxon, result_sources: [])

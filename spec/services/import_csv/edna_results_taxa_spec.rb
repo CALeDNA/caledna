@@ -72,7 +72,8 @@ describe ImportCsv::EdnaResultsTaxa do
       context 'when ResultTaxon matches taxonomy string' do
         it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
           create(:result_taxon, clean_taxonomy_string: taxonomy_string,
-                                original_taxonomy_string: taxonomy_string)
+                                original_taxonomy_string: taxonomy_string,
+                                result_sources: [source_data])
 
           expect { subject(taxonomy_string, source_data) }
             .to_not have_enqueued_job(ImportCsvCreateResultTaxonJob)
@@ -128,6 +129,13 @@ describe ImportCsv::EdnaResultsTaxa do
       dummy_class.update_or_create_result_taxon(taxonomy_string, attributes)
     end
     let(:source_data) { '1|primer1' }
+
+    it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
+      taxonomy_string = 'NA'
+
+      expect { subject(taxonomy_string, source_data) }
+        .to have_enqueued_job(ImportCsvCreateResultTaxonJob)
+    end
 
     context 'when taxonomy string is phylum format' do
       let(:taxonomy_string) { 'P;C;O;F;G;S' }

@@ -17,9 +17,6 @@ module ProcessEdnaResults
     rank = get_taxon_rank(taxonomy_string)
     hierarchy = get_hierarchy(taxonomy_string)
 
-    raise TaxaError, 'rank not found' if rank.blank?
-    raise TaxaError, 'hierarchy not found' if hierarchy.blank?
-
     taxon_data = taxon_data_from_string(taxonomy_string, rank, hierarchy)
 
     taxa = find_taxa_by_hierarchy(hierarchy, rank).to_a
@@ -81,6 +78,12 @@ module ProcessEdnaResults
     if parts.length == 6
       true
     elsif parts.length == 7
+      false
+    elsif string == 'NA'
+      false
+    elsif string == ';;;;;;'
+      false
+    elsif string == ';;;;;;;'
       false
     else
       raise TaxaError, "#{string}: invalid taxonomy string"
@@ -347,7 +350,7 @@ module ProcessEdnaResults
 
   def find_canonical_taxon_from_string(taxonomy_string)
     new_string = remove_na(taxonomy_string)
-    new_string.split(';').last
+    new_string.split(';').last || new_string
   end
 
   def remove_na(taxonomy_string)
