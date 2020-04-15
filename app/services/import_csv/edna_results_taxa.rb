@@ -6,6 +6,8 @@ module ImportCsv
     include ProcessEdnaResults
     include CsvUtils
 
+    # only import csv if first sum.taxonomy has valid taxa string. find
+    # ResultTaxon, then update or create ResultTaxon
     def import_csv(file, research_project_id, primer)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
@@ -21,7 +23,8 @@ module ImportCsv
       OpenStruct.new(valid?: true, errors: nil)
     end
 
-    def find_result_taxon(taxonomy_string, source_data)
+    # triggered by ImportCsvFindResultTaxonJob; create or update ResultTaxa
+    def update_or_create_result_taxon(taxonomy_string, source_data)
       result_taxon =
         ResultTaxon.find_by(original_taxonomy_string: taxonomy_string)
 
@@ -41,7 +44,11 @@ module ImportCsv
       data.entries.each do |row|
         source_data = "#{research_project_id}|#{primer}"
         taxonomy_string = row['sum.taxonomy']
-        ImportCsvFindResultTaxonJob.perform_later(taxonomy_string, source_data)
+        # ImportCsvUpdateOrCreateResultTaxonJob calls
+        # update_or_create_result_taxon
+        ImportCsvUpdateOrCreateResultTaxonJob.perform_later(
+          taxonomy_string, source_data
+        )
       end
     end
 
@@ -56,7 +63,7 @@ module ImportCsv
                  result_sources: [source_data] }
       end
       create_data = results.merge(data)
-
+      # ImportCsvCreateResultTaxonJob calls create_result_taxon
       ImportCsvCreateResultTaxonJob.perform_later(create_data)
     end
   end

@@ -6,6 +6,8 @@ module ImportCsv
     include CsvUtils
     include ProcessEdnaResults
 
+    # only import csv if all barcodes are in database. create or update
+    # research project sources
     def import_csv(file, research_project_id)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
@@ -17,29 +19,31 @@ module ImportCsv
         return OpenStruct.new(valid?: false, errors: message)
       end
 
-      update_research_project_sources(data, research_project_id)
+      create_or_update_research_proj_sources(data, research_project_id)
       OpenStruct.new(valid?: true, errors: nil)
     end
 
     private
 
-    def update_research_project_sources(data, research_project_id)
+    def create_or_update_research_proj_sources(data, research_project_id)
       data.entries.each do |row|
         barcode = row['sum.taxonomy']
         next if barcode.blank?
 
         sample = Sample.find_by(barcode: barcode)
-        update_research_project_source(row, sample, research_project_id)
+        create_or_update_research_proj_source(row, sample, research_project_id)
       end
     end
 
-    def update_research_project_source(row, sample, research_project_id)
+    def create_or_update_research_proj_source(row, sample, research_project_id)
       source =
         ResearchProjectSource.where(sourceable: sample)
                              .where(research_project_id: research_project_id)
                              .first_or_create
 
-      source.metadata = row.reject { |k, _v| k == 'sum.taxonomy' || k.blank? }.to_h
+      source.metadata =
+        row.reject { |k, _v| k == 'sum.taxonomy' || k.blank? }.to_h
+
       source.save
     end
   end

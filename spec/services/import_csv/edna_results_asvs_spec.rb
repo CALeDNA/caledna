@@ -82,9 +82,24 @@ describe ImportCsv::EdnaResultsAsvs do
   describe('#queue_asv_job') do
     include ActiveJob::TestHelper
 
+    let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
+    let(:file) { fixture_file_upload(csv, 'text/csv') }
+    let(:research_project) { create(:research_project, id: project_id) }
+    let(:primer) { '12S' }
+    let(:data) { CSV.read(file.path, headers: true, col_sep: "\t") }
+    let(:csv_barcode1) { 'K0001-LA-S1' }
+    let(:taxon_id1) { 1 }
+    let(:taxon_id2) { 2 }
+    let(:taxon_id3) { 3 }
+    let(:sample_id1) { 100 }
+    let(:sample_id2) { 200 }
+    let(:project_id) { 500 }
+
     before(:each) do
       project = create(:field_project, name: 'unknown')
       stub_const('FieldProject::DEFAULT_PROJECT', project)
+      create(:sample, :approved, barcode: 'K0001-LA-S1', id: sample_id1)
+      create(:sample, :approved, barcode: 'K0001-LA-S2', id: sample_id2)
     end
 
     def subject
@@ -93,90 +108,94 @@ describe ImportCsv::EdnaResultsAsvs do
       barcodes = dummy_class.convert_header_row_to_barcodes(data)
       samples_data =
         dummy_class.find_samples_from_barcodes(barcodes)[:valid_data]
+
       dummy_class.queue_asv_job(data.to_json, barcodes, samples_data,
                                 asv_attributes)
     end
 
-    let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
-    let(:file) { fixture_file_upload(csv, 'text/csv') }
-    let(:research_project) { create(:research_project) }
-    let(:primer) { '12S' }
-    let(:data) { CSV.read(file.path, headers: true, col_sep: "\t") }
-    let(:csv_barcode1) { 'K0001-LA-S1' }
-
-    context 'when matching taxon does not exist' do
-      let!(:result_taxon) do
-        create(
-          :result_taxon,
-          clean_taxonomy_string: 'Foo',
-          taxon_rank: 'phylum',
-          normalized: true
-        )
-      end
-
-      it 'does not add ImportCsvCreateAsvJob to queue' do
-        expect do
-          subject
-        end
-          .to_not have_enqueued_job(ImportCsvCreateAsvJob)
-      end
-
-      it 'does not add ImportCsvCreateResearchProjectSourceJob to queue' do
-        expect do
-          subject
-        end
-          .to_not have_enqueued_job(ImportCsvCreateResearchProjectSourceJob)
-      end
+    # rubocop:disable Metrics/MethodLength
+    def create_taxa
+      create(
+        :result_taxon,
+        taxon_id: taxon_id1,
+        taxon_rank: 'family',
+        clean_taxonomy_string: 'Phylum;Class;Order;Family;;'
+      )
+      create(
+        :result_taxon,
+        taxon_id: taxon_id2,
+        taxon_rank: 'genus',
+        clean_taxonomy_string: 'Phylum;Class;Order;Family;Genus;'
+      )
+      create(
+        :result_taxon,
+        taxon_id: taxon_id3,
+        taxon_rank: 'species',
+        clean_taxonomy_string: 'Phylum;Class;Order;Family;Genus;Genus species'
+      )
     end
+    # rubocop:enable Metrics/MethodLength
 
-    context 'when matching taxon does exist with no reads' do
-      let!(:result_taxon) do
-        create(
-          :result_taxon,
-          clean_taxonomy_string: data[0]['sum.taxonomy'],
-          taxon_rank: 'family',
-          normalized: true
-        )
-      end
-
-      it 'does not add ImportCsvCreateAsvJob to queue' do
-        expect do
-          subject
-        end
-          .to_not have_enqueued_job(ImportCsvCreateAsvJob)
-      end
-
-      it 'does not add ImportCsvCreateResearchProjectSourceJob to queue' do
-        expect do
-          subject
-        end
-          .to_not have_enqueued_job(ImportCsvCreateResearchProjectSourceJob)
+    context 'when matching ResultTaxon does not exist' do
+      it 'raises an error' do
+        expect { subject }.to raise_error(ImportError)
       end
     end
 
     context 'when matching taxon does exist with reads' do
-      let!(:result_taxon) do
-        create(
-          :result_taxon,
-          clean_taxonomy_string: data[1]['sum.taxonomy'],
-          taxon_rank: 'genus',
-          normalized: true
-        )
+      before(:each) do
+        create_taxa
       end
 
-      it 'adds ImportCsvCreateAsvJob to queue' do
+      it 'adds ImportCsvFirstOrCreateAsvJob to queue' do
         expect do
           subject
         end
-          .to have_enqueued_job(ImportCsvCreateAsvJob).exactly(2).times
+          .to have_enqueued_job(ImportCsvFirstOrCreateAsvJob).exactly(2).times
       end
 
-      it 'does add ImportCsvCreateResearchProjectSourceJob to queue' do
+      it 'does add ImportCsvFirstOrCreateResearchProjSourceJob to queue' do
         expect do
           subject
         end
-          .to have_enqueued_job(ImportCsvCreateResearchProjectSourceJob)
+          .to have_enqueued_job(ImportCsvFirstOrCreateResearchProjSourceJob)
           .exactly(2).times
+      end
+
+      it 'adds pass correct agruments to ImportCsvFirstOrCreateAsvJob' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job.with(
+            research_project_id: research_project.id, primer: primer,
+            taxon_id: taxon_id2, sample_id: sample_id1, count: 2
+          ).exactly(1).times
+      end
+
+      it 'adds pass correct agruments to ImportCsvFirstOrCreateAsvJob' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job.with(
+            research_project_id: research_project.id, primer: primer,
+            taxon_id: taxon_id2, sample_id: sample_id2, count: 2
+          ).exactly(1).times
+      end
+
+      it 'adds pass correct agruments to FirstOrCreateResearchProjSourceJob' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job.with(sample_id1, 'Sample', project_id)
+                               .exactly(1).times
+      end
+
+      it 'adds pass correct agruments to FirstOrCreateResearchProjSourceJob' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job.with(sample_id2, 'Sample', project_id)
+                               .exactly(1).times
       end
     end
   end

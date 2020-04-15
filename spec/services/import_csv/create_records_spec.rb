@@ -5,10 +5,10 @@ require 'rails_helper'
 describe ImportCsv::CreateRecords do
   let(:dummy_class) { Class.new { extend ImportCsv::CreateRecords } }
 
-  describe '#create_research_project_source' do
+  describe '#first_or_create_research_project_source' do
     def subject(sample, type, research_project_id)
-      dummy_class.create_research_project_source(sample, type,
-                                                 research_project_id)
+      dummy_class.first_or_create_research_project_source(sample, type,
+                                                          research_project_id)
     end
 
     let(:research_project) { create(:research_project) }
@@ -33,9 +33,9 @@ describe ImportCsv::CreateRecords do
     end
   end
 
-  describe '#create_asv' do
+  describe '#first_or_create_asv' do
     def subject(attributes)
-      dummy_class.create_asv(attributes)
+      dummy_class.first_or_create_asv(attributes)
     end
 
     let(:sample) { create(:sample) }

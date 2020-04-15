@@ -7,6 +7,8 @@ module ImportCsv
     include CsvUtils
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # only import csv if all barcodes are in the database. First or create
+    # ResearchProjectSource. First or create ASV.
     def import_csv(file, research_project_id, primer_id)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
@@ -23,6 +25,8 @@ module ImportCsv
         research_project_id: research_project_id,
         primer_id: primer_id
       }
+
+      # ImportCsvQueueAsvJob calls queue_asv_job
       ImportCsvQueueAsvJob.perform_later(
         data.to_json, barcodes, samples[:valid_data], asv_attributes
       )
@@ -31,6 +35,7 @@ module ImportCsv
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+    # called by ImportCsvQueueAsvJob
     def queue_asv_job(data_json, barcodes, samples_data, asv_attributes)
       data = JSON.parse(data_json)
       data.each do |row|
@@ -40,7 +45,7 @@ module ImportCsv
         next if invalid_taxon?(taxonomy_string)
 
         result_taxon = find_result_taxon_from_string(taxonomy_string)
-        next if result_taxon.blank?
+        raise ImportError, 'must import taxa first' if result_taxon.blank?
 
         asv_attributes[:taxon_id] = result_taxon.taxon_id
         create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
@@ -83,11 +88,13 @@ module ImportCsv
 
         sample_id = samples_data[barcode]
 
-        ImportCsvCreateResearchProjectSourceJob
+        # calls first_or_create_research_project_source
+        ImportCsvFirstOrCreateResearchProjSourceJob
           .perform_later(sample_id, 'Sample',
                          asv_attributes[:research_project_id])
 
-        ImportCsvCreateAsvJob.perform_later(
+        #  calls first_or_create_asv
+        ImportCsvFirstOrCreateAsvJob.perform_later(
           asv_attributes.merge(sample_id: sample_id, count: read_count)
         )
       end

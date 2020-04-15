@@ -24,12 +24,13 @@ describe ImportCsv::EdnaResultsTaxa do
         expect(subject(file, research_project.id, primer).valid?).to eq(true)
       end
 
-      it 'adds ImportCsvQueueAsvJob to queue' do
+      it 'adds ImportCsvFindResultTaxonJob to queue' do
         expect { subject(file, research_project.id, primer) }
-          .to have_enqueued_job(ImportCsvFindResultTaxonJob).exactly(3).times
+          .to have_enqueued_job(ImportCsvUpdateOrCreateResultTaxonJob)
+          .exactly(3).times
       end
 
-      it 'passes correct as arguement' do
+      it 'passes correct as arguement to ImportCsvFindResultTaxonJob' do
         source = "#{research_project.id}|#{primer}"
         expect { subject(file, research_project.id, primer) }
           .to have_enqueued_job
@@ -51,15 +52,17 @@ describe ImportCsv::EdnaResultsTaxa do
         expect(result.errors).to eq(message)
       end
 
-      it 'does not add ImportCsvQueueAsvJob to queue' do
+      it 'does not add ImportCsvFindResultTaxonJob to queue' do
         expect { subject(file, research_project.id, primer) }
-          .to have_enqueued_job(ImportCsvFindResultTaxonJob).exactly(0).times
+          .to have_enqueued_job(ImportCsvUpdateOrCreateResultTaxonJob)
+          .exactly(0).times
       end
     end
   end
 
-  describe('#find_result_taxon') do
+  describe('#update_or_create_result_taxon') do
     include ActiveJob::TestHelper
+    include ProcessEdnaResults
 
     shared_examples 'find result taxon' do
       let!(:ncbi_version_id) { create(:ncbi_version, id: 1).id }
@@ -107,11 +110,22 @@ describe ImportCsv::EdnaResultsTaxa do
             .to have_enqueued_job(ImportCsvCreateResultTaxonJob)
             .exactly(1).times
         end
+
+        it 'passes correct as arguement to ImportCsvCreateResultTaxonJob' do
+          results = format_result_taxon_data_from_string(taxonomy_string).merge(
+            normalized: false, exact_match: false,
+            result_sources: [source_data]
+          )
+
+          expect { subject(taxonomy_string, source_data) }
+            .to have_enqueued_job
+            .with(results).exactly(1).times
+        end
       end
     end
 
     def subject(taxonomy_string, attributes)
-      dummy_class.find_result_taxon(taxonomy_string, attributes)
+      dummy_class.update_or_create_result_taxon(taxonomy_string, attributes)
     end
     let(:source_data) { '1|primer1' }
 

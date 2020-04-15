@@ -384,6 +384,12 @@ describe ProcessEdnaResults do
       expect(subject(string)).to eq(true)
     end
 
+    it 'returns true if empty string' do
+      string = ''
+
+      expect(subject(string)).to eq(true)
+    end
+
     it 'returns true if string is only "NA" and semicolons' do
       strings = [';NA;;;;;', ';NA;;NA;;NA;', ';;;;;;NA', 'NA;;;;;']
 

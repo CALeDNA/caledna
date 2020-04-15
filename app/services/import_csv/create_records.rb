@@ -5,23 +5,23 @@ module ImportCsv
     include CustomCounter
     include ProcessEdnaResults
 
-    def create_asv(attributes)
+    def first_or_create_asv(attributes)
       asv = Asv.where(attributes).first_or_create
 
       return asv if asv.valid?
       raise ImportError, "ASV #{attributes[:sample_id]}: #{asv.errors}"
     end
 
-    def create_research_project_source(sourceable_id, type, research_project_id)
+    def first_or_create_research_project_source(sourceable_id, type,
+                                                research_project_id)
       attributes = {
         sourceable_id: sourceable_id,
         sourceable_type: type,
         research_project_id: research_project_id
       }
 
-      project = ResearchProjectSource.where(attributes).first_or_create
-
-      return if project.valid?
+      source = ResearchProjectSource.where(attributes).first_or_create
+      return if source.valid?
       raise ImportError, 'ResearchProjectSource not created'
     end
 

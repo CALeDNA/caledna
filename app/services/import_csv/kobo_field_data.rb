@@ -7,6 +7,8 @@ module ImportCsv
     include ProcessEdnaResults
 
     # TODO: find a way to deal with image upload
+    # Import csv if all barcodes are not in database. Create new sample for
+    # each record.
     def import_csv(file, field_project_id)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)

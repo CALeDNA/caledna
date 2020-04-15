@@ -42,18 +42,62 @@ describe ImportCsv::SamplesResearchMetadata do
         expect(results.valid?).to eq(true)
       end
 
-      it 'creates ResearchProjectSource' do
-        expect { subject(file, research_project_id) }
-          .to change { ResearchProjectSource.count }.by(2)
+      context 'and ResearchProjectSource does not exist' do
+        it 'creates ResearchProjectSource' do
+          expect { subject(file, research_project_id) }
+            .to change { ResearchProjectSource.count }.by(2)
+        end
+
+        it 'creates ResearchProjectSource using csv data' do
+          subject(file, research_project_id)
+          source = ResearchProjectSource.first
+
+          expect(source.sourceable).to eq(sample1)
+          expect(source.research_project_id).to eq(research_project_id)
+          expect(source.metadata).to eq('field1' => 'a', 'field2' => 'b')
+        end
       end
 
-      it 'creates ResearchProjectSource using csv data' do
-        subject(file, research_project_id)
-        source = ResearchProjectSource.first
+      context 'and ResearchProjectSource already exists' do
+        let!(:source1) do
+          create(:research_project_source,
+                 sourceable: sample1, research_project_id: research_project_id,
+                 metadata: { old: 1 })
+        end
+        let!(:source2) do
+          create(:research_project_source,
+                 sourceable: sample2, research_project_id: research_project_id,
+                 metadata: {})
+        end
 
-        expect(source.sourceable).to eq(sample1)
-        expect(source.research_project_id).to eq(research_project_id)
-        expect(source.metadata).to eq('field1' => 'a', 'field2' => 'b')
+        it 'does not create ResearchProjectSource' do
+          expect { subject(file, research_project_id) }
+            .to change { ResearchProjectSource.count }.by(0)
+        end
+
+        it 'does not change the existing research_project_id' do
+          expect { subject(file, research_project_id) }
+            .to_not(change { source1.reload.research_project_id })
+        end
+
+        it 'does not change the existing sourceable_id' do
+          expect { subject(file, research_project_id) }
+            .to_not(change { source1.reload.sourceable_id })
+        end
+
+        it 'overwrites the existing metadata' do
+          expect { subject(file, research_project_id) }
+            .to change { source1.reload.metadata }
+            .from('old' => 1)
+            .to('field1' => 'a', 'field2' => 'b')
+        end
+
+        it 'overwrites the default metadata' do
+          expect { subject(file, research_project_id) }
+            .to change { source2.reload.metadata }
+            .from({})
+            .to('field1' => 'c', 'field2' => 'd')
+        end
       end
     end
   end
