@@ -25,15 +25,15 @@ class ResearchProjectsController < ApplicationController
     research_projects.slug,
     COUNT(DISTINCT(samples.id))
     FROM research_projects
-    JOIN research_project_sources
-      ON research_projects.id =
-    research_project_sources.research_project_id
-    JOIN samples
+    LEFT JOIN research_project_sources
+      ON research_projects.id = research_project_sources.research_project_id
+      AND sourceable_type = 'Sample'
+    LEFT JOIN samples
       ON research_project_sources.sourceable_id = samples.id
-    WHERE samples.status_cd = 'results_completed'
-    AND latitude IS NOT NULL
-    AND longitude IS NOT NULL
-    AND sourceable_type = 'Sample'
+      AND samples.status_cd = 'results_completed'
+      AND latitude IS NOT NULL
+      AND longitude IS NOT NULL
+    WHERE published = TRUE
     GROUP BY research_projects.id
     ORDER BY research_projects.name
     LIMIT $1 OFFSET $2;
