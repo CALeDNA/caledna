@@ -17,27 +17,51 @@ module ProcessEdnaResults
     hierarchy = get_hierarchy(taxonomy_string)
     taxon_data = taxon_data_from_string(taxonomy_string, rank, hierarchy)
 
-    taxa = find_taxa_by_hierarchy(hierarchy, rank).to_a
+    find_taxon_loop(hierarchy, rank, taxon_data, 1)
+  end
+
+  def filtered_ranks(hierarchy, rank_count)
+    ranks = %i[superkingdom kingdom phylum class order family genus species]
+    hierarchy.keys.sort_by { |k| ranks.index(k) }.reverse[0, rank_count]
+  end
+
+  def find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
+    return taxon_data if hierarchy == {}
+    return taxon_data if ranks_count == hierarchy.size
+
+    ranks = filtered_ranks(hierarchy, ranks_count)
+    taxa = find_taxa_by_hierarchy(hierarchy, rank, ranks).to_a
     if taxa&.size == 1
-      taxon_data =
-        taxon_data.merge(taxon_data_from_found_taxon(taxa.first, taxon_data))
+      taxon_data = taxon_data_from_found_taxon(taxa.first, taxon_data)
     end
+
+    ranks_count += 1
+    find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
+  end
+
+  def taxon_data_from_string(taxonomy_string, rank, hierarchy)
+    {
+      taxon_id: nil,
+      taxon_rank: rank,
+      hierarchy: hierarchy,
+      original_taxonomy_string: taxonomy_string,
+      clean_taxonomy_string: remove_na(taxonomy_string),
+      ncbi_id: nil,
+      bold_id: nil,
+      ncbi_version_id: nil
+    }
+  end
+
+  def taxon_data_from_found_taxon(taxon, taxon_data)
+    taxon_data[:taxon_id] = taxon.taxon_id
+    taxon_data[:ncbi_id] = taxon.ncbi_id
+    taxon_data[:bold_id] = taxon.bold_id
+    taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
     taxon_data
   end
 
-  def filtered_hierarchy(hierarchy, target_rank)
-    highest_rank = hierarchy[:phylum] ? :phylum : :superkingdom
-    ranks = if target_rank == 'genus'
-              [highest_rank, :family, :genus]
-            else
-              ([highest_rank] << target_rank.to_sym).uniq
-            end
-
-    hierarchy.select { |k, _v| ranks.include?(k) }
-  end
-
-  def find_taxa_by_hierarchy(hierarchy, target_rank)
-    filtered_hierarchy = filtered_hierarchy(hierarchy, target_rank)
+  def find_taxa_by_hierarchy(hierarchy, target_rank, ranks_used)
+    filtered_hierarchy = hierarchy.select { |k, _v| ranks_used.include?(k) }
 
     NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
             .where(rank: target_rank)
@@ -168,6 +192,20 @@ module ProcessEdnaResults
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+  # NOTE: adds kingdoms to taxonomy string since test results don't include
+  # kingdoms
+  def get_complete_taxon_string(string)
+    rank = get_taxon_rank_phylum(string)
+    hierarchy = get_hierarchy_phylum(string, rank)
+
+    kingdom = hierarchy[:kingdom]
+    superkingdom = hierarchy[:superkingdom]
+
+    string = kingdom.present? ? "#{kingdom};#{string}" : ";#{string}"
+    string = superkingdom.present? ? "#{superkingdom};#{string}" : ";#{string}"
+    string
+  end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -344,27 +382,6 @@ module ProcessEdnaResults
   end
 
   private
-
-  def taxon_data_from_string(taxonomy_string, rank, hierarchy)
-    {
-      taxon_id: nil,
-      taxon_rank: rank,
-      hierarchy: hierarchy,
-      original_taxonomy_string: taxonomy_string,
-      clean_taxonomy_string: remove_na(taxonomy_string),
-      ncbi_id: nil,
-      bold_id: nil,
-      ncbi_version_id: nil
-    }
-  end
-
-  def taxon_data_from_found_taxon(taxon, taxon_data)
-    taxon_data[:taxon_id] = taxon.taxon_id
-    taxon_data[:ncbi_id] = taxon.ncbi_id
-    taxon_data[:bold_id] = taxon.bold_id
-    taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
-    taxon_data
-  end
 
   def get_taxon_rank(taxonomy_string)
     if phylum_taxonomy_string?(taxonomy_string)
