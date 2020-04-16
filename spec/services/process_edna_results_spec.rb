@@ -206,20 +206,6 @@ describe ProcessEdnaResults do
     let(:bold_id) { 300 }
     let(:ncbi_version_id) { create(:ncbi_version, id: 1).id }
 
-    it 'foo' do
-      string = 'Bacteria;Planctomycetes;Planctomycetia;Planctomycetales;Planctomycetaceae;Bythopirellula;'
-      hierarchy = {
-        superkingdom: 'Bacteria', phylum: 'Planctomycetes',
-        class: 'Planctomycetia', order: 'Pirellulales',
-        family: 'Lacipirellulaceae', genus: 'Bythopirellula'
-      }
-      create(:ncbi_node, canonical_name: 'Bythopirellula', rank: 'genus',
-                         hierarchy_names: hierarchy, taxon_id: 1)
-      results = subject(string)
-
-      expect(results[:taxon_id]).to eq(1)
-    end
-
     shared_examples_for 'all ranks are present' do |string, res_hierarchy|
       it 'returns a hash of taxon info when all ranks are present' do
         hierarchy_names = {
@@ -1174,16 +1160,20 @@ describe ProcessEdnaResults do
       end
 
       context ', and family do not match, genus match, and rank is genus' do
-        given_hier = {
-          superkingdom: 'sk', kingdom: 'k',
-          class: 'c', order: 'o', family: 'f', genus: 'g'
-        }
-        hier = {
-          superkingdom: 'sk', kingdom: 'k2',
-          class: 'c2', order: 'o2', family: 'f2', genus: 'g'
-        }
-        rank = 'genus'
-        it_behaves_like 'phylum and lowest rank match', given_hier, hier, rank
+        it 'returns empty array' do
+          given_hier = {
+            superkingdom: 'sk', kingdom: 'k',
+            class: 'c', order: 'o', family: 'f', genus: 'g'
+          }
+          hier = {
+            superkingdom: 'sk', kingdom: 'k2',
+            class: 'c2', order: 'o2', family: 'f2', genus: 'g'
+          }
+          rank = 'genus'
+          create(:ncbi_node, hierarchy_names: hier, rank: rank)
+
+          expect(subject(given_hier, rank)).to match_array([])
+        end
       end
     end
 
@@ -1232,38 +1222,12 @@ describe ProcessEdnaResults do
       }
       rank = 'species'
       it_behaves_like 'phylum and lowest rank match', given_hier, hier, rank
-
-      context ', and family and genus match, and rank is genus' do
-        given_hier = {
-          superkingdom: 'sk', kingdom: 'k', phylum: 'p',
-          class: 'c', order: 'o', family: 'f', genus: 'g'
-        }
-        hier = {
-          superkingdom: 'sk', kingdom: 'k', phylum: 'p',
-          class: 'c2', order: 'o2', family: 'f', genus: 'g'
-        }
-        rank = 'genus'
-        it_behaves_like 'phylum and lowest rank match', given_hier, hier, rank
-      end
-
-      context ', and family do not match, genus match, and rank is genus' do
-        given_hier = {
-          superkingdom: 'sk', kingdom: 'k', phylum: 'p',
-          class: 'c', order: 'o', family: 'f', genus: 'g'
-        }
-        hier = {
-          superkingdom: 'sk', kingdom: 'k', phylum: 'p',
-          class: 'c2', order: 'o2', family: 'f2', genus: 'g'
-        }
-        rank = 'genus'
-        it_behaves_like 'phylum and lowest rank match', given_hier, hier, rank
-      end
     end
   end
 
   describe '#filtered_hierarchy' do
-    def subject(hierarchy, rank, include_family=false)
-      dummy_class.filtered_hierarchy(hierarchy, rank, include_family)
+    def subject(hierarchy, rank)
+      dummy_class.filtered_hierarchy(hierarchy, rank)
     end
 
     context 'for ranks superkingdom and lower, when superkingdom is present' \
@@ -1380,83 +1344,39 @@ describe ProcessEdnaResults do
     end
 
     context 'for rank genus, when family and genus are present, ' do
-      context 'and include_family is true' do
-        let(:include_family) { true }
-        context 'superkingdom is present and phylum is absent ' do
-          it 'returns a phlyum, family, genus' do
-            hierarchy = { superkingdom: 'sk', kingdom: 'k', class: 'c',
-                          order: 'o', family: 'f', genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(superkingdom: 'sk', family: 'f', genus: 'g')
-          end
+      context 'superkingdom is present and phylum is absent ' do
+        it 'returns a phlyum, family, genus' do
+          hierarchy = { superkingdom: 'sk', kingdom: 'k', class: 'c',
+                        order: 'o', family: 'f', genus: 'g' }
+          expect(subject(hierarchy, 'genus'))
+            .to eq(superkingdom: 'sk', family: 'f', genus: 'g')
         end
-
-        context 'superkingdom and phylum are present' do
-          it 'returns a phlyum, family, genus' do
-            hierarchy = { superkingdom: 'sk', kingdom: 'k', phylum: 'p',
-                          class: 'c', order: 'o', family: 'f', genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(phylum: 'p', family: 'f', genus: 'g')
-          end
-        end
-
-        context 'superkingdom is absent and phylum is present ' do
-          it 'returns a phlyum, family, genus' do
-            hierarchy = { kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
-                          family: 'f', genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(phylum: 'p', family: 'f', genus: 'g')
-          end
-        end
-
-        context 'superkingdom and phylum are absent' do
-          it 'returns a family, genus' do
-            hierarchy = { kingdom: 'k', class: 'c', order: 'o', family: 'f',
-                          genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(family: 'f', genus: 'g')
-          end
-        end
-
-
       end
 
-      context 'and include_family is false' do
-        let(:include_family) { false }
-        context 'superkingdom is present and phylum is absent ' do
-          it 'returns a phlyum, family, genus' do
-            hierarchy = { superkingdom: 'sk', kingdom: 'k', class: 'c',
-                          order: 'o', family: 'f', genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(superkingdom: 'sk', genus: 'g')
-          end
+      context 'superkingdom and phylum are present' do
+        it 'returns a phlyum, family, genus' do
+          hierarchy = { superkingdom: 'sk', kingdom: 'k', phylum: 'p',
+                        class: 'c', order: 'o', family: 'f', genus: 'g' }
+          expect(subject(hierarchy, 'genus'))
+            .to eq(phylum: 'p', family: 'f', genus: 'g')
         end
+      end
 
-        context 'superkingdom and phylum are present' do
-          it 'returns a phlyum, family, genus' do
-            hierarchy = { superkingdom: 'sk', kingdom: 'k', phylum: 'p',
-                          class: 'c', order: 'o', family: 'f', genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(phylum: 'p', genus: 'g')
-          end
+      context 'superkingdom is absent and phylum is present ' do
+        it 'returns a phlyum, family, genus' do
+          hierarchy = { kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
+                        family: 'f', genus: 'g' }
+          expect(subject(hierarchy, 'genus'))
+            .to eq(phylum: 'p', family: 'f', genus: 'g')
         end
+      end
 
-        context 'superkingdom is absent and phylum is present ' do
-          it 'returns a phlyum, family, genus' do
-            hierarchy = { kingdom: 'k', phylum: 'p', class: 'c', order: 'o',
-                          family: 'f', genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(phylum: 'p', genus: 'g')
-          end
-        end
-
-        context 'superkingdom and phylum are absent' do
-          it 'returns a family, genus' do
-            hierarchy = { kingdom: 'k', class: 'c', order: 'o', family: 'f',
-                          genus: 'g' }
-            expect(subject(hierarchy, 'genus', include_family))
-              .to eq(genus: 'g')
-          end
+      context 'superkingdom and phylum are absent' do
+        it 'returns a family, genus' do
+          hierarchy = { kingdom: 'k', class: 'c', order: 'o', family: 'f',
+                        genus: 'g' }
+          expect(subject(hierarchy, 'genus'))
+            .to eq(family: 'f', genus: 'g')
         end
       end
     end

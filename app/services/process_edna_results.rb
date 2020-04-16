@@ -25,14 +25,10 @@ module ProcessEdnaResults
     taxon_data
   end
 
-  def filtered_hierarchy(hierarchy, target_rank, include_family=false)
+  def filtered_hierarchy(hierarchy, target_rank)
     highest_rank = hierarchy[:phylum] ? :phylum : :superkingdom
     ranks = if target_rank == 'genus'
-              if include_family
-                [highest_rank, :family, :genus]
-              else
-                [highest_rank, :genus]
-              end
+              [highest_rank, :family, :genus]
             else
               ([highest_rank] << target_rank.to_sym).uniq
             end
@@ -41,20 +37,7 @@ module ProcessEdnaResults
   end
 
   def find_taxa_by_hierarchy(hierarchy, target_rank)
-    # hundreds of genera have same name but belong to different families.
-    # to increase the number of exact matches, check for family and genus first.
-
-    # true: if rank == genus, search ncbi_nodes using family and genus
-    filtered_hierarchy = filtered_hierarchy(hierarchy, target_rank, true)
-
-    taxa = NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
-                   .where(rank: target_rank)
-
-    return taxa unless target_rank == 'genus'
-    return taxa if taxa.present?
-
-    # false: if rank == genus, search ncbi_nodes using genus
-    filtered_hierarchy = filtered_hierarchy(hierarchy, target_rank, false)
+    filtered_hierarchy = filtered_hierarchy(hierarchy, target_rank)
 
     NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
             .where(rank: target_rank)
