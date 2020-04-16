@@ -12,24 +12,32 @@ module ProcessEdnaResults
     false
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def format_result_taxon_data_from_string(taxonomy_string)
     rank = get_taxon_rank(taxonomy_string)
     hierarchy = get_hierarchy(taxonomy_string)
-
     taxon_data = taxon_data_from_string(taxonomy_string, rank, hierarchy)
 
-    taxa = find_taxa_by_hierarchy(hierarchy, rank).to_a
-    if taxa&.size == 1
-      taxon = taxa.first
-      taxon_data[:taxon_id] = taxon.taxon_id
-      taxon_data[:ncbi_id] = taxon.ncbi_id
-      taxon_data[:bold_id] = taxon.bold_id
-      taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
-    end
-    taxon_data
+    find_taxon_loop(hierarchy, rank, taxon_data, 1)
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+  def filtered_ranks(hierarchy, rank_count)
+    ranks = %i[superkingdom kingdom phylum class order family genus species]
+    hierarchy.keys.sort_by { |k| ranks.index(k) }.reverse[0, rank_count]
+  end
+
+  def find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
+    return taxon_data if hierarchy == {}
+    return taxon_data if ranks_count == hierarchy.size
+
+    ranks = filtered_ranks(hierarchy, ranks_count)
+    taxa = find_taxa_by_hierarchy(hierarchy, rank, ranks).to_a
+    if taxa&.size == 1
+      taxon_data = taxon_data_from_found_taxon(taxa.first, taxon_data)
+    end
+
+    ranks_count += 1
+    find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
+  end
 
   def taxon_data_from_string(taxonomy_string, rank, hierarchy)
     {
@@ -44,22 +52,20 @@ module ProcessEdnaResults
     }
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def find_taxa_by_hierarchy(hierarchy, target_rank)
-    clauses = []
-    ranks = %i[superkingdom kingdom phylum class order family genus species]
-    ranks.each do |rank|
-      next if hierarchy[rank].blank?
-      clauses << '"' + rank.to_s + '": "' +
-                 hierarchy[rank].gsub("'", "''") + '"'
-    end
-    sql = "rank = '#{target_rank}' AND  hierarchy_names @> '{"
-    sql += clauses.join(', ')
-    sql += "}'"
-
-    NcbiNode.where(sql)
+  def taxon_data_from_found_taxon(taxon, taxon_data)
+    taxon_data[:taxon_id] = taxon.taxon_id
+    taxon_data[:ncbi_id] = taxon.ncbi_id
+    taxon_data[:bold_id] = taxon.bold_id
+    taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
+    taxon_data
   end
-  # rubocop:enable Metrics/MethodLength
+
+  def find_taxa_by_hierarchy(hierarchy, target_rank, ranks_used)
+    filtered_hierarchy = hierarchy.select { |k, _v| ranks_used.include?(k) }
+
+    NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+            .where(rank: target_rank)
+  end
 
   def find_result_taxon_from_string(string)
     clean_string = remove_na(string)

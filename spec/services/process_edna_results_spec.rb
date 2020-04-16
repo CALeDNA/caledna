@@ -273,8 +273,7 @@ describe ProcessEdnaResults do
         class: 'Class',
         order: 'Order',
         family: 'Family',
-        genus: 'Genus',
-        species: 'Species'
+        genus: 'Genus'
       }
       create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
                          hierarchy_names: hierarchy_names, taxon_id: id,
@@ -301,8 +300,7 @@ describe ProcessEdnaResults do
         kingdom: 'Kingdom',
         class: 'Class',
         order: 'Order',
-        genus: 'Genus',
-        species: 'Species'
+        genus: 'Genus'
       }
       create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
                          hierarchy_names: hierarchy_names, taxon_id: id,
@@ -349,18 +347,21 @@ describe ProcessEdnaResults do
     end
 
     it 'returns a hash with nil taxon_id if multiple taxa are found' do
-      string = ';;;Family;;'
+      string = ';Class;Order;;Genus;'
       hierarchy_names = {
         superkingdom: 'Superkingdom',
         kingdom: 'Kingdom',
-        family: 'Family'
+        phylum: nil,
+        class: 'Class',
+        order: 'Order',
+        genus: 'Genus'
       }
 
-      create(:ncbi_node, canonical_name: 'Family', rank: 'family',
+      create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
                          hierarchy_names: hierarchy_names.merge(phylum: 'Phy1'),
                          taxon_id: 101, ncbi_id: ncbi_id, bold_id: bold_id,
                          ncbi_version_id: ncbi_version_id)
-      create(:ncbi_node, canonical_name: 'Family', rank: 'family',
+      create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
                          hierarchy_names: hierarchy_names.merge(phylum: 'Phy2'),
                          taxon_id: 102, ncbi_id: ncbi_id, bold_id: bold_id,
                          ncbi_version_id: ncbi_version_id)
@@ -372,9 +373,9 @@ describe ProcessEdnaResults do
       expect(results[:ncbi_id]).to eq(nil)
       expect(results[:bold_id]).to eq(nil)
       expect(results[:ncbi_version_id]).to eq(nil)
-      expect(results[:taxon_rank]).to eq('family')
+      expect(results[:taxon_rank]).to eq('genus')
       expect(results[:hierarchy]).to include(
-        family: 'Family'
+        genus: 'Genus'
       )
     end
   end
@@ -802,7 +803,9 @@ describe ProcessEdnaResults do
 
   describe '#find_taxa_by_hierarchy' do
     def subject(hierarchy, rank)
-      dummy_class.find_taxa_by_hierarchy(hierarchy, rank)
+      rank_count = hierarchy.size
+      ranks_used = dummy_class.filtered_ranks(hierarchy, rank_count)
+      dummy_class.find_taxa_by_hierarchy(hierarchy, rank, ranks_used)
     end
 
     context 'when hierarchy and rank are exact matches' do
@@ -964,6 +967,43 @@ describe ProcessEdnaResults do
       end
     end
   end
+
+  describe '#filtered_ranks' do
+    def subject(hierarchy, rank_count)
+      dummy_class.filtered_ranks(hierarchy, rank_count)
+    end
+
+    it 'returns a ordered array of ranks for a given hierarchy and number' do
+      hierarchy = { kingdom: 'k', genus: 'g', phylum: 'p', species: 's',
+                    order: 'o', superkingdom: 'sk', family: 'f', class: 'c' }
+
+      expect(subject(hierarchy, 8))
+        .to eq(%i[species genus family order class phylum kingdom superkingdom])
+      expect(subject(hierarchy, 7))
+        .to eq(%i[species genus family order class phylum kingdom])
+      expect(subject(hierarchy, 6))
+        .to eq(%i[species genus family order class phylum])
+      expect(subject(hierarchy, 5))
+        .to eq(%i[species genus family order class])
+      expect(subject(hierarchy, 4)).to eq(%i[species genus family order])
+      expect(subject(hierarchy, 3)).to eq(%i[species genus family])
+      expect(subject(hierarchy, 2)).to eq(%i[species genus])
+      expect(subject(hierarchy, 1)).to eq([:species])
+    end
+
+    it 'correctly handles sparse hierarchy' do
+      hierarchy = { kingdom: 'k', genus: 'g',
+                    order: 'o', superkingdom: 'sk', class: 'c' }
+
+      expect(subject(hierarchy, 5))
+        .to eq(%i[genus order class kingdom superkingdom])
+      expect(subject(hierarchy, 4)).to eq(%i[genus order class kingdom])
+      expect(subject(hierarchy, 3)).to eq(%i[genus order class])
+      expect(subject(hierarchy, 2)).to eq(%i[genus order])
+      expect(subject(hierarchy, 1)).to eq([:genus])
+    end
+  end
+
 
   describe '#find_sample_from_barcode' do
     let(:barcode) { 'K0001-LA-S1' }
