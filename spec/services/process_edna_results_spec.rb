@@ -870,7 +870,9 @@ describe ProcessEdnaResults do
       }
       rank = 'species'
       it_behaves_like 'hierarchy and rank exactly match', hierarchy, rank
+    end
 
+    context 'when given rank matches existing taxa' do
       it 'returns matching taxa for incomplete hierarchy' do
         hierarchy = { genus: 'Genus', species: 'Species' }
         rank = 'species'
@@ -879,7 +881,7 @@ describe ProcessEdnaResults do
         expect(subject(hierarchy, rank)).to eq([taxa])
       end
 
-      it 'returns matching taxa for strings with single quotes' do
+      it 'returns matching taxa for hierarchy name with single quotes' do
         hierarchy = { genus: 'Genus', species: "Species 'name'" }
         rank = 'species'
         taxa = create(:ncbi_node, hierarchy_names: hierarchy, rank: rank)
@@ -887,7 +889,8 @@ describe ProcessEdnaResults do
         expect(subject(hierarchy, rank)).to eq([taxa])
       end
 
-      it "returns matching taxa if string doesn't have quotes but taxa does" do
+      it "returns matching taxa if hierarchy name doesn't have quotes, " \
+        'but existing taxa does' do
         given_hierarchy = { genus: 'Genus', species: 'Species name' }
         hierarchy = { genus: 'Genus', species: "Species 'name'" }
         rank = 'species'
@@ -907,6 +910,77 @@ describe ProcessEdnaResults do
 
         expect(subject(given_hierarchy, rank)).to eq([taxon.reload])
       end
+
+      it 'returns empty array when hierarchy does not match' do
+        hierarchy1 = { superkingdom: 'Superkingdom', kingdom: 'Kingdom 1' }
+        hierarchy2 = { superkingdom: 'Superkingdom', kingdom: 'Kingdom 2' }
+        rank = 'kingdom'
+        create(:ncbi_node, hierarchy_names: hierarchy2, rank: rank)
+
+        expect(subject(hierarchy1, rank)).to eq([])
+      end
+    end
+
+    context 'when hierarchy name matches exiting taxa canonical name' do
+      it 'returns empty array if hierarchy & taxa superkingdom do not match' do
+        name = 'f'
+        given_hierarchy = { superkingdom: 'sk', family: name }
+        given_rank = 'family'
+
+        hierarchy = { superkingdom: 'sk2', no_rank: name }
+        rank = 'no rank'
+        create(:ncbi_node, hierarchy_names: hierarchy, rank: rank,
+                           canonical_name: name)
+
+        hierarchy = { superkingdom: 'sk2', sublass: name }
+        rank = 'sublass'
+        create(:ncbi_node, hierarchy_names: hierarchy, rank: rank,
+                           canonical_name: name)
+
+        expect(subject(given_hierarchy, given_rank)).to eq([])
+      end
+
+      it 'returns taxa if hierarchy and taxa superkingdom & class match' do
+        name = 'name'
+        given_hierarchy = { superkingdom: 'sk', class: 'c', family: name }
+        given_rank = 'family'
+
+        hierarchy = { superkingdom: 'sk', class: 'c', no_rank: name }
+        rank = 'no rank'
+        taxa = create(:ncbi_node, hierarchy_names: hierarchy, rank: rank,
+                                  canonical_name: name)
+
+        hierarchy = { superkingdom: 'sk2', class: 'c', sublass: name }
+        rank = 'sublass'
+        create(:ncbi_node, hierarchy_names: hierarchy, rank: rank,
+                           canonical_name: name)
+
+        expect(subject(given_hierarchy, given_rank)).to eq([taxa])
+      end
+
+      it 'returns taxa if hierarchy and taxa superkingdom & phylum match ' do
+        name = 'name'
+        given_hierarchy = { superkingdom: 'sk', phylum: 'p', family: name }
+        given_rank = 'family'
+
+        hierarchy1 = { superkingdom: 'sk', phylum: 'p', no_rank: name }
+        rank1 = 'no rank'
+        taxa1 = create(:ncbi_node, hierarchy_names: hierarchy1, rank: rank1,
+                                   canonical_name: name)
+
+        hierarchy2 = { superkingdom: 'sk', phylum: 'p', no_rank: name }
+        rank2 = 'no rank'
+        taxa2 = create(:ncbi_node, hierarchy_names: hierarchy2, rank: rank2,
+                                   canonical_name: name)
+
+        hierarchy3 = { superkingdom: 'sk2', phylum: 'p', sublass: name }
+        rank3 = 'sublass'
+        create(:ncbi_node, hierarchy_names: hierarchy3, rank: rank3,
+                           canonical_name: name)
+
+        expect(subject(given_hierarchy, given_rank))
+          .to match_array([taxa1, taxa2])
+      end
     end
 
     it 'returns empty array when rank does not match' do
@@ -918,14 +992,7 @@ describe ProcessEdnaResults do
       expect(subject(hierarchy, rank1)).to eq([])
     end
 
-    it 'returns empty array when hierarchy does not match' do
-      hierarchy1 = { superkingdom: 'Superkingdom', kingdom: 'Kingdom 1' }
-      hierarchy2 = { superkingdom: 'Superkingdom', kingdom: 'Kingdom 2' }
-      rank = 'kingdom'
-      create(:ncbi_node, hierarchy_names: hierarchy2, rank: rank)
 
-      expect(subject(hierarchy1, rank)).to eq([])
-    end
 
     context 'when given hierarchy partially matches existing taxa' do
       it 'returns all matching taxa when rank matches' do

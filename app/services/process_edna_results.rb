@@ -64,20 +64,30 @@ module ProcessEdnaResults
     filtered_hierarchy = hierarchy.select { |k, _v| ranks_used.include?(k) }
     name = hierarchy[target_rank.to_sym]
 
-    taxa = NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
-                   .where(rank: target_rank)
+    taxa = find_taxa_by_hierarchy_names(filtered_hierarchy, target_rank)
     return taxa if taxa.present?
 
-    sql = "lower(REPLACE(canonical_name, '''', '')) = ?"
-    taxa = NcbiNode.where(sql, name.downcase).where(rank: target_rank)
+    taxa = find_taxa_with_quotes(name, target_rank)
     return taxa if taxa.present?
 
-    NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
-            'ncbi_nodes.ncbi_id')
-            .where(rank: target_rank)
-            .where("ncbi_names.name_class IN ('equivalent name', 'in-part', " \
-            "'includes', 'scientific name', 'synonym')")
-            .where('ncbi_names.name = ?', name)
+    taxa = find_taxa_by_ncbi_names(name, target_rank)
+    return taxa if taxa.present?
+
+    taxa = NcbiNode.where("lower(canonical_name) = '#{name.downcase}'")
+
+    valid_superkingdom =
+      find_taxa_with_valid_rank(taxa, hierarchy, 'superkingdom')
+    return [] if valid_superkingdom.blank?
+
+    valid_phylum =
+      find_taxa_with_valid_rank(valid_superkingdom, hierarchy, 'phylum')
+    return valid_phylum if valid_phylum.present?
+
+    valid_class =
+      find_taxa_with_valid_rank(valid_superkingdom, hierarchy, 'class')
+    return valid_class if valid_class.present?
+
+    []
   end
 
   def find_result_taxon_from_string(string)
@@ -418,6 +428,31 @@ module ProcessEdnaResults
 
   def get_superkingdom(taxon)
     taxon.hierarchy_names['superkingdom']
+  end
+
+  def find_taxa_by_hierarchy_names(filtered_hierarchy, rank)
+    NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+            .where(rank: rank)
+  end
+
+  def find_taxa_with_quotes(name, rank)
+    sql = "lower(REPLACE(canonical_name, '''', '')) = ?"
+    NcbiNode.where(sql, name.downcase).where(rank: rank)
+  end
+
+  def find_taxa_by_ncbi_names(name, rank)
+    NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
+                   'ncbi_nodes.ncbi_id')
+            .where(rank: rank)
+            .where("ncbi_names.name_class IN ('equivalent name', " \
+            "'in-part', 'includes', 'scientific name', 'synonym')")
+            .where('ncbi_names.name = ?', name)
+  end
+
+  def find_taxa_with_valid_rank(taxa, hierarchy, rank)
+    taxa.select do |t|
+      t.hierarchy_names[rank] == hierarchy[rank.to_sym]
+    end
   end
 end
 
