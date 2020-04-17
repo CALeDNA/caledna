@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 namespace :result_taxa do
+  task add_canonical_name: :environment do
+    ResultTaxon.where(canonical_name: nil).find_each do |taxon|
+      name = find_canonical_taxon_from_string(taxon.clean_taxonomy_string)
+      taxon.canonical_name = name
+      taxon.save
+    end
+  end
+
   task update_missing_superkingdom_string: :environment do
     sql =  <<-SQL
     update result_taxa
