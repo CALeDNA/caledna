@@ -62,9 +62,22 @@ module ProcessEdnaResults
 
   def find_taxa_by_hierarchy(hierarchy, target_rank, ranks_used)
     filtered_hierarchy = hierarchy.select { |k, _v| ranks_used.include?(k) }
+    name = hierarchy[target_rank.to_sym]
 
-    NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+    taxa = NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+                   .where(rank: target_rank)
+    return taxa if taxa.present?
+
+    sql = "lower(REPLACE(canonical_name, '''', '')) = ?"
+    taxa = NcbiNode.where(sql, name.downcase).where(rank: target_rank)
+    return taxa if taxa.present?
+
+    NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
+            'ncbi_nodes.ncbi_id')
             .where(rank: target_rank)
+            .where("ncbi_names.name_class IN ('equivalent name', 'in-part', " \
+            "'includes', 'scientific name', 'synonym')")
+            .where('ncbi_names.name = ?', name)
   end
 
   def find_result_taxon_from_string(string)
