@@ -291,7 +291,7 @@ ActiveRecord::Schema.define(version: 2020_04_16_221257) do
     t.jsonb "metadata", default: {}
     t.index "((metadata ->> 'location'::text))", name: "idx_rps_metadata_location"
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
-    t.index ["sample_id"], name: "research_project_sources_sample_id_idx"
+    t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
     t.index ["sourceable_id"], name: "index_research_project_sources_on_sourceable_id"
     t.index ["sourceable_type"], name: "index_research_project_sources_on_sourceable_type"
   end
@@ -341,11 +341,12 @@ ActiveRecord::Schema.define(version: 2020_04_16_221257) do
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
 
-  create_table "result_taxa", id: :serial, force: :cascade do |t|
+  create_table "result_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
     t.string "taxon_rank"
     t.jsonb "hierarchy"
     t.boolean "normalized"
