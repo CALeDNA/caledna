@@ -7,14 +7,9 @@
 
 <% if suggestion.hierarchy_names.present? %>
 <ol>
-  <li>superkingdom: <%= suggestion.hierarchy_names['superkingdom'] %></li>
-  <li>kingdom: <%= suggestion.hierarchy_names['kingdom'] %></li>
-  <li>phylum: <%= suggestion.hierarchy_names['phylum'] %></li>
-  <li>class: <%= suggestion.hierarchy_names['class'] %></li>
-  <li>order: <%= suggestion.hierarchy_names['order'] %></li>
-  <li>family: <%= suggestion.hierarchy_names['family'] %></li>
-  <li>genus: <%= suggestion.hierarchy_names['genus'] %></li>
-  <li>species: <%= suggestion.hierarchy_names['species'] %></li>
+  <% suggestion.names.each.with_index do |name, i| %>
+    <li><%= suggestion.ranks[i] %>: <%= name %></li>
+  <% end %>
 </ol>
 <% else %>
   <%= suggestion.attributes %>

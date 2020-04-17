@@ -16,7 +16,7 @@
     <% @taxa.each do |taxon| %>
     <tr>
       <td><%= taxon.taxon_rank %></td>
-      <td><%= taxon.original_taxonomy_string %></td>
+      <td><%= taxon.clean_taxonomy_string %></td>
       <td>
         <%= link_to 'Edit', admin_labwork_normalize_ncbi_taxon_path(taxon) %>
       </td>

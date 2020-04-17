@@ -75,6 +75,9 @@ module Admin
       def result_taxon_attr(taxon)
         result_taxon.taxon_id = taxon.taxon_id
         result_taxon.normalized = true
+        result_taxon.ncbi_id = taxon.ncbi_id
+        result_taxon.bold_id = taxon.bold_id
+        result_taxon.ncbi_version_id = taxon.ncbi_version_id
       end
 
       def handle_error_id(message)
@@ -148,18 +151,18 @@ module Admin
       # ==================
 
       def suggestions
-        canonical_name =
-          result_taxon.hierarchy[result_taxon.taxon_rank].downcase
-
-        @suggestions ||=
+        @suggestions ||= begin
+          canonical_name = result_taxon.canonical_name.downcase
           NcbiNode.where("lower(canonical_name) = '#{canonical_name}'")
+        end
       end
 
       def more_suggestions
-        species = result_taxon.original_taxonomy.split(';').last.downcase
-        @more_suggestions ||= NcbiNode.where(
-          "lower(REPLACE(canonical_name, '''', '')) = '#{species}'"
-        )
+        @more_suggestions ||= begin
+          canonical_name = result_taxon.canonical_name.downcase
+          sql = "lower(REPLACE(canonical_name, '''', '')) = ?"
+          NcbiNode.where(sql, canonical_name)
+        end
       end
 
       def result_taxon
