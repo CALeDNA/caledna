@@ -59,7 +59,7 @@ module ProcessEdnaResults
     puts hierarchy_no_lowest
     puts target_rank
 
-    taxa = find_taxa_by_canonical_name(name, filtered_hierarchy, target_rank)
+    taxa = find_taxa_by_canonical_name(name, hierarchy_no_lowest)
     return taxa if taxa.present?
 
     puts '---------- 2'
