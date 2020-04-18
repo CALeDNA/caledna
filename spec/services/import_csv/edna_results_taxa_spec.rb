@@ -64,15 +64,16 @@ describe ImportCsv::EdnaResultsTaxa do
     include ActiveJob::TestHelper
     include ProcessEdnaResults
 
-    shared_examples 'find result taxon' do
+    shared_examples 'find result taxon' do |taxonomy_string|
       let!(:ncbi_version_id) { create(:ncbi_version, id: 1).id }
       let(:ncbi_id) { 20 }
       let(:bold_id) { 30 }
 
       context 'when ResultTaxon matches taxonomy string' do
         it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
-          create(:result_taxon, clean_taxonomy_string: taxonomy_string,
-                                original_taxonomy_string: taxonomy_string,
+          clean_string = dummy_class.remove_na(taxonomy_string)
+          create(:result_taxon, original_taxonomy_string: [taxonomy_string],
+                                clean_taxonomy_string: clean_string,
                                 result_sources: [source_data])
 
           expect { subject(taxonomy_string, source_data) }
@@ -81,9 +82,11 @@ describe ImportCsv::EdnaResultsTaxa do
 
         context 'and source data is new' do
           it 'appends source data' do
+            clean_string = dummy_class.remove_na(taxonomy_string)
             old_source = '2|primer2'
             taxon =
-              create(:result_taxon, original_taxonomy_string: taxonomy_string,
+              create(:result_taxon, original_taxonomy_string: [taxonomy_string],
+                                    clean_taxonomy_string: clean_string,
                                     result_sources: [old_source])
 
             expect { subject(taxonomy_string, source_data) }
@@ -95,12 +98,43 @@ describe ImportCsv::EdnaResultsTaxa do
 
         context 'and source data already exists' do
           it 'does not append source data' do
+            clean_string = dummy_class.remove_na(taxonomy_string)
             taxon =
-              create(:result_taxon, original_taxonomy_string: taxonomy_string,
+              create(:result_taxon, original_taxonomy_string: [taxonomy_string],
+                                    clean_taxonomy_string: clean_string,
                                     result_sources: [source_data])
 
             expect { subject(taxonomy_string, source_data) }
               .to_not(change { taxon.reload.result_sources })
+          end
+        end
+
+        context 'and taxonomy_string is new' do
+          it 'appends original_taxonomy_string' do
+            clean_string = dummy_class.remove_na(taxonomy_string)
+            old_string = 'v1_string'
+            taxon =
+              create(:result_taxon, original_taxonomy_string: [old_string],
+                                    clean_taxonomy_string: clean_string,
+                                    result_sources: [source_data])
+
+            expect { subject(taxonomy_string, source_data) }
+              .to change { taxon.reload.original_taxonomy_string }
+              .from([old_string])
+              .to([old_string, taxonomy_string])
+          end
+        end
+
+        context 'and taxonomy_string already exists' do
+          it 'does not append original_taxonomy_string' do
+            clean_string = dummy_class.remove_na(taxonomy_string)
+            taxon =
+              create(:result_taxon, original_taxonomy_string: [taxonomy_string],
+                                    clean_taxonomy_string: clean_string,
+                                    result_sources: [source_data])
+
+            expect { subject(taxonomy_string, source_data) }
+              .to_not(change { taxon.reload.original_taxonomy_string })
           end
         end
       end
@@ -128,9 +162,10 @@ describe ImportCsv::EdnaResultsTaxa do
     def subject(taxonomy_string, attributes)
       dummy_class.update_or_create_result_taxon(taxonomy_string, attributes)
     end
+
     let(:source_data) { '1|primer1' }
 
-    it 'adds does not ImportCsvCreateResultTaxonJob to queue' do
+    it 'when taxonomy_string is NA, add ImportCsvCreateResultTaxonJob to queue' do
       taxonomy_string = 'NA'
 
       expect { subject(taxonomy_string, source_data) }
@@ -139,7 +174,7 @@ describe ImportCsv::EdnaResultsTaxa do
 
     context 'when taxonomy string is phylum format' do
       let(:taxonomy_string) { 'P;C;O;F;G;S' }
-      include_examples 'find result taxon'
+      include_examples 'find result taxon', 'P;C;O;F;G;S'
 
       context 'when ResultTaxon does not matches taxonomy string' do
         context 'and taxon is in the database' do
@@ -204,7 +239,7 @@ describe ImportCsv::EdnaResultsTaxa do
 
     context 'when taxonomy string is superkingdom format' do
       let(:taxonomy_string) { 'SK;P;C;O;F;G;S' }
-      include_examples 'find result taxon'
+      include_examples 'find result taxon', 'SK;P;C;O;F;G;S'
 
       context 'when ResultTaxon does not matches taxonomy string' do
         context 'and taxon is in the database' do

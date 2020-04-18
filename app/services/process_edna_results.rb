@@ -439,7 +439,7 @@ module ProcessEdnaResults
       taxon_id: nil,
       taxon_rank: rank,
       hierarchy: hierarchy,
-      original_taxonomy_string: taxonomy_string,
+      original_taxonomy_string: [taxonomy_string],
       clean_taxonomy_string: remove_na(taxonomy_string),
       ncbi_id: nil,
       bold_id: nil,

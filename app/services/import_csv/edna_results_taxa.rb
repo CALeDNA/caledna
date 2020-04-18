@@ -5,6 +5,7 @@ module ImportCsv
     require 'csv'
     include ProcessEdnaResults
     include CsvUtils
+    include CreateRecords
 
     # only import csv if first sum.taxonomy has valid taxa string. find
     # ResultTaxon, then update or create ResultTaxon
@@ -25,14 +26,19 @@ module ImportCsv
 
     # triggered by ImportCsvFindResultTaxonJob; create or update ResultTaxa
     def update_or_create_result_taxon(taxonomy_string, source_data)
+      clean_str = remove_na(taxonomy_string)
       result_taxon =
-        ResultTaxon.find_by(original_taxonomy_string: taxonomy_string)
+        ResultTaxon.find_by(clean_taxonomy_string: clean_str)
 
       if result_taxon.present?
         unless result_taxon.result_sources.include?(source_data)
           result_taxon.result_sources << source_data
-          result_taxon.save
         end
+
+        unless result_taxon.original_taxonomy_string.include?(taxonomy_string)
+          result_taxon.original_taxonomy_string << taxonomy_string
+        end
+        result_taxon.save if result_taxon.changed?
         return
       end
 
@@ -45,7 +51,6 @@ module ImportCsv
       data.entries.each do |row|
         source_data = "#{research_project_id}|#{primer}"
         taxonomy_string = row['sum.taxonomy']
-
         # ImportCsvUpdateOrCreateResultTaxonJob calls
         # update_or_create_result_taxon
         ImportCsvUpdateOrCreateResultTaxonJob.perform_later(
@@ -67,7 +72,7 @@ module ImportCsv
       create_data = results.merge(data)
 
       # ImportCsvCreateResultTaxonJob calls create_result_taxon
-      ImportCsvCreateResultTaxonJob.perform_later(create_data)
+      create_result_taxon(create_data)
     end
   end
 end
