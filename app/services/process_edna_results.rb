@@ -16,62 +16,58 @@ module ProcessEdnaResults
     rank = get_taxon_rank(taxonomy_string)
     hierarchy = get_hierarchy(taxonomy_string)
     taxon_data = taxon_data_from_string(taxonomy_string, rank, hierarchy)
-
-    find_taxon_loop(hierarchy, rank, taxon_data, 1)
-  end
-
-  def filtered_ranks(hierarchy, rank_count)
-    ranks = %i[superkingdom kingdom phylum class order family genus species]
-    hierarchy.keys.sort_by { |k| ranks.index(k) }.reverse[0, rank_count]
-  end
-
-  def find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
     return taxon_data if hierarchy == {}
-    # handle cases when we have traversed the entire hierarchy
-    # return taxon_data if ranks_count > 1 && ranks_count == hierarchy.size
-    # handles cases if hierarchy only has one item
-    # return taxon_data if ranks_count > hierarchy.size
 
-    ranks = filtered_ranks(hierarchy, ranks_count)
-    taxa = find_taxa_by_hierarchy(hierarchy, rank, ranks).to_a
+    taxa = find_existing_taxa(hierarchy, rank).to_a
     if taxa&.size == 1
       taxon_data = taxon_data_from_found_taxon(taxa.first, taxon_data)
-
-      return taxon_data
     end
     taxon_data
-    ranks_count += 1
-    find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
   end
 
-  def find_taxa_by_hierarchy(hierarchy, target_rank, ranks_used)
-    filtered_hierarchy = hierarchy.select { |k, _v| ranks_used.include?(k) }
+  def filtered_ranks(hierarchy, include_lowest:)
+    all_ranks = %i[superkingdom kingdom phylum class order family genus species]
+    lowest = hierarchy.keys.sort_by { |k| all_ranks.index(k) }.reverse[0, 2]
+    add_more_lower = [hierarchy[:phylum], hierarchy[:superkingdom],
+                      hierarchy[:class]].all?(&:blank?)
+    add_class =
+      (hierarchy[:superkingdom].blank? && hierarchy[:phylum].blank?) &&
+      hierarchy[:class].present?
+
+    ranks = []
+    ranks << :superkingdom if hierarchy[:superkingdom].present?
+    ranks << :phylum if hierarchy[:phylum].present?
+    ranks << :class if add_class
+
+    ranks << lowest[1] if add_more_lower
+    ranks << lowest[0] if include_lowest || hierarchy.size == 1
+
+    ranks.compact.uniq
+  end
+
+  def find_existing_taxa(hierarchy, target_rank)
     name = hierarchy[target_rank.to_sym]
+    ranks_no_lowest = filtered_ranks(hierarchy, include_lowest: false)
+    hierarchy_no_lowest = filtered_hierarchy(hierarchy, ranks_no_lowest)
+    filtered_ranks = filtered_ranks(hierarchy, include_lowest: true)
+    filtered_hierarchy = filtered_hierarchy(hierarchy, filtered_ranks)
 
-    taxa = find_taxa_by_hierarchy_names(filtered_hierarchy, target_rank)
+
+    puts '---------- 1'
+    puts hierarchy
+    puts filtered_hierarchy
+    puts hierarchy_no_lowest
+    puts target_rank
+
+    taxa = find_taxa_by_canonical_name(name, filtered_hierarchy, target_rank)
     return taxa if taxa.present?
 
-    taxa = find_taxa_with_quotes(name, target_rank)
+    puts '---------- 2'
+    taxa = find_taxa_with_quotes(name, hierarchy_no_lowest, target_rank)
     return taxa if taxa.present?
 
-    taxa = find_taxa_by_ncbi_names(name, target_rank)
-    return taxa if taxa.present?
-
-    taxa = NcbiNode.where("lower(canonical_name) = '#{name.downcase}'")
-
-    valid_superkingdom =
-      find_taxa_with_valid_rank(taxa, hierarchy, 'superkingdom')
-    return [] if valid_superkingdom.blank?
-
-    valid_phylum =
-      find_taxa_with_valid_rank(valid_superkingdom, hierarchy, 'phylum')
-    return valid_phylum if valid_phylum.present?
-
-    valid_class =
-      find_taxa_with_valid_rank(valid_superkingdom, hierarchy, 'class')
-    return valid_class if valid_class.present?
-
-    []
+    puts '---------- 3'
+    taxa = find_taxa_by_ncbi_names(name, hierarchy_no_lowest, target_rank)
   end
 
   def find_result_taxon_from_string(string)
@@ -400,23 +396,33 @@ module ProcessEdnaResults
     taxon.hierarchy_names['superkingdom']
   end
 
-  def find_taxa_by_hierarchy_names(filtered_hierarchy, rank)
-    NcbiNode.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
-            .where(rank: rank)
-  end
-
-  def find_taxa_with_quotes(name, rank)
+  def find_taxa_with_quotes(name, filtered_hierarchy, rank = nil)
     sql = "lower(REPLACE(canonical_name, '''', '')) = ?"
-    NcbiNode.where(sql, name.downcase).where(rank: rank)
+    taxa = NcbiNode.where(sql, name.downcase)
+                   .where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+    taxa = taxa.where(rank: rank) if rank
+    puts taxa.to_sql
+    taxa
   end
 
-  def find_taxa_by_ncbi_names(name, rank)
-    NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
-                   'ncbi_nodes.ncbi_id')
-            .where(rank: rank)
-            .where("ncbi_names.name_class IN ('equivalent name', " \
-            "'in-part', 'includes', 'scientific name', 'synonym')")
-            .where('ncbi_names.name = ?', name)
+  def find_taxa_by_canonical_name(name, filtered_hierarchy, rank = nil)
+    taxa = NcbiNode.where('lower(canonical_name) = ?', name.downcase)
+                   .where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+    taxa = taxa.where(rank: rank) if rank
+    puts taxa.to_sql
+    taxa
+  end
+
+  def find_taxa_by_ncbi_names(name, filtered_hierarchy, rank = nil)
+    taxa = NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
+                          'ncbi_nodes.ncbi_id')
+                   .where("ncbi_names.name_class IN ('in-part', 'includes', " \
+                          "'scientific name', 'equivalent name','synonym')")
+                   .where('ncbi_names.name = ?', name)
+                   .where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+    taxa = taxa.where(rank: rank) if rank
+    puts taxa.to_sql
+    taxa
   end
 
   def find_taxa_with_valid_rank(taxa, hierarchy, rank)
@@ -434,18 +440,21 @@ module ProcessEdnaResults
       clean_taxonomy_string: remove_na(taxonomy_string),
       ncbi_id: nil,
       bold_id: nil,
-      ncbi_version_id: nil
+      ncbi_version_id: nil,
+      canonical_name: find_canonical_taxon_from_string(taxonomy_string)
     }
   end
-
 
   def taxon_data_from_found_taxon(taxon, taxon_data)
     taxon_data[:taxon_id] = taxon.taxon_id
     taxon_data[:ncbi_id] = taxon.ncbi_id
     taxon_data[:bold_id] = taxon.bold_id
     taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
-    taxon_data[:canonical_name] = taxon.canonical_name
     taxon_data
+  end
+
+  def filtered_hierarchy(hierarchy, ranks)
+    hierarchy.select { |k, _v| ranks.include?(k) }
   end
 end
 

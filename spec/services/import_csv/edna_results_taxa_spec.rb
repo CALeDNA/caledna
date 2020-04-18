@@ -149,7 +149,8 @@ describe ImportCsv::EdnaResultsTaxa do
             taxon = create(:ncbi_node, hierarchy_names: hierarchy_names,
                                        rank: 'species', ncbi_id: ncbi_id,
                                        bold_id: bold_id,
-                                       ncbi_version_id: ncbi_version_id)
+                                       ncbi_version_id: ncbi_version_id,
+                                       canonical_name: 'S')
 
             arguements = {
               taxon_id: taxon.taxon_id,
@@ -163,6 +164,7 @@ describe ImportCsv::EdnaResultsTaxa do
               ncbi_id: ncbi_id,
               bold_id: bold_id,
               ncbi_version_id: ncbi_version_id,
+              canonical_name: 'S',
               normalized: true,
               exact_match: true,
               result_sources: [source_data]
@@ -187,6 +189,7 @@ describe ImportCsv::EdnaResultsTaxa do
               ncbi_id: nil,
               bold_id: nil,
               ncbi_version_id: nil,
+              canonical_name: 'S',
               normalized: false,
               exact_match: false,
               result_sources: [source_data]
@@ -212,7 +215,8 @@ describe ImportCsv::EdnaResultsTaxa do
             taxon = create(:ncbi_node, hierarchy_names: hierarchy_names,
                                        rank: 'species', ncbi_id: ncbi_id,
                                        bold_id: bold_id,
-                                       ncbi_version_id: ncbi_version_id)
+                                       ncbi_version_id: ncbi_version_id,
+                                       canonical_name: 'S')
 
             arguements = {
               taxon_id: taxon.taxon_id,
@@ -226,6 +230,7 @@ describe ImportCsv::EdnaResultsTaxa do
               ncbi_id: ncbi_id,
               bold_id: bold_id,
               ncbi_version_id: ncbi_version_id,
+              canonical_name: 'S',
               normalized: true,
               exact_match: true,
               result_sources: [source_data]
@@ -247,7 +252,10 @@ describe ImportCsv::EdnaResultsTaxa do
               },
               original_taxonomy_string: taxonomy_string,
               clean_taxonomy_string: taxonomy_string,
-              ncbi_id: nil, bold_id: nil, ncbi_version_id: nil,
+              ncbi_id: nil,
+              bold_id: nil,
+              ncbi_version_id: nil,
+              canonical_name: 'S',
               normalized: false,
               exact_match: false,
               result_sources: [source_data]
