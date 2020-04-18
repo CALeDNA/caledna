@@ -35,7 +35,8 @@ module ProcessEdnaResults
       hierarchy[:class].present?
 
     add_phlyum =
-      (hierarchy[:phylum].present? && hierarchy[:superkingdom].blank?)
+      (hierarchy[:phylum].present? && hierarchy[:superkingdom].blank?) ||
+      (lowest[0] == :genus && hierarchy[:phylum].present?)
 
     ranks = []
     ranks << :superkingdom if hierarchy[:superkingdom].present?

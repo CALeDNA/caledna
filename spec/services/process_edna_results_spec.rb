@@ -1157,32 +1157,6 @@ describe ProcessEdnaResults do
         expect(subject(hierarchy)).to match_array(%i[family])
       end
 
-      it 'returns an array of superkingdom, phylum, and lowest rank if ' \
-        'hierarchy has superkingdom and phylum' do
-        hierarchy = { superkingdom: 'Sk', phylum: 'P' }
-        expect(subject(hierarchy)).to match_array(%i[superkingdom phylum])
-
-        hierarchy = { superkingdom: 'Sk', phylum: 'P', class: 'C' }
-        expect(subject(hierarchy)).to match_array(%i[superkingdom phylum class])
-
-        hierarchy = { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O' }
-        expect(subject(hierarchy)).to match_array(%i[superkingdom phylum order])
-
-        hierarchy = { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O',
-                      family: 'F' }
-        expect(subject(hierarchy))
-          .to match_array(%i[superkingdom phylum family])
-
-        hierarchy = { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O',
-                      family: 'F', genus: 'G' }
-        expect(subject(hierarchy)).to match_array(%i[superkingdom phylum genus])
-
-        hierarchy = { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O',
-                      family: 'F', genus: 'G', species: 'Sp' }
-        expect(subject(hierarchy))
-          .to match_array(%i[superkingdom phylum species])
-      end
-
       it 'returns an array of phylum and lowest rank if hierarchy does not ' \
         'have superkingdom, but has phylum' do
         hierarchy = { phylum: 'P', class: 'C' }
@@ -1249,6 +1223,32 @@ describe ProcessEdnaResults do
         hierarchy = { order: 'O', family: 'F', genus: 'Sp' }
         expect(subject(hierarchy)).to match_array(%i[family genus])
       end
+
+      context 'when rank is genus' do
+        it 'and highest rank is superkingdom, it returns phylum' do
+          hierarchy = { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O',
+                        family: 'F', genus: 'G' }
+          expect(subject(hierarchy))
+            .to match_array(%i[superkingdom phylum genus])
+        end
+
+        it 'and highest rank is phylum, it returns phylum' do
+          hierarchy = { phylum: 'P', class: 'C', order: 'O', family: 'F',
+                        genus: 'G' }
+          expect(subject(hierarchy)).to match_array(%i[phylum genus])
+        end
+
+        it 'does not contain phylum otherwise' do
+          hierarchy = { class: 'C', order: 'O', family: 'F', genus: 'G' }
+          expect(subject(hierarchy)).to match_array(%i[class genus])
+
+          hierarchy = { order: 'O', family: 'F', genus: 'G' }
+          expect(subject(hierarchy)).to match_array(%i[family genus])
+
+          hierarchy = { family: 'F', genus: 'G' }
+          expect(subject(hierarchy)).to match_array(%i[family genus])
+        end
+      end
     end
 
     context 'when include lowest is false' do
@@ -1267,24 +1267,6 @@ describe ProcessEdnaResults do
         expect(subject(hierarchy)).to match_array(%i[family])
       end
 
-      it 'returns the superkingdom and phylum if ' \
-        'hierarchy has superkingdom and phylum' do
-        hierarchies = [
-          { superkingdom: 'Sk', phylum: 'P' },
-          { superkingdom: 'Sk', phylum: 'P', class: 'C' },
-          { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O' },
-          { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O',
-            family: 'F' },
-          { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O',
-            family: 'F', genus: 'G' },
-          { superkingdom: 'Sk', phylum: 'P', class: 'C', order: 'O',
-            family: 'F', genus: 'G', species: 'Sp' }
-        ]
-
-        hierarchies.each do |hierarchy|
-          expect(subject(hierarchy)).to match_array(%i[superkingdom phylum])
-        end
-      end
 
       it 'returns the phylum if hierarchy does not ' \
         'have superkingdom, but has phylum' do
