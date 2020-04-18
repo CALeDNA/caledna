@@ -34,9 +34,12 @@ module ProcessEdnaResults
       (hierarchy[:superkingdom].blank? && hierarchy[:phylum].blank?) &&
       hierarchy[:class].present?
 
+    add_phlyum =
+      (hierarchy[:phylum].present? && hierarchy[:superkingdom].blank?)
+
     ranks = []
     ranks << :superkingdom if hierarchy[:superkingdom].present?
-    ranks << :phylum if hierarchy[:phylum].present?
+    ranks << :phylum if add_phlyum
     ranks << :class if add_class
 
     ranks << lowest[1] if add_more_lower
@@ -59,7 +62,7 @@ module ProcessEdnaResults
     puts hierarchy_no_lowest
     puts target_rank
 
-    taxa = find_taxa_by_canonical_name(name, hierarchy_no_lowest)
+    taxa = find_taxa_by_canonical_name(name, filtered_hierarchy, target_rank)
     return taxa if taxa.present?
 
     puts '---------- 2'
