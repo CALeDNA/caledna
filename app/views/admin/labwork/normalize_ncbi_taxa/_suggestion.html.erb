@@ -1,22 +1,31 @@
-<% if suggestion.ncbi_id %>
-  NCBI ID: <%= link_to suggestion.ncbi_id, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{suggestion.ncbi_id}" %>
-<% end%>
-<% if suggestion.bold_id %>
-  BOLD ID: <%= suggestion.bold_id %>
-<% end%>
+<div style="margin-top: 2em;">
+  <% if suggestion.ncbi_id %>
+    NCBI ID: <%= link_to suggestion.ncbi_id, "https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=#{suggestion.ncbi_id}" %>
+  <% end%>
+  <% if suggestion.bold_id %>
+    BOLD ID: <%= suggestion.bold_id %>
+  <% end%>
+</div>
 
-<% if suggestion.hierarchy_names.present? %>
-<ol>
-  <% suggestion.names.each.with_index do |name, i| %>
-    <li><%= suggestion.ranks[i] %>: <%= name %></li>
-  <% end %>
-</ol>
-<% else %>
-  <%= suggestion.attributes %>
+<% if suggestion.names.present? %>
+  <table class="table table-condensed taxonomy-tree" style="margin-bottom: 1em;">
+    <% suggestion.names.each.with_index do |name, i| %>
+      <tr>
+        <td><%= suggestion.ranks[i] %></td>
+        <td><%= name %></td>
+      </tr>
+    <% end %>
+    <tr><td>&nbsp;</td><td></td></tr>
+    <tr>
+      <td>other names</td>
+      <td>
+        <%= suggestion.synonyms.pluck(:name).join(', ') %>
+      </td>
+    </tr>
+  </table>
 <% end %>
 
 <%= simple_form_for :normalize_ncbi_taxon, url: admin_labwork_normalize_ncbi_taxon_update_existing_path(@result_taxon), method: :put do |f| %>
   <%= f.hidden_field :taxon_id, value: suggestion.taxon_id  %>
   <%= f.submit 'Use this taxon' %>
 <% end %>
-<br><br>

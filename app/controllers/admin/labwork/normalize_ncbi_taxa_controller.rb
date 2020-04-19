@@ -16,7 +16,7 @@ module Admin
         authorize 'Labwork::NormalizeTaxon'.to_sym, :show?
 
         @result_taxon = result_taxon
-        @suggestions = suggestions.present? ? suggestions : more_suggestions
+        @suggestions = suggestions
       end
 
       # NOTE: used when matching test result to existing taxon
@@ -161,17 +161,38 @@ module Admin
       # ==================
 
       def suggestions
-        @suggestions ||= begin
-          canonical_name = result_taxon.canonical_name.downcase
-          NcbiNode.where("lower(canonical_name) = '#{canonical_name}'")
+        if suggestions_by_canonical_name.present?
+          suggestions_by_canonical_name
+        elsif suggestions_with_strings.present?
+          suggestions_with_strings
+        else
+          suggestions_by_ncbi_names
         end
       end
 
-      def more_suggestions
-        @more_suggestions ||= begin
+      def suggestions_by_canonical_name
+        @suggestions_by_canonical_name ||= begin
+          canonical_name = result_taxon.canonical_name.downcase
+          NcbiNode.where('lower(canonical_name) = ?', canonical_name)
+        end
+      end
+
+      def suggestions_with_strings
+        @suggestions_with_strings ||= begin
           canonical_name = result_taxon.canonical_name.downcase
           sql = "lower(REPLACE(canonical_name, '''', '')) = ?"
           NcbiNode.where(sql, canonical_name)
+        end
+      end
+
+      def suggestions_by_ncbi_names
+        @suggestions_by_ncbi_names ||= begin
+          canonical_name = result_taxon.canonical_name
+          NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
+                         'ncbi_nodes.ncbi_id')
+                  .where("ncbi_names.name_class IN ('in-part', 'includes', " \
+                         "'scientific name', 'equivalent name','synonym')")
+                  .where('ncbi_names.name = ?', canonical_name)
         end
       end
 

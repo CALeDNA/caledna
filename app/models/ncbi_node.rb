@@ -100,7 +100,11 @@ class NcbiNode < ApplicationRecord
   # rubocop:enable Metrics/AbcSize
 
   def synonyms
-    ncbi_names.synonyms
+    @synonyms ||= begin
+      NcbiName.where(taxon_id: ncbi_id)
+              .where("ncbi_names.name_class IN ('in-part', 'includes', " \
+                     "'equivalent name','synonym')")
+    end
   end
 
   def common_names_display(parenthesis: true, truncate: true, first_only: false)
