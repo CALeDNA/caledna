@@ -66,6 +66,16 @@ module Admin
       end
       # rubocop:enable Metrics/MethodLength
 
+      def ignore_taxon
+        authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
+        result_taxon.ignore = true
+        if result_taxon.save
+          redirect_to admin_labwork_normalize_ncbi_taxa_path
+        else
+          handle_error_id('Could not update results.')
+        end
+      end
+
       private
 
       # ==================
@@ -167,8 +177,9 @@ module Admin
 
       def result_taxon
         @result_taxon ||= begin
-          id = params[:id] || raw_params[:result_taxon_id] ||
-               params[:normalize_ncbi_taxon_id]
+          id = params[:id] || params[:normalize_ncbi_taxon_id] ||
+               raw_params[:result_taxon_id]
+
           ResultTaxon.find(id)
         end
       end

@@ -102,6 +102,7 @@ Rails.application.routes.draw do
         put 'update_existing' => 'normalize_ncbi_taxa#update_existing'
         put 'update_create' => 'normalize_ncbi_taxa#update_create'
         put 'update_with_id' => 'normalize_ncbi_taxa#update_with_id'
+        put 'ignore_taxon' => 'normalize_ncbi_taxa#ignore_taxon'
       end
 
       controller 'taxa_counts' do
