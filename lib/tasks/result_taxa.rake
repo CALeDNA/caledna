@@ -5,6 +5,7 @@ namespace :result_taxa do
     include ImportCsv::EdnaResultsTaxa
 
     base = ENV.fetch('RESEARCH_PROJECT_BASE')
+    # rubocop:disable Metrics/LineLength
     files = [
       {
         path: OpenStruct.new(path: "#{base}/desert/16S_ASV_sum_by_taxonomy_60_renamed.txt"),
@@ -88,6 +89,7 @@ namespace :result_taxa do
         research_project_id: '4'
       }
     ]
+    # rubocop:enable Metrics/LineLength
 
     files.each do |file|
       import_csv(file[:path], file[:research_project_id], file[:primer])

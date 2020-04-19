@@ -25,6 +25,8 @@ module ProcessEdnaResults
     taxon_data
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
   def filtered_ranks(hierarchy, include_lowest:)
     all_ranks = %i[superkingdom kingdom phylum class order family genus species]
     lowest = hierarchy.keys.sort_by { |k| all_ranks.index(k) }.reverse[0, 2]
@@ -48,6 +50,8 @@ module ProcessEdnaResults
 
     ranks.compact.uniq
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
 
   def find_existing_taxa(hierarchy, target_rank)
     name = hierarchy[target_rank.to_sym]
@@ -56,22 +60,13 @@ module ProcessEdnaResults
     filtered_ranks = filtered_ranks(hierarchy, include_lowest: true)
     filtered_hierarchy = filtered_hierarchy(hierarchy, filtered_ranks)
 
-
-    puts '---------- 1'
-    puts hierarchy
-    puts filtered_hierarchy
-    puts hierarchy_no_lowest
-    puts target_rank
-
     taxa = find_taxa_by_canonical_name(name, filtered_hierarchy, target_rank)
     return taxa if taxa.present?
 
-    puts '---------- 2'
     taxa = find_taxa_with_quotes(name, hierarchy_no_lowest, target_rank)
     return taxa if taxa.present?
 
-    puts '---------- 3'
-    taxa = find_taxa_by_ncbi_names(name, hierarchy_no_lowest, target_rank)
+    find_taxa_by_ncbi_names(name, hierarchy_no_lowest, target_rank)
   end
 
   def find_result_taxon_from_string(string)
@@ -86,6 +81,7 @@ module ProcessEdnaResults
                .where(taxon_rank: rank).first
   end
 
+  # rubocop:disable Metrics/MethodLength
   def phylum_taxonomy_string?(string)
     parts = string.split(';', -1)
     if parts.length == 6
@@ -102,6 +98,7 @@ module ProcessEdnaResults
       raise TaxaError, "#{string}: invalid taxonomy string"
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -404,17 +401,13 @@ module ProcessEdnaResults
     sql = "lower(REPLACE(canonical_name, '''', '')) = ?"
     taxa = NcbiNode.where(sql, name.downcase)
                    .where('hierarchy_names @> ?', filtered_hierarchy.to_json)
-    taxa = taxa.where(rank: rank) if rank
-    puts taxa.to_sql
-    taxa
+    taxa.where(rank: rank) if rank
   end
 
   def find_taxa_by_canonical_name(name, filtered_hierarchy, rank = nil)
     taxa = NcbiNode.where('lower(canonical_name) = ?', name.downcase)
                    .where('hierarchy_names @> ?', filtered_hierarchy.to_json)
-    taxa = taxa.where(rank: rank) if rank
-    puts taxa.to_sql
-    taxa
+    taxa.where(rank: rank) if rank
   end
 
   def find_taxa_by_ncbi_names(name, filtered_hierarchy, rank = nil)
@@ -424,9 +417,7 @@ module ProcessEdnaResults
                           "'scientific name', 'equivalent name','synonym')")
                    .where('ncbi_names.name = ?', name)
                    .where('hierarchy_names @> ?', filtered_hierarchy.to_json)
-    taxa = taxa.where(rank: rank) if rank
-    puts taxa.to_sql
-    taxa
+    taxa.where(rank: rank) if rank
   end
 
   def find_taxa_with_valid_rank(taxa, hierarchy, rank)
@@ -435,6 +426,7 @@ module ProcessEdnaResults
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def taxon_data_from_string(taxonomy_string, rank, hierarchy)
     {
       taxon_id: nil,
@@ -448,6 +440,7 @@ module ProcessEdnaResults
       canonical_name: find_canonical_taxon_from_string(taxonomy_string)
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def taxon_data_from_found_taxon(taxon, taxon_data)
     taxon_data[:taxon_id] = taxon.taxon_id

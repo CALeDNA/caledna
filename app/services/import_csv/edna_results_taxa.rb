@@ -24,21 +24,13 @@ module ImportCsv
       OpenStruct.new(valid?: true, errors: nil)
     end
 
-    # triggered by ImportCsvFindResultTaxonJob; create or update ResultTaxa
     def update_or_create_result_taxon(taxonomy_string, source_data)
       clean_str = remove_na(taxonomy_string)
       result_taxon =
         ResultTaxon.find_by(clean_taxonomy_string: clean_str)
 
       if result_taxon.present?
-        unless result_taxon.result_sources.include?(source_data)
-          result_taxon.result_sources << source_data
-        end
-
-        unless result_taxon.original_taxonomy_string.include?(taxonomy_string)
-          result_taxon.original_taxonomy_string << taxonomy_string
-        end
-        result_taxon.save if result_taxon.changed?
+        update_result_taxon(result_taxon, source_data, taxonomy_string)
         return
       end
 
@@ -71,8 +63,18 @@ module ImportCsv
       end
       create_data = results.merge(data)
 
-      # ImportCsvCreateResultTaxonJob calls create_result_taxon
       create_result_taxon(create_data)
+    end
+
+    def update_result_taxon(result_taxon, source_data, taxonomy_string)
+      unless result_taxon.result_sources.include?(source_data)
+        result_taxon.result_sources << source_data
+      end
+
+      unless result_taxon.original_taxonomy_string.include?(taxonomy_string)
+        result_taxon.original_taxonomy_string << taxonomy_string
+      end
+      result_taxon.save if result_taxon.changed?
     end
   end
 end
