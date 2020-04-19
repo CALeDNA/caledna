@@ -346,6 +346,32 @@ describe ProcessEdnaResults do
       )
     end
 
+    it 'returns a hash of taxon info when there is only one rank' do
+      string = 'Phylum;;;;;'
+      hierarchy_names = {
+        superkingdom: 'Superkingdom',
+        kingdom: 'Kingdom',
+        phylum: 'Phylum'
+      }
+
+      create(:ncbi_node, canonical_name: 'Phylum', rank: 'phylum',
+                         hierarchy_names: hierarchy_names, taxon_id: id,
+                         ncbi_id: ncbi_id, bold_id: bold_id,
+                         ncbi_version_id: ncbi_version_id)
+      results = subject(string)
+
+      expect(results[:original_taxonomy_string]).to eq(string)
+      expect(results[:clean_taxonomy_string]).to eq(string)
+      expect(results[:taxon_id]).to eq(id)
+      expect(results[:ncbi_id]).to eq(ncbi_id)
+      expect(results[:bold_id]).to eq(bold_id)
+      expect(results[:ncbi_version_id]).to eq(ncbi_version_id)
+      expect(results[:taxon_rank]).to eq('phylum')
+      expect(results[:hierarchy]).to include(
+        phylum: 'Phylum'
+      )
+    end
+
     it 'returns a hash with nil taxon_id if multiple taxa are found' do
       string = ';Class;Order;;Genus;'
       hierarchy_names = {

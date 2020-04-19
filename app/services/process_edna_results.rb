@@ -27,37 +27,21 @@ module ProcessEdnaResults
 
   def find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
     return taxon_data if hierarchy == {}
-    return taxon_data if ranks_count == hierarchy.size
+    # handle cases when we have traversed the entire hierarchy
+    # return taxon_data if ranks_count > 1 && ranks_count == hierarchy.size
+    # handles cases if hierarchy only has one item
+    # return taxon_data if ranks_count > hierarchy.size
 
     ranks = filtered_ranks(hierarchy, ranks_count)
     taxa = find_taxa_by_hierarchy(hierarchy, rank, ranks).to_a
     if taxa&.size == 1
       taxon_data = taxon_data_from_found_taxon(taxa.first, taxon_data)
-    end
 
+      return taxon_data
+    end
+    taxon_data
     ranks_count += 1
     find_taxon_loop(hierarchy, rank, taxon_data, ranks_count)
-  end
-
-  def taxon_data_from_string(taxonomy_string, rank, hierarchy)
-    {
-      taxon_id: nil,
-      taxon_rank: rank,
-      hierarchy: hierarchy,
-      original_taxonomy_string: taxonomy_string,
-      clean_taxonomy_string: remove_na(taxonomy_string),
-      ncbi_id: nil,
-      bold_id: nil,
-      ncbi_version_id: nil
-    }
-  end
-
-  def taxon_data_from_found_taxon(taxon, taxon_data)
-    taxon_data[:taxon_id] = taxon.taxon_id
-    taxon_data[:ncbi_id] = taxon.ncbi_id
-    taxon_data[:bold_id] = taxon.bold_id
-    taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
-    taxon_data
   end
 
   def find_taxa_by_hierarchy(hierarchy, target_rank, ranks_used)
@@ -215,20 +199,6 @@ module ProcessEdnaResults
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-  # NOTE: adds kingdoms to taxonomy string since test results don't include
-  # kingdoms
-  def get_complete_taxon_string(string)
-    rank = get_taxon_rank_phylum(string)
-    hierarchy = get_hierarchy_phylum(string, rank)
-
-    kingdom = hierarchy[:kingdom]
-    superkingdom = hierarchy[:superkingdom]
-
-    string = kingdom.present? ? "#{kingdom};#{string}" : ";#{string}"
-    string = superkingdom.present? ? "#{superkingdom};#{string}" : ";#{string}"
-    string
-  end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -453,6 +423,29 @@ module ProcessEdnaResults
     taxa.select do |t|
       t.hierarchy_names[rank] == hierarchy[rank.to_sym]
     end
+  end
+
+  def taxon_data_from_string(taxonomy_string, rank, hierarchy)
+    {
+      taxon_id: nil,
+      taxon_rank: rank,
+      hierarchy: hierarchy,
+      original_taxonomy_string: taxonomy_string,
+      clean_taxonomy_string: remove_na(taxonomy_string),
+      ncbi_id: nil,
+      bold_id: nil,
+      ncbi_version_id: nil
+    }
+  end
+
+
+  def taxon_data_from_found_taxon(taxon, taxon_data)
+    taxon_data[:taxon_id] = taxon.taxon_id
+    taxon_data[:ncbi_id] = taxon.ncbi_id
+    taxon_data[:bold_id] = taxon.bold_id
+    taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
+    taxon_data[:canonical_name] = taxon.canonical_name
+    taxon_data
   end
 end
 
