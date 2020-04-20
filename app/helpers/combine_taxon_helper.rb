@@ -38,13 +38,11 @@ module CombineTaxonHelper
     return if ncbi.blank?
 
     taxa_array =
-      ncbi.delete('{"').delete('{').delete('"}').delete('}').split(',')
+      ncbi.delete('{"').delete('{').delete('"}').delete('}').split('|')
 
-    names = taxa_array.flat_map do |t|
-      id = t.split('|').first
-      NcbiNode.find(id).vernaculars.map(&:name)
-    end
-    names.present? ? "(#{names.join(', ')})" : ''
+    id = taxa_array.first
+    names = NcbiNodePillarPoint.find(id).common_names
+    names.present? ? "(#{names.split('|').join(', ')})" : ''
   end
   # rubocop:enable Metrics/AbcSize
 

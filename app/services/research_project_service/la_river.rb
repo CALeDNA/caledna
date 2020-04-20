@@ -67,7 +67,7 @@ module ResearchProjectService
 
     def query_results(sql_string)
       results = conn.exec_query(sql_string)
-      results.to_hash
+      results.entries
     end
   end
 end

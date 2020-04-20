@@ -97,8 +97,8 @@ module ResearchProjectService
             'true'
           else
             '(SELECT count(*) ' \
-            'FROM ncbi_names ' \
-            'WHERE lower(ncbi_names.name) = ' \
+            'FROM pillar_point.ncbi_names ' \
+            'WHERE lower(pillar_point.ncbi_names.name) = ' \
             "lower(gbif_ct.#{combine_taxon_rank_field})) != 0 "
           end
 
@@ -117,11 +117,11 @@ module ResearchProjectService
           )) AS gbif_taxa,
 
 
-          (SELECT ARRAY_AGG(ncbi_nodes.taxon_id || '|' ||  #{ncbi_taxa_sql})
-          FROM ncbi_nodes
-          JOIN ncbi_names
-            ON ncbi_nodes.taxon_id = ncbi_names.taxon_id
-          WHERE lower(ncbi_names.name) =
+          (SELECT ARRAY_AGG(pillar_point.ncbi_nodes.taxon_id || '|' ||  #{ncbi_taxa_sql})
+          FROM pillar_point.ncbi_nodes
+          JOIN pillar_point.ncbi_names
+            ON pillar_point.ncbi_nodes.taxon_id = pillar_point.ncbi_names.taxon_id
+          WHERE lower(pillar_point.ncbi_names.name) =
             lower(gbif_ct.#{combine_taxon_rank_field})
           ) AS ncbi_taxa
         SQL
@@ -129,20 +129,24 @@ module ResearchProjectService
 
       def join_sql
         <<~SQL
-          FROM combine_taxa as gbif_ct
+          FROM pillar_point.combine_taxa as gbif_ct
           JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey = gbif_ct.source_taxon_id
+            ON external.gbif_occurrences.taxonkey =
+              gbif_ct.source_taxon_id
             AND gbif_ct.source = 'gbif'
           JOIN  research_project_sources
-            ON external.gbif_occurrences.gbifid = research_project_sources.sourceable_id
+            ON external.gbif_occurrences.gbifid =
+              research_project_sources.sourceable_id
             AND research_project_id = #{project.id}
             AND sourceable_type = 'GbifOccurrence'
             AND metadata ->> 'location' != 'Montara SMR'
-          LEFT JOIN combine_taxa AS edna_ct
-            ON edna_ct.#{combine_taxon_rank_field} = gbif_ct.#{combine_taxon_rank_field}
+          LEFT JOIN pillar_point.combine_taxa AS edna_ct
+            ON lower(edna_ct.#{combine_taxon_rank_field}) =
+              lower(gbif_ct.#{combine_taxon_rank_field})
             AND (edna_ct.source = 'ncbi' OR edna_ct.source = 'bold')
           LEFT JOIN external.gbif_occ_taxa as g_taxa
-            ON gbif_ct.source_#{combine_taxon_rank_field} = g_taxa.#{gbif_taxon_rank_field}
+            ON gbif_ct.source_#{combine_taxon_rank_field} =
+              g_taxa.#{gbif_taxon_rank_field}
             AND g_taxa.taxonrank = '#{taxon_rank}'
         SQL
       end

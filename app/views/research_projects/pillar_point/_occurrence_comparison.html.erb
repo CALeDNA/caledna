@@ -18,7 +18,7 @@
         total:  PillarPointHelper.total(@division_counts[:cal].values)
       } %>
 
-    <h3>Unique Organism</h3>
+    <h3>Organisms</h3>
     <canvas id="cal-unique-chart" width="400" height="400"></canvas>
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",
@@ -40,7 +40,7 @@
         total: PillarPointHelper.total(@division_counts[:gbif].values)
       } %>
 
-    <h3>Unique Species</h3>
+    <h3>Species</h3>
     <canvas id="gbif-unique-chart" width="400" height="400"></canvas>
 
     <%= render partial: "research_projects/pillar_point/occurrence_table",

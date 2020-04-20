@@ -369,6 +369,136 @@ ActiveRecord::Schema.define(version: 2020_04_21_005042) do
     t.index ["taxon_id"], name: "index_result_taxa_on_taxon_id"
   end
 
+  create_table "result_taxa_v2", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+  end
+
+  create_table "result_taxa_v3", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+  end
+
+  create_table "result_taxa_v4", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+  end
+
+  create_table "result_taxa_v5", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
+  create_table "result_taxa_v6", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
+  create_table "result_taxa_v7", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
+  create_table "result_taxa_v8", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
   create_table "samples", id: :serial, force: :cascade do |t|
     t.integer "field_project_id"
     t.integer "kobo_id"

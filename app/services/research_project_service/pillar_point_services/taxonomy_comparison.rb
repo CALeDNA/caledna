@@ -52,34 +52,35 @@ module ResearchProjectService
 
       def taxa_total_edna_sql
         <<-SQL
-          SELECT combine_taxa.kingdom, combine_taxa.#{combine_taxon_rank_field}
-          FROM combine_taxa
-          LEFT JOIN asvs
-            ON asvs.taxon_id = combine_taxa.caledna_taxon_id
-          JOIN research_project_sources
-            ON asvs.sample_id = research_project_sources.sourceable_id
-            AND research_project_sources.research_project_id = #{project.id}
-            AND sourceable_type = 'Sample'
-          WHERE  (combine_taxa.source = 'ncbi' or combine_taxa.source = 'bold')
-          AND combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
+          SELECT pillar_point.combine_taxa.kingdom,
+            pillar_point.combine_taxa.#{combine_taxon_rank_field}
+          FROM pillar_point.combine_taxa
+          LEFT JOIN pillar_point.asvs as pp_asvs
+            ON pp_asvs.taxon_id = pillar_point.combine_taxa.caledna_taxon_id
+            AND pp_asvs.research_project_id = #{project.id}
+          WHERE (pillar_point.combine_taxa.source = 'ncbi' OR
+            pillar_point.combine_taxa.source = 'bold')
+          AND pillar_point.combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
           #{taxon_group_filters_sql}
         SQL
       end
 
       def taxa_total_gbif_sql
         <<-SQL
-          SELECT combine_taxa.kingdom, combine_taxa.#{combine_taxon_rank_field}
-          FROM combine_taxa
+          SELECT pillar_point.combine_taxa.kingdom,
+            pillar_point.combine_taxa.#{combine_taxon_rank_field}
+          FROM pillar_point.combine_taxa
           JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey = combine_taxa.source_taxon_id
+            ON external.gbif_occurrences.taxonkey =
+              pillar_point.combine_taxa.source_taxon_id
           JOIN research_project_sources
             ON external.gbif_occurrences.gbifid =
               research_project_sources.sourceable_id
             AND research_project_id = #{project.id}
             AND sourceable_type = 'GbifOccurrence'
             AND metadata ->> 'location' != 'Montara SMR'
-          WHERE  combine_taxa.source = 'gbif'
-          AND combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
+          WHERE  pillar_point.combine_taxa.source = 'gbif'
+          AND pillar_point.combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
           #{taxon_group_filters_sql}
         SQL
       end
@@ -87,7 +88,7 @@ module ResearchProjectService
       def taxon_group_filters_sql
         return if taxon_groups.blank?
 
-        " AND lower(combine_taxa.kingdom) in (#{selected_taxon_groups})"
+        " AND lower(pillar_point.combine_taxa.kingdom) in (#{selected_taxon_groups})"
       end
     end
   end

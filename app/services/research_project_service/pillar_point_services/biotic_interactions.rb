@@ -8,7 +8,7 @@ module ResearchProjectService
         return unless globi_taxon
 
         taxon =
-          NcbiNode
+          NcbiNodePillarPoint
           .where("lower(canonical_name) = #{conn.quote(globi_taxon.downcase)}")
           .first
 
@@ -52,13 +52,10 @@ module ResearchProjectService
         ) as gbif_match,
         #{conn.quote(globi_taxon)} IN(
           SELECT  unnest(string_to_array(full_taxonomy_string, ';'))
-          FROM research_project_sources
-          JOIN asvs
-          ON asvs.sample_id = research_project_sources.sourceable_id
-          JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs.taxon_id
-          WHERE research_project_sources.research_project_id = #{project.id}
-          AND sourceable_type = 'Sample'
+          FROM  pillar_point.asvs as pp_asvs
+          JOIN pillar_point.ncbi_nodes
+            ON pillar_point.ncbi_nodes.taxon_id = pp_asvs.taxon_id
+          WHERE pp_asvs.research_project_id = #{project.id}
         ) as edna_match;
         SQL
 
@@ -110,14 +107,13 @@ module ResearchProjectService
           'false' as is_source,
           ("targetTaxonName" IN
           (SELECT unnest(string_to_array(full_taxonomy_string, ';'))
-          FROM research_project_sources
-          JOIN asvs
-          ON asvs.sample_id = research_project_sources.sourceable_id
-          JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs.taxon_id
-          WHERE research_project_sources.research_project_id = #{project.id}
-          AND sourceable_type = 'Sample'
+          FROM  pillar_point.asvs as pp_asvs
+          JOIN pillar_point.ncbi_nodes
+            ON pillar_point.ncbi_nodes.taxon_id = pp_asvs.taxon_id
+          WHERE pp_asvs.research_project_id = #{project.id}
+
           INTERSECT
+
           SELECT ("targetTaxonName")
           FROM external.globi_interactions
           WHERE "sourceTaxonName" = #{conn.quote(globi_taxon)} )
@@ -132,7 +128,9 @@ module ResearchProjectService
           WHERE research_project_sources.research_project_id = #{project.id}
           AND sourceable_type = 'GbifOccurrence'
           AND metadata ->> 'location' != 'Montara SMR'
+
           INTERSECT
+
           SELECT "targetTaxonName"
           FROM external.globi_interactions
           WHERE "sourceTaxonName" = #{conn.quote(globi_taxon)} )
@@ -165,14 +163,13 @@ module ResearchProjectService
         'true' as is_source,
         ("sourceTaxonName" IN
           (SELECT unnest(string_to_array(full_taxonomy_string, ';'))
-          FROM research_project_sources
-          JOIN asvs
-          ON asvs.sample_id = research_project_sources.sourceable_id
-          JOIN ncbi_nodes
-          ON ncbi_nodes.taxon_id = asvs.taxon_id
-          WHERE research_project_sources.research_project_id = #{project.id}
-          AND sourceable_type = 'Sample'
+          FROM pillar_point.asvs as pp_asvs
+          JOIN pillar_point.ncbi_nodes
+          ON pillar_point.ncbi_nodes.taxon_id = pp_asvs.taxon_id
+          WHERE pp_asvs.research_project_id = #{project.id}
+
           INTERSECT
+
           SELECT ("sourceTaxonName")
           FROM external.globi_interactions
           WHERE "targetTaxonName" = #{conn.quote(globi_taxon)} )
@@ -187,7 +184,9 @@ module ResearchProjectService
           WHERE research_project_sources.research_project_id = #{project.id}
           AND sourceable_type = 'GbifOccurrence'
           AND metadata ->> 'location' != 'Montara SMR'
+
           INTERSECT
+
           SELECT "sourceTaxonName"
           FROM external.globi_interactions
           WHERE "targetTaxonName" = #{conn.quote(globi_taxon)} )

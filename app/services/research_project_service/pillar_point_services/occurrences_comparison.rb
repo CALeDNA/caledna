@@ -21,15 +21,11 @@ module ResearchProjectService
 
       def cal_division_sql
         <<-SQL
-          FROM asvs
-          JOIN research_project_sources
-            ON sourceable_id = asvs.sample_id
-            and (research_project_sources.sourceable_type = 'Sample')
-            AND (research_project_sources.research_project_id =
-            #{conn.quote(project.id)})
-          JOIN combine_taxa
-            ON asvs.taxon_id = combine_taxa.caledna_taxon_id
+          FROM pillar_point.asvs as pp_asvs
+          JOIN pillar_point.combine_taxa
+            ON pp_asvs.taxon_id = pillar_point.combine_taxa.caledna_taxon_id
             AND (source = 'ncbi' OR source = 'bold')
+          WHERE pp_asvs.research_project_id = #{project.id}
           GROUP BY kingdom
           ORDER BY kingdom;
         SQL
@@ -56,8 +52,8 @@ module ResearchProjectService
       def gbif_division_stats
         sql = <<-SQL
           #{gbif_division_sql}
-          GROUP BY combine_taxa.kingdom
-          ORDER BY combine_taxa.kingdom
+          GROUP BY pillar_point.combine_taxa.kingdom
+          ORDER BY pillar_point.combine_taxa.kingdom
         SQL
 
         conn.exec_query(sql)
@@ -66,8 +62,8 @@ module ResearchProjectService
       def gbif_division_unique_stats
         sql = <<-SQL
           #{gbif_unique_sql}
-          GROUP BY combine_taxa.kingdom
-          ORDER BY combine_taxa.kingdom
+          GROUP BY pillar_point.combine_taxa.kingdom
+          ORDER BY pillar_point.combine_taxa.kingdom
         SQL
 
         conn.exec_query(sql)

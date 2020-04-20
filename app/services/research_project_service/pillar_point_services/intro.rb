@@ -31,20 +31,20 @@ module ResearchProjectService
       def cal_stats
         samples =
           ResearchProjectSource.cal.where(research_project: project).count
-        unique_organisms =
-          Asv
-          .select('DISTINCT(taxon_id)')
-          .joins(
-            'JOIN research_project_sources ON sourceable_id = asvs.sample_id'
-          )
-          .where("research_project_sources.sourceable_type = 'Sample'")
-          .where('research_project_sources.research_project_id = ?', project.id)
-          .count
-
         {
           occurrences: samples,
           organisms: unique_organisms
         }
+      end
+
+      def unique_organisms
+        sql = <<-SQL
+        SELECT COUNT(DISTINCT(taxon_id))
+        FROM pillar_point.asvs as pp_asvs
+        WHERE pp_asvs.research_project_id = #{project.id}
+        SQL
+
+        query_results(sql).first['count']
       end
     end
   end

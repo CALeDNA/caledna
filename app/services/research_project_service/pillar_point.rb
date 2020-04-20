@@ -83,14 +83,14 @@ module ResearchProjectService
 
     def gbif_division_sql
       <<-SQL
-        SELECT combine_taxa.kingdom as category, COUNT(*) as count
+        SELECT pillar_point.combine_taxa.kingdom as category, COUNT(*) as count
         #{gbif_common_division_sql}
       SQL
     end
 
     def gbif_unique_sql
       <<-SQL
-        SELECT combine_taxa.kingdom as category,
+        SELECT pillar_point.combine_taxa.kingdom as category,
         COUNT(DISTINCT(source_taxon_id))
         #{gbif_common_division_sql}
       SQL
@@ -99,8 +99,8 @@ module ResearchProjectService
     def gbif_common_division_sql
       <<-SQL
         FROM external.gbif_occurrences
-        JOIN combine_taxa
-          ON combine_taxa.source_taxon_id = external.gbif_occurrences.taxonkey
+        JOIN pillar_point.combine_taxa
+          ON pillar_point.combine_taxa.source_taxon_id = external.gbif_occurrences.taxonkey
           AND (source = 'gbif')
         JOIN research_project_sources
           ON research_project_sources.sourceable_id =
@@ -109,7 +109,7 @@ module ResearchProjectService
           AND (research_project_sources.research_project_id =
           #{conn.quote(project.id)})
           AND (metadata ->> 'location' != 'Montara SMR')
-        WHERE combine_taxa.kingdom IS NOT NULL
+        WHERE pillar_point.combine_taxa.kingdom IS NOT NULL
       SQL
     end
 

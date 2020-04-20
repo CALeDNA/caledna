@@ -162,6 +162,14 @@ module ResearchProjects
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
+    def occurrences
+      if params[:source] == 'gbif'
+        pillar_point_service.gbif_occurrences.page(params[:page])
+      else
+        samples.page(params[:page])
+      end
+    end
+
     def pillar_point_service
       @pillar_point_service ||= begin
         ResearchProjectService::PillarPoint.new(project, params)

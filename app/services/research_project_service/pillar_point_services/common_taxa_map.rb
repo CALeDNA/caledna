@@ -31,17 +31,14 @@ module ResearchProjectService
         sql = <<-SQL
           SELECT DISTINCT barcode, latitude, longitude, samples.id,
           samples.status_cd AS status
-          FROM asvs
-          JOIN research_project_sources
-          ON research_project_sources.sourceable_id = asvs.sample_id
-          AND sourceable_type = 'Sample'
-          AND research_project_sources.research_project_id = #{project.id}
+          FROM pillar_point.asvs as pp_asvs
           JOIN samples
-          ON asvs.sample_id = samples.id
-          JOIN combine_taxa
-          ON asvs.taxon_id = combine_taxa.caledna_taxon_id
-          AND combine_taxa.#{rank} = '#{taxon}'
-          AND (source = 'ncbi' OR source = 'bold');
+            ON pp_asvs.sample_id = samples.id
+          JOIN pillar_point.combine_taxa
+            ON pp_asvs.taxon_id = pillar_point.combine_taxa.caledna_taxon_id
+            AND pillar_point.combine_taxa.#{rank} = '#{taxon}'
+            AND (source = 'ncbi' OR source = 'bold')
+          WHERE pp_asvs.research_project_id = #{project.id};
         SQL
 
         conn.exec_query(sql)
@@ -55,20 +52,21 @@ module ResearchProjectService
 
         sql = <<-SQL
           SELECT DISTINCT external.gbif_occurrences.gbifid AS id,
-          decimallongitude AS longitude,
-          decimallatitude AS latitude, combine_taxa.kingdom,
-          combine_taxa.species
+            decimallongitude AS longitude,
+            decimallatitude AS latitude, pillar_point.combine_taxa.kingdom,
+            pillar_point.combine_taxa.species
           FROM external.gbif_occurrences
           JOIN research_project_sources
-          ON research_project_sources.sourceable_id =
-          external.gbif_occurrences.gbifid
-          AND (research_project_sources.sourceable_type = 'GbifOccurrence')
-          AND (research_project_sources.research_project_id = #{project.id})
-          AND (metadata ->> 'location' != 'Montara SMR')
-          JOIN combine_taxa
-          ON external.gbif_occurrences.taxonkey = combine_taxa.source_taxon_id
-          AND combine_taxa.#{rank} = '#{taxon}'
-          AND (source = 'gbif');
+            ON research_project_sources.sourceable_id =
+              external.gbif_occurrences.gbifid
+            AND (research_project_sources.sourceable_type = 'GbifOccurrence')
+            AND (research_project_sources.research_project_id = #{project.id})
+            AND (metadata ->> 'location' != 'Montara SMR')
+          JOIN pillar_point.combine_taxa
+            ON external.gbif_occurrences.taxonkey =
+              pillar_point.combine_taxa.source_taxon_id
+            AND pillar_point.combine_taxa.#{rank} = '#{taxon}'
+            AND (source = 'gbif');
         SQL
 
         conn.exec_query(sql)

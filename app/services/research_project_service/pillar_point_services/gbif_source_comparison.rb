@@ -23,8 +23,8 @@ module ResearchProjectService
           #{gbif_division_sql}
           AND external.gbif_occurrences.datasetkey =
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY combine_taxa.kingdom
-          ORDER BY combine_taxa.kingdom;
+          GROUP BY pillar_point.combine_taxa.kingdom
+          ORDER BY pillar_point.combine_taxa.kingdom;
         SQL
 
         conn.exec_query(sql)
@@ -35,8 +35,8 @@ module ResearchProjectService
           #{gbif_division_sql}
           AND external.gbif_occurrences.datasetkey !=
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY combine_taxa.kingdom
-          ORDER BY combine_taxa.kingdom;
+          GROUP BY pillar_point.combine_taxa.kingdom
+          ORDER BY pillar_point.combine_taxa.kingdom;
         SQL
 
         conn.exec_query(sql)
@@ -47,8 +47,8 @@ module ResearchProjectService
           #{gbif_unique_sql}
           AND external.gbif_occurrences.datasetkey =
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY combine_taxa.kingdom
-          ORDER BY combine_taxa.kingdom;
+          GROUP BY pillar_point.combine_taxa.kingdom
+          ORDER BY pillar_point.combine_taxa.kingdom;
         SQL
         conn.exec_query(sql)
       end
@@ -58,8 +58,8 @@ module ResearchProjectService
           #{gbif_unique_sql}
           AND external.gbif_occurrences.datasetkey !=
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
-          GROUP BY combine_taxa.kingdom
-          ORDER BY combine_taxa.kingdom;
+          GROUP BY pillar_point.combine_taxa.kingdom
+          ORDER BY pillar_point.combine_taxa.kingdom;
         SQL
         conn.exec_query(sql)
       end

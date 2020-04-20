@@ -108,17 +108,17 @@ module ResearchProjectService
       def area_diversity_cal_sql
         @area_diversity_cal_sql = begin
           sql = <<-SQL
-            SELECT asvs.taxon_id
-            FROM combine_taxa
-            JOIN asvs
-              ON asvs.taxon_id = combine_taxa.caledna_taxon_id
-              AND (combine_taxa.source = 'ncbi' OR combine_taxa.source = 'bold')
-            JOIN ncbi_nodes
-            ON asvs.taxon_id = ncbi_nodes.taxon_id
+            SELECT pp_asvs.taxon_id
+            FROM pillar_point.combine_taxa
+            JOIN pillar_point.asvs as pp_asvs
+              ON pp_asvs.taxon_id = pillar_point.combine_taxa.caledna_taxon_id
+              AND (combine_taxa.source = 'ncbi' OR pillar_point.combine_taxa.source = 'bold')
+            JOIN pillar_point.ncbi_nodes
+              ON pp_asvs.taxon_id = pillar_point.ncbi_nodes.taxon_id
             JOIN research_project_sources
-            ON research_project_sources.sourceable_id = asvs.sample_id
+              ON research_project_sources.sourceable_id = pp_asvs.sample_id
             JOIN samples
-            ON asvs.sample_id = samples.id
+              ON pp_asvs.sample_id = samples.id
             WHERE sourceable_type = 'Sample'
             AND research_project_sources.research_project_id = #{project.id}
             AND rank = 'species'
@@ -126,7 +126,7 @@ module ResearchProjectService
 
           if taxon_groups
             sql +=
-              " AND lower(combine_taxa.kingdom) in (#{selected_taxon_groups})"
+              " AND lower(pillar_point.combine_taxa.kingdom) in (#{selected_taxon_groups})"
           end
 
           if months
@@ -141,9 +141,10 @@ module ResearchProjectService
       def area_diversity_gbif_sql
         sql = <<-SQL
           SELECT taxonkey
-          FROM combine_taxa
+          FROM pillar_point.combine_taxa
           JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey = combine_taxa.source_taxon_id
+            ON external.gbif_occurrences.taxonkey =
+              pillar_point.combine_taxa.source_taxon_id
           JOIN research_project_sources
           ON research_project_sources.sourceable_id =
             external.gbif_occurrences.gbifid
@@ -153,7 +154,7 @@ module ResearchProjectService
 
         if taxon_groups
           sql +=
-            " AND lower(combine_taxa.kingdom) in (#{selected_taxon_groups})"
+            " AND lower(pillar_point.combine_taxa.kingdom) in (#{selected_taxon_groups})"
         end
 
         if months

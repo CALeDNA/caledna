@@ -2,6 +2,7 @@
 
 class ResearchProject < ApplicationRecord
   LA_RIVER = ResearchProject.find_by(name: 'Los Angeles River')
+  PILLAR_POINT = ResearchProject.find_by(name: 'Pillar Point')
 
   has_many :research_project_sources
   has_many :research_project_authors
