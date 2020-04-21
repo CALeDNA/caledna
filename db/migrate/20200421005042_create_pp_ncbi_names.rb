@@ -2,8 +2,8 @@ class CreatePpNcbiNames < ActiveRecord::Migration[5.2]
   def up
     execute <<-SQL
     CREATE TABLE pillar_point.ncbi_names AS
-      SELECT external.ncbi_names_2017.*
-      FROM external.ncbi_names_2017
+      SELECT ncbi_names.*
+      FROM ncbi_names
       WHERE name IN (
         SELECT (unnest(array[superkingdom, kingdom, phylum, class_name,
           "order", family, genus, species]))
