@@ -4,8 +4,8 @@ class PrimerDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     name: Field::String,
-    sequence_1: Field::Text,
-    sequence_2: Field::Text,
+    forward_primer: Field::Text,
+    reverse_primer: Field::Text,
     reference: Field::Text,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
@@ -18,8 +18,8 @@ class PrimerDashboard < Administrate::BaseDashboard
 
    SHOW_PAGE_ATTRIBUTES = [
     :name,
-    :sequence_1,
-    :sequence_2,
+    :forward_primer,
+    :reverse_primer,
     :reference,
     :created_at,
     :updated_at,
@@ -27,8 +27,8 @@ class PrimerDashboard < Administrate::BaseDashboard
 
   FORM_ATTRIBUTES = [
     :name,
-    :sequence_1,
-    :sequence_2,
+    :forward_primer,
+    :reverse_primer,
     :reference,
   ].freeze
 
