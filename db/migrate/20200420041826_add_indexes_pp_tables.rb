@@ -11,8 +11,10 @@ class AddIndexesPpTables < ActiveRecord::Migration[5.2]
 
     add_index 'pillar_point.combine_taxa', :caledna_taxon_id
 
-    project_id = ResearchProject::PILLAR_POINT.id
-    execute "UPDATE pillar_point.asvs SET research_project_id = #{project_id}"
+    project = ResearchProject::PILLAR_POINT
+    if project
+      execute "UPDATE pillar_point.asvs SET research_project_id = #{project.id}"
+    end
   end
 
   def down; end
