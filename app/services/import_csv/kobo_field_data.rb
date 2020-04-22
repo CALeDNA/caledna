@@ -18,11 +18,22 @@ module ImportCsv
         return OpenStruct.new(valid?: false, errors: message)
       end
 
+      begin
+        collection_date(data.entries.first)
+      rescue ArgumentError
+        message = "Date must be in YYYY-MM-DD format."
+        return OpenStruct.new(valid?: false, errors: message)
+      end
+
       create_samples(data, field_project_id)
       OpenStruct.new(valid?: true, errors: nil)
     end
 
     private
+
+    def collection_date(row)
+      DateTime.parse("#{row['collection_date']} #{row['collection_time']}")
+    end
 
     def create_samples(data, field_project_id)
       data.entries.each do |row|
@@ -37,8 +48,7 @@ module ImportCsv
     def process_sample(row, field_project_id)
       {
         barcode: row['barcode'],
-        collection_date:
-          DateTime.parse("#{row['collection_date']} #{row['collection_time']}"),
+        collection_date: collection_date(row),
         location: row['location'],
         latitude: row['latitude'],
         longitude: row['longitude'],
@@ -63,6 +73,8 @@ module ImportCsv
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def convert_comma_separated_string(string)
+      return if string.blank?
+
       string.split(',').map(&:strip)
     end
   end
