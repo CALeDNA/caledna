@@ -16,6 +16,7 @@ class Sample < ApplicationRecord
   has_many :asvs
   has_many :research_project_sources, as: :sourceable
   has_many :research_projects, through: :research_project_sources
+  has_many :sample_primers
 
   validate :unique_approved_barcodes
 
@@ -39,6 +40,11 @@ class Sample < ApplicationRecord
   as_enum :substrate, KoboValues::SUBSTRATES, map: :string
   as_enum :habitat, KoboValues::HABITAT, map: :string
   as_enum :depth, KoboValues::DEPTH, map: :string
+
+  def primers
+    ids = sample_primers.pluck(:primer_id).uniq
+    Primer.where('id IN (?)', ids)
+  end
 
   def status_display
     status.to_s.tr('_', ' ')

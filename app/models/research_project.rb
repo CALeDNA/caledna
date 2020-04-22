@@ -11,12 +11,18 @@ class ResearchProject < ApplicationRecord
                                 source: :authorable, source_type: 'Researcher'
   has_many :user_authors, through: :research_project_authors,
                           source: :authorable, source_type: 'User'
+  has_many :sample_primers
 
   validates :slug, uniqueness: true
   validates :name, presence: true
   validates :slug, presence: true
 
   scope :published, -> { where(published: true) }
+
+  def primers
+    ids = sample_primers.pluck(:primer_id).uniq
+    Primer.where('id IN (?)', ids)
+  end
 
   def project_pages
     @project_pages ||= pages.published

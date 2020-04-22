@@ -119,4 +119,33 @@ describe Sample do
       expect(sample.kobo_data_display).to eq('latitude' => 90)
     end
   end
+
+  describe '#primers' do
+    it 'returns an array of unique primers for this sample' do
+      sample = create(:sample)
+      project1 = create(:research_project)
+      project2 = create(:research_project)
+      primer1 = create(:primer)
+      primer2 = create(:primer)
+      create(:sample_primer, sample: sample, primer: primer1,
+                             research_project: project1)
+      create(:sample_primer, sample: sample, primer: primer2,
+                             research_project: project1)
+      create(:sample_primer, sample: sample, primer: primer2,
+                             research_project: project2)
+
+      expect(sample.primers).to match_array([primer2, primer1])
+    end
+
+    it 'ignores primers for other samples' do
+      sample = create(:sample)
+      sample2 = create(:sample)
+      project1 = create(:research_project)
+      primer1 = create(:primer)
+      create(:sample_primer, sample: sample2, primer: primer1,
+                             research_project: project1)
+
+      expect(sample.primers).to match_array([])
+    end
+  end
 end

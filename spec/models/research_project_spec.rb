@@ -166,4 +166,33 @@ describe ResearchProject do
       expect(project1.user_authors).to eq([user1])
     end
   end
+
+  describe '#primers' do
+    it 'returns an array of unique primers for this project' do
+      project = create(:research_project)
+      sample1 = create(:sample)
+      sample2 = create(:sample)
+      primer1 = create(:primer)
+      primer2 = create(:primer)
+      create(:sample_primer, sample: sample1, primer: primer1,
+                             research_project: project)
+      create(:sample_primer, sample: sample1, primer: primer2,
+                             research_project: project)
+      create(:sample_primer, sample: sample2, primer: primer2,
+                             research_project: project)
+
+      expect(project.primers).to match_array([primer2, primer1])
+    end
+
+    it 'ignores primers for other projects' do
+      project = create(:research_project)
+      project2 = create(:research_project)
+      sample1 = create(:sample)
+      primer1 = create(:primer)
+      create(:sample_primer, sample: sample1, primer: primer1,
+                             research_project: project2)
+
+      expect(project.primers).to match_array([])
+    end
+  end
 end
