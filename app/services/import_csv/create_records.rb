@@ -12,6 +12,16 @@ module ImportCsv
       raise ImportError, "ASV #{attributes[:sample_id]}: #{asv.errors}"
     end
 
+    def create_sample_primer(attributes)
+      record = SamplePrimer.where(attributes).first_or_create
+
+      return record if record.valid?
+      sample_id = attributes[:sample_id]
+      primer_id = attributes[:primer_id]
+
+      raise ImportError, "SamplePrimer #{sample_id} #{primer_id}: #{asv.errors}"
+    end
+
     def first_or_create_research_project_source(sourceable_id, type,
                                                 research_project_id)
       attributes = {

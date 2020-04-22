@@ -67,7 +67,7 @@ describe ImportCsv::EdnaResultsAsvs do
         expect do
           subject(file, research_project.id, primer)
         end
-          .to_not have_enqueued_job(ImportCsvQueueAsvJob)
+          .to have_enqueued_job(ImportCsvQueueAsvJob).exactly(0).times
       end
 
       it 'returns error message' do
@@ -104,7 +104,7 @@ describe ImportCsv::EdnaResultsAsvs do
 
     def subject
       asv_attributes =
-        { research_project_id: research_project.id, primer: primer }
+        { research_project_id: research_project.id, primer_id: primer.id }
       barcodes = dummy_class.convert_header_row_to_barcodes(data)
       samples_data =
         dummy_class.find_samples_from_barcodes(barcodes)[:valid_data]
@@ -196,6 +196,35 @@ describe ImportCsv::EdnaResultsAsvs do
         end
           .to have_enqueued_job.with(sample_id2, 'Sample', project_id)
                                .exactly(1).times
+      end
+
+      it 'adds ImportCsvCreateSamplePrimerJob to queue' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job(ImportCsvCreateSamplePrimerJob).exactly(2).times
+      end
+
+      it 'passes arguements to ImportCsvCreateSamplePrimerJob' do
+        arguements = {
+          sample_id: 1,
+          research_project_id: 10,
+          primer_id: 100
+        }
+
+        expect { subject }
+          .to have_enqueued_job.with(arguements).exactly(1).times
+      end
+
+      it 'passes arguements to ImportCsvCreateSamplePrimerJob' do
+        arguements = {
+          sample_id: 2,
+          research_project_id: 10,
+          primer_id: 100
+        }
+
+        expect { subject }
+          .to have_enqueued_job.with(arguements).exactly(1).times
       end
     end
   end

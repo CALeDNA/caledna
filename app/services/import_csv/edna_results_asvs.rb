@@ -47,9 +47,11 @@ module ImportCsv
         result_taxon = find_result_taxon_from_string(taxonomy_string)
         raise ImportError, 'must import taxa first' if result_taxon.blank?
 
-        asv_attributes[:taxon_id] = result_taxon.taxon_id
-        create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
+        attributes = asv_attributes.merge(taxon_id: result_taxon.taxon_id)
+        create_asvs_for_row(row, barcodes, samples_data, attributes)
       end
+
+      create_sample_primers(samples_data, asv_attributes)
     end
 
     def convert_header_row_to_barcodes(data)
@@ -77,6 +79,14 @@ module ImportCsv
     # rubocop:enable Metrics/MethodLength
 
     private
+
+    def create_sample_primers(samples_data, asv_attributes)
+      samples_data.each do |_barcode, sample_id|
+        attributes = asv_attributes.merge(sample_id: sample_id)
+
+        ImportCsvCreateSamplePrimerJob.perform_later(attributes)
+      end
+    end
 
     # rubocop:disable Metrics/MethodLength
     def create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
