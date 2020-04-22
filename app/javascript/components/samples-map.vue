@@ -240,12 +240,18 @@ export default {
           status,
           gps_precision,
           primers,
-          substrate
+          substrate,
+          collection_date,
         } = sample;
 
         const asvs_count = asvs_counts.find(
           asvs_count => asvs_count.sample_id === id
         );
+
+        const formatDateString = (dateString) => {
+          let date = new Date(dateString)
+          return date.toLocaleDateString()
+        }
 
         return {
           id,
@@ -255,7 +261,8 @@ export default {
           status: status.replace("_", " "),
           primers: primers.join(", "),
           substrate,
-          asv_count: asvs_count ? asvs_count.count : 0
+          asv_count: asvs_count ? asvs_count.count : 0,
+          collection_date: formatDateString(collection_date),
         };
       });
     },
@@ -264,7 +271,6 @@ export default {
     // fetch samples
     //================
     fetchSamples(url) {
-      console.log("fetchSamples", url);
       this.showSpinner = true;
       axios
         .get(url)

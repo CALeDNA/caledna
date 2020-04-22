@@ -1,57 +1,61 @@
 export const samplesTableColumns = [
   {
     label: "Site",
-    field: "barcode"
+    field: "barcode",
   },
   {
     label: "Location",
-    field: "location"
+    field: "location",
   },
 
   {
     label: "Organisms from ASV",
     field: "asv_count",
-    type: "number"
+    type: "number",
   },
   {
-    label: "Substrates",
-    field: "substrate"
+    label: "Substrate",
+    field: "substrate",
   },
   {
     label: "Status",
-    field: "status"
+    field: "status",
   },
   {
     label: "Primers",
-    field: "primers"
-  }
+    field: "primers",
+  },
+  {
+    label: "Date",
+    field: "collection_date",
+  },
 ];
 
 export const taxaTableColumns = [
   {
     label: "Site",
-    field: "barcode"
+    field: "barcode",
   },
   {
     label: "Location",
-    field: "location"
+    field: "location",
   },
 
   {
     label: "Organisms from ASV",
     field: "asv_count",
-    type: "number"
+    type: "number",
   },
   {
     label: "Substrates",
-    field: "substrate"
+    field: "substrate",
   },
   {
     label: "Primers",
-    field: "primers"
+    field: "primers",
   },
   {
     label: "Matching Taxa",
-    field: "taxa"
-  }
+    field: "taxa",
+  },
 ];
