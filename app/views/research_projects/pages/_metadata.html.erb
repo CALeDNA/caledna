@@ -37,7 +37,7 @@
   </tr>
   <tr>
     <td>Primers</td>
-    <td><%= project.primers %></td>
+    <td><%= project.primers.join(', ') %></td>
   </tr>
 
   <% project.metadata_display.each do |data| %>
