@@ -7,7 +7,7 @@ module Api
       include FilterCompletedSamples
 
       def index
-        render json: NcbiNodeSerializer.new(taxa)
+        render json: NcbiNodeSerializer.new(taxa).serializable_hash
       end
 
       def show

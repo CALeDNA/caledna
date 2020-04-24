@@ -6,7 +6,8 @@ module Api
       before_action :add_cors_headers
 
       def index
-        render json: InatObservationSerializer.new(observations),
+        render json: InatObservationSerializer.new(observations)
+                                              .serializable_hash,
                status: :ok
       end
 
