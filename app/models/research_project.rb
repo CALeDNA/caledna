@@ -19,11 +19,6 @@ class ResearchProject < ApplicationRecord
 
   scope :published, -> { where(published: true) }
 
-  def primers
-    ids = sample_primers.pluck(:primer_id).uniq
-    Primer.where('id IN (?)', ids)
-  end
-
   def project_pages
     @project_pages ||= pages.published
                             .order('display_order ASC NULLS LAST') || []

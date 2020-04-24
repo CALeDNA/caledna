@@ -8,8 +8,10 @@ module Api
       include FilterCompletedSamples
 
       def show
+        serializer_params = { params: { research_project_id: project.id } }
         render json: {
-          samples: SampleSerializer.new(research_project_samples),
+          samples:
+            SampleSerializer.new(research_project_samples, serializer_params),
           asvs_count: asvs_count
         }, status: :ok
       end

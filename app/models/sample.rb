@@ -41,11 +41,6 @@ class Sample < ApplicationRecord
   as_enum :habitat, KoboValues::HABITAT, map: :string
   as_enum :depth, KoboValues::DEPTH, map: :string
 
-  def primers
-    ids = sample_primers.pluck(:primer_id).uniq
-    Primer.where('id IN (?)', ids)
-  end
-
   def status_display
     status.to_s.tr('_', ' ')
   end

@@ -16,12 +16,10 @@ module FilterSamples
   end
 
   def samples_for_primers(samples)
-    primers = Primer.all.pluck(:name)
-    raw_primers = params[:primer].split('|')
-                                 .select { |p| primers.include?(p) }
-
-    samples = samples.where('primers && ?', "{#{raw_primers.join(',')}}")
-    samples
+    primer_ids = params[:primer].split('|')
+    samples.joins(:sample_primers)
+           .where('sample_primers.primer_id IN (?)', primer_ids)
+           .group(:id)
   end
 
   def query_string

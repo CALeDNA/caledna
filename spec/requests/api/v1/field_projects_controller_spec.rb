@@ -183,64 +183,102 @@ describe 'FieldProjecs' do
     end
 
     context 'primer query param' do
+      let(:primer1_id) { 10 }
+      let(:primer2_id) { 20 }
+      let(:primer1) { create(:primer, id: primer1_id) }
+      let(:primer2) { create(:primer, id: primer2_id) }
       let(:project) { create(:field_project, id: target_id) }
 
-      before(:each) do
-        create(:sample, :approved, primers: ['12S'], field_project: project)
-        create(:sample, :approved, primers: ['18s'], field_project: project)
-        create(:sample, :approved, primers: ['bad'], field_project: project)
-        create(:primer, name: '12S')
-        create(:primer, name: '18s')
+      def create_samples
+        s1 = create(:sample, :approved, field_project: project)
+        s2 = create(:sample, :approved, field_project: project)
+        p1 = primer1
+        p2 = primer2
+        rproj1 = create(:research_project)
+        rproj2 = create(:research_project)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+        create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
       end
 
       it 'returns samples when there is one primer' do
-        get api_v1_field_project_path(id: target_id, primer: '12S')
+        create_samples
+
+        get api_v1_field_project_path(id: target_id, primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(1)
 
         primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([['12S']])
+        expect(primer).to match_array([[primer1_id]])
       end
 
       it 'returns samples when there are multiple primer' do
-        get api_v1_field_project_path(id: target_id, primer: '12S|18s')
+        create_samples
+
+        get api_v1_field_project_path(id: target_id,
+                                      primer: "#{primer1_id}|#{primer2_id}")
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(2)
 
         primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([['12S'], ['18s']])
+        expect(primer).to match_array([[primer1_id], [primer2_id]])
       end
 
       it 'ignores invalid primers' do
-        get api_v1_field_project_path(id: target_id, primer: 'bad')
+        create_samples
+
+        get api_v1_field_project_path(id: target_id, primer: 999)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(0)
       end
+
+      it 'only includes one instance of a sample' do
+        sample = create(:sample, :approved, id: 1, field_project: project)
+        create(:research_project, slug: 'proj1', id: 100)
+        create(:sample_primer, primer: primer1, sample: sample,
+                               research_project_id: 100)
+        create(:sample_primer, primer: primer2, sample: sample,
+                               research_project_id: 100)
+
+        get api_v1_field_project_path(id: target_id,
+                                      primer: "#{primer1_id}|#{primer2_id}")
+        data = JSON.parse(response.body)['samples']['data']
+
+        expect(data.length).to eq(1)
+
+        primer = data.map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array([[primer1_id, primer2_id]])
+      end
     end
 
     context 'multiple query params' do
+      let(:primer1_id) { 10 }
+      let(:primer2_id) { 20 }
       let(:project) { create(:field_project, id: target_id) }
 
       before(:each) do
-        create(:sample, :results_completed, id: 1, substrate_cd: :soil,
-                                            primers: ['12S'],
-                                            field_project: project)
-        create(:sample, :results_completed, id: 2, substrate_cd: :foo,
-                                            primers: ['12S'],
-                                            field_project: project)
-        create(:sample, :geo, id: 3, substrate_cd: :soil,
-                              status_cd: :foo, primers: ['12S'],
-                              field_project: project)
+        s1 = create(:sample, :results_completed, id: 1, substrate_cd: :soil,
+                                                 field_project: project)
+        s2 = create(:sample, :results_completed, id: 2, substrate_cd: :foo,
+                                                 field_project: project)
+        s3 = create(:sample, :geo, id: 3, substrate_cd: :soil,
+                                   status_cd: :foo, field_project: project)
         create(:sample, :results_completed, id: 4, substrate_cd: :soil,
-                                            primers: ['foo'],
                                             field_project: project)
-        create(:sample, :approved, id: 5, substrate_cd: :soil,
-                                   primers: ['12S'], field_project: project)
+        s5 = create(:sample, :approved, id: 5, substrate_cd: :soil,
+                                        field_project: project)
         create(:sample, :approved, id: 6)
-        create(:primer, name: '12S')
+        p1 = create(:primer, name: '12S', id: primer1_id)
+        rproj1 = create(:research_project)
+        rproj2 = create(:research_project)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+        create(:sample_primer, sample: s2, primer: p1, research_project: rproj1)
+        create(:sample_primer, sample: s3, primer: p1, research_project: rproj1)
+        create(:sample_primer, sample: s5, primer: p1, research_project: rproj1)
       end
 
       it 'returns samples that match substrate & status' do
@@ -256,7 +294,7 @@ describe 'FieldProjecs' do
 
       it 'returns samples that match substrate & primer' do
         get api_v1_field_project_path(id: target_id, substrate: 'soil',
-                                      primer: '12S')
+                                      primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(2)
@@ -268,7 +306,7 @@ describe 'FieldProjecs' do
       it 'returns samples that match all the query params' do
         get api_v1_field_project_path(id: target_id, substrate: 'soil',
                                       status: 'results_completed',
-                                      primer: '12S')
+                                      primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(1)

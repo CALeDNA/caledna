@@ -117,36 +117,44 @@ describe 'Samples' do
     end
 
     context 'primer query param' do
+      let(:primer1_id) { 10 }
+      let(:primer2_id) { 20 }
+
       before(:each) do
-        create(:sample, :approved, primers: ['12S'])
-        create(:sample, :results_completed, primers: ['18s'])
-        create(:sample, :approved, primers: ['bad'])
-        create(:primer, name: '12S')
-        create(:primer, name: '18s')
+        s1 = create(:sample, :approved)
+        s2 = create(:sample, :results_completed)
+        p1 = create(:primer, name: '12S', id: primer1_id)
+        p2 = create(:primer, name: '18s', id: primer2_id)
+
+        rproj1 = create(:research_project)
+        rproj2 = create(:research_project)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+        create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
       end
 
       it 'returns samples when there is one primer' do
-        get api_v1_samples_path(primer: '12S')
+        get api_v1_samples_path(primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(1)
 
         primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to eq([['12S']])
+        expect(primer).to eq([[primer1_id]])
       end
 
       it 'returns samples when there are multiple primer' do
-        get api_v1_samples_path(primer: '12S|18s')
+        get api_v1_samples_path(primer: "#{primer1_id}|#{primer2_id}")
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(2)
 
         primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([['12S'], ['18s']])
+        expect(primer).to match_array([[primer1_id], [primer2_id]])
       end
 
       it 'ignores invalid primers' do
-        get api_v1_samples_path(primer: 'bad')
+        get api_v1_samples_path(primer: 999)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(0)
@@ -154,21 +162,28 @@ describe 'Samples' do
     end
 
     context 'multiple query params' do
+      let(:primer1_id) { 10 }
+      let(:primer2_id) { 20 }
+
       before(:each) do
-        create(:sample, :results_completed, id: 1, substrate_cd: :soil,
-                                            primers: ['12S'])
-        create(:sample, :results_completed, id: 2, substrate_cd: :soil,
-                                            primers: ['12S'])
-        create(:sample, :results_completed, id: 3, substrate_cd: :foo,
-                                            primers: ['12S'])
-        create(:sample, :geo, id: 4, substrate_cd: :soil,
-                              status_cd: :rejected, primers: ['12S'])
-        create(:sample, :results_completed, id: 5, substrate_cd: :soil,
-                                            primers: ['foo'])
-        create(:sample, :approved, id: 6, substrate_cd: :soil,
-                                   primers: ['12S'])
+        s1 = create(:sample, :results_completed, id: 1, substrate_cd: :soil)
+        s2 = create(:sample, :results_completed, id: 2, substrate_cd: :soil)
+        s3 = create(:sample, :results_completed, id: 3, substrate_cd: :foo)
+        s4 = create(:sample, :geo, id: 4, substrate_cd: :soil,
+                                   status_cd: :rejected)
+        create(:sample, :results_completed, id: 5, substrate_cd: :soil)
+        s6 = create(:sample, :approved, id: 6, substrate_cd: :soil)
         create(:sample, :approved, id: 7)
-        create(:primer, name: '12S')
+        p1 = create(:primer, name: '12S', id: primer1_id)
+
+        proj1 = create(:research_project)
+        proj2 = create(:research_project)
+        create(:sample_primer, sample: s1, primer: p1, research_project: proj1)
+        create(:sample_primer, sample: s1, primer: p1, research_project: proj2)
+        create(:sample_primer, sample: s2, primer: p1, research_project: proj1)
+        create(:sample_primer, sample: s3, primer: p1, research_project: proj1)
+        create(:sample_primer, sample: s4, primer: p1, research_project: proj1)
+        create(:sample_primer, sample: s6, primer: p1, research_project: proj1)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
@@ -201,7 +216,7 @@ describe 'Samples' do
 
       it 'returns samples that match substrate & primer' do
         get api_v1_samples_path(substrate: 'soil',
-                                primer: '12S')
+                                primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(3)
@@ -225,7 +240,7 @@ describe 'Samples' do
         get api_v1_samples_path(substrate: 'soil',
                                 status: 'results_completed',
                                 keyword: 'match',
-                                primer: '12S')
+                                primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(1)

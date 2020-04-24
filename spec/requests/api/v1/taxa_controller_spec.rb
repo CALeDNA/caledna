@@ -51,12 +51,14 @@ describe 'Taxa' do
   describe 'show' do
     let(:target_id) { 10 }
 
-    def create_occurence(taxon, substrate: :soil, primers: '12S',
-                         status: :results_completed)
+    def create_occurence(taxon, substrate: :soil, primer: create(:primer),
+                         status: :results_completed,
+                         research_project: create(:research_project))
 
-      sample = create(:sample, status: status, substrate_cd: substrate,
-                               primers: primers.split('|'))
+      sample = create(:sample, status: status, substrate_cd: substrate)
       create(:asv, sample: sample, taxon_id: taxon.taxon_id)
+      create(:sample_primer, primer: primer, sample: sample,
+                             research_project: research_project)
       sample
     end
 
@@ -211,12 +213,12 @@ describe 'Taxa' do
     end
 
     context 'status query param' do
-      let(:project) { create(:research_project, slug: target_id) }
-
       before(:each) do
         taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-        create_occurence(taxon, status: :results_completed)
-        create_occurence(taxon, status: :approved)
+        project = create(:research_project, slug: target_id)
+        create_occurence(taxon, status: :results_completed,
+                                research_project: project)
+        create_occurence(taxon, status: :approved, research_project: project)
       end
 
       it 'ignores status params and only returns completed samples ' do
@@ -233,17 +235,20 @@ describe 'Taxa' do
     end
 
     describe 'primer query param' do
-      before(:each) do
+      let(:primer1_id) { 10 }
+      let(:primer2_id) { 20 }
+
+      def create_samples
         taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-        create_occurence(taxon, primers: '12S')
-        create_occurence(taxon, primers: '18S')
-        create_occurence(taxon, primers: 'bad')
-        create(:primer, name: '12S')
-        create(:primer, name: '18S')
+        create_occurence(taxon, primer: create(:primer, id: primer1_id))
+        create_occurence(taxon, primer: create(:primer, id: primer2_id))
+        create_occurence(taxon, primer: create(:primer, id: 30))
       end
 
       it 'returns samples when there is one primer' do
-        get api_v1_taxon_path(id: target_id, primer: '12S')
+        create_samples
+
+        get api_v1_taxon_path(id: target_id, primer: primer1_id)
         samples, asvs_count, base_samples = parse_response(response)
 
         expect(samples.length).to eq(1)
@@ -251,11 +256,14 @@ describe 'Taxa' do
         expect(base_samples.length).to eq(1)
 
         primers = samples.map { |i| i['attributes']['primers'] }
-        expect(primers).to eq([['12S']])
+        expect(primers).to eq([[primer1_id]])
       end
 
       it 'returns samples when there is multiple primers' do
-        get api_v1_taxon_path(id: target_id, primer: '12S|18S')
+        create_samples
+
+        get api_v1_taxon_path(id: target_id,
+                              primer: "#{primer1_id}|#{primer2_id}")
         samples, asvs_count, base_samples = parse_response(response)
 
         expect(samples.length).to eq(2)
@@ -263,14 +271,39 @@ describe 'Taxa' do
         expect(base_samples.length).to eq(2)
 
         primers = samples.map { |i| i['attributes']['primers'] }
-        expect(primers).to match_array([['12S'], ['18S']])
+        expect(primers).to match_array([[primer1_id], [primer2_id]])
       end
 
       it 'ignores invalid primers' do
-        get api_v1_field_project_path(id: target_id, primer: 'bad')
+        create_samples
+
+        get api_v1_taxon_path(id: target_id, primer: 999)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(0)
+      end
+
+      it 'only includes one instance of a sample' do
+        taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
+        primer1 = create(:primer, id: primer1_id)
+        primer2 = create(:primer, id: primer2_id)
+        sample = create(:sample, :results_completed)
+        research_project = create(:research_project)
+        create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer1)
+        create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer2)
+        create(:sample_primer, primer: primer1, sample: sample,
+                               research_project: research_project)
+        create(:sample_primer, primer: primer2, sample: sample,
+                               research_project: research_project)
+
+        get api_v1_taxon_path(id: target_id,
+                              primer: "#{primer1_id}|#{primer2_id}")
+        data = JSON.parse(response.body)['samples']['data']
+
+        expect(data.length).to eq(1)
+
+        primer = data.map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array([[primer1_id, primer2_id]])
       end
     end
   end

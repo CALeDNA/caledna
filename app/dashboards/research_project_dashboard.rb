@@ -16,7 +16,6 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     reference_barcode_database: Field::Text,
     dryad_link: Field::String,
     decontamination_method: Field::Text,
-    primers: ArrayField,
     slug: Field::String,
     metadata: Field::JSON.with_options(searchable: false),
   }.freeze
@@ -34,7 +33,6 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     :reference_barcode_database,
     :dryad_link,
     :decontamination_method,
-    :primers,
     :researcher_authors,
     :user_authors,
     :created_at,
@@ -49,7 +47,6 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     :reference_barcode_database,
     :dryad_link,
     :decontamination_method,
-    :primers,
     :researcher_authors,
     :user_authors
   ].freeze

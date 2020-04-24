@@ -15,17 +15,16 @@ module FilterCompletedSamples
   end
 
   def samples_for_primers(samples)
-    primers = Primer.all.pluck(:name)
-    raw_primers = params[:primer].split('|')
-                                 .select { |p| primers.include?(p) }
-
-    samples =
-      samples.where('samples.primers && ?', "{#{raw_primers.join(',')}}")
-    samples
+    primer_ids = params[:primer].split('|')
+    samples.joins(:sample_primers)
+           .where('sample_primers.primer_id IN (?)', primer_ids)
+           .group(:id)
   end
 
   def research_project_samples
     @research_project_samples ||= begin
+      return [] if project.blank?
+
       completed_samples
         .joins('JOIN research_project_sources ' \
           'ON samples.id = research_project_sources.sourceable_id')

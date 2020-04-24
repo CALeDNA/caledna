@@ -52,7 +52,7 @@ module Api
           completed_samples
             .select(:id).select(:barcode).select(:status_cd)
             .select(:latitude).select(:longitude).select(:substrate_cd)
-            .select(:primers).select(:gps_precision).select(:location)
+            .select(:gps_precision).select(:location)
             .select('array_agg( "ncbi_nodes"."canonical_name"|| ' \
               "' | ' ||ncbi_nodes.taxon_id) AS taxa")
             .joins('JOIN asvs on asvs.sample_id = samples.id')
