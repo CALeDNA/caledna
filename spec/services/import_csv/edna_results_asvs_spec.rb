@@ -85,7 +85,7 @@ describe ImportCsv::EdnaResultsAsvs do
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
     let(:research_project) { create(:research_project, id: project_id) }
-    let(:primer) { '12S' }
+    let(:primer) { create(:primer, id: primer_id) }
     let(:data) { CSV.read(file.path, headers: true, col_sep: "\t") }
     let(:csv_barcode1) { 'K0001-LA-S1' }
     let(:taxon_id1) { 1 }
@@ -94,6 +94,7 @@ describe ImportCsv::EdnaResultsAsvs do
     let(:sample_id1) { 100 }
     let(:sample_id2) { 200 }
     let(:project_id) { 500 }
+    let(:primer_id) { 1000 }
 
     before(:each) do
       project = create(:field_project, name: 'unknown')
@@ -167,7 +168,7 @@ describe ImportCsv::EdnaResultsAsvs do
           subject
         end
           .to have_enqueued_job.with(
-            research_project_id: research_project.id, primer: primer,
+            research_project_id: project_id, primer_id: primer_id,
             taxon_id: taxon_id2, sample_id: sample_id1, count: 2
           ).exactly(1).times
       end
@@ -177,8 +178,8 @@ describe ImportCsv::EdnaResultsAsvs do
           subject
         end
           .to have_enqueued_job.with(
-            research_project_id: research_project.id, primer: primer,
-            taxon_id: taxon_id2, sample_id: sample_id2, count: 2
+            research_project_id: project_id, primer_id: primer_id,
+            taxon_id: taxon_id2, sample_id: sample_id2, count: 4
           ).exactly(1).times
       end
 
@@ -207,9 +208,9 @@ describe ImportCsv::EdnaResultsAsvs do
 
       it 'passes arguements to ImportCsvCreateSamplePrimerJob' do
         arguements = {
-          sample_id: 1,
-          research_project_id: 10,
-          primer_id: 100
+          sample_id: sample_id1,
+          research_project_id: project_id,
+          primer_id: primer_id
         }
 
         expect { subject }
@@ -218,9 +219,9 @@ describe ImportCsv::EdnaResultsAsvs do
 
       it 'passes arguements to ImportCsvCreateSamplePrimerJob' do
         arguements = {
-          sample_id: 2,
-          research_project_id: 10,
-          primer_id: 100
+          sample_id: sample_id2,
+          research_project_id: project_id,
+          primer_id: primer_id
         }
 
         expect { subject }

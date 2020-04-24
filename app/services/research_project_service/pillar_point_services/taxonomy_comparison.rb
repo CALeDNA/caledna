@@ -89,7 +89,7 @@ module ResearchProjectService
         return if taxon_groups.blank?
 
         ' AND lower(pillar_point.combine_taxa.kingdom) in ' \
-          "(#{selected_taxon_groups})"
+        "(#{selected_taxon_groups})"
       end
     end
   end

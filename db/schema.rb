@@ -36,17 +36,14 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "asvs", id: :serial, force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "asvs", force: :cascade do |t|
     t.integer "taxon_id"
-    t.text "primers", default: [], array: true
-    t.integer "sample_id"
-    t.integer "count", default: 0
-    t.jsonb "counts", default: {}
-    t.integer "research_project_id"
-    t.string "primer"
+    t.bigint "sample_id"
+    t.integer "count"
+    t.bigint "research_project_id"
     t.bigint "primer_id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["primer_id"], name: "index_asvs_on_primer_id"
     t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
@@ -187,7 +184,7 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
   end
 
   create_table "ncbi_names", force: :cascade do |t|
-    t.integer "taxon_id", null: false
+    t.integer "taxon_id"
     t.text "name"
     t.string "unique_name"
     t.string "name_class"
@@ -196,53 +193,44 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index "lower(name)", name: "index_ncbi_names_on_lower_name"
     t.index ["name_class"], name: "index_ncbi_names_on_name_class"
-    t.index ["taxon_id"], name: "ncbi_names_taxonid_idx"
+    t.index ["ncbi_version_id"], name: "index_ncbi_names_on_ncbi_version_id"
+    t.index ["taxon_id"], name: "index_ncbi_names_on_taxon_id"
   end
 
-  create_table "ncbi_nodes", primary_key: "taxon_id", id: :integer, default: nil, force: :cascade do |t|
+  create_table "ncbi_nodes", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
     t.integer "parent_taxon_id"
-    t.string "rank", limit: 255
-    t.string "embl_code", limit: 255
-    t.integer "division_id"
-    t.boolean "inherited_division"
-    t.integer "genetic_code_id"
-    t.boolean "inherited_genetic_code"
-    t.integer "mitochondrial_genetic_code_id"
-    t.boolean "inherited_mitochondrial_genetic_code"
-    t.boolean "genbank_hidden"
-    t.boolean "hidden_subtree_root"
-    t.text "comments"
+    t.string "rank"
     t.string "canonical_name"
-    t.text "lineage", array: true
-    t.jsonb "hierarchy", default: {}
-    t.text "full_taxonomy_string"
-    t.text "short_taxonomy_string"
+    t.integer "division_id"
     t.integer "cal_division_id"
-    t.integer "asvs_count", default: 0
-    t.string "ids", default: [], array: true
-    t.string "alt_names"
+    t.text "full_taxonomy_string"
+    t.integer "ids", default: [], array: true
+    t.text "ranks", default: [], array: true
+    t.text "names", default: [], array: true
     t.jsonb "hierarchy_names", default: {}
+    t.jsonb "hierarchy", default: {}
     t.integer "ncbi_id"
-    t.bigint "bold_id"
-    t.integer "asvs_count_5", default: 0
-    t.integer "asvs_count_la_river", default: 0
-    t.integer "asvs_count_la_river_5", default: 0
+    t.integer "bold_id"
+    t.string "source", default: "ncbi"
+    t.bigint "ncbi_version_id"
+    t.string "alt_names"
     t.string "common_names"
-    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "idx_taxa_search", using: :gin
-    t.index "lower((canonical_name)::text) text_pattern_ops", name: "canonical_name_prefix"
-    t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
+    t.integer "asvs_count", default: 0
+    t.integer "asvs_count_la_river", default: 0
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "full_text_search_idx", using: :gin
+    t.index "lower((canonical_name)::text) text_pattern_ops", name: "name_autocomplete_idx"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
-    t.index ["asvs_count_5"], name: "index_ncbi_nodes_on_asvs_count_5"
     t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"
-    t.index ["asvs_count_la_river_5"], name: "index_ncbi_nodes_on_asvs_count_la_river_5"
     t.index ["bold_id"], name: "index_ncbi_nodes_on_bold_id"
     t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
-    t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
-    t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
+    t.index ["hierarchy"], name: "index_ncbi_nodes_on_hierarchy", using: :gin
     t.index ["hierarchy_names"], name: "index_ncbi_nodes_on_hierarchy_names", using: :gin
     t.index ["ids"], name: "index_ncbi_nodes_on_ids", using: :gin
     t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
+    t.index ["ncbi_version_id"], name: "index_ncbi_nodes_on_ncbi_version_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
   end
@@ -367,10 +355,14 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "ignore", default: false
-    t.string "original_taxonomy_string"
+    t.text "original_taxonomy_string", array: true
     t.string "clean_taxonomy_string"
-    t.text "sources", default: [], array: true
+    t.text "result_sources", default: [], array: true
     t.boolean "exact_match", default: true
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
     t.index ["clean_taxonomy_string"], name: "index_result_taxa_on_clean_taxonomy_string"
     t.index ["ignore"], name: "index_result_taxa_on_ignore"
     t.index ["taxon_id"], name: "index_result_taxa_on_taxon_id"
@@ -541,7 +533,8 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
   add_foreign_key "event_registrations", "users"
   add_foreign_key "events", "field_projects"
   add_foreign_key "kobo_photos", "samples"
-  add_foreign_key "ncbi_nodes", "ncbi_divisions", column: "cal_division_id"
+  add_foreign_key "ncbi_names", "external.ncbi_versions", column: "ncbi_version_id"
+  add_foreign_key "ncbi_nodes", "external.ncbi_versions", column: "ncbi_version_id"
   add_foreign_key "pages", "research_projects"
   add_foreign_key "pages", "websites"
   add_foreign_key "research_project_authors", "research_projects"

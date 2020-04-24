@@ -43,7 +43,6 @@ module ImportCsv
 
       source.metadata =
         row.reject { |k, _v| k == 'sum.taxonomy' || k.blank? }.to_h
-
       source.save
     end
   end
