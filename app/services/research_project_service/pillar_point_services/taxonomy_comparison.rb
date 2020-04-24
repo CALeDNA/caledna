@@ -88,7 +88,8 @@ module ResearchProjectService
       def taxon_group_filters_sql
         return if taxon_groups.blank?
 
-        " AND lower(pillar_point.combine_taxa.kingdom) in (#{selected_taxon_groups})"
+        ' AND lower(pillar_point.combine_taxa.kingdom) in ' \
+          "(#{selected_taxon_groups})"
       end
     end
   end

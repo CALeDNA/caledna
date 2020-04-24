@@ -9,6 +9,7 @@ module ImportCsv
     # TODO: find a way to deal with image upload
     # Import csv if all barcodes are not in database. Create new sample for
     # each record.
+    # rubocop:disable Metrics/MethodLength
     def import_csv(file, field_project_id)
       delimiter = delimiter_detector(file)
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
@@ -23,13 +24,14 @@ module ImportCsv
       begin
         collection_date(data.entries.first)
       rescue ArgumentError
-        message = "Date must be in YYYY-MM-DD format."
+        message = 'Date must be in YYYY-MM-DD format.'
         return OpenStruct.new(valid?: false, errors: message)
       end
 
       create_samples(data, field_project_id)
       OpenStruct.new(valid?: true, errors: nil)
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 

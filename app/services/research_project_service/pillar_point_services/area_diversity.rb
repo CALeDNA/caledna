@@ -126,7 +126,8 @@ module ResearchProjectService
 
           if taxon_groups
             sql +=
-              " AND lower(pillar_point.combine_taxa.kingdom) in (#{selected_taxon_groups})"
+              ' AND lower(pillar_point.combine_taxa.kingdom) in ' \
+              "(#{selected_taxon_groups})"
           end
 
           if months
@@ -154,7 +155,8 @@ module ResearchProjectService
 
         if taxon_groups
           sql +=
-            " AND lower(pillar_point.combine_taxa.kingdom) in (#{selected_taxon_groups})"
+            ' AND lower(pillar_point.combine_taxa.kingdom) in ' \
+            "(#{selected_taxon_groups})"
         end
 
         if months

@@ -32,7 +32,6 @@ module CombineTaxonHelper
     end.join('|')
   end
 
-  # rubocop:disable Metrics/AbcSize
   def self.vernaculars(taxon)
     ncbi = taxon['ncbi_taxa']
     return if ncbi.blank?
@@ -44,7 +43,6 @@ module CombineTaxonHelper
     names = NcbiNodePillarPoint.find(id).common_names
     names.present? ? "(#{names.split('|').join(', ')})" : ''
   end
-  # rubocop:enable Metrics/AbcSize
 
   # rubocop:disable Metrics/MethodLength
   def self.target_taxon(taxon)
