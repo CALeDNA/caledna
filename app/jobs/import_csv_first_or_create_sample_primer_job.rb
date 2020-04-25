@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class ImportCsvCreateSamplePrimerJob < ApplicationJob
+class ImportCsvFirstOrCreateSamplePrimerJob < ApplicationJob
   include ImportCsv::CreateRecords
 
   queue_as :default
 
   def perform(data)
-    create_sample_primer(data)
+    first_or_create_sample_primer(data)
   end
 end

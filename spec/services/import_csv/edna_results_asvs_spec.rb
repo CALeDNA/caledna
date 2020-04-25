@@ -199,14 +199,15 @@ describe ImportCsv::EdnaResultsAsvs do
                                .exactly(1).times
       end
 
-      it 'adds ImportCsvCreateSamplePrimerJob to queue' do
+      it 'adds ImportCsvFirstOrCreateSamplePrimerJob to queue' do
         expect do
           subject
         end
-          .to have_enqueued_job(ImportCsvCreateSamplePrimerJob).exactly(2).times
+          .to have_enqueued_job(ImportCsvFirstOrCreateSamplePrimerJob)
+          .exactly(2).times
       end
 
-      it 'passes arguements to ImportCsvCreateSamplePrimerJob' do
+      it 'passes arguements to ImportCsvFirstOrCreateSamplePrimerJob' do
         arguements = {
           sample_id: sample_id1,
           research_project_id: project_id,
@@ -217,7 +218,7 @@ describe ImportCsv::EdnaResultsAsvs do
           .to have_enqueued_job.with(arguements).exactly(1).times
       end
 
-      it 'passes arguements to ImportCsvCreateSamplePrimerJob' do
+      it 'passes arguements to ImportCsvFirstOrCreateSamplePrimerJob' do
         arguements = {
           sample_id: sample_id2,
           research_project_id: project_id,
@@ -226,6 +227,13 @@ describe ImportCsv::EdnaResultsAsvs do
 
         expect { subject }
           .to have_enqueued_job.with(arguements).exactly(1).times
+      end
+
+      it 'adds ImportCsvUpdateSampleStatusJob to queue' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job(ImportCsvUpdateSampleStatusJob).exactly(2).times
       end
     end
   end

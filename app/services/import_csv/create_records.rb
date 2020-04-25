@@ -13,7 +13,7 @@ module ImportCsv
             "ASV #{attributes[:sample_id]}: #{record.errors.messages}"
     end
 
-    def create_sample_primer(attributes)
+    def first_or_create_sample_primer(attributes)
       record = SamplePrimer.where(attributes).first_or_create
 
       return record if record.valid?

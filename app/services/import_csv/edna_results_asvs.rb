@@ -53,7 +53,7 @@ module ImportCsv
         create_asvs_for_row(row, barcodes, samples_data, attributes)
       end
 
-      create_sample_primers(samples_data, asv_attributes)
+      update_sample_data(samples_data, asv_attributes)
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
@@ -83,11 +83,12 @@ module ImportCsv
 
     private
 
-    def create_sample_primers(samples_data, asv_attributes)
+    def update_sample_data(samples_data, asv_attributes)
       samples_data.each do |_barcode, sample_id|
         attributes = asv_attributes.merge(sample_id: sample_id)
 
-        ImportCsvCreateSamplePrimerJob.perform_later(attributes)
+        ImportCsvUpdateSampleStatusJob.perform_later(sample_id)
+        ImportCsvFirstOrCreateSamplePrimerJob.perform_later(attributes)
       end
     end
 
