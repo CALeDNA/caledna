@@ -185,8 +185,8 @@ describe 'FieldProjecs' do
     context 'primer query param' do
       let(:primer1_id) { 10 }
       let(:primer2_id) { 20 }
-      let(:primer1) { create(:primer, id: primer1_id) }
-      let(:primer2) { create(:primer, id: primer2_id) }
+      let(:primer1) { create(:primer, name: 'primer1', id: primer1_id) }
+      let(:primer2) { create(:primer, name: 'primer2', id: primer2_id) }
       let(:project) { create(:field_project, id: target_id) }
 
       def create_samples
@@ -209,8 +209,12 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(1)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' }
+          ]
+        )
       end
 
       it 'returns samples when there are multiple primer' do
@@ -222,8 +226,13 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(2)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id], [primer2_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' },
+            { 'id' => primer2_id, 'name' => 'primer2' }
+          ]
+        )
       end
 
       it 'ignores invalid primers' do
@@ -249,8 +258,13 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(1)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id, primer2_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' },
+            { 'id' => primer2_id, 'name' => 'primer2' }
+          ]
+        )
       end
     end
 

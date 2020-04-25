@@ -169,8 +169,8 @@ describe 'ResearchProjects' do
       let(:primer1_id) { 10 }
       let(:primer2_id) { 20 }
       let(:project) { create(:research_project, slug: target_id) }
-      let(:primer1) { create(:primer, id: primer1_id) }
-      let(:primer2) { create(:primer, id: primer2_id) }
+      let(:primer1) { create(:primer, name: 'primer1', id: primer1_id) }
+      let(:primer2) { create(:primer, name: 'primer2', id: primer2_id) }
 
       it 'returns samples when there is one primer' do
         create_project_samples(project, primer: primer1)
@@ -181,8 +181,10 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [{ 'id' => primer1_id, 'name' => 'primer1' }]
+        )
       end
 
       it 'returns samples when there are multiple primer' do
@@ -195,8 +197,13 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(2)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id], [primer2_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' },
+            { 'id' => primer2_id, 'name' => 'primer2' }
+          ]
+        )
       end
 
       it 'ignores invalid primers' do
@@ -227,8 +234,10 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [{ 'id' => primer1_id, 'name' => 'primer1' }]
+        )
       end
 
       it 'only includes one instance of a sample' do
@@ -247,8 +256,13 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id, primer2_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' },
+            { 'id' => primer2_id, 'name' => 'primer2' }
+          ]
+        )
       end
     end
 

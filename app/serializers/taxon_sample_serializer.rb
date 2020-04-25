@@ -6,7 +6,10 @@ class TaxonSampleSerializer
              :gps_precision, :location, :taxa
 
   attribute :primers do |object|
-    object.sample_primers.pluck(:primer_id).uniq
+    object.sample_primers
+          .joins(:primer)
+          .select('primers.name, primers.id')
+          .uniq
   end
 
   attribute :taxa do |object|

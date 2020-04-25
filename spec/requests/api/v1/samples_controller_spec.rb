@@ -123,8 +123,8 @@ describe 'Samples' do
       before(:each) do
         s1 = create(:sample, :approved)
         s2 = create(:sample, :results_completed)
-        p1 = create(:primer, name: '12S', id: primer1_id)
-        p2 = create(:primer, name: '18s', id: primer2_id)
+        p1 = create(:primer, name: 'primer1', id: primer1_id)
+        p2 = create(:primer, name: 'primer2', id: primer2_id)
 
         rproj1 = create(:research_project)
         rproj2 = create(:research_project)
@@ -139,8 +139,12 @@ describe 'Samples' do
 
         expect(data.length).to eq(1)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to eq([[primer1_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' }
+          ]
+        )
       end
 
       it 'returns samples when there are multiple primer' do
@@ -149,8 +153,13 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id], [primer2_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' },
+            { 'id' => primer2_id, 'name' => 'primer2' }
+          ]
+        )
       end
 
       it 'ignores invalid primers' do

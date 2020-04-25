@@ -240,8 +240,10 @@ describe 'Taxa' do
 
       def create_samples
         taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-        create_occurence(taxon, primer: create(:primer, id: primer1_id))
-        create_occurence(taxon, primer: create(:primer, id: primer2_id))
+        primer1 = create(:primer, id: primer1_id, name: 'primer1')
+        primer2 = create(:primer, id: primer2_id, name: 'primer2')
+        create_occurence(taxon, primer: primer1)
+        create_occurence(taxon, primer: primer2)
         create_occurence(taxon, primer: create(:primer, id: 30))
       end
 
@@ -255,8 +257,12 @@ describe 'Taxa' do
         expect(asvs_count.length).to eq(3)
         expect(base_samples.length).to eq(1)
 
-        primers = samples.map { |i| i['attributes']['primers'] }
-        expect(primers).to eq([[primer1_id]])
+        primer = samples.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' }
+          ]
+        )
       end
 
       it 'returns samples when there is multiple primers' do
@@ -270,8 +276,13 @@ describe 'Taxa' do
         expect(asvs_count.length).to eq(3)
         expect(base_samples.length).to eq(2)
 
-        primers = samples.map { |i| i['attributes']['primers'] }
-        expect(primers).to match_array([[primer1_id], [primer2_id]])
+        primer = samples.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' },
+            { 'id' => primer2_id, 'name' => 'primer2' }
+          ]
+        )
       end
 
       it 'ignores invalid primers' do
@@ -285,8 +296,8 @@ describe 'Taxa' do
 
       it 'only includes one instance of a sample' do
         taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-        primer1 = create(:primer, id: primer1_id)
-        primer2 = create(:primer, id: primer2_id)
+        primer1 = create(:primer, id: primer1_id, name: 'primer1')
+        primer2 = create(:primer, id: primer2_id, name: 'primer2')
         sample = create(:sample, :results_completed)
         research_project = create(:research_project)
         create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer1)
@@ -302,8 +313,13 @@ describe 'Taxa' do
 
         expect(data.length).to eq(1)
 
-        primer = data.map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array([[primer1_id, primer2_id]])
+        primer = data.flat_map { |i| i['attributes']['primers'] }
+        expect(primer).to match_array(
+          [
+            { 'id' => primer1_id, 'name' => 'primer1' },
+            { 'id' => primer2_id, 'name' => 'primer2' }
+          ]
+        )
       end
     end
   end

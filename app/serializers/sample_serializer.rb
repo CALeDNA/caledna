@@ -8,11 +8,15 @@ class SampleSerializer
   attribute :primers do |object, params|
     if params[:research_project_id]
       object.sample_primers
+            .joins(:primer)
             .where(research_project_id: params[:research_project_id])
-            .pluck(:primer_id)
+            .select('primers.name, primers.id')
             .uniq
     else
-      object.sample_primers.pluck(:primer_id).uniq
+      object.sample_primers
+            .joins(:primer)
+            .select('primers.name, primers.id')
+            .uniq
     end
   end
 end
