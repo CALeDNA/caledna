@@ -6,10 +6,11 @@ module ImportCsv
     include ProcessEdnaResults
 
     def first_or_create_asv(attributes)
-      asv = Asv.where(attributes).first_or_create
+      record = Asv.where(attributes).first_or_create
 
-      return asv if asv.valid?
-      raise ImportError, "ASV #{attributes[:sample_id]}: #{asv.errors}"
+      return record if record.valid?
+      raise ImportError,
+            "ASV #{attributes[:sample_id]}: #{record.errors.messages}"
     end
 
     def create_sample_primer(attributes)
@@ -19,7 +20,8 @@ module ImportCsv
       sample_id = attributes[:sample_id]
       primer_id = attributes[:primer_id]
 
-      raise ImportError, "SamplePrimer #{sample_id} #{primer_id}: #{asv.errors}"
+      raise ImportError,
+            "SamplePrimer #{sample_id} #{primer_id}: #{record.errors.messages}"
     end
 
     def first_or_create_research_project_source(sourceable_id, type,
@@ -30,9 +32,11 @@ module ImportCsv
         research_project_id: research_project_id
       }
 
-      source = ResearchProjectSource.where(attributes).first_or_create
-      return if source.valid?
-      raise ImportError, 'ResearchProjectSource not created'
+      record = ResearchProjectSource.where(attributes).first_or_create
+
+      return if record.valid?
+      raise ImportError,
+            "ResearchProjectSource #{sourceable_id}: #{record.errors.messages}"
     end
 
     def create_result_taxon(data)

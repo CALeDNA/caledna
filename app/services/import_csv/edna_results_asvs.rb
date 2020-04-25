@@ -48,6 +48,7 @@ module ImportCsv
 
         result_taxon = find_result_taxon_from_string(taxonomy_string)
         raise ImportError, 'must import taxa first' if result_taxon.blank?
+        next if result_taxon.taxon_id.blank?
 
         attributes = asv_attributes.merge(taxon_id: result_taxon.taxon_id)
         create_asvs_for_row(row, barcodes, samples_data, attributes)
