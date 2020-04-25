@@ -128,14 +128,15 @@ module Admin
       def update_result_taxon_params
         {
           normalized: true,
-          ignored: false,
+          ignore: false,
           taxon_id: raw_params[:taxon_id],
-          taxon_rank: raw_params[:rank]
+          ncbi_id: raw_params[:ncbi_id],
+          bold_id: raw_params[:bold_id]
         }
       end
 
       def create_params
-        raw_params.except(:result_taxon_id, :dataset_id)
+        raw_params.except(:result_taxon_id)
       end
 
       # rubocop:disable Metrics/MethodLength
@@ -148,10 +149,15 @@ module Admin
           :result_taxon_id,
           :division_id,
           :cal_division_id,
-          :dataset_id,
+          :bold_id,
+          :ncbi_id,
+          :source,
+          :full_taxonomy_string,
           hierarchy_names: {},
           hierarchy: {},
-          ids: []
+          ids: [],
+          names: [],
+          ranks: []
         )
       end
       # rubocop:enable Metrics/MethodLength
