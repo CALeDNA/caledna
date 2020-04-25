@@ -10,189 +10,172 @@ describe ProcessEdnaResults do
       dummy_class.convert_raw_barcode(header)
     end
 
-    it 'converts kit.number header' do
-      header = 'X16S_K0078.C2.S59.L001'
+    context 'when v1 barcodes K0001-LA-S1' do
+      it 'converts KxxxxLS' do
+        headers = [
+          ['k1b1', 'K0001-LB-S1'],
+          ['K12B1', 'K0012-LB-S1'],
+          ['k123b1', 'K0123-LB-S1'],
+          ['K1234B1', 'K1234-LB-S1'],
+          ['k1234b1.extra', 'K1234-LB-S1']
+        ]
 
-      expect(subject(header)).to eq('K0078-LC-S2')
-    end
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
+      end
 
-    it 'converts K_L_S_ header' do
-      headers = [
-        ['X16S_K1LAS1.S18.L001', 'K0001-LA-S1'],
-        ['X16S_K12LAS1.S18.L001', 'K0012-LA-S1'],
-        ['X16S_K123LAS1.S18.L001', 'K0123-LA-S1'],
-        ['X16S_K1234LAS1.S18.L001', 'K1234-LA-S1']
-      ]
+      it 'converts xxxxLS' do
+        headers = [
+          ['1b1', 'K0001-LB-S1'],
+          ['12B1', 'K0012-LB-S1'],
+          ['123b1', 'K0123-LB-S1'],
+          ['1234B1', 'K1234-LB-S1'],
+          ['1234b1.extra', 'K1234-LB-S1']
+        ]
 
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
+      end
+
+      it 'converts Kxxxx_L_S or Kxxxx-L-S' do
+        headers = [
+          ['k1_la_s1', 'K0001-LA-S1'],
+          ['K12_LA_S1', 'K0012-LA-S1'],
+          ['k123-la-s1', 'K0123-LA-S1'],
+          ['K1234-LA-S1', 'K1234-LA-S1'],
+          ['k1234_la-s1.extra', 'K1234-LA-S1']
+        ]
+
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
+      end
+
+      # pillar point
+      it 'converts PPxxxxLS' do
+        headers = [
+          ['pp1a1', 'K0001-LA-S1'],
+          ['PP12A1', 'K0012-LA-S1'],
+          ['pp123a1', 'K0123-LA-S1'],
+          ['PP1234A1', 'K1234-LA-S1'],
+          ['pp1234a1.extra', 'K1234-LA-S1']
+        ]
+
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
       end
     end
 
-    it 'converts K_S_L_ header' do
-      headers = [
-        ['X16S_K1S1LA.S18.L001', 'K0001-LA-S1'],
-        ['X16S_K12S1LA.S18.L001', 'K0012-LA-S1'],
-        ['X16S_K123S1LA.S18.L001', 'K0123-LA-S1'],
-        ['X16S_K1234S1LA.S18.L001', 'K1234-LA-S1']
-      ]
+    context 'when v2 barcodes K0001-A1' do
+      it 'converts Kxxxx_A1 or Kxxxx-A1' do
+        headers = [
+          ['k1_a1', 'K0001-A1'],
+          ['K12-B2', 'K0012-B2'],
+          ['k123_c3', 'K0123-C3'],
+          ['K1234-E4', 'K1234-E4'],
+          ['k0001-g5', 'K0001-G5'],
+          ['K0001_K6', 'K0001-K6'],
+          ['k0001-l7', 'K0001-L7'],
+          ['K0001_M8', 'K0001-M8'],
+          ['k0001-t9', 'K0001-T9'],
+          ['K0001_A1.extra', 'K0001-A1']
+        ]
 
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
       end
     end
 
-    it 'converts K_S_L_R_ header' do
-      headers = [
-        ['X16S_K1S1LAR1.S18.L001', 'K0001-LA-S1-R1'],
-        ['X16S_K12S1LAR1.S18.L001', 'K0012-LA-S1-R1'],
-        ['X16S_K123S1LAR1.S18.L001', 'K0123-LA-S1-R1'],
-        ['X16S_K1234S1LAR1.S18.L001', 'K1234-LA-S1-R1']
-      ]
+    context 'when random names' do
+      it 'converts LA River water samples' do
+        headers = [
+          ['mwws_a1', 'MWWS-A1'],
+          ['MWWS-B2', 'MWWS-B2'],
+          ['mwws_m8', 'MWWS-M8'],
+          ['MWWS-T9', 'MWWS-T9'],
+          ['mwws_a1.extra', 'MWWS-A1'],
+          ['asws-a1', 'ASWS-A1'],
+          ['ASWS_B2', 'ASWS-B2'],
+          ['asws-m8', 'ASWS-M8'],
+          ['ASWS_T9', 'ASWS-T9'],
+          ['asws-a1.extra', 'ASWS-A1']
+        ]
 
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
+      end
+
+      it 'converts random names with underscores' do
+        headers = [
+          %w[Foo_1234 Foo_1234],
+          ['Foo_1234.extra', 'Foo_1234']
+        ]
+
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
+      end
+
+      it 'converts random names with dashes' do
+        headers = [
+          %w[Foo-1234 Foo-1234],
+          ['Foo-1234.extra', 'Foo-1234']
+        ]
+
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
+      end
+
+      it 'converts random names with spaces' do
+        headers = [
+          ['Foo 1234', 'Foo 1234'],
+          ['Foo 1234.extra', 'Foo 1234']
+        ]
+
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
+      end
+
+      it 'converts random names' do
+        headers = [
+          %w[Foo1234 Foo1234],
+          ['Foo1234.extra', 'Foo1234']
+        ]
+
+        headers.each do |header|
+          expect(subject(header.first)).to eq(header.second)
+        end
       end
     end
 
-    it 'converts K_LS header' do
-      headers = [
-        ['X16S_K1A1.S18.L001', 'K0001-LA-S1'],
-        ['X16S_K12A1.S18.L001', 'K0012-LA-S1'],
-        ['X16S_K123A1.S18.L001', 'K0123-LA-S1'],
-        ['X16S_K1234A1.S18.L001', 'K1234-LA-S1']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
+    context 'when blank or neg' do
+      it 'returns nil for "blank" samples' do
+        headers = [
+          'K0001.blank.extra', 'X16s_K0001Blank.extra', 'FooBLANK',
+          'X16S_FooBlank', 'blank.Foo', 'Foo.blank'
+        ]
+        headers.each do |header|
+          expect(subject(header)).to eq(nil)
+        end
       end
-    end
 
-    it 'converts _LS header' do
-      headers = [
-        ['X16S_1A1.S18.L001', 'K0001-LA-S1'],
-        ['X16S_12A1.S18.L001', 'K0012-LA-S1'],
-        ['X16S_123A1.S18.L001', 'K0123-LA-S1'],
-        ['X16S_1234A1.S18.L001', 'K1234-LA-S1']
-      ]
+      it 'returns nil for "neg" samples' do
+        headers = [
+          'K0001.neg.extra', 'X16s_K0001Neg.extra', 'FooNEG',
+          'X16S_FooNeg', 'neg.Foo', 'Foo.neg'
+        ]
 
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
+        headers.each do |header|
+          expect(subject(header)).to eq(nil)
+        end
       end
-    end
-
-    it 'converts header without primers' do
-      headers = [
-        ['K1A1.S18.L001', 'K0001-LA-S1'],
-        ['K12A1.S18.L001', 'K0012-LA-S1'],
-        ['K123A1.S18.L001', 'K0123-LA-S1'],
-        ['K1234A1.S18.L001', 'K1234-LA-S1']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
-      end
-    end
-
-    it 'converts abbreviated K_LS header' do
-      headers =  [
-        ['K1B1', 'K0001-LB-S1'],
-        ['K12B1', 'K0012-LB-S1'],
-        ['K123B1', 'K0123-LB-S1'],
-        ['K1234B1', 'K1234-LB-S1']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
-      end
-    end
-
-    it 'converts abbreviated X_LS header' do
-      headers =  [
-        ['X1B1', 'K0001-LB-S1'],
-        ['X12B1', 'K0012-LB-S1'],
-        ['X123B1', 'K0123-LB-S1'],
-        ['X1234B1', 'K1234-LB-S1']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
-      end
-    end
-
-    it 'converts abbreviated _LS header' do
-      headers =  [
-        ['1B1', 'K0001-LB-S1'],
-        ['12B1', 'K0012-LB-S1'],
-        ['123B1', 'K0123-LB-S1'],
-        ['1234B1', 'K1234-LB-S1']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
-      end
-    end
-
-    it 'converts abbreviated PP_LS header' do
-      headers =  [
-        ['PP1B1', 'K0001-LB-S1'],
-        ['PP12B1', 'K0012-LB-S1'],
-        ['PP123B1', 'K0123-LB-S1'],
-        ['PP1234B1', 'K1234-LB-S1']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
-      end
-    end
-
-    it 'converts X12S_K0723_A1.10.S10.L001' do
-      headers = [
-        ['X12S_K0001_A1.01.S01.L001', 'K0001-A1'],
-        ['K0001_A1.01.S01.L001', 'K0001-A1']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
-      end
-    end
-
-    it 'converts water samples' do
-      headers = [
-        ['X12S_MWWS_A0.01.S01.L001', 'MWWS-A0'],
-        ['ASWS_A0.01.S01.L001', 'ASWS-A0']
-      ]
-
-      headers.each do |header|
-        expect(subject(header.first)).to eq(header.second)
-      end
-    end
-
-    it 'returns nil for "blank" samples' do
-      headers = [
-        'K0401.blank.S135.L001', 'X16s_K0001Blank.S1.L001', 'forestpcrBLANK',
-        'X16S_ShrubBlank1'
-      ]
-      headers.each do |header|
-        expect(subject(header)).to eq(nil)
-      end
-    end
-
-    it 'returns nil for "neg" samples' do
-      headers = [
-        'K0401.extneg.S135.L001', 'X16s_K0001Neg.S1.L001', 'forestpcrNEG',
-        'X16S_neg'
-      ]
-
-      headers.each do |header|
-        expect(subject(header)).to eq(nil)
-      end
-    end
-
-    it 'returns nil for invalid barcode' do
-      header = 'PITS_forest.S96.L001'
-
-      expect(subject(header)).to eq(nil)
     end
   end
 

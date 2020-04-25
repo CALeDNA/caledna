@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ProcessEdnaResults
+  # rubocop:disable Metrics/CyclomaticComplexity
   def invalid_taxon?(taxonomy_string, strict: true)
     return true if taxonomy_string == 'NA'
     return true if taxonomy_string.split(';').blank?
@@ -13,7 +14,7 @@ module ProcessEdnaResults
     return true if parts_count > 7
     false
   end
-
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def format_result_taxon_data_from_string(taxonomy_string)
     rank = get_taxon_rank(taxonomy_string)
@@ -239,84 +240,63 @@ module ProcessEdnaResults
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def convert_raw_barcode(cell)
-    sample = cell.split('_').last
-    parts = sample.split('.')
+    parts = cell.split('.')
+    sample = parts[0]
+    ksample = sample.tr('_', '-')
+    # return nil
 
-    # NOTE: dot notation. X16S_K0078.C2.S59.L001
-    if /^(K\d{4})\.([ABC][12])\./.match?(sample)
-      kit = parts.first
-      location_letter = parts.second.split('').first
-      sample_number = parts.second.split('').second
-      "#{kit}-L#{location_letter}-S#{sample_number}"
-
-    # NOTE: K_L_S_. 'X12S_K0124LBS2.S16.L001'
-    elsif /^K(\d{1,4})(L[ABC])(S[12])\./.match?(sample)
-      match = /^K(\d{1,4})(L[ABC])(S[12])/.match(parts.first)
+    # NOTE: KxxxxLS, barcode v1
+    if /^[K]?\d{1,4}[ABC][12]$/i.match?(ksample)
+      match = /(\d{1,4})([ABC])([12])/i.match(ksample)
       kit = match[1].rjust(4, '0')
       location_letter = match[2]
       sample_number = match[3]
-      "K#{kit}-#{location_letter}-#{sample_number}"
+      "K#{kit}-L#{location_letter}-S#{sample_number}".upcase
 
-    # NOTE: K_S_L_. 'X12S_K0404S1LA.S1.L001'
-    elsif /^K(\d{1,4})(S[12])(L[ABC])\./.match?(sample)
-      match = /^K(\d{1,4})(S[12])(L[ABC])/.match(parts.first)
+    # NOTE: Kxxxx-L-S, barcode v1
+    elsif /^[K]\d{1,4}-L[ABC]-S[12]$/i.match?(ksample)
+      match = /(\d{1,4})-L([ABC])-S([12])/i.match(ksample)
       kit = match[1].rjust(4, '0')
-      location_letter = match[3]
+      location_letter = match[2]
+      sample_number = match[3]
+      "K#{kit}-L#{location_letter}-S#{sample_number}".upcase
+
+    # NOTE: PPxxxxA1, Pillar Point, barcode v1
+    elsif /^PP\d{1,4}[ABC][12]$/i.match?(ksample)
+      match = /(\d{1,4})([ABC])([12])/i.match(ksample)
+      kit = match[1].rjust(4, '0')
+      location_letter = match[2]
+      sample_number = match[3]
+      "K#{kit}-L#{location_letter}-S#{sample_number}".upcase
+
+    # NOTE: Kxxxx-A1, barcode v2
+    # rubocop:disable Metrics/LineLength
+    elsif /^[K]\d{1,4}-((A1)|(B2)|(C3)|(E4)|(G5)|(K6)|(L7)|(M8)|(T9))$/i.match?(ksample)
+      match = /(\d{1,4})-(\w\d)/i.match(ksample)
+      kit = match[1].rjust(4, '0')
       sample_number = match[2]
-      "K#{kit}-#{location_letter}-#{sample_number}"
+      "K#{kit}-#{sample_number}".upcase
+    # rubocop:enable Metrics/LineLength
 
-    # NOTE: K_S_L_R_. 'X18S_K0403S1LBR1.S16.L001'
-    elsif /^K(\d{1,4})(S[12])(L[ABC])(R\d)\./.match?(sample)
-      match = /^K(\d{1,4})(S[12])(L[ABC])(R\d)/.match(parts.first)
-      kit = match[1].rjust(4, '0')
-      location_letter = match[3]
+    # NOTE: ASWS-A1 or MWWS-A1, barcode v2
+    elsif /^((ASWS)|(MWWS))-(\w\d)$/i.match?(ksample)
+      match = /(\w{4})-(\w\d)/i.match(ksample)
+      kit = match[1]
       sample_number = match[2]
-      replicate_number = match[4]
-      "K#{kit}-#{location_letter}-#{sample_number}-#{replicate_number}"
+      "#{kit}-#{sample_number}".upcase
 
-    # NOTE: K_LS. PITS_K0001A1.S1.L001
-    # NOTE: _LS. X16S_11A1.S18.L001
-    elsif /^K?\d{1,4}[ABC][12]\./.match?(sample)
-      match = /(\d{1,4})([ABC])([12])/.match(parts.first)
-      kit = match[1].rjust(4, '0')
-      location_letter = match[2]
-      sample_number = match[3]
-      "K#{kit}-L#{location_letter}-S#{sample_number}"
-
-    # NOTE: K301B1
-    # NOTE: X203C1
-    # NOTE: 203C1
-    elsif /^[KX]?\d{1,4}[ABC][12]$/.match?(sample)
-      match = /(\d{1,4})([ABC])([12])/.match(parts.first)
-      kit = match[1].rjust(4, '0')
-      location_letter = match[2]
-      sample_number = match[3]
-      "K#{kit}-L#{location_letter}-S#{sample_number}"
-
-    # NOTE: PP301B1
-    elsif /^PP\d{1,4}[ABC][12]$/.match?(sample)
-      match = /(\d{1,4})([ABC])([12])/.match(parts.first)
-      kit = match[1].rjust(4, '0')
-      location_letter = match[2]
-      sample_number = match[3]
-      "K#{kit}-L#{location_letter}-S#{sample_number}"
-
-    # NOTE: K0401.extneg.S135.L001 or X16S_ShrubBlank1
-    elsif /(neg)|(blank)/i.match?(sample)
+    # NOTE: neg or blank
+    elsif /(neg)|(blank)/i.match?(cell)
       nil
 
-    # NOTE: X12S_MWWS_H0.54.S54.L001 or X12S_K0723_A1.10.S10.L001
-    elsif /^.*?\.\d+\.S\d+\.L\d{3}$/.match?(cell)
-      match = /(.*?)\.\d+\.S\d+\.L\d{3}/.match(cell)
-      parts = match[1].split('_')
-      if parts.length == 3
-        "#{parts[1]}-#{parts[2]}"
-      else
-        "#{parts[0]}-#{parts[1]}"
-      end
+    elsif /^sum.taxonomy$/i.match?(cell)
+      nil
 
-    elsif /^K\d{1,4}/.match?(sample)
-      raise ImportError, "#{sample}: invalid sample format"
+    elsif /^sum$/i.match?(cell)
+      nil
+
+    else
+      sample
     end
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
