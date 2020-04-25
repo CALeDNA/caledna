@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_22_092612) do
+ActiveRecord::Schema.define(version: 2020_04_24_175505) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -89,9 +90,9 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "iucn_status"
     t.string "source"
     t.string "col_id"
     t.string "wikispecies_id"
@@ -191,7 +192,8 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.bigint "ncbi_version_id"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.index "lower(name)", name: "index_ncbi_names_on_lower_name"
+    t.index "lower(name)", name: "index_ncbi_names_on_name2"
+    t.index ["name"], name: "index_ncbi_names_on_name"
     t.index ["name_class"], name: "index_ncbi_names_on_name_class"
     t.index ["ncbi_version_id"], name: "index_ncbi_names_on_ncbi_version_id"
     t.index ["taxon_id"], name: "index_ncbi_names_on_taxon_id"
@@ -287,9 +289,9 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.integer "sourceable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "sample_id"
     t.string "sourceable_type"
     t.jsonb "metadata", default: {}
+    t.integer "sample_id"
     t.index "((metadata ->> 'location'::text))", name: "idx_rps_metadata_location"
     t.index ["research_project_id"], name: "index_research_project_sources_on_research_project_id"
     t.index ["sample_id"], name: "index_research_project_sources_on_sample_id"
@@ -341,13 +343,23 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.index ["email"], name: "index_researchers_on_email", unique: true
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
-    t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
 
-  create_table "result_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
+  create_table "result_raw_imports", force: :cascade do |t|
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.string "canonical_name"
+    t.string "primer"
+    t.bigint "research_project_id"
+    t.jsonb "payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["research_project_id"], name: "index_result_raw_imports_on_research_project_id"
+  end
+
+  create_table "result_taxa", id: :serial, force: :cascade do |t|
     t.string "taxon_rank"
     t.jsonb "hierarchy"
     t.boolean "normalized"
@@ -364,8 +376,139 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.integer "ncbi_version_id"
     t.string "canonical_name"
     t.index ["clean_taxonomy_string"], name: "index_result_taxa_on_clean_taxonomy_string"
+    t.index ["clean_taxonomy_string"], name: "result_taxa_clean_taxonomy_string_idx", unique: true
     t.index ["ignore"], name: "index_result_taxa_on_ignore"
     t.index ["taxon_id"], name: "index_result_taxa_on_taxon_id"
+  end
+
+  create_table "result_taxa_v2", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+  end
+
+  create_table "result_taxa_v3", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+  end
+
+  create_table "result_taxa_v4", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+  end
+
+  create_table "result_taxa_v5", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
+  create_table "result_taxa_v6", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
+  create_table "result_taxa_v7", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
+  create_table "result_taxa_v8", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
   end
 
   create_table "sample_primers", force: :cascade do |t|
@@ -399,7 +542,7 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.string "depth_cd"
     t.boolean "missing_coordinates", default: false
     t.jsonb "metadata", default: {}
-    t.string "primers", default: [], array: true
+    t.string "primersx", default: [], array: true
     t.jsonb "csv_data", default: {}
     t.string "country", default: "United States of America"
     t.string "country_code", default: "US"
@@ -410,7 +553,7 @@ ActiveRecord::Schema.define(version: 2020_04_22_092612) do
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
     t.index ["metadata"], name: "samples_metadata_idx", using: :gin
-    t.index ["primers"], name: "index_samples_on_primer", using: :gin
+    t.index ["primersx"], name: "index_samples_on_primer", using: :gin
     t.index ["status_cd"], name: "index_samples_on_status_cd"
   end
 
