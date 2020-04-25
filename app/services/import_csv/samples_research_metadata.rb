@@ -9,8 +9,7 @@ module ImportCsv
     # only import csv if all barcodes are in database. create or update
     # research project sources
     def import_csv(file, research_project_id)
-      delimiter = delimiter_detector(file)
-      data = CSV.read(file.path, headers: true, col_sep: delimiter)
+      data = my_csv_read(file)
 
       new_barcodes =
         process_barcodes_for_csv_table(data, 'sum.taxonomy')[:new_barcodes]

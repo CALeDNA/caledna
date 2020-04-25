@@ -13,4 +13,11 @@ module CsvUtils
     counts = counts.sort { |a, b| b[1] <=> a[1] }
     counts.size.positive? ? counts[0][0][1] : nil
   end
+
+  def my_csv_read(file)
+    # set encoding to handle UTF8 BOM files
+    # https://stackoverflow.com/a/7780559 https://stackoverflow.com/a/6784805
+    delim = delimiter_detector(file)
+    CSV.read(file.path, headers: true, col_sep: delim, encoding: 'bom|utf-8')
+  end
 end

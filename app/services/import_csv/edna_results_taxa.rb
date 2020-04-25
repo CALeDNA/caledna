@@ -10,10 +10,10 @@ module ImportCsv
     # only import csv if first sum.taxonomy has valid taxa string. find
     # ResultTaxon, then update or create ResultTaxon
     def import_csv(file, research_project_id, primer)
-      delimiter = delimiter_detector(file)
-      data = CSV.read(file.path, headers: true, col_sep: delimiter)
+      data = my_csv_read(file)
 
       first_result = data.entries.first['sum.taxonomy']
+
       if invalid_taxon?(first_result)
         return OpenStruct.new(valid?: false,
                               errors: "#{first_result} is invalid format")

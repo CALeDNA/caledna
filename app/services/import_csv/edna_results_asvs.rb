@@ -10,8 +10,7 @@ module ImportCsv
     # only import csv if all barcodes are in the database. First or create
     # ResearchProjectSource. First or create ASV.
     def import_csv(file, research_project_id, primer_id)
-      delimiter = delimiter_detector(file)
-      data = CSV.read(file.path, headers: true, col_sep: delimiter)
+      data = my_csv_read(file)
 
       barcodes = convert_header_row_to_barcodes(data)
       samples = find_samples_from_barcodes(barcodes)

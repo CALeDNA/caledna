@@ -11,8 +11,7 @@ module ImportCsv
     # each record.
     # rubocop:disable Metrics/MethodLength
     def import_csv(file, field_project_id)
-      delimiter = delimiter_detector(file)
-      data = CSV.read(file.path, headers: true, col_sep: delimiter)
+      data = my_csv_read(file)
 
       existing_barcodes =
         process_barcodes_for_csv_table(data, 'barcode')[:existing_barcodes]
