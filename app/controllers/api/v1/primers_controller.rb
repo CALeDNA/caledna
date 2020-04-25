@@ -6,7 +6,8 @@ module Api
       before_action :add_cors_headers
 
       def index
-        render json: PrimerSerializer.new(Primer.all).serializable_hash
+        primers = Primer.all.order(:name)
+        render json: PrimerSerializer.new(primers).serializable_hash
       end
     end
   end

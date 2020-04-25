@@ -21,28 +21,22 @@ export const searchMixins = {
     },
     filterSamples(filters, samples) {
       if (filters.status && filters.status !== "all") {
-        samples = samples.filter(sample => {
+        samples = samples.filter((sample) => {
           return filters.status == sample.status;
         });
       }
 
-      if (
-        filters.substrate &&
-        !filters.substrate.includes("all") &&
-        filters.substrate.length > 0
-      ) {
-        samples = samples.filter(sample => {
+      if (filters.substrate && !filters.substrate.includes("all") && filters.substrate.length > 0) {
+        samples = samples.filter((sample) => {
           return filters.substrate.includes(sample.substrate);
         });
       }
 
-      if (
-        filters.primer &&
-        !filters.primer.includes("all") &&
-        filters.primer.length > 0
-      ) {
-        samples = samples.filter(sample => {
-          return filters.primer.some(primer => sample.primers.includes(primer));
+      if (filters.primer && !filters.primer.includes("all") && filters.primer.length > 0) {
+        samples = samples.filter((sample) => {
+          return filters.primer.some((primer) => {
+            return sample.primers.map((p) => p.id).includes(Number(primer));
+          });
         });
       }
 

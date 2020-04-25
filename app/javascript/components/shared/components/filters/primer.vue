@@ -12,7 +12,7 @@
           :value="option.value"
           v-model="store.state.currentFilters[inputName]"
         />
-        {{option.label}}
+        {{ option.label }}
       </label>
     </div>
   </fieldset>
@@ -50,7 +50,7 @@ export default {
           let name = primer.attributes.name;
           this.options.push({
             label: name,
-            value: name,
+            value: primer.attributes.id,
             id: `primer-${name}`
           });
         });
