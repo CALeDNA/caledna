@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
 module ProcessEdnaResults
-  def invalid_taxon?(taxonomy_string)
+  def invalid_taxon?(taxonomy_string, strict: true)
     return true if taxonomy_string == 'NA'
     return true if taxonomy_string.split(';').blank?
-    return true if taxonomy_string.split(';', -1).uniq.sort == ['', 'NA']
+    if strict && taxonomy_string.split(';', -1).uniq.sort == ['', 'NA']
+      return true
+    end
 
     parts_count = taxonomy_string.split(';', -1).count
     return true if parts_count < 6
     return true if parts_count > 7
     false
   end
+
 
   def format_result_taxon_data_from_string(taxonomy_string)
     rank = get_taxon_rank(taxonomy_string)

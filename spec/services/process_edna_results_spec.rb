@@ -415,8 +415,8 @@ describe ProcessEdnaResults do
   end
 
   describe '#invalid_taxon?' do
-    def subject(string)
-      dummy_class.invalid_taxon?(string)
+    def subject(string, strict: true)
+      dummy_class.invalid_taxon?(string, strict: strict)
     end
 
     it 'returns true if string is "NA"' do
@@ -467,6 +467,16 @@ describe ProcessEdnaResults do
 
       strings.each do |string|
         expect(subject(string)).to eq(false)
+      end
+    end
+
+    context 'when strict is false' do
+      it 'returns true if string is only "NA" and semicolons' do
+        strings = [';NA;;;;;', ';NA;;NA;;NA;', ';;;;;;NA', 'NA;;;;;']
+
+        strings.each do |string|
+          expect(subject(string, strict: false)).to eq(false)
+        end
       end
     end
   end

@@ -14,7 +14,7 @@ module ImportCsv
 
       first_result = data.entries.first['sum.taxonomy']
 
-      if invalid_taxon?(first_result)
+      if invalid_taxon?(first_result, strict: false)
         return OpenStruct.new(valid?: false,
                               errors: "#{first_result} is invalid format")
       end
