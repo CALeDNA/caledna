@@ -38,6 +38,12 @@ describe ImportCsv::EdnaResultsTaxa do
           .with('Phylum;Class;Order;Family;Genus;Genus species', source)
           .exactly(1).times
       end
+
+      it 'adds ImportCsvCreateResultRawImportJob to queue' do
+        expect { subject(file, research_project.id, primer) }
+          .to have_enqueued_job(ImportCsvCreateResultRawImportJob)
+          .exactly(3).times
+      end
     end
 
     context 'csv contain invalid taxa strings' do

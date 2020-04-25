@@ -36,13 +36,14 @@ module ImportCsv
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # called by ImportCsvQueueAsvJob
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def queue_asv_job(data_json, barcodes, samples_data, asv_attributes)
       data = JSON.parse(data_json)
       data.each do |row|
         next if row.first == 'sum.taxonomy'
 
         taxonomy_string = row.first
+        next if taxonomy_string.blank?
         next if invalid_taxon?(taxonomy_string)
 
         result_taxon = find_result_taxon_from_string(taxonomy_string)
@@ -54,7 +55,7 @@ module ImportCsv
 
       create_sample_primers(samples_data, asv_attributes)
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def convert_header_row_to_barcodes(data)
       data.first.headers.map do |raw_barcode|

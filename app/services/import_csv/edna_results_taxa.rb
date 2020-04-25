@@ -41,14 +41,33 @@ module ImportCsv
 
     def find_result_taxa(data, research_project_id, primer)
       data.entries.each do |row|
-        source_data = "#{research_project_id}|#{primer}"
         taxonomy_string = row['sum.taxonomy']
+        next if taxonomy_string.blank?
+
+        create_result_raw_import(row, research_project_id, primer)
+
+        source_data = "#{research_project_id}|#{primer}"
+
         # ImportCsvUpdateOrCreateResultTaxonJob calls
         # update_or_create_result_taxon
         ImportCsvUpdateOrCreateResultTaxonJob.perform_later(
           taxonomy_string, source_data
         )
       end
+    end
+
+    def create_result_raw_import(row, research_project_id, primer)
+      taxonomy_string = row['sum.taxonomy']
+      attributes = {
+        payload: row.to_h,
+        research_project_id: research_project_id,
+        primer: primer,
+        original_taxonomy_string: taxonomy_string,
+        clean_taxonomy_string: remove_na(taxonomy_string),
+        canonical_name: find_canonical_taxon_from_string(taxonomy_string)
+      }
+
+      ImportCsvCreateResultRawImportJob.perform_later(attributes)
     end
 
     def create_result_taxon_from(taxonomy_string, source_data)
