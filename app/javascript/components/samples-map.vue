@@ -241,17 +241,17 @@ export default {
           gps_precision,
           primers,
           substrate,
-          collection_date,
+          collection_date
         } = sample;
 
         const asvs_count = asvs_counts.find(
           asvs_count => asvs_count.sample_id === id
         );
 
-        const formatDateString = (dateString) => {
-          let date = new Date(dateString)
-          return date.toLocaleDateString()
-        }
+        const formatDateString = dateString => {
+          let date = new Date(dateString);
+          return date.toLocaleDateString();
+        };
 
         return {
           id,
@@ -259,10 +259,10 @@ export default {
           coordinates: `${latitude}, ${longitude}`,
           location,
           status: status.replace("_", " "),
-          primers: primers.join(", "),
+          primers: primers.map(p => p.name).join(", "),
           substrate,
           asv_count: asvs_count ? asvs_count.count : 0,
-          collection_date: formatDateString(collection_date),
+          collection_date: formatDateString(collection_date)
         };
       });
     },

@@ -191,7 +191,7 @@ export default {
           coordinates: `${latitude}, ${longitude}`,
           location,
           status: status.replace("_", " "),
-          primers: primers.join(", "),
+          primers: primers.map(p => p.name).join(", "),
           substrate,
           asv_count: asvs_count ? asvs_count.count : 0
         };

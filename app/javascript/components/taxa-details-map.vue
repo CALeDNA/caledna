@@ -229,7 +229,7 @@ export default {
           coordinates: `${latitude}, ${longitude}`,
           location: location,
           status: status.replace("_", " "),
-          primers: primers.join(", "),
+          primers: primers.map(p => p.name).join(", "),
           substrate,
           taxa,
           asv_count: asvs_count ? asvs_count.count : 0
