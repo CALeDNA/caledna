@@ -28,7 +28,9 @@ Rails.application.routes.draw do
       resource :stats, only: [] do
         get '/home_page', to: 'stats#home_page'
       end
+      get '/taxa/next_taxon_id', to: 'taxa#next_taxon_id'
       resources :taxa, only: %i[index show]
+
       namespace :research_projects do
         namespace :pillar_point do
           params = { slug: 'pillar-point' }

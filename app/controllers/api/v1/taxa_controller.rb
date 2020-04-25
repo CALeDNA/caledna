@@ -19,6 +19,12 @@ module Api
         }, status: :ok
       end
 
+      def next_taxon_id
+        sql = 'SELECT MAX(taxon_id) FROM ncbi_nodes;'
+        res = ActiveRecord::Base.connection.exec_query(sql)
+        render json: { next_taxon_id: res[0]['max'] + 1 }
+      end
+
       private
 
       # =======================
