@@ -101,7 +101,7 @@ class TaxaController < ApplicationController
 
   def total_records
     @total_records ||= begin
-      NcbiNode.find_by(taxon_id: id).asvs_count
+      NcbiNode.find_by(taxon_id: id).asvs_count || 0
     end
   end
 
