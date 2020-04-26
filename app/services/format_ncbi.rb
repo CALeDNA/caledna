@@ -53,7 +53,7 @@ module FormatNcbi
     nodes.each do |node|
       name = node.canonical_name
       rank = node.rank
-      id = node.ncbi_id
+      id = node.taxon_id
 
       node.ids << id
       node.ranks << rank
@@ -91,12 +91,13 @@ module FormatNcbi
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def create_taxa_tree_for(parent_node)
     child_nodes = NcbiNode.where(parent_taxon_id: parent_node.ncbi_id)
+                          .where(source: 'NCBI')
     return if child_nodes.blank?
 
     child_nodes.each do |node|
       name = node.canonical_name
       rank = node.rank
-      id = node.ncbi_id
+      id = node.taxon_id
 
       node.ids = append_array(parent_node.ids, id)
       node.ranks = append_array(parent_node.ranks, rank)
