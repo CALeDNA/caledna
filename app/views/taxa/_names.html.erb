@@ -13,18 +13,18 @@
   <% end %>
 </table>
 
-<% if taxon.common_names.present? %>
-  <h3>Common Names</h3>
+<% if taxon.ncbi_names.other.present? %>
+  <h3>Other Names</h3>
   <table class="table table-condensed ">
     <tr>
       <th>Name</th>
       <th>Type</th>
     </tr>
 
-    <% taxon.common_names.each do |common_name|%>
+    <% taxon.ncbi_names.other.each do |ncbi_name|%>
       <tr>
-        <td><%= common_name.name %></td>
-        <td><%= common_name.name_class %></td>
+        <td><%= ncbi_name.name %></td>
+        <td><%= ncbi_name.name_class %></td>
       </tr>
     <% end %>
   </table>
