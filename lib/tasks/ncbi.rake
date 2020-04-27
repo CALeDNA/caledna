@@ -315,6 +315,7 @@ namespace :ncbi do
     end
   end
 
+  # rubocop:disable Metrics/LineLength
   task update_cal_divisions: :environment do
     plant_id = NcbiDivision.find_by(name: 'Plantae').id
     fungi_id = NcbiDivision.find_by(name: 'Fungi').id
@@ -590,4 +591,5 @@ namespace :ncbi do
       conn.execute(q)
     end
   end
+  # rubocop:enable Metrics/LineLength
 end

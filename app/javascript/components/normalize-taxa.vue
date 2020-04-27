@@ -224,7 +224,7 @@ export default {
       if (res.errors) {
         this.errors = res.errors;
       } else {
-        window.location = "/admin/labwork";
+        window.location = "/admin/labwork/normalize_ncbi_taxa";
       }
     },
 
@@ -296,8 +296,13 @@ export default {
         body.bold_id = Number(this.newTaxon.sourceId);
       }
 
+      body.update_result_taxa =
+        window.caledna.currentResultTaxaRank == this.newTaxon.rank;
+
+      // console.log(body);
+
       api
-        .createUpdateTaxa(id, this.trimObject(body))
+        .updateAndCreateTaxa(id, this.trimObject(body))
         .then(this.handleFormSuccess)
         .catch(this.handleFormError);
     },

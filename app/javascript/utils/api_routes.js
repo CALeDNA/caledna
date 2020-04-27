@@ -8,8 +8,8 @@ const routes = {
   normalizeTaxa: "/admin/labwork/normalize_ncbi_taxa",
 };
 
-const createUpdateTaxa = (id, body) => {
-  let url = `${routes.normalizeTaxa}/${id}/update_create`;
+const updateAndCreateTaxa = (id, body) => {
+  let url = `${routes.normalizeTaxa}/${id}/update_and_create_taxa`;
   return put(url, { body });
 };
 
@@ -19,6 +19,6 @@ const getNextTaxonId = () => {
 
 export default {
   routes,
-  createUpdateTaxa,
+  updateAndCreateTaxa,
   getNextTaxonId,
 };

@@ -98,3 +98,11 @@
     <%= f.submit 'No matches found' %>
   <% end %>
 </section>
+
+<script>
+(function(){
+  window.caledna = {
+    currentResultTaxaRank: '<%= @result_taxon.taxon_rank %>'
+  }
+})()
+</script>

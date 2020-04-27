@@ -19,13 +19,10 @@ module Admin
         @suggestions = suggestions
       end
 
-      # NOTE: used when matching test result to existing taxon
-      def update_existing
+      def update_with_suggestion
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
 
-        result_taxon.taxon_id = update_existing_params[:taxon_id]
-        result_taxon.normalized = true
-        result_taxon.ignore = false
+        update_result_taxon_with_suggestion
 
         if result_taxon.save(validate: false)
           redirect_to admin_labwork_normalize_ncbi_taxa_path
@@ -40,7 +37,8 @@ module Admin
         taxon = find_taxa_with_source_id
         return handle_error_id('No taxa matches the ID') if taxon.blank?
 
-        result_taxon_attr(taxon)
+        update_result_taxon_with_taxon(taxon)
+
         if result_taxon.save
           redirect_to admin_labwork_normalize_ncbi_taxa_path
         else
@@ -48,13 +46,11 @@ module Admin
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
-      # NOTE: used when creating new taxon for test results
-      def update_create
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def update_and_create_taxa
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
         ActiveRecord::Base.transaction do
-          result_taxon.update!(update_result_taxon_params)
-          NcbiNode.create!(create_params)
+          create_or_update_taxa
         end
         render json: { status: :ok }
       rescue ActiveRecord::RecordInvalid => exception
@@ -64,7 +60,7 @@ module Admin
                            .split(', ')
         }
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       def ignore_taxon
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
@@ -78,17 +74,19 @@ module Admin
 
       private
 
-      # ==================
-      # update_with_id
-      # ==================
-
-      def result_taxon_attr(taxon)
+      def update_result_taxon_with_taxon(taxon)
         result_taxon.taxon_id = taxon.taxon_id
         result_taxon.normalized = true
         result_taxon.ncbi_id = taxon.ncbi_id
         result_taxon.bold_id = taxon.bold_id
         result_taxon.ncbi_version_id = taxon.ncbi_version_id
       end
+
+      # ==================
+      # update_with_id
+      # input: source and source_id
+      # find NcbiNode, update ResultTaxa
+      # ==================
 
       def handle_error_id(message)
         flash[:error] = message
@@ -100,9 +98,9 @@ module Admin
         source = update_with_id_params[:source]
         id = update_with_id_params[:source_id]
         if source == 'NCBI'
-          attributes = { ncbi_id: id }
+          attributes = { ncbi_id: id, source: 'NCBI' }
         elsif source == 'BOLD'
-          attributes = { bold_id: id }
+          attributes = { bold_id: id, source: 'BOLD' }
         else
           return
         end
@@ -114,35 +112,62 @@ module Admin
       end
 
       # ==================
-      # update_existing
+      # update_with_suggestion
+      # input: taxon_id, bold_id, ncbi_id, ncbi_version_id
+      # update ResultTaxa
       # ==================
 
-      def update_existing_params
-        params.require(:normalize_ncbi_taxon).permit(:taxon_id)
+      def update_result_taxon_with_suggestion
+        result_taxon.taxon_id = update_with_suggestion_params[:taxon_id]
+        result_taxon.bold_id = update_with_suggestion_params[:bold_id]
+        result_taxon.ncbi_id = update_with_suggestion_params[:ncbi_id]
+        result_taxon.ncbi_version_id =
+          update_with_suggestion_params[:ncbi_version_id]
+        result_taxon.normalized = true
       end
 
-      # ==================
-      # update_create
-      # ==================
-
-      def update_result_taxon_params
-        {
-          normalized: true,
-          ignore: false,
-          taxon_id: raw_params[:taxon_id],
-          ncbi_id: raw_params[:ncbi_id],
-          bold_id: raw_params[:bold_id]
-        }
-      end
-
-      def create_params
-        raw_params.except(:result_taxon_id)
-      end
-
-      # rubocop:disable Metrics/MethodLength
-      def raw_params
+      def update_with_suggestion_params
         params.require(:normalize_ncbi_taxon).permit(
           :taxon_id,
+          :bold_id,
+          :ncbi_id,
+          :ncbi_version_id
+        )
+      end
+
+      # ==================
+      # update_and_create_taxa
+      # input ResultTaxa, parent NcbiNode, new NcbiNode
+      # ==================
+
+      def create_or_update_taxa
+        params = update_and_create_params
+
+        taxon = NcbiNode.where(rank: params[:rank],
+                               canonical_name: params[:canonical_name],
+                               source: params[:source])
+        if params[:source] == 'NCBI'
+          taxon = taxon.where(ncbi_id: params[:ncbi_id])
+        elsif params[:source] == 'BOLD'
+          taxon = taxon.where(bold_id: params[:bold_id])
+        end
+        taxon = taxon.first_or_create
+
+        if ['true', true].include?(update_and_create_params['update_result_taxa'])
+          update_result_taxon_with_taxon(taxon)
+          result_taxon.ncbi_version_id = update_and_create_params['ncbi_version_id']
+          result_taxon.save
+        end
+
+        taxon.update(create_taxa_params)
+      end
+
+      def create_taxa_params
+        update_and_create_params.except(:result_taxon_id, :update_result_taxa)
+      end
+
+      def update_and_create_params
+        params.require(:normalize_ncbi_taxon).permit(
           :parent_taxon_id,
           :rank,
           :canonical_name,
@@ -153,6 +178,8 @@ module Admin
           :ncbi_id,
           :source,
           :full_taxonomy_string,
+          :update_result_taxa,
+          :ncbi_version_id,
           hierarchy_names: {},
           hierarchy: {},
           ids: [],
@@ -160,7 +187,6 @@ module Admin
           ranks: []
         )
       end
-      # rubocop:enable Metrics/MethodLength
 
       # ==================
       # show
@@ -205,7 +231,7 @@ module Admin
       def result_taxon
         @result_taxon ||= begin
           id = params[:id] || params[:normalize_ncbi_taxon_id] ||
-               raw_params[:result_taxon_id]
+               update_and_create_params[:result_taxon_id]
 
           ResultTaxon.find(id)
         end
