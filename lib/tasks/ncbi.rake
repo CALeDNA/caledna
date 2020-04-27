@@ -314,4 +314,280 @@ namespace :ncbi do
               end
     end
   end
+
+  task update_cal_divisions: :environment do
+    plant_id = NcbiDivision.find_by(name: 'Plantae').id
+    fungi_id = NcbiDivision.find_by(name: 'Fungi').id
+    animal_id = NcbiDivision.find_by(name: 'Animalia').id
+    archaea_id = NcbiDivision.find_by(name: 'Archaea').id
+    protozoa_id = NcbiDivision.find_by(name: 'Protozoa').id
+    chromista_id = NcbiDivision.find_by(name: 'Chromista').id
+
+    ruggeiro_queries = [
+      {
+        name: 'Viridiplantae',
+        id: plant_id,
+        where_sql: <<-SQL
+        hierarchy_names @> '{"kingdom": "Viridiplantae"}'
+        SQL
+      },
+      {
+        name: 'Rhodophyta',
+        id: plant_id,
+        where_sql: <<-SQL
+        hierarchy_names @> '{"phylum": "Rhodophyta"}'
+        SQL
+      },
+      {
+        name: 'Fungi',
+        id: fungi_id,
+        where_sql: <<-SQL
+        hierarchy_names @> '{"kingdom": "Fungi"}'
+        SQL
+      },
+      {
+        name: 'Metazoa',
+        id: animal_id,
+        where_sql: <<-SQL
+        hierarchy_names @> '{"kingdom": "Metazoa"}'
+        SQL
+      },
+      {
+        name: 'Archaea',
+        id: archaea_id,
+        where_sql: <<-SQL
+        hierarchy_names @> '{"superkingdom": "Archaea"}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Sar|Rhizaria',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{463147}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Sar|Stramenopiles',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{15789}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Sar|Alveolata',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{15785}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Haptista',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{2159448}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Cryptophyceae',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{2387}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Eukaryota incertae sedis|Picozoa|Picomonadea',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{1038777}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Eukaryota incertae sedis|Telonemida',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{499560}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Opisthokonta|Rotosphaerida',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{2221084}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Amoebozoa',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{472800}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Metamonada',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{2161748}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Discoba',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{2161759}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Breviatea',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{1115555}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Opisthokonta|Aphelida|Aphelidea',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{1202362}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Opisthokonta|Filasterea',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{2222232}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Opisthokonta|Ichthyosporea',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{97722}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|CRuMs|Rigifilida',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{970236}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Opisthokonta|Choanoflagellata',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{11852}'
+        SQL
+      }
+    ]
+
+    more_queries = [
+      {
+        name: 'Eukaryota|Ancyromonadida',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{2221087}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Apusozoa|Apusomonadidae',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{137631}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Opisthokonta|Opisthokonta incertae sedis|Corallochytrium',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{72059}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Malawimonadidae',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{105023}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Hemimastigophora|Spironemidae',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{1668079}'
+        SQL
+      },
+
+      {
+        name: 'Eukaryota|Glaucocystophyceae|Gloeochaetales|Gloeochaetaceae',
+        id: plant_id,
+        where_sql: <<-SQL
+        ids @> '{19596}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Eukaryota incertae sedis|Picozoa',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{355817}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Eukaryota incertae sedis|Palpitomonas',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{608070}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|Eukaryota incertae sedis|Microheliella',
+        id: chromista_id,
+        where_sql: <<-SQL
+        ids @> '{893419}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|CRuMs|Mantamonadidae',
+        id: protozoa_id,
+        where_sql: <<-SQL
+        ids @> '{971251}'
+        SQL
+      },
+      {
+        name: 'Eukaryota|CRuMs|Collodictyonidae|Diphylleia',
+        id: plant_id,
+        where_sql: <<-SQL
+        ids @> '{141694}'
+        SQL
+      }
+    ]
+
+    all_queries = []
+
+    #  environmental samples
+    all_queries << 'UPDATE ncbi_nodes SET cal_division_id = 11 WHERE division_id = 11 AND cal_division_id IS NULL;'
+
+    # Bacteria
+    all_queries << 'UPDATE ncbi_nodes SET cal_division_id = 0 WHERE division_id = 0 AND cal_division_id IS NULL;'
+
+    # Viruses
+    all_queries << 'UPDATE ncbi_nodes SET cal_division_id = 9 WHERE division_id = 3 AND cal_division_id IS NULL;'
+    all_queries << 'UPDATE ncbi_nodes SET cal_division_id = 9 WHERE division_id = 9 AND cal_division_id IS NULL;'
+
+    # misc
+    all_queries << 'UPDATE ncbi_nodes SET cal_division_id = 7 WHERE division_id = 7 AND cal_division_id IS NULL;'
+    all_queries << 'UPDATE ncbi_nodes SET cal_division_id = 8 WHERE division_id = 8 AND cal_division_id IS NULL;'
+
+    ruggeiro_queries.each do |q|
+      all_queries << "UPDATE ncbi_nodes SET cal_division_id = #{q[:id]} WHERE #{q[:where_sql]} AND cal_division_id IS NULL;"
+    end
+
+    more_queries.each do |q|
+      all_queries << "UPDATE ncbi_nodes SET cal_division_id = #{q[:id]} WHERE #{q[:where_sql]} AND cal_division_id IS NULL;"
+    end
+
+    all_queries.each do |q|
+      puts q
+      conn.execute(q)
+    end
+  end
 end
