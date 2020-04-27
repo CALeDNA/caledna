@@ -39,7 +39,7 @@ describe ImportCsv::EdnaResultsTaxa do
           .exactly(1).times
       end
 
-      it 'adds ImportCsvCreateResultRawImportJob to queue' do
+      xit 'adds ImportCsvCreateResultRawImportJob to queue' do
         expect { subject(file, research_project.id, primer) }
           .to have_enqueued_job(ImportCsvCreateResultRawImportJob)
           .exactly(3).times

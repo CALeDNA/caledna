@@ -44,9 +44,9 @@ module ImportCsv
         taxonomy_string = row['sum.taxonomy']
         next if taxonomy_string.blank?
 
-        # NOTE: disable creatind ResultRawImport for each csv row
-        ImportCsvCreateResultRawImportJob
-          .perform_later(row.to_h, research_project_id, primer)
+        # NOTE: disable creating ResultRawImport for each csv row
+        # ImportCsvCreateResultRawImportJob
+        #   .perform_later(row.to_h, research_project_id, primer)
 
         source_data = "#{research_project_id}|#{primer}"
 
@@ -57,7 +57,6 @@ module ImportCsv
         )
       end
     end
-
 
     def create_result_taxon_from(taxonomy_string, source_data)
       results = format_result_taxon_data_from_string(taxonomy_string)
