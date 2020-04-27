@@ -46,7 +46,7 @@ module FormatNcbi
   end
   # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def create_taxa_tree
     nodes = NcbiNode.where('parent_taxon_id = 1 AND ncbi_id != 1')
 
@@ -55,9 +55,9 @@ module FormatNcbi
       rank = node.rank
       id = node.taxon_id
 
-      node.ids << id
-      node.ranks << rank
-      node.names << name
+      node.ids = [id]
+      node.ranks = [rank]
+      node.names = [name]
       node.full_taxonomy_string = name
 
       if valid_rank?(node)
@@ -71,7 +71,7 @@ module FormatNcbi
       create_taxa_tree_for(node)
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -119,8 +119,4 @@ module FormatNcbi
     end
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
-
-  # ===================
-  #
-  # ===================
 end
