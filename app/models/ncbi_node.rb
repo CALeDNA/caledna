@@ -15,7 +15,6 @@ class NcbiNode < ApplicationRecord
     itis_link
     iucn_link
     ncbi_link
-    wikidata_link
     wikipedia_link
     worms_link
   ].freeze
@@ -25,7 +24,6 @@ class NcbiNode < ApplicationRecord
   has_many :ncbi_citations, through: :ncbi_citation_nodes
   belongs_to :ncbi_division, foreign_key: 'cal_division_id', optional: true
   has_many :asvs, foreign_key: 'taxon_id'
-  has_many :external_resources, foreign_key: 'ncbi_id'
 
   # rubocop:disable Lint/AmbiguousOperator
   delegate *LINKS, to: :format_resources
@@ -47,6 +45,10 @@ class NcbiNode < ApplicationRecord
       url: 'https://www.ncbi.nlm.nih.gov/taxonomy',
       citation: 'NCBI Taxonomy database. November 2017.'
     )
+  end
+
+  def external_resources
+    ExternalResource.where(ncbi_id: ncbi_id)
   end
 
   def show_interactions?
@@ -117,7 +119,7 @@ class NcbiNode < ApplicationRecord
 
   def taxonomy_lineage
     @taxonomy_lineage ||= begin
-      taxa = NcbiNode.where('ncbi_id in (?)', ids)
+      taxa = NcbiNode.where('taxon_id in (?)', ids)
       # NOTE: query returns taxa in random order; use ids.map to order the
       # taxa according according to ids
       ids.map do |id|
@@ -288,6 +290,6 @@ class NcbiNode < ApplicationRecord
 
   def format_resources
     @format_resources ||=
-      FormatExternalResources.new(taxon_id, external_resources)
+      FormatExternalResources.new(ncbi_id, external_resources)
   end
 end

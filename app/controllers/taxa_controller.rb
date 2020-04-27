@@ -46,9 +46,9 @@ class TaxaController < ApplicationController
     ncbi_nodes.hierarchy_names, ncbi_nodes.common_names,
     ncbi_divisions.name as division_name
     FROM "ncbi_nodes"
-    JOIN "external_resources"
-       ON "external_resources"."ncbi_id" = "ncbi_nodes"."taxon_id"
-    LEFT JOIN ncbi_divisions
+    LEFT JOIN "external_resources"
+       ON "external_resources"."ncbi_id" = "ncbi_nodes"."ncbi_id"
+    JOIN ncbi_divisions
       ON ncbi_nodes.cal_division_id = ncbi_divisions.id
     WHERE "ncbi_nodes"."rank" = 'species'
     AND (asvs_count > 0)
@@ -61,23 +61,15 @@ class TaxaController < ApplicationController
   end
 
   def plants_sql
-    division = NcbiDivision.find_by(name: 'Plantae')
-    return if division.blank?
-
     kingdom_sql = <<-SQL
-      AND ncbi_nodes.cal_division_id = #{division.id}
-      AND (hierarchy_names ->> 'phylum' = 'Streptophyta')
+      AND (hierarchy_names @> '{"phylum":"Streptophyta"}')
     SQL
     top_sql(kingdom_sql)
   end
 
   def animals_sql
-    division = NcbiDivision.find_by(name: 'Animalia')
-    return if division.blank?
-
     kingdom_sql = <<-SQL
-      AND ncbi_nodes.cal_division_id = #{division.id}
-      AND (hierarchy_names ->> 'kingdom' = 'Metazoa')
+      AND (hierarchy_names @> '{"kingdom": "Metazoa"}')
     SQL
     top_sql(kingdom_sql)
   end
@@ -92,7 +84,7 @@ class TaxaController < ApplicationController
 
   def children
     @children ||= begin
-      NcbiNode.where(parent_taxon_id: id)
+      NcbiNode.where(parent_taxon_id: taxon.ncbi_id)
               .order('canonical_name')
               .page(params[:children_page])
               .per(10)

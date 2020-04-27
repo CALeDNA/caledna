@@ -6,34 +6,34 @@ describe NcbiNode do
   describe '#conservation_status' do
     it 'returns IUCN status if status exists' do
       status = IucnStatus::CATEGORIES.values.first
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: status)
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: status)
 
       expect(taxon.conservation_status).to eq(status)
     end
 
     it 'returns IUCN status when there is valid status & multiple nil status' do
       status = IucnStatus::CATEGORIES.values.first
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: nil)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: status)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: nil)
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: nil)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: status)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: nil)
 
       expect(taxon.conservation_status).to eq(status)
     end
 
     it 'returns last IUCN status when there are multiple valid status' do
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: 'a')
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: 'c')
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: 'b')
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: 'a')
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: 'c')
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: 'b')
 
       expect(taxon.conservation_status).to eq('b')
     end
 
     it 'returns null if IUCN status does not exists' do
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: nil)
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: nil)
 
       expect(taxon.conservation_status).to eq(nil)
     end
@@ -42,15 +42,15 @@ describe NcbiNode do
   describe '#conservation_status?' do
     it 'returns true if taxon has IUCN status' do
       status = IucnStatus::CATEGORIES.values.first
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: status)
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: status)
 
       expect(taxon.conservation_status?).to eq(true)
     end
 
     it 'returns false if taxon does not have IUCN status' do
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: nil)
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: nil)
 
       expect(taxon.conservation_status?).to eq(false)
     end
@@ -59,16 +59,16 @@ describe NcbiNode do
   describe '#threatened?' do
     it 'returns true if taxon IUCN status belongs to THREATENED' do
       status = IucnStatus::THREATENED.values.first
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: status)
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: status)
 
       expect(taxon.threatened?).to eq(true)
     end
 
     it 'returns false if taxon does not belong to THREATENED' do
       status = 'random'
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id, iucn_status: status)
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id, iucn_status: status)
 
       expect(taxon.threatened?).to eq(false)
     end
@@ -76,8 +76,8 @@ describe NcbiNode do
 
   describe '#image' do
     it '1 returns wikidata_image if it exists' do
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id,
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id,
                                  wikidata_image: 'wikidata_image',
                                  eol_image: 'eol_image',
                                  eol_image_attribution: 'eol_attribution',
@@ -91,8 +91,8 @@ describe NcbiNode do
     end
 
     it '2 returns inat_image if it exists' do
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id,
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id,
                                  wikidata_image: nil,
                                  eol_image: 'eol_image',
                                  eol_image_attribution: 'eol_attribution',
@@ -106,8 +106,8 @@ describe NcbiNode do
     end
 
     it '3 returns eol_image if it exists' do
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id,
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id,
                                  wikidata_image: nil,
                                  eol_image: 'eol_image',
                                  eol_image_attribution: 'eol_attribution',
@@ -122,8 +122,8 @@ describe NcbiNode do
 
     it '4 returns image if iNaturalist API image exists' do
       VCR.use_cassette 'NcbiNode inat api image' do
-        taxon = create(:ncbi_node)
-        create(:external_resource, ncbi_id: taxon.id,
+        taxon = create(:ncbi_node, ncbi_id: 100)
+        create(:external_resource, ncbi_id: taxon.ncbi_id,
                                    wikidata_image: nil,
                                    eol_image: nil,
                                    eol_image_attribution: nil,
@@ -141,8 +141,8 @@ describe NcbiNode do
 
     it '4 returns nil if iNaturalist API image does not exist' do
       VCR.use_cassette 'NcbiNode inat api no image' do
-        taxon = create(:ncbi_node)
-        create(:external_resource, ncbi_id: taxon.id,
+        taxon = create(:ncbi_node, ncbi_id: 100)
+        create(:external_resource, ncbi_id: taxon.ncbi_id,
                                    wikidata_image: nil,
                                    eol_image: nil,
                                    eol_image_attribution: nil,
@@ -157,8 +157,8 @@ describe NcbiNode do
 
     it '5 returns image from EoL API if it exists' do
       VCR.use_cassette 'NcbiNode eol api image' do
-        taxon = create(:ncbi_node)
-        create(:external_resource, ncbi_id: taxon.id,
+        taxon = create(:ncbi_node, ncbi_id: 100)
+        create(:external_resource, ncbi_id: taxon.ncbi_id,
                                    wikidata_image: nil,
                                    eol_image: nil,
                                    eol_image_attribution: nil,
@@ -177,8 +177,8 @@ describe NcbiNode do
 
     it '5 returns nil if EoL API image does not exist' do
       VCR.use_cassette 'NcbiNode eol api no image' do
-        taxon = create(:ncbi_node)
-        create(:external_resource, ncbi_id: taxon.id,
+        taxon = create(:ncbi_node, ncbi_id: 100)
+        create(:external_resource, ncbi_id: taxon.ncbi_id,
                                    wikidata_image: nil,
                                    eol_image: nil,
                                    eol_image_attribution: nil,
@@ -192,8 +192,8 @@ describe NcbiNode do
     end
 
     it '6 returns nil if all image data is nil' do
-      taxon = create(:ncbi_node)
-      create(:external_resource, ncbi_id: taxon.id,
+      taxon = create(:ncbi_node, ncbi_id: 100)
+      create(:external_resource, ncbi_id: taxon.ncbi_id,
                                  wikidata_image: nil,
                                  eol_image: nil,
                                  eol_image_attribution: nil,

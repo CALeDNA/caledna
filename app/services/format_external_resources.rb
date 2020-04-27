@@ -3,12 +3,12 @@
 class FormatExternalResources
   require 'sparql/client'
 
-  attr_reader :taxon_id, :external_resources
+  attr_reader :ncbi_id, :external_resources
 
   URL = 'https://query.wikidata.org/sparql'
 
-  def initialize(taxon_id, external_resources)
-    @taxon_id = taxon_id
+  def initialize(ncbi_id, external_resources)
+    @ncbi_id = ncbi_id
     @external_resources = external_resources.order(:created_at)
   end
 
@@ -162,7 +162,7 @@ class FormatExternalResources
   end
 
   def ncbi_link
-    id = resource_value_for(:ncbi_id) || taxon_id
+    id = resource_value_for(:ncbi_id) || ncbi_id
     return if id.blank?
     url = 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id='
     OpenStruct.new(
