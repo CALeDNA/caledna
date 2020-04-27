@@ -17,7 +17,7 @@ namespace :misc do
       AND ( ncbi_id IS NULL);
     SQL
 
-    res = conn.exec_query(sql)
+    conn.exec_query(sql)
   end
 
   desc '2. add taxa tree data for BOLD species'

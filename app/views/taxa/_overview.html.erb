@@ -87,7 +87,7 @@
 <% elsif taxon.threatened? %>
   <div class="panel panel-default">
     <p class="panel-body">
-      <%= pluralize(samples.total_records, 'site') %> with
+      <%= pluralize(@total_records, 'site') %> with
       <%= taxon.canonical_name %> <%= taxon.common_names_display(truncate: false) %><br><br>
 
       NOTE: In order to protect threatened species, we do not show

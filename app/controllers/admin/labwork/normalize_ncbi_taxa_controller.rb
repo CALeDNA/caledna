@@ -46,7 +46,7 @@ module Admin
         end
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
       def update_and_create_taxa
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
         ActiveRecord::Base.transaction do
@@ -60,7 +60,7 @@ module Admin
                            .split(', ')
         }
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
 
       def ignore_taxon
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
@@ -140,32 +140,35 @@ module Admin
       # input ResultTaxa, parent NcbiNode, new NcbiNode
       # ==================
 
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def create_or_update_taxa
-        params = update_and_create_params
+        ucparams = update_and_create_params
 
-        taxon = NcbiNode.where(rank: params[:rank],
-                               canonical_name: params[:canonical_name],
-                               source: params[:source])
-        if params[:source] == 'NCBI'
-          taxon = taxon.where(ncbi_id: params[:ncbi_id])
-        elsif params[:source] == 'BOLD'
-          taxon = taxon.where(bold_id: params[:bold_id])
+        taxon = NcbiNode.where(rank: ucparams[:rank],
+                               canonical_name: ucparams[:canonical_name],
+                               source: ucparams[:source])
+        if ucparams[:source] == 'NCBI'
+          taxon = taxon.where(ncbi_id: ucparams[:ncbi_id])
+        elsif ucparams[:source] == 'BOLD'
+          taxon = taxon.where(bold_id: ucparams[:bold_id])
         end
         taxon = taxon.first_or_create
 
-        if ['true', true].include?(update_and_create_params['update_result_taxa'])
+        if ['true', true].include?(ucparams['update_result_taxa'])
           update_result_taxon_with_taxon(taxon)
-          result_taxon.ncbi_version_id = update_and_create_params['ncbi_version_id']
+          result_taxon.ncbi_version_id = ucparams['ncbi_version_id']
           result_taxon.save
         end
 
         taxon.update(create_taxa_params)
       end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       def create_taxa_params
         update_and_create_params.except(:result_taxon_id, :update_result_taxa)
       end
 
+      # rubocop:disable Metrics/MethodLength
       def update_and_create_params
         params.require(:normalize_ncbi_taxon).permit(
           :parent_taxon_id,
@@ -187,6 +190,7 @@ module Admin
           ranks: []
         )
       end
+      # rubocop:enable Metrics/MethodLength
 
       # ==================
       # show

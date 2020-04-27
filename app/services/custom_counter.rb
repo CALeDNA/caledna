@@ -22,23 +22,6 @@ module CustomCounter
     end
   end
 
-  def get_sample_ids(taxon_id)
-    asvs = Asv.where("ids @> '{?}'", taxon_id)
-              .joins('JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id')
-              .select('DISTINCT(sample_id)')
-    asvs.map(&:sample_id)
-  end
-
-  def get_sample_ids_la_river(taxon_id)
-    asvs = Asv.where("ids @> '{?}'", taxon_id)
-              .joins('JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id')
-              .joins('JOIN samples ON samples.id = asvs.sample_id')
-              .select('DISTINCT(sample_id)')
-              .where('samples.field_project_id = ?',
-                     FieldProject::LA_RIVER.id)
-    asvs.map(&:sample_id)
-  end
-
   private
 
   def asvs_count_sql

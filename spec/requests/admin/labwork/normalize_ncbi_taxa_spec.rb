@@ -108,7 +108,7 @@ describe 'NormalizeNcbiTaxaController' do
     end
   end
 
-  # rebocop:disable Metrics/LineLength
+  # rubocop:disable Metrics/LineLength
   describe '#PUT update_with_suggestion' do
     before do
       create(:ncbi_version, id: ncbi_version_id)
@@ -139,9 +139,9 @@ describe 'NormalizeNcbiTaxaController' do
         .to(ncbi_version_id)
     end
   end
-  # rebocop:enable Metrics/LineLength
+  # rubocop:enable Metrics/LineLength
 
-  # rebocop:disable Metrics/LineLength
+  # rubocop:disable Metrics/LineLength
   describe '#PUT update_and_create_taxa' do
     let(:parent_taxon_id) { 3 }
     let(:division_id) { 400 }
@@ -284,7 +284,7 @@ describe 'NormalizeNcbiTaxaController' do
       end
     end
   end
-  # rebocop:enable Metrics/LineLength
+  # rubocop:enable Metrics/LineLength
 
   describe '#PUT ignore_taxon' do
     it 'updates ResultTaxon' do
