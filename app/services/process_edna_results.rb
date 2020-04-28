@@ -61,10 +61,8 @@ module ProcessEdnaResults
     name = hierarchy[target_rank.to_sym]
     ranks_no_lowest = filtered_ranks(hierarchy, include_lowest: false)
     hierarchy_no_lowest = filtered_hierarchy(hierarchy, ranks_no_lowest)
-    filtered_ranks = filtered_ranks(hierarchy, include_lowest: true)
-    filtered_hierarchy = filtered_hierarchy(hierarchy, filtered_ranks)
 
-    taxa = find_taxa_by_canonical_name(name, filtered_hierarchy, target_rank)
+    taxa = find_low_to_high(name, hierarchy, [], 0)
     return taxa if taxa.present?
 
     taxa = find_taxa_with_quotes(name, hierarchy_no_lowest, target_rank)
@@ -354,6 +352,38 @@ module ProcessEdnaResults
     { existing_barcodes: existing_barcodes, new_barcodes: new_barcodes }
   end
 
+  def find_low_to_high(name, hierarchy, taxa, count)
+    return taxa if taxa.length == 1
+    return taxa if hierarchy.length < count
+
+    filtered_ranks = filtered_ranks_by_number(hierarchy, count)
+    filtered_hierarchy = filtered_hierarchy(hierarchy, filtered_ranks)
+
+    taxa = NcbiNode.where('lower(canonical_name) = ?', name.downcase)
+
+    if count.positive?
+      taxa = taxa.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+    end
+    # puts '--------'
+    # puts count
+    # puts filtered_hierarchy
+    # puts taxa.to_sql
+    # puts '--------'
+
+    count += 1
+
+    find_low_to_high(name, hierarchy, taxa, count)
+  end
+
+  def filtered_ranks_by_number(hierarchy, rank_count)
+    ranks = %i[superkingdom kingdom phylum class order family genus species]
+    hierarchy.keys.sort_by { |k| ranks.index(k) }.reverse[0, rank_count]
+  end
+
+  def filtered_hierarchy(hierarchy, ranks)
+    hierarchy.select { |k, _v| ranks.include?(k) }
+  end
+
   private
 
   def get_taxon_rank(taxonomy_string)
@@ -431,10 +461,6 @@ module ProcessEdnaResults
     taxon_data[:bold_id] = taxon.bold_id
     taxon_data[:ncbi_version_id] = taxon.ncbi_version_id
     taxon_data
-  end
-
-  def filtered_hierarchy(hierarchy, ranks)
-    hierarchy.select { |k, _v| ranks.include?(k) }
   end
 end
 
