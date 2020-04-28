@@ -9,7 +9,9 @@
 
 <% if suggestion.names.present? %>
   <table class="table table-condensed taxonomy-tree" style="margin-bottom: 1em;">
-    <% suggestion.names.each.with_index do |name, i| %>
+    <% suggestion.names.each.with_index do |name, i|
+      next if (suggestion.ranks[i] == 'no rank') && (i + 1 != suggestion.names.length)
+    %>
       <tr>
         <td><%= suggestion.ranks[i] %></td>
         <td><%= name %></td>
