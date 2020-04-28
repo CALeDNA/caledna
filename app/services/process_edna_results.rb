@@ -71,6 +71,42 @@ module ProcessEdnaResults
     find_taxa_by_ncbi_names(name, hierarchy_no_lowest, target_rank)
   end
 
+  def find_low_to_high(name, hierarchy, taxa, count)
+    return taxa if taxa.length == 1
+    return taxa if hierarchy.length < count
+
+    filtered_ranks = filtered_ranks_by_number(hierarchy, count)
+    filtered_hierarchy = filtered_hierarchy(hierarchy, filtered_ranks)
+
+    taxa = NcbiNode.where('lower(canonical_name) = ?', name.downcase)
+
+    if count.positive?
+      taxa = taxa.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
+    end
+
+    if hierarchy.length == count && taxa.length > 1
+      taxa = taxa.where(rank: filtered_ranks.first)
+    end
+    puts '--------'
+    puts count
+    puts filtered_hierarchy
+    puts taxa.to_sql
+    puts '--------'
+
+    count += 1
+
+    find_low_to_high(name, hierarchy, taxa, count)
+  end
+
+  def filtered_ranks_by_number(hierarchy, rank_count)
+    ranks = %i[superkingdom kingdom phylum class order family genus species]
+    hierarchy.keys.sort_by { |k| ranks.index(k) }.reverse[0, rank_count]
+  end
+
+  def filtered_hierarchy(hierarchy, ranks)
+    hierarchy.select { |k, _v| ranks.include?(k) }
+  end
+
   def find_result_taxon_from_string(string)
     clean_string = remove_na(string)
     rank = if phylum_taxonomy_string?(clean_string)
@@ -350,38 +386,6 @@ module ProcessEdnaResults
       sample.present? ? existing_barcodes << barcode : new_barcodes << barcode
     end
     { existing_barcodes: existing_barcodes, new_barcodes: new_barcodes }
-  end
-
-  def find_low_to_high(name, hierarchy, taxa, count)
-    return taxa if taxa.length == 1
-    return taxa if hierarchy.length < count
-
-    filtered_ranks = filtered_ranks_by_number(hierarchy, count)
-    filtered_hierarchy = filtered_hierarchy(hierarchy, filtered_ranks)
-
-    taxa = NcbiNode.where('lower(canonical_name) = ?', name.downcase)
-
-    if count.positive?
-      taxa = taxa.where('hierarchy_names @> ?', filtered_hierarchy.to_json)
-    end
-    # puts '--------'
-    # puts count
-    # puts filtered_hierarchy
-    # puts taxa.to_sql
-    # puts '--------'
-
-    count += 1
-
-    find_low_to_high(name, hierarchy, taxa, count)
-  end
-
-  def filtered_ranks_by_number(hierarchy, rank_count)
-    ranks = %i[superkingdom kingdom phylum class order family genus species]
-    hierarchy.keys.sort_by { |k| ranks.index(k) }.reverse[0, rank_count]
-  end
-
-  def filtered_hierarchy(hierarchy, ranks)
-    hierarchy.select { |k, _v| ranks.include?(k) }
   end
 
   private

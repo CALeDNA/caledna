@@ -1834,38 +1834,62 @@ describe ProcessEdnaResults do
       given_hier = { superkingdom: 'sk', family: name1 }
 
       hierarchy1 = { superkingdom: 'sk', class: name1, family: name2 }
-      create(:ncbi_node, canonical_name: name2, hierarchy_names: hierarchy1)
+      create(:ncbi_node, canonical_name: name2, rank: 'family',
+                         hierarchy_names: hierarchy1)
 
       expect(subject(name1, given_hier, initial_taxa, count))
         .to match_array([])
     end
 
-    context 'when there is one taxa that matches the lowest name' do
-      it 'returns matching taxon' do
+    context 'when there is one taxon that matches the lowest name' do
+      it 'and rank is the same, returns taxon' do
         given_hier = { superkingdom: 'sk', family: name1 }
 
         hierarchy1 = given_hier
-        taxon = create(:ncbi_node, canonical_name: name1,
+        taxon = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                    hierarchy_names: hierarchy1)
 
         hierarchy2 = { superkingdom: 'sk', family: name2 }
-        create(:ncbi_node, canonical_name: name2,
+        create(:ncbi_node, canonical_name: name2, rank: 'family',
                            hierarchy_names: hierarchy2)
 
         expect(subject(name1, given_hier, initial_taxa, count))
           .to match_array([taxon])
       end
 
-      it 'returns matching taxon regardless of rank' do
+      it 'and rank is different, returns taxon' do
         given_hier = { superkingdom: 'sk', family: name1 }
 
         hierarchy1 = { superkingdom: 'sk', genus: name1 }
-        taxon = create(:ncbi_node, canonical_name: name1,
+        taxon = create(:ncbi_node, canonical_name: name1, rank: 'genus',
                                    hierarchy_names: hierarchy1)
 
         hierarchy2 = { superkingdom: 'sk', family: name2 }
-        create(:ncbi_node, canonical_name: name2,
+        create(:ncbi_node, canonical_name: name2, rank: 'family',
                            hierarchy_names: hierarchy2)
+
+        expect(subject(name1, given_hier, initial_taxa, count))
+          .to match_array([taxon])
+      end
+
+      it 'and rank is no rank, returns taxon' do
+        given_hier = { superkingdom: 'sk', family: name1 }
+
+        hierarchy1 = { superkingdom: 'sk', 'no rank': name1 }
+        taxon = create(:ncbi_node, canonical_name: name1, rank: 'no rank',
+                                   hierarchy_names: hierarchy1)
+
+        expect(subject(name1, given_hier, initial_taxa, count))
+          .to match_array([taxon])
+      end
+
+      it 'and rank is minor rank, returns taxon' do
+        given_hier = { superkingdom: 'sk', family: name1 }
+
+        hierarchy1 = { superkingdom: 'sk', subfamily: name1 }
+        taxon = create(:ncbi_node, canonical_name: name1, rank: 'subfamily',
+                                   hierarchy_names: hierarchy1)
+
 
         expect(subject(name1, given_hier, initial_taxa, count))
           .to match_array([taxon])
@@ -1873,36 +1897,39 @@ describe ProcessEdnaResults do
     end
 
     context 'when there are multiple taxa that have same lowest name' do
-      it 'and name has different ranks, returns taxa that match rank & name' do
+      it 'but ranks are different, returns taxa that match rank & name' do
         given_hier = { class: 'c', family: name1 }
 
         hierarchy1 = given_hier
-        taxon1 = create(:ncbi_node, canonical_name: name1,
+        taxon1 = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                     hierarchy_names: hierarchy1)
-        taxon2 = create(:ncbi_node, canonical_name: name1,
+        taxon2 = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                     hierarchy_names: hierarchy1)
 
         hierarchy2 = { class: 'c', genus: name1 }
-        create(:ncbi_node, canonical_name: name1, hierarchy_names: hierarchy2)
+        create(:ncbi_node, canonical_name: name1, rank: 'genus',
+                           hierarchy_names: hierarchy2)
 
         expect(subject(name1, given_hier, initial_taxa, count))
           .to match_array([taxon1, taxon2])
       end
 
       it 'and given hierarchy is an exact match, returns matching taxa' do
-        given_hier = { phylum: 'p', class: 'c', order: 'o', family: name1 }
+        given_hier = { class: 'c', order: 'o', family: name1 }
 
         hierarchy1 = given_hier
-        taxon1 = create(:ncbi_node, canonical_name: name1,
+        taxon1 = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                     hierarchy_names: hierarchy1)
-        taxon2 = create(:ncbi_node, canonical_name: name1,
+        taxon2 = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                     hierarchy_names: hierarchy1)
 
-        hierarchy2 = { phylum: '-', class: 'c', order: 'o', family: name1 }
-        create(:ncbi_node, canonical_name: name1, hierarchy_names: hierarchy2)
+        hierarchy2 = { class: '-', order: 'o', family: name1 }
+        create(:ncbi_node, canonical_name: name1, rank: 'family',
+                           hierarchy_names: hierarchy2)
 
         hierarchy3 = { order: '-', family: name1 }
-        create(:ncbi_node, canonical_name: name1, hierarchy_names: hierarchy3)
+        create(:ncbi_node, canonical_name: name1, rank: 'family',
+                           hierarchy_names: hierarchy3)
 
         expect(subject(name1, given_hier, initial_taxa, count))
           .to match_array([taxon1, taxon2])
@@ -1912,49 +1939,116 @@ describe ProcessEdnaResults do
         given_hier = { class: 'c', order: 'o', family: name1 }
 
         hierarchy1 = given_hier.merge(phylum: 'p')
-        taxon1 = create(:ncbi_node, canonical_name: name1,
+        taxon1 = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                     hierarchy_names: hierarchy1)
 
         hierarchy2 = given_hier.merge('kingdom' => 'k')
-        taxon2 = create(:ncbi_node, canonical_name: name1,
+        taxon2 = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                     hierarchy_names: hierarchy2)
 
         hierarchy3 = { class: 'c', order: '-', family: name1 }
-        create(:ncbi_node, canonical_name: name1, hierarchy_names: hierarchy3)
+        create(:ncbi_node, canonical_name: name1, rank: 'family',
+                           hierarchy_names: hierarchy3)
 
         expect(subject(name1, given_hier, initial_taxa, count))
           .to match_array([taxon1, taxon2])
       end
 
-      it 'is not affected by no ranks' do
+      it 'and hierarchy matches the mid ranks, returns taxa w/ same rank' do
         given_hier = { class: 'c', order: 'o', family: name1 }
 
-        hierarchy1 = given_hier.merge('no rank': 'nr')
-        taxon1 = create(:ncbi_node, canonical_name: name1,
+        hierarchy1 = given_hier
+        taxon1 = create(:ncbi_node, canonical_name: name1, rank: 'family',
                                     hierarchy_names: hierarchy1)
+
+        hierarchy2 = given_hier.merge(subfamily: name1)
+        create(:ncbi_node, canonical_name: name1, rank: 'subfamily',
+                           hierarchy_names: hierarchy2)
 
         expect(subject(name1, given_hier, initial_taxa, count))
           .to match_array([taxon1])
       end
+
+      it 'and ranks do not match, returns empty array' do
+        given_hier = { class: 'c', order: 'o', family: name1 }
+
+        hierarchy1 = { class: 'c', order: 'o', subfamily: name1 }
+        create(:ncbi_node, canonical_name: name1, rank: 'subfamily',
+                           hierarchy_names: hierarchy1)
+
+        hierarchy2 = { class: 'c', order: 'o', genus: name1 }
+        create(:ncbi_node, canonical_name: name1, rank: 'genus',
+                           hierarchy_names: hierarchy2)
+
+        hierarchy2 = { class: 'c', order: 'o', 'no rank': name1 }
+        create(:ncbi_node, canonical_name: name1, rank: 'no rank',
+                           hierarchy_names: hierarchy2)
+
+        expect(subject(name1, given_hier, initial_taxa, count))
+          .to match_array([])
+      end
     end
 
     context 'when hierarchy has one item' do
-      it 'and there are matches, returns all matching taxon' do
+      it 'and multiple matches for name and rank, returns all matching taxa' do
         hierarchy = { class: name1 }
 
-        taxon1 = create(:ncbi_node, canonical_name: name1,
+        taxon1 = create(:ncbi_node, canonical_name: name1, rank: 'class',
                                     hierarchy_names: hierarchy)
-        taxon2 = create(:ncbi_node, canonical_name: name1,
+        taxon2 = create(:ncbi_node, canonical_name: name1, rank: 'class',
                                     hierarchy_names: hierarchy)
 
         expect(subject(name1, hierarchy, initial_taxa, count))
           .to match_array([taxon1, taxon2])
       end
 
-      it 'and there are no matches, returns empty array' do
+      it 'and multiple matches for name, returns taxa with same rank' do
+        given_hier = { class: name1 }
+
+        hierarchy1 = given_hier
+        taxon1 = create(:ncbi_node, canonical_name: name1, rank: 'class',
+                                    hierarchy_names: hierarchy1)
+
+        hierarchy2 = { order: name1 }
+        create(:ncbi_node, canonical_name: name1, rank: 'order',
+                           hierarchy_names: hierarchy2)
+
+        expect(subject(name1, given_hier, initial_taxa, count))
+          .to match_array([taxon1])
+      end
+
+      it "and multiple matches for name, but ranks don't match, returns []" do
+        given_hier = { class: name1 }
+
+        hierarchy1 = { family: name1 }
+        create(:ncbi_node, canonical_name: name1, rank: 'family',
+                           hierarchy_names: hierarchy1)
+
+        hierarchy2 = { order: name1 }
+        create(:ncbi_node, canonical_name: name1, rank: 'order',
+                           hierarchy_names: hierarchy2)
+
+        expect(subject(name1, given_hier, initial_taxa, count))
+          .to match_array([])
+      end
+
+      it 'and one match for name, returns taxa regardless of rank' do
+        given_hier = { class: name1 }
+
+        hierarchy1 = { order: name1 }
+        taxon1 = create(:ncbi_node, canonical_name: name1, rank: 'order',
+                                    hierarchy_names: hierarchy1)
+
+        expect(subject(name1, given_hier, initial_taxa, count))
+          .to match_array([taxon1])
+      end
+
+      it 'and there are no matches for name, returns empty array' do
         hierarchy = { class: name1 }
 
-        create(:ncbi_node, canonical_name: name2)
+        hierarchy1 = { class: name2 }
+        create(:ncbi_node, canonical_name: name2, rank: 'class',
+                           hierarchy_names: hierarchy1)
 
         expect(subject(name1, hierarchy, initial_taxa, count)).to eq([])
       end
