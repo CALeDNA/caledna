@@ -28,6 +28,7 @@ class PageDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :title,
     :published,
     :menu_text,

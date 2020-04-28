@@ -34,6 +34,7 @@ class ResearcherDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = %i[
+    id
     email
     username
     orcid

@@ -24,6 +24,7 @@ class EventRegistrationDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :user,
     :event,
     :status_cd,

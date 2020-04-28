@@ -48,7 +48,8 @@ class UserDashboard < Administrate::BaseDashboard
     :updated_at
   ].freeze
 
-    SHOW_PAGE_ATTRIBUTES = [
+   SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :email,
     :username,
     :name,

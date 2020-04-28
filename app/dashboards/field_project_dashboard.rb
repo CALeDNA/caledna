@@ -26,6 +26,7 @@ class FieldProjectDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :name,
     :published,
     :description,

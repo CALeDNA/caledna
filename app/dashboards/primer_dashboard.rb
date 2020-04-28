@@ -17,6 +17,7 @@ class PrimerDashboard < Administrate::BaseDashboard
   ].freeze
 
    SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :name,
     :forward_primer,
     :reverse_primer,

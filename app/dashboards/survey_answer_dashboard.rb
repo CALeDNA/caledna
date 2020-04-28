@@ -20,8 +20,8 @@ class SurveyAnswerDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
-    :survey_response,
     :id,
+    :survey_response,
     :survey_question_id,
     :content,
     :created_at,

@@ -54,6 +54,7 @@ class SampleDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :barcode,
     :latitude,
     :longitude,

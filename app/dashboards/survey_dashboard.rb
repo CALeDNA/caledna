@@ -20,6 +20,7 @@ class SurveyDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :name,
     :slug,
     :description,
