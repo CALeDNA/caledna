@@ -397,7 +397,7 @@ module ProcessEdnaResults
     taxa = NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
                           'ncbi_nodes.ncbi_id')
                    .where("ncbi_names.name_class IN ('in-part', 'includes', " \
-                          "'scientific name', 'equivalent name','synonym')")
+                          "'anamorph', 'equivalent name','synonym')")
                    .where('ncbi_names.name = ?', name)
                    .where('hierarchy_names @> ?', filtered_hierarchy.to_json)
     taxa.where(rank: rank) if rank

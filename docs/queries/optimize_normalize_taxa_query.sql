@@ -8,6 +8,8 @@ TABLE result_taxa;
 
 truncate  result_taxa restart identity;
 
+-- v1 - v9 has desert, pillar point, la river
+
 -- find matching taxa for the taxonomy string
 
 -- v1 strict match all ranks
@@ -128,12 +130,14 @@ select * from result_taxa where normalized = false and taxon_rank = 'genus';
 -- add phylum for genus
 
 -- 12925
-select count((clean_taxonomy_string)) from result_taxa;
+select count(clean_taxonomy_string) from result_taxa;
 -- 12814
-select count( (clean_taxonomy_string)) from result_taxa where normalized = true;
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
 -- 111; 49 genus
-select count( (clean_taxonomy_string)) from result_taxa where normalized = false;
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
 select * from result_taxa where normalized = false and taxon_rank = 'genus';
+
+
 
 -----------------------------
 
