@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_24_175505) do
+ActiveRecord::Schema.define(version: 2020_04_28_160929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -310,6 +310,9 @@ ActiveRecord::Schema.define(version: 2020_04_24_175505) do
     t.text "decontamination_method"
     t.jsonb "metadata", default: {}
     t.string "primers", default: [], array: true
+    t.decimal "map_latitude"
+    t.decimal "map_longitude"
+    t.integer "map_zoom"
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|

@@ -18,6 +18,9 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     decontamination_method: Field::Text,
     slug: Field::String,
     metadata: Field::JSON.with_options(searchable: false),
+    map_latitude: Field::String,
+    map_longitude: Field::String,
+    map_zoom: Field::Number
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -27,6 +30,7 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
+    :id,
     :name,
     :published,
     :slug,
@@ -35,6 +39,9 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     :decontamination_method,
     :researcher_authors,
     :user_authors,
+    :map_latitude,
+    :map_longitude,
+    :map_zoom,
     :created_at,
     :updated_at,
     :metadata
@@ -48,7 +55,10 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     :dryad_link,
     :decontamination_method,
     :researcher_authors,
-    :user_authors
+    :user_authors,
+    :map_latitude,
+    :map_longitude,
+    :map_zoom,
   ].freeze
 
 

@@ -7,3 +7,20 @@
   <%= javascript_pack_tag 'research_projects_details_map' %>
   <%= stylesheet_pack_tag 'research_projects_details_map' %>
 <% end %>
+
+<script>
+(function(){
+
+  window.caledna = {}
+    <% if @project.map_latitude %>
+    window.caledna.mapLatitude = <%= @project.map_latitude  %>
+  <% end %>
+  <% if @project.map_longitude %>
+    window.caledna.mapLongitude = <%= @project.map_longitude  %>
+  <% end %>
+  <% if @project.map_zoom %>
+    window.caledna.mapZoom = <%= @project.map_zoom  %>
+  <% end %>
+
+})()
+</script>
