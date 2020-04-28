@@ -89,15 +89,69 @@ namespace :result_taxa do
         research_project_id: '4'
       }
     ]
+
+    more_files = [
+      {
+        path: OpenStruct.new(path: "#{base}/Palmyra_Atoll/ASV_12S.csv"),
+        primer: '12S',
+        research_project_id: '19'
+      },
+      {
+        path: OpenStruct.new(path: "#{base}/Palmyra_Atoll/ASV_12Selasmo.csv"),
+        primer: '12Selasmo',
+        research_project_id: '19'
+      },
+      {
+        path: OpenStruct.new(path: "#{base}/Palmyra_Atoll/ASV_18S.csv"),
+        primer: '18S',
+        research_project_id: '19'
+      },
+      {
+        path: OpenStruct.new(path: "#{base}/Palmyra_Atoll/ASV_CO1.csv"),
+        primer: 'CO1',
+        research_project_id: '19'
+      },
+
+      {
+        path: OpenStruct.new(path: "#{base}/transects/asv_deco_dedup_16S.csv"),
+        primer: '16S',
+        research_project_id: '20'
+      },
+      {
+        path: OpenStruct.new(path: "#{base}/transects/asv_deco_dedup_18S.csv"),
+        primer: '18S',
+        research_project_id: '20'
+      },
+      {
+        path: OpenStruct.new(path: "#{base}/transects/asv_deco_dedup_CO1.csv"),
+        primer: 'CO1',
+        research_project_id: '20'
+      },
+      {
+        path: OpenStruct.new(path: "#{base}/transects/asv_deco_dedup_FITS.csv"),
+        primer: 'FITS',
+        research_project_id: '20'
+      },
+      {
+        path: OpenStruct.new(path: "#{base}/transects/asv_deco_dedup_PITS.csv"),
+        primer: 'PITS',
+        research_project_id: '20'
+      }
+    ]
     # rubocop:enable Metrics/LineLength
 
+    puts files.length
+    puts more_files.length
+
     files.each do |file|
+      puts "#{file[:path].path.split('/').last} - #{file[:research_project_id]}"
+
       import_csv(file[:path], file[:research_project_id], file[:primer])
 
-      puts "#{file[:path].path.split('/').last} - #{file[:research_project_id]}"
-      sleep(30)
+      sleep(15)
     end
   end
+
   task add_canonical_name: :environment do
     ResultTaxon.where(canonical_name: nil).find_each do |taxon|
       name = find_canonical_taxon_from_string(taxon.clean_taxonomy_string)
