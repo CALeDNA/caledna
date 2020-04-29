@@ -229,16 +229,11 @@ module Admin
         end
       end
 
-      def name_class
-        ['in-part', 'includes', 'scientific name', 'equivalent name', 'synonym']
-      end
-
       def suggestions_by_ncbi_names
         @suggestions_by_ncbi_names ||= begin
           canonical_name = result_taxon.canonical_name
           NcbiNode.joins('JOIN ncbi_names ' \
                          'ON ncbi_names.taxon_id = ncbi_nodes.ncbi_id')
-                  .where('ncbi_names.name_class IN (?)', name_class)
                   .where('ncbi_names.name = ?', canonical_name)
         end
       end
@@ -248,7 +243,6 @@ module Admin
           canonical_name = result_taxon.canonical_name
           NcbiNode.joins('JOIN external.ncbi_names_2017 ' \
                          'ON ncbi_names_2017.taxon_id = ncbi_nodes.ncbi_id')
-                  .where('ncbi_names_2017.name_class IN (?)', name_class)
                   .where('ncbi_names_2017.name = ?', canonical_name)
         end
       end

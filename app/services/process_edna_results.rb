@@ -74,8 +74,6 @@ module ProcessEdnaResults
     find_low_to_high(name, hierarchy, initial_taxa, count, true) do
       NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
                      'ncbi_nodes.ncbi_id')
-              .where("ncbi_names.name_class IN ('in-part', 'includes', " \
-                     "'anamorph', 'equivalent name','synonym')")
               .where('ncbi_names.name = ?', name)
     end
   end
