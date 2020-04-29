@@ -207,8 +207,10 @@ module Admin
           suggestions_with_strings
         elsif suggestions_by_ncbi_names.present?
           suggestions_by_ncbi_names
-        else
+        elsif suggestions_by_ncbi_names2017.present?
           suggestions_by_ncbi_names2017
+        else
+          suggestions_by_merge
         end
       end
 
@@ -247,6 +249,17 @@ module Admin
           NcbiNode.joins('JOIN external.ncbi_names_2017 ' \
                          'ON ncbi_names_2017.taxon_id = ncbi_nodes.ncbi_id')
                   .where('ncbi_names_2017.name_class IN (?)', name_class)
+                  .where('ncbi_names_2017.name = ?', canonical_name)
+        end
+      end
+
+      def suggestions_by_merge
+        @suggestions_by_merge ||= begin
+          canonical_name = result_taxon.canonical_name
+          NcbiNode.joins('JOIN external.ncbi_merged_taxa ON ' \
+                         'ncbi_merged_taxa.taxon_id = ncbi_nodes.ncbi_id')
+                  .joins('JOIN external.ncbi_names_2017 ON ' \
+                         'ncbi_names_2017.taxon_id = ncbi_merged_taxa.old_taxon_id')
                   .where('ncbi_names_2017.name = ?', canonical_name)
         end
       end
