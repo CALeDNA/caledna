@@ -22,24 +22,33 @@ module ProcessEdnaResults
     taxon_data = taxon_data_from_string(taxonomy_string, rank, hierarchy)
     return taxon_data if hierarchy == {}
 
-    taxa = find_existing_taxa(hierarchy, rank).to_a
+    taxa = find_existing_taxa(hierarchy, rank, taxon_data).to_a
     if taxa&.size == 1
       taxon_data = taxon_data_from_found_taxon(taxa.first, taxon_data)
     end
     taxon_data
   end
 
-  def find_existing_taxa(hierarchy, target_rank)
+  # rubocop: disable Metrics/MethodLength
+  def find_existing_taxa(hierarchy, target_rank, taxon_data)
     name = hierarchy[target_rank.to_sym]
 
     taxa = find_taxa_by_canonical_name(name, hierarchy)
+    taxon_data[:match_type] = :find_canonical_name
     return taxa if taxa.present?
 
     taxa = find_taxa_with_quotes(name, hierarchy)
+    taxon_data[:match_type] = :find_with_quotes
     return taxa if taxa.present?
 
-    find_taxa_by_ncbi_names(name, hierarchy)
+    taxa = find_taxa_by_ncbi_names(name, hierarchy)
+    taxon_data[:match_type] = :find_other_names
+    return taxa if taxa.present?
+
+    taxon_data[:match_type] = nil
+    []
   end
+  # rubocop: enable Metrics/MethodLength
 
   def find_taxa_with_quotes(name, hierarchy)
     initial_taxa = []
@@ -53,6 +62,7 @@ module ProcessEdnaResults
   def find_taxa_by_canonical_name(name, hierarchy)
     initial_taxa = []
     count = 0
+
     find_low_to_high(name, hierarchy, initial_taxa, count) do
       NcbiNode.where('lower(canonical_name) = ?', name.downcase)
     end

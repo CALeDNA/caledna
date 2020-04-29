@@ -23,6 +23,7 @@ module Admin
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
 
         update_result_taxon_with_suggestion
+        result_taxon.match_type = :use_suggestion
 
         if result_taxon.save(validate: false)
           redirect_to admin_labwork_normalize_ncbi_taxa_path
@@ -38,6 +39,7 @@ module Admin
         return handle_error_id('No taxa matches the ID') if taxon.blank?
 
         update_result_taxon_with_taxon(taxon)
+        result_taxon.match_type = :set_id
 
         if result_taxon.save
           redirect_to admin_labwork_normalize_ncbi_taxa_path
@@ -65,6 +67,7 @@ module Admin
       def ignore_taxon
         authorize 'Labwork::NormalizeTaxon'.to_sym, :update?
         result_taxon.ignore = true
+        result_taxon.match_type = :ignore
         if result_taxon.save
           redirect_to admin_labwork_normalize_ncbi_taxa_path
         else
@@ -157,6 +160,7 @@ module Admin
         if ['true', true].include?(ucparams['update_result_taxa'])
           update_result_taxon_with_taxon(taxon)
           result_taxon.ncbi_version_id = ucparams['ncbi_version_id']
+          result_taxon.match_type = :create_new
           result_taxon.save
         end
 
