@@ -538,55 +538,31 @@ describe ProcessEdnaResults do
   end
 
   describe '#get_hierarchy_phylum' do
+    before do
+      stub_const('TaxaReference::PHYLUM_SUPERKINGDOM',
+                 'Phylum' => 'Superkingdom')
+    end
+
     def subject(string)
       dummy_class.get_hierarchy_phylum(string)
     end
 
-    it 'returns taxon data when taxon has long hierarchy names' do
-      hierarchy_names = {
-        superkingdom: 'Superkingdom',
-        kingdom: 'Kingdom',
-        phylum: 'Phylum',
-        subphylum: 'Subphylum',
+    it 'returns hash without superkingdom if no phylum' do
+      string = ';Class;Order;Family;Genus;'
+      expected = {
         class: 'Class',
-        subclass: 'Subclass',
-        superorder: 'Superorder',
         order: 'Order',
-        suborder: 'Suborder',
-        infraorder: 'Infraorder',
-        superfamily: 'Superfamily',
         family: 'Family',
-        genus: 'Genus',
-        species: 'Species'
-      }
-      create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
-                         hierarchy_names: hierarchy_names)
-      string = 'Phylum;Class;Order;Family;Genus;'
-
-      expect(subject(string)).to eq(
-        phylum: 'Phylum', class: 'Class', order: 'Order', family: 'Family',
         genus: 'Genus'
-      )
+      }
+
+      expect(subject(string)).to eq(expected)
     end
 
-    it 'returns a hash of taxonomy names' do
-      create(
-        :ncbi_node,
-        canonical_name: 'Species',
-        rank: 'species',
-        hierarchy_names: {
-          superkingdom: 'Superkingdom',
-          kingdom: 'Kingdom',
-          phylum: 'Phylum',
-          class: 'Class',
-          order: 'Order',
-          family: 'Family',
-          genus: 'Genus',
-          species: 'Species'
-        }
-      )
+    it 'returns a hash of taxonomy names with superkingdom' do
       string = 'Phylum;Class;Order;Family;Genus;Species'
       expected = {
+        superkingdom: 'Superkingdom',
         phylum: 'Phylum',
         class: 'Class',
         order: 'Order',
@@ -599,21 +575,9 @@ describe ProcessEdnaResults do
     end
 
     it 'returns hash that does not contain missing taxa' do
-      create(
-        :ncbi_node,
-        canonical_name: 'Genus',
-        rank: 'genus',
-        hierarchy_names: {
-          superkingdom: 'Superkingdom',
-          kingdom: 'Kingdom',
-          phylum: 'Phylum',
-          class: 'Class',
-          family: 'Family',
-          genus: 'Genus'
-        }
-      )
       string = 'Phylum;Class;;Family;Genus;'
       expected = {
+        superkingdom: 'Superkingdom',
         phylum: 'Phylum',
         class: 'Class',
         family: 'Family',
@@ -624,21 +588,9 @@ describe ProcessEdnaResults do
     end
 
     it 'returns hash that does not contain "NA" taxa' do
-      create(
-        :ncbi_node,
-        canonical_name: 'Genus',
-        rank: 'genus',
-        hierarchy_names: {
-          superkingdom: 'Superkingdom',
-          kingdom: 'Kingdom',
-          phylum: 'Phylum',
-          class: 'Class',
-          family: 'Family',
-          genus: 'Genus'
-        }
-      )
       string = 'Phylum;Class;NA;Family;Genus;NA'
       expected = {
+        superkingdom: 'Superkingdom',
         phylum: 'Phylum',
         class: 'Class',
         family: 'Family',
@@ -726,24 +678,6 @@ describe ProcessEdnaResults do
     end
 
     it 'returns taxon data when taxon has long hierarchy names' do
-      hierarchy_names = {
-        superkingdom: 'Superkingdom',
-        kingdom: 'Kingdom',
-        phylum: 'Phylum',
-        subphylum: 'Subphylum',
-        class: 'Class',
-        subclass: 'Subclass',
-        superorder: 'Superorder',
-        order: 'Order',
-        suborder: 'Suborder',
-        infraorder: 'Infraorder',
-        superfamily: 'Superfamily',
-        family: 'Family',
-        genus: 'Genus',
-        species: 'Species'
-      }
-      create(:ncbi_node, canonical_name: 'Genus', rank: 'genus',
-                         hierarchy_names: hierarchy_names)
       string = 'Superkingdom;Phylum;Class;Order;Family;Genus;'
 
       expect(subject(string)).to eq(
@@ -753,21 +687,6 @@ describe ProcessEdnaResults do
     end
 
     it 'returns a hash of taxonomy names' do
-      create(
-        :ncbi_node,
-        canonical_name: 'Species',
-        rank: 'species',
-        hierarchy_names: {
-          superkingdom: 'Superkingdom',
-          kingdom: 'Kingdom',
-          phylum: 'Phylum',
-          class: 'Class',
-          order: 'Order',
-          family: 'Family',
-          genus: 'Genus',
-          species: 'Species'
-        }
-      )
       string = 'Superkingdom;Phylum;Class;Order;Family;Genus;Species'
       expected = {
         superkingdom: 'Superkingdom',

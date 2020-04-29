@@ -207,7 +207,11 @@ module ProcessEdnaResults
     hierarchy[:family] = taxa[3] if taxa[3].present?
     hierarchy[:order] = taxa[2] if taxa[2].present?
     hierarchy[:class] = taxa[1] if taxa[1].present?
-    hierarchy[:phylum] = taxa[0] if taxa[0].present?
+
+    if taxa[0].present?
+      hierarchy[:phylum] = taxa[0]
+      hierarchy[:superkingdom] = TaxaReference::PHYLUM_SUPERKINGDOM[taxa[0]]
+    end
     hierarchy
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize

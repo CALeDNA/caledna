@@ -300,15 +300,20 @@ describe ImportCsv::EdnaResultsTaxa do
     end
 
     context 'when taxonomy string is phylum format' do
+      before do
+        stub_const('TaxaReference::PHYLUM_SUPERKINGDOM', 'P' => 'Sk')
+      end
+
       taxa_string = 'P;C;;NA;G;S'
 
       options = {
-        hierarchy: { species: 'S', genus: 'G', class: 'C', phylum: 'P' },
+        hierarchy: { species: 'S', genus: 'G', class: 'C', phylum: 'P',
+                     superkingdom: 'Sk' },
         name: 'S',
         rank: 'species',
         taxa_string: taxa_string,
         phylum_string: taxa_string,
-        superkingdom_string: ';' + taxa_string
+        superkingdom_string: 'Sk;' + taxa_string
       }
 
       include_examples 'ResultTaxon matches taxa string', taxa_string
