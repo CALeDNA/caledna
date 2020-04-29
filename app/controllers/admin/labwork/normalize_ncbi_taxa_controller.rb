@@ -201,8 +201,10 @@ module Admin
           suggestions_by_canonical_name
         elsif suggestions_with_strings.present?
           suggestions_with_strings
-        else
+        elsif suggestions_by_ncbi_names.present?
           suggestions_by_ncbi_names
+        else
+          suggestions_by_ncbi_names2017
         end
       end
 
@@ -221,14 +223,27 @@ module Admin
         end
       end
 
+      def name_class
+        ['in-part', 'includes', 'scientific name', 'equivalent name', 'synonym']
+      end
+
       def suggestions_by_ncbi_names
         @suggestions_by_ncbi_names ||= begin
           canonical_name = result_taxon.canonical_name
-          NcbiNode.joins('JOIN ncbi_names ON ncbi_names.taxon_id = ' \
-                         'ncbi_nodes.ncbi_id')
-                  .where("ncbi_names.name_class IN ('in-part', 'includes', " \
-                         "'scientific name', 'equivalent name','synonym')")
+          NcbiNode.joins('JOIN ncbi_names ' \
+                         'ON ncbi_names.taxon_id = ncbi_nodes.ncbi_id')
+                  .where('ncbi_names.name_class IN (?)', name_class)
                   .where('ncbi_names.name = ?', canonical_name)
+        end
+      end
+
+      def suggestions_by_ncbi_names2017
+        @suggestions_by_ncbi_names2017 ||= begin
+          canonical_name = result_taxon.canonical_name
+          NcbiNode.joins('JOIN external.ncbi_names_2017 ' \
+                         'ON ncbi_names_2017.taxon_id = ncbi_nodes.ncbi_id')
+                  .where('ncbi_names_2017.name_class IN (?)', name_class)
+                  .where('ncbi_names_2017.name = ?', canonical_name)
         end
       end
 
