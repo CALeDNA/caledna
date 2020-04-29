@@ -76,6 +76,8 @@ describe ImportCsv::EdnaResultsTaxa do
     let(:source_data) { '1|primer1' }
 
     shared_examples 'ResultTaxon matches taxa string' do |taxa_string|
+      let(:clean_string) { dummy_class.remove_na(taxa_string) }
+
       it 'does not create a ResultTaxon' do
         create(:result_taxon, original_taxonomy_string: [taxa_string],
                               clean_taxonomy_string: clean_string,
@@ -145,14 +147,21 @@ describe ImportCsv::EdnaResultsTaxa do
       let(:hierarchy) { options[:hierarchy] }
       let(:name) { options[:name] }
       let(:rank) { options[:rank] }
-      let(:clean_string) { dummy_class.remove_na(taxa_string) }
+      let(:superkingdom_string) { options[:superkingdom_string] }
+      let(:clean_superkingdom_string) do
+        dummy_class.remove_na(superkingdom_string)
+      end
+      let(:clean_phylum_string) do
+        dummy_class.remove_na(options[:phylum_string])
+      end
       let(:result_taxon_common_attributes) do
         {
           canonical_name: name,
           taxon_rank: rank,
           hierarchy: hierarchy,
-          original_taxonomy_string: [taxa_string],
-          clean_taxonomy_string: clean_string
+          original_taxonomy_string: [superkingdom_string],
+          clean_taxonomy_string: clean_superkingdom_string,
+          clean_taxonomy_string_phylum: clean_phylum_string
         }
       end
 
@@ -218,14 +227,21 @@ describe ImportCsv::EdnaResultsTaxa do
       let(:hierarchy) { options[:hierarchy] }
       let(:name) { options[:name] }
       let(:rank) { options[:rank] }
-      let(:clean_string) { dummy_class.remove_na(taxa_string) }
+      let(:superkingdom_string) { options[:superkingdom_string] }
+      let(:clean_superkingdom_string) do
+        dummy_class.remove_na(superkingdom_string)
+      end
+      let(:clean_phylum_string) do
+        dummy_class.remove_na(options[:phylum_string])
+      end
       let(:result_taxon_common_attributes) do
         {
           canonical_name: name,
           taxon_rank: rank,
           hierarchy: hierarchy,
-          original_taxonomy_string: [taxa_string],
-          clean_taxonomy_string: clean_string
+          original_taxonomy_string: [superkingdom_string],
+          clean_taxonomy_string: clean_superkingdom_string,
+          clean_taxonomy_string_phylum: clean_phylum_string
         }
       end
 
@@ -259,7 +275,9 @@ describe ImportCsv::EdnaResultsTaxa do
         hierarchy: {},
         name: ';;;;;',
         rank: 'unknown',
-        taxa_string: taxa_string
+        taxa_string: taxa_string,
+        phylum_string: taxa_string,
+        superkingdom_string: ';' + taxa_string
       }
 
       include_examples 'ResultTaxon matches taxa string', taxa_string
@@ -272,7 +290,9 @@ describe ImportCsv::EdnaResultsTaxa do
         hierarchy: {},
         name: 'NA',
         rank: 'unknown',
-        taxa_string: taxa_string
+        taxa_string: taxa_string,
+        phylum_string: taxa_string,
+        superkingdom_string: taxa_string
       }
 
       include_examples 'ResultTaxon matches taxa string', taxa_string
@@ -280,17 +300,31 @@ describe ImportCsv::EdnaResultsTaxa do
     end
 
     context 'when taxonomy string is phylum format' do
-      taxa_string = 'P;C;O;NA;G;S'
+      taxa_string = 'P;C;;NA;G;S'
+
       options = {
-        hierarchy: { phylum: 'P', class: 'C', order: 'O',
-                     genus: 'G', species: 'S' },
+        hierarchy: { species: 'S', genus: 'G', class: 'C', phylum: 'P' },
         name: 'S',
         rank: 'species',
-        taxa_string: taxa_string
+        taxa_string: taxa_string,
+        phylum_string: taxa_string,
+        superkingdom_string: ';' + taxa_string
       }
 
       include_examples 'ResultTaxon matches taxa string', taxa_string
       include_examples "ResultTaxon don't match valid taxa string", options
+
+      it 'matches existing ResultTaxon via clean_taxonomy_string_phylum' do
+        taxa_string = 'P;C;O;NA;G;S'
+        clean_string = dummy_class.remove_na(taxa_string)
+
+        create(:result_taxon, clean_taxonomy_string: '',
+                              clean_taxonomy_string_phylum: clean_string,
+                              original_taxonomy_string: '')
+
+        expect { subject(taxa_string, source_data) }
+          .to_not(change { ResultTaxon.count })
+      end
     end
 
     context 'when taxonomy string is superkingdom format' do
@@ -300,11 +334,25 @@ describe ImportCsv::EdnaResultsTaxa do
                      genus: 'G', species: 'S' },
         name: 'S',
         rank: 'species',
-        taxa_string: taxa_string
+        taxa_string: taxa_string,
+        phylum_string: 'P;C;O;;G;S',
+        superkingdom_string: taxa_string
       }
 
       include_examples 'ResultTaxon matches taxa string', taxa_string
       include_examples "ResultTaxon don't match valid taxa string", options
+
+      it 'matches existing ResultTaxon via clean_taxonomy_string' do
+        taxa_string = 'SK;P;C;O;NA;G;S'
+        clean_string = dummy_class.remove_na(taxa_string)
+
+        create(:result_taxon, clean_taxonomy_string: clean_string,
+                              clean_taxonomy_string_phylum: '',
+                              original_taxonomy_string: '')
+
+        expect { subject(taxa_string, source_data) }
+          .to_not(change { ResultTaxon.count })
+      end
     end
   end
 end

@@ -26,8 +26,8 @@ module ImportCsv
 
     def update_or_create_result_taxon(taxonomy_string, source_data)
       clean_str = remove_na(taxonomy_string)
-      result_taxon =
-        ResultTaxon.find_by(clean_taxonomy_string: clean_str)
+      sql = 'clean_taxonomy_string = ? OR clean_taxonomy_string_phylum = ?'
+      result_taxon = ResultTaxon.where(sql, clean_str, clean_str).first
 
       if result_taxon.present?
         update_result_taxon(result_taxon, source_data, taxonomy_string)

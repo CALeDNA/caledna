@@ -71,6 +71,7 @@ module ProcessEdnaResults
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def find_low_to_high(name, hierarchy, taxa, count, skip_lowest = false)
     return taxa if taxa.length == 1
     return taxa if hierarchy.length < count
@@ -84,8 +85,6 @@ module ProcessEdnaResults
       filtered_hierarchy = filtered_hierarchy(hierarchy, filtered_ranks)
     end
 
-    # debugger
-
     taxa = yield
 
     if count.positive?
@@ -96,12 +95,12 @@ module ProcessEdnaResults
       taxa = taxa.where(rank: filtered_ranks.first)
     end
 
-    puts '--------'
-    puts count
-    puts filtered_hierarchy
-    puts taxa.to_sql
-    puts taxa.count
-    puts '--------'
+    # puts '--------'
+    # puts count
+    # puts filtered_hierarchy
+    # puts taxa.to_sql
+    # puts taxa.count
+    # puts '--------'
 
     count += 1
 
@@ -110,6 +109,7 @@ module ProcessEdnaResults
     end
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def filtered_ranks_by_number(hierarchy, length, skip_lowest = false)
     start_index = skip_lowest ? 1 : 0
@@ -132,7 +132,8 @@ module ProcessEdnaResults
              get_taxon_rank_superkingdom(clean_string)
            end
 
-    ResultTaxon.where(clean_taxonomy_string: clean_string)
+    sql = 'clean_taxonomy_string = ? OR clean_taxonomy_string_phylum = ?'
+    ResultTaxon.where(sql, clean_string, clean_string)
                .where(taxon_rank: rank).first
   end
 
@@ -437,14 +438,40 @@ module ProcessEdnaResults
     end
   end
 
+  def create_original_taxonomy(taxonomy_string)
+    return taxonomy_string unless phylum_taxonomy_string?(taxonomy_string)
+
+    add_superkingdom(taxonomy_string)
+  end
+
+  def create_clean_taxonomy_phylum(clean_string)
+    return clean_string if phylum_taxonomy_string?(clean_string)
+
+    clean_string.gsub(/^.*?;/, '')
+  end
+
+  def create_clean_taxonomy(clean_string)
+    return clean_string unless phylum_taxonomy_string?(clean_string)
+
+    add_superkingdom(clean_string)
+  end
+
+  def add_superkingdom(str)
+    phylum = str.split(';').first
+    superkingdom = TaxaReference::PHYLUM_SUPERKINGDOM[phylum]
+    "#{superkingdom};#{str}"
+  end
+
   # rubocop:disable Metrics/MethodLength
   def taxon_data_from_string(taxonomy_string, rank, hierarchy)
+    clean_string = remove_na(taxonomy_string)
     {
       taxon_id: nil,
       taxon_rank: rank,
       hierarchy: hierarchy,
-      original_taxonomy_string: [taxonomy_string],
-      clean_taxonomy_string: remove_na(taxonomy_string),
+      original_taxonomy_string: [create_original_taxonomy(taxonomy_string)],
+      clean_taxonomy_string: create_clean_taxonomy(clean_string),
+      clean_taxonomy_string_phylum: create_clean_taxonomy_phylum(clean_string),
       ncbi_id: nil,
       bold_id: nil,
       ncbi_version_id: nil,
