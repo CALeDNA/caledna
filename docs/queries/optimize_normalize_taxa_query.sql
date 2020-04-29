@@ -1,12 +1,13 @@
-
-select count(*), clean_taxonomy_string, ncbi_id
- from result_taxa
- group by clean_taxonomy_string, ncbi_id;
-
-CREATE TABLE result_taxa_v8 AS
+CREATE TABLE result_taxa_v11 AS
 TABLE result_taxa;
 
-truncate  result_taxa restart identity;
+TRUNCATE  result_taxa restart identity;
+ALTER SEQUENCE result_taxa_id_seq RESTART WITH 1;
+
+
+INSERT INTO result_taxa
+SELECT * FROM result_taxa_v10;
+
 
 -- v1 - v9 has desert, pillar point, la river
 
@@ -138,6 +139,93 @@ select count( clean_taxonomy_string) from result_taxa where normalized = false;
 select * from result_taxa where normalized = false and taxon_rank = 'genus';
 
 
+----
+
+---
+-- v9b - bold, 5 projects
+
+-- 3 projects
+-- 12925
+select count(clean_taxonomy_string) from result_taxa;
+-- 12808
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 117; 49 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
+-- 5 projects
+-- 31381
+select count(clean_taxonomy_string) from result_taxa;
+-- 30535
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 846; 131 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
+----------
+
+-- v10; recursive low to high
+-- 3 projects
+-- 12925
+select count(clean_taxonomy_string) from result_taxa;
+-- 12853
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 72; 19 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
+-- 5 projects
+-- 31381
+select count(clean_taxonomy_string) from result_taxa;
+-- 31197
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 184; 39 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
+----------
+
+-- v11; recursive low to high, rank match
+-- 3 projects
+-- 12925
+select count(clean_taxonomy_string) from result_taxa;
+-- 12862
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 63; 11 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
+-- 5 projects
+-- 31381
+select count(clean_taxonomy_string) from result_taxa;
+-- 31221
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 160; 19 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
+----------
+
+-- v12; recursive low to high for all finds
+-- 3 projects
+
+-- 12925
+select count(clean_taxonomy_string) from result_taxa;
+-- 12862
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 63; 15 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
+-- 5 projects
+-- 23064
+select count(clean_taxonomy_string) from result_taxa;
+-- 22963
+select count( clean_taxonomy_string) from result_taxa where normalized = true;
+-- 101; 17 genus
+select count( clean_taxonomy_string) from result_taxa where normalized = false;
+select count(*) from result_taxa where normalized = false and taxon_rank = 'genus';
+
 
 -----------------------------
 
@@ -178,3 +266,40 @@ select hierarchy_names ->> 'superkingdom', hierarchy_names from ncbi_nodes
 select hierarchy_names ->> 'superkingdom', hierarchy_names from ncbi_nodes
  where not hierarchy_names ? 'superkingdom'
  and division_id in (0, 1, 2 , 3 , 4, 5, 6 , 10) ;
+
+--------
+
+-- look at the various ncbi 2020 and 2017 tables for result taxa that did not match
+
+select
+result_taxa.id,  result_taxa.canonical_name, result_taxa.taxon_rank,
+
+ncbi_names_2017.taxon_id as taxon_id_17_names, ncbi_names_2017.name, ncbi_names_2017.name_class, ncbi_names_2017.unique_name,
+
+nc_names.canonical_name, nc_names.ncbi_id,
+
+
+ncbi_names.taxon_id as taxon_id_20_names, ncbi_names.name, ncbi_names.name_class, ncbi_names.unique_name,
+
+
+ncbi_merged_taxa.old_taxon_id as old_taxon_id_20_merged, ncbi_merged_taxa.taxon_id as taxon_id_20_merged ,
+
+nc_merged.canonical_name as canonical_name_20_merged
+
+
+from result_taxa
+
+left join external.ncbi_names_2017 on ncbi_names_2017.name = result_taxa.canonical_name
+
+left join ncbi_nodes as nc_names on ncbi_names_2017.taxon_id = nc_names.ncbi_id
+
+
+
+left join ncbi_names on ncbi_names.name = result_taxa.canonical_name
+
+left join external.ncbi_merged_taxa on ncbi_merged_taxa.old_taxon_id = ncbi_names.taxon_id
+
+left join ncbi_nodes as nc_merged on ncbi_merged_taxa.taxon_id = nc_merged.ncbi_id
+
+
+where normalized = false;
