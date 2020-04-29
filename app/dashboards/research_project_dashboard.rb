@@ -18,8 +18,8 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     decontamination_method: Field::Text,
     slug: Field::String,
     metadata: Field::JSON.with_options(searchable: false),
-    map_latitude: Field::String,
-    map_longitude: Field::String,
+    map_latitude: Field::Number,
+    map_longitude: Field::Number,
     map_zoom: Field::Number
   }.freeze
 
