@@ -235,6 +235,21 @@ describe ImportCsv::EdnaResultsAsvs do
         end
           .to have_enqueued_job(ImportCsvUpdateSampleStatusJob).exactly(2).times
       end
+
+      it 'passes arguements to ImportCsvUpdateSampleStatusJob' do
+        arguements = sample_id1
+
+
+        expect { subject }
+          .to have_enqueued_job.with(arguements).exactly(1).times
+      end
+
+      it 'passes arguements to ImportCsvUpdateSampleStatusJob' do
+        arguements = sample_id2
+
+        expect { subject }
+          .to have_enqueued_job.with(arguements).exactly(1).times
+      end
     end
   end
 
