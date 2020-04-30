@@ -8,6 +8,10 @@ ALTER SEQUENCE result_taxa_id_seq RESTART WITH 1;
 INSERT INTO result_taxa
 SELECT * FROM result_taxa_v10;
 
+-- https://til.codes/dont-forget-to-update-the-sequence-in-postgresql-after-a-copy-command/
+
+select max(id) from result_taxa;
+SELECT setval('result_taxa_id_seq', max(id)) FROM result_taxa;
 
 -- v1 - v9 has desert, pillar point, la river
 
