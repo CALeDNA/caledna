@@ -10,10 +10,12 @@
 
 // https://stephanwagner.me/only-css-loading-spinner
 @keyframes spinner {
-  to {transform: rotate(360deg);}
+  to {
+    transform: rotate(360deg);
+  }
 }
 .spinner:before {
-  content: '';
+  content: "";
   box-sizing: border-box;
   position: absolute;
   top: 50%;
@@ -23,7 +25,7 @@
   margin-top: -25px;
   margin-left: -25px;
   border-radius: 50%;
-  border: 5px solid #ccc;
+  border: 5px solid $grey-border;
   border-top-color: #000;
-  animation: spinner .6s linear infinite;
+  animation: spinner 0.6s linear infinite;
 }

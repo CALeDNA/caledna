@@ -5,6 +5,9 @@ class ResearchProjectsController < ApplicationController
 
   def index
     @projects = projects
+    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
+    @samples_with_results_count = Sample.results_completed.count
+    @families_count = families_count
   end
 
   def show
@@ -64,6 +67,24 @@ class ResearchProjectsController < ApplicationController
     AND sourceable_type = 'Sample';
     SQL
   end
+
+  def families_count
+    @families_count ||= begin
+      results = conn.exec_query(rank_count('family'))
+      results.entries[0]['count']
+    end
+  end
+
+  def rank_count(rank)
+    <<-SQL
+    SELECT COUNT(DISTINCT(hierarchy_names ->> '#{rank}'))
+    FROM ncbi_nodes
+    WHERE taxon_id IN (
+      SELECT taxon_id FROM asvs GROUP BY taxon_id
+    );
+    SQL
+  end
+
 
   # =======================
   # show

@@ -4,6 +4,11 @@ class TaxaController < ApplicationController
   def index
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
+
+    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
+    join_sql = 'JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs.taxon_id'
+    @families_count = families_count
+    @species_count = species_count
   end
 
   def show
@@ -51,7 +56,7 @@ class TaxaController < ApplicationController
     JOIN ncbi_divisions
       ON ncbi_nodes.cal_division_id = ncbi_divisions.id
     WHERE "ncbi_nodes"."rank" = 'species'
-    AND (asvs_count > 0)
+    AND (asvs_count > 5)
     #{kingdom_sql}
     GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
     ncbi_nodes.asvs_count, ncbi_divisions.name
@@ -77,6 +82,30 @@ class TaxaController < ApplicationController
   #================
   # show
   #================
+
+  def families_count
+    @families_count ||= begin
+      results = conn.exec_query(rank_count('family'))
+      results.entries[0]['count']
+    end
+  end
+
+  def species_count
+    @species_count ||= begin
+      results = conn.exec_query(rank_count('species'))
+      results.entries[0]['count']
+    end
+  end
+
+  def rank_count(rank)
+    <<-SQL
+    SELECT COUNT(DISTINCT(hierarchy_names ->> '#{rank}'))
+    FROM ncbi_nodes
+    WHERE taxon_id IN (
+      SELECT taxon_id FROM asvs GROUP BY taxon_id
+    );
+    SQL
+  end
 
   def taxon
     @taxon ||= NcbiNode.find(params[:id])

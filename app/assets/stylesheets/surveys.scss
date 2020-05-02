@@ -1,7 +1,8 @@
-#survey, #survey-response {
+#survey,
+#survey-response {
   .question-photo {
     max-width: 400px;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
     margin-bottom: 3rem;
   }
 }
@@ -31,12 +32,12 @@
     > li li {
       font-size: 1.5rem;
       font-weight: normal;
-      margin-top: .5rem;
+      margin-top: 0.5rem;
     }
   }
 
   .user-answer {
-    border: 1px solid #ccc;
+    border: 1px solid $grey-border;
     padding: 2px 5px;
     border-radius: 4px;
     background: #eee;

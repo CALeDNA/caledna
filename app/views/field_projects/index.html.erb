@@ -1,3 +1,14 @@
+<% content_for :hero_container do %>
+<div class="cal-hero-container">
+  <ul>
+    <li><%= pluralize(number_with_delimiter(@users_count), 'User') %></li>
+    <li><%= pluralize(number_with_delimiter(@events_count), 'BioBlitz') %></li>
+    <li><%= pluralize(number_with_delimiter(@samples_count), 'Site') %></li>
+  </ul>
+</div>
+<% end %>
+
+
 <h1>Field Projects</h1>
 <p class="page-description">
   Here's all the events where community scientists and researchers collected
