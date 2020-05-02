@@ -2,6 +2,12 @@
 
 module Admin
   class ResearchProjectsController < Admin::ApplicationController
+    def edna_results
+      @project = ResearchProject.find(params[:research_project_id])
+      @samples = edna_results_samples
+      @primers = edna_results_primers
+    end
+
     # rubocop:disable Metrics/MethodLength
     def create
       authorize_resource(resource)
@@ -41,6 +47,28 @@ module Admin
     # rubocop:enable Metrics/MethodLength
 
     private
+
+    def edna_results_primers
+      @edna_results_primers ||= begin
+        Asv.select('primers.name', 'count(distinct(asvs.taxon_id)) as count')
+           .joins('JOIN primers on asvs.primer_id = primers.id')
+           .where('asvs.research_project_id = ?', params[:research_project_id])
+           .order('primers.name')
+           .group('primers.name')
+      end
+    end
+
+    def edna_results_samples
+      @edna_results_samples ||= begin
+        Sample
+          .select('count(asvs.id) as count', 'samples.barcode')
+          .select('latitude', 'longitude', 'samples.id')
+          .joins(:asvs)
+          .where('asvs.research_project_id = ?', params[:research_project_id])
+          .group('samples.barcode', 'latitude', 'longitude', 'samples.id')
+          .order('barcode')
+      end
+    end
 
     def resource
       @resource ||= resource_class.new(resource_params)

@@ -1,0 +1,35 @@
+<% content_for(:title) {  "#{@project.name} eDNA results" } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+
+<p><%= @samples.length %> samples</p>
+
+<h2>Primers Info</h2>
+<table>
+<% @primers.each do |primer| %>
+  <tr>
+    <td><%= primer.name %></td>
+    <td><%= primer.count %> taxa</td>
+  </tr>
+<% end %>
+</table>
+
+<h2>Samples Info</h2>
+<table>
+<% @samples.each do |sample| %>
+  <tr>
+    <td><%= link_to sample.barcode, admin_sample_path(sample.id) %></td>
+    <td><%= sample.count %> organisms</td>
+    <td><%= sample.latitude %> / <%= sample.longitude %></td>
+
+  </tr>
+<% end %>
+</table>
+
+</section>

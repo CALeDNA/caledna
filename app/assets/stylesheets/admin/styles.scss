@@ -4,8 +4,12 @@
 // buttons
 // ================
 
+.main-content__header {
+  display: block;
+}
 header .button {
-  margin-left: 1em;
+  margin-right: 0.5em;
+  margin-top: 0.5em;
 }
 
 .button {

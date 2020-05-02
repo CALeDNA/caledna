@@ -63,7 +63,10 @@ Rails.application.routes.draw do
     resources :kobo_photos
     resources :pages
     resources :primers
-    resources :research_projects
+    resources :research_projects do
+      get 'edna_results', to: 'research_projects#edna_results',
+                          as: 'edna_results'
+    end
     resources :researchers
     resources :samples
     resources :site_news
