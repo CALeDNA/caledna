@@ -1,3 +1,13 @@
+<% content_for :hero_container do %>
+<div class="cal-hero-container">
+  <ul>
+    <li><%= pluralize(number_with_delimiter(@samples_count), 'Site') %></li>
+    <li><%= pluralize(number_with_delimiter(@samples_with_results_count), 'Site') %> with results</li>
+    <li><%= pluralize(number_with_delimiter(@taxa_count), 'Taxon') %></li>
+  </ul>
+</div>
+<% end %>
+
 <h1>
   Sites <%= " : #{@display_name}" if @display_name %>
 </h1>
@@ -5,6 +15,8 @@
   Here's all sites where soil or sediment samples were collected in the field and sent
   back to CALeDNA for genetic analyses.
 </p>
+
+
 
 <div id="samples-map"></div>
 <%= javascript_pack_tag 'samples_map' %>

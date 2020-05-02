@@ -153,7 +153,7 @@ h4 {
 
 .my-btn-default {
   background-color: #f6f6f6;
-  border-color: #ccc;
+  border-color: $grey-border;
 }
 
 .my-btn-default:focus,
@@ -176,7 +176,7 @@ span.meta {
 }
 
 h1.border {
-  border-top: 1px solid #ccc;
+  border-top: 1px solid $grey-border;
   padding-top: 1.5rem;
 }
 
@@ -185,7 +185,7 @@ h1.border {
   padding: 0;
   margin-bottom: 3rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $grey-border;
 
   li {
     display: inline-block;
@@ -195,6 +195,45 @@ h1.border {
 
 .page-description {
   margin-bottom: 2em;
+}
+
+.cal-hero-container {
+  background: $light-grey-background;
+  display: flex;
+  justify-content: center;
+
+  ul {
+    padding: 1em 0;
+    list-style: none;
+    font-size: 1.1em;
+    margin-bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 94%;
+  }
+
+  @media (min-width: 768px) {
+    ul {
+      font-size: 1.2em;
+
+      width: 750px;
+    }
+  }
+
+  @media (min-width: 992px) {
+    ul {
+      width: 970px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    ul {
+      width: 1170px;
+    }
+  }
+
+  li {
+  }
 }
 
 .form {

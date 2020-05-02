@@ -31,14 +31,14 @@ header .button {
 .btn-default {
   color: $main-text;
   background-color: #fff;
-  border-color: #ccc;
+  border-color: $grey-border;
   font-weight: 700;
 }
 
 input[type="submit"].btn-default {
   color: $main-text;
   background-color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid $grey-border;
 }
 
 .btn-group,
@@ -164,14 +164,14 @@ h6 {
   }
 
   .correct-answer {
-    border: 1px solid #ccc;
+    border: 1px solid $grey-border;
     padding: 2px 5px;
     border-radius: 4px;
     background: #eee;
   }
 
   .user-answer {
-    border: 1px solid #ccc;
+    border: 1px solid $grey-border;
     padding: 2px 5px;
     border-radius: 4px;
     background: #eee;

@@ -1,14 +1,13 @@
 .devise-links {
   margin-top: 3rem;
   padding-top: 3rem;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid $grey-border;
 
   div {
-    margin-bottom: .75rem;
+    margin-bottom: 0.75rem;
   }
 
   .sign-up {
     margin-bottom: 3rem;
-
   }
 }

@@ -4,6 +4,13 @@ class TaxaController < ApplicationController
   def index
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
+
+    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
+    join_sql = 'JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs.taxon_id'
+    @families_count =
+      Asv.joins(join_sql).select("DISTINCT(hierarchy ->> 'family')").count
+    @species_count =
+      Asv.joins(join_sql).select("DISTINCT(hierarchy ->> 'species')").count
   end
 
   def show

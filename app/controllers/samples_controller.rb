@@ -3,7 +3,11 @@
 class SamplesController < ApplicationController
   include AsvTreeFormatter
 
-  def index; end
+  def index
+    @samples_count = Sample.approved.with_coordinates.count
+    @samples_with_results_count = Sample.results_completed.count
+    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
+  end
 
   def show
     @division_counts = division_counts

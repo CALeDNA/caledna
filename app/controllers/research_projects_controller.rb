@@ -5,6 +5,11 @@ class ResearchProjectsController < ApplicationController
 
   def index
     @projects = projects
+    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
+    @samples_with_results_count = Sample.results_completed.count
+    join_sql = 'JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs.taxon_id'
+    @families_count =
+      Asv.joins(join_sql).select("DISTINCT(hierarchy ->> 'family')").count
   end
 
   def show

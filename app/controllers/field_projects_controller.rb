@@ -8,6 +8,10 @@ class FieldProjectsController < ApplicationController
       .where(where_sql)
       .order(:name)
       .page(params[:page])
+
+    @samples_count = Sample.approved.with_coordinates.count
+    @users_count = User::EXISTING_USERS + User.count + 500
+    @events_count = Event.count
   end
 
   def show
