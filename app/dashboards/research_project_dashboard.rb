@@ -63,7 +63,7 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
 
 
   def display_resource(research_project)
-    "Research Project: #{research_project.name}"
+    research_project.name
   end
 
   def permitted_attributes
