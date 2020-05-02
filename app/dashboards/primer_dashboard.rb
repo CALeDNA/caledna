@@ -34,6 +34,6 @@ class PrimerDashboard < Administrate::BaseDashboard
   ].freeze
 
   def display_resource(primer)
-    "Primer #{primer.name}"
+    primer.name
   end
 end

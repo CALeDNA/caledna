@@ -8,7 +8,10 @@ class AsvDashboard < Administrate::BaseDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
-    research_project: Field::BelongsTo,
+    research_project: Field::BelongsTo.with_options(
+      searchable: true,
+      searchable_field: 'name',
+    ),
     sample: Field::BelongsTo.with_options(
       searchable: true,
       searchable_field: 'barcode',
@@ -17,15 +20,15 @@ class AsvDashboard < Administrate::BaseDashboard
       searchable: true,
       searchable_field: 'canonical_name',
     ),
-    highlights: Field::HasMany,
     id: Field::Number,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     taxon_id: Field::Number,
-    primers: Field::Text,
-    primer: Field::String,
-    count: Field::Number,
-    counts: Field::String.with_options(searchable: false),
+    primer: Field::BelongsTo.with_options(
+      searchable: true,
+      searchable_field: 'name',
+    ),
+    count: Field::Number
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -62,14 +65,14 @@ class AsvDashboard < Administrate::BaseDashboard
     :sample,
     :taxon_id,
     :research_project,
-    :primers,
+    :primer,
     :count,
   ].freeze
 
   # Overwrite this method to customize how asvs are displayed
   # across all pages of the admin dashboard.
   #
-  # def display_resource(asv)
-  #   "Asv ##{asv.id}"
-  # end
+  def display_resource(asv)
+    "#{asv.sample.barcode} - #{asv.ncbi_node.canonical_name}"
+  end
 end
