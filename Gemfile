@@ -5,8 +5,11 @@ source 'https://rubygems.org'
 ruby '2.4.0'
 gem 'rails', '~> 5.2'
 
-gem 'administrate', '~> 0.13.0'
+# use my fork to fix using left join intead of join on search
+gem 'administrate', git: 'https://github.com/wykhuh/administrate.git'
 gem 'administrate-field-image'
+# gem 'administrate-field-jsonb'
+
 gem 'administrate-field-json', git: 'https://github.com/eddietejeda/administrate-field-json.git'
 gem 'administrate-field-nested_has_many', '~> 1.0.0'
 gem 'autoprefixer-rails', '~> 7.2'

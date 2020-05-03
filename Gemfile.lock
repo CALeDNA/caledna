@@ -13,6 +13,22 @@ GIT
     fast_jsonapi (1.6.0)
       activesupport (>= 4.2)
 
+GIT
+  remote: https://github.com/wykhuh/administrate.git
+  revision: 51ca1ef708c9478e09287f4be1400826c770953a
+  specs:
+    administrate (0.13.0)
+      actionpack (>= 4.2)
+      actionview (>= 4.2)
+      activerecord (>= 4.2)
+      autoprefixer-rails (>= 6.0)
+      datetime_picker_rails (~> 0.0.7)
+      jquery-rails (>= 4.0)
+      kaminari (>= 1.0)
+      momentjs-rails (~> 2.8)
+      sassc-rails (~> 2.1)
+      selectize-rails (~> 0.6)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -59,17 +75,6 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    administrate (0.13.0)
-      actionpack (>= 4.2)
-      actionview (>= 4.2)
-      activerecord (>= 4.2)
-      autoprefixer-rails (>= 6.0)
-      datetime_picker_rails (~> 0.0.7)
-      jquery-rails (>= 4.0)
-      kaminari (>= 1.0)
-      momentjs-rails (~> 2.8)
-      sassc-rails (~> 2.1)
-      selectize-rails (~> 0.6)
     administrate-field-image (1.1.0)
       administrate (>= 0.2.0.rc1)
     administrate-field-nested_has_many (1.0.0)
@@ -453,7 +458,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  administrate (~> 0.13.0)
+  administrate!
   administrate-field-image
   administrate-field-json!
   administrate-field-nested_has_many (~> 1.0.0)
