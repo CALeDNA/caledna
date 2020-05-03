@@ -1,6 +1,5 @@
 //= require bootstrap-sprockets
 //= require summernote/summernote-bs4.min
-
 (function () {
   const sendFile = function (file, toSummernote) {
     var data;

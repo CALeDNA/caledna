@@ -1,0 +1,96 @@
+<% content_for :page_id do %>home<% end %>
+<div class="container">
+  <div class="col-md-8">
+    <h1>Protecting Our River</h1>
+
+    <p>
+    Protecting Our River is a community engagement project that mobilizes L.A.
+    residents from a variety of backgrounds to help monitor the biodiversity of
+    the L.A. River and its tributaries. We aim to increase community awareness
+    and participation in conservation of biodiversity by merging science, art,
+    and community involvement.
+    </p>
+  </div>
+
+  <div class="col-md-4">
+    <figure>
+      <%= image_tag 'river/blue_heron_plants.jpg', class: "img-responsive" %>
+      <figcaption><span class="meta">© NHMLA Community Science Program, some rights reserved (CC-BY-NC)</span></figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="our-work">
+  <div class="container">
+    <h2>Biodiversity Monitoring</h2>
+
+    <div class="col-md-8">
+      <p>
+        Our team of researchers, conservation groups, and community scientists
+        (volunteers who participate in scientific
+        projects) uses a variety of methods to collect
+        biodiversity data including photographic
+        observations and environmental DNA (the DNA organisms shed into the
+        environment).
+      </p>
+      <p>
+        For our summer 2019 pilot program, we collected 52 sediment
+        and water samples from two locations along the river.
+        UCLA researchers examined the environmental DNA (eDNA) in the samples
+        to identify the microbes, fungi, plants, and animals in the area.
+      </p>
+    </div>
+    <div class="col-md-4">
+      <ul>
+        <li><%= pluralize(@stats[:locations], 'L.A. river location') %></li>
+        <li><%= pluralize(@stats[:sites], 'sampling site') %></li>
+        <li><%= pluralize(@stats[:taxa], 'identified organism') %></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+  <div class="activities">
+    <div class="item">
+      <%= link_to our_mission_path do %>
+        <%= image_tag 'river/bird_circle.jpg' %>
+        <h3>Our Mission</h3>
+        <p>Learn more about this project's goals and roadmap.</p>
+      <% end %>
+    </div>
+
+    <div class="item">
+      <%= link_to '#' do %>
+        <%= image_tag 'river/pilot_results.jpg' %>
+        <h3>Pilot Results</h3>
+        <p>Browse through the results from our summer 2019 pilot.</p>
+      <% end %>
+    </div>
+
+    <div class="item">
+      <%= link_to '#' do %>
+        <%= image_tag 'river/explore_data.jpg' %>
+        <h3>Explore our Data</h3>
+        <p>Explore biological and environmental data about the LA River.</p>
+      <% end %>
+    </div>
+
+    <div class="item">
+      <%= link_to get_involved_path do %>
+        <%= image_tag 'river/get_involved.jpg' %>
+        <h3>Getting Involved</h3>
+        <p>Discover the various ways to get involved in this project.</p>
+      <% end %>
+    </div>
+
+    <div class="item">
+      <%= link_to '#' do %>
+        <%= image_tag 'river/news.png' %>
+        <h3>News</h3>
+        <p>Read the latest news about this project.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

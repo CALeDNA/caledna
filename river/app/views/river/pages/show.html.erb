@@ -1,0 +1,10 @@
+<% if @page.present? %>
+  <h1>
+    <%= @page.title %>
+    <% if current_researcher %>
+      <%= link_to 'Edit', edit_page_path(id: params[:id]), class: "btn btn-primary" %>
+    <% end %>
+  </h1>
+
+  <%= sanitize @page.body %>
+<% end %>

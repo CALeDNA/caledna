@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% if Rails.env.production? %>
+      <%= render partial: "layouts/river/analytics" %>
+    <% end %>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+    <title>Protecting Our River</title>
+    <%= csrf_meta_tags %>
+
+
+    <%= stylesheet_link_tag    'river/application', media: 'all' %>
+    <%= javascript_include_tag 'river/application' %>
+  </head>
+
+  <body id="<%= yield :page_id %>">
+    <div id="main-wrapper">
+      <%= render partial: "layouts/river/nav" %>
+      <% flash.each do |name, msg| -%>
+        <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
+      <% end -%>
+
+      <div class="hero">
+        <%= image_tag "river/Los_Angeles_River.jpg", class: 'hero' %>
+        <div class='overlay'>
+          <p class="container">Together, we can help protect the biodiversity of the L.A. River.</p>
+        </div>
+      </div>
+
+      <div class="main-container">
+        <%= yield %>
+      </div>
+
+
+      <%= render partial: "layouts/river/footer" %>
+    </div>
+  </body>
+</html>

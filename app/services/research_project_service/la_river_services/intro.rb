@@ -11,6 +11,10 @@ module ResearchProjectService
         }
       end
 
+      def home_page_stats
+        total_home_page_stats
+      end
+
       private
 
       def river_sites
@@ -51,6 +55,15 @@ module ResearchProjectService
         taxa = distinct_taxa(sites)
 
         { sites: sites.count, taxa: taxa.count }
+      end
+
+      def total_home_page_stats
+        sites = river_sites
+        taxa = distinct_taxa(sites)
+        locations = river_sites
+                    .select("DISTINCT(samples.metadata ->> 'location' )")
+
+        { sites: sites.count, taxa: taxa.count, locations: locations.count }
       end
     end
   end

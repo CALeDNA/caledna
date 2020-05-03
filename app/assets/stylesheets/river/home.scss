@@ -1,0 +1,106 @@
+#home {
+  h1 {
+    font-size: 30px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .main-container {
+      padding-top: 1.5em;
+    }
+  }
+
+  .alert {
+    margin-bottom: 0;
+  }
+
+  .hero {
+    position: relative;
+
+    img {
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .overlay {
+        color: #fff;
+        padding: 1em 0;
+        position: absolute;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        letter-spacing: 2px;
+        width: 100%;
+        text-shadow: 2px 2px 8px #000;
+        font-weight: 500;
+      }
+    }
+
+    .overlay {
+      p {
+        font-size: 1.5em;
+      }
+    }
+  }
+
+  .our-work {
+    background: #efefef;
+    margin: 2em 0;
+    padding: 1.75em 0;
+
+    h2 {
+      margin-top: 0;
+      padding: 0 15px;
+    }
+    ul {
+      // padding-top: 0;
+    }
+
+    li {
+      // list-style: none;
+      font-size: 1.15em;
+    }
+  }
+
+  .activities {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 1em;
+
+    h3 {
+      border: 0 solid #ddd;
+      border-width: 0 1px;
+      margin: 0;
+      padding: 10px 10px 0px 10px;
+      text-align: center;
+    }
+
+    .item {
+      margin-bottom: 1em;
+
+      p {
+        border: 0 solid #ddd;
+        border-width: 0 1px 1px 1px;
+        padding: 10px;
+        color: #333;
+      }
+
+      img {
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .item {
+        width: 300px;
+      }
+
+      .item img {
+        width: 300px;
+      }
+    }
+  }
+}

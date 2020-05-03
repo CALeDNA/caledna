@@ -1,0 +1,8 @@
+<%= simple_form_for @page,
+  url: page_path(id: params[:id]),
+  method: :put,
+  html: {enctype: 'multipart/form-data'} do |f| %>
+  <%= f.input :title %>
+  <%= f.input :body, as: :summernote %>
+  <%= f.submit %>
+<% end %>

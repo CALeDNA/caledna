@@ -2,6 +2,8 @@
 
 # rubocop:disable Metrics/BlockLength:
 Rails.application.routes.draw do
+  # mount River::Engine, at: '/'
+
   devise_for :users, controllers: {
     registrations: 'users/registrations',
     sessions: 'users/sessions'
