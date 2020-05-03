@@ -4,9 +4,9 @@ class PrimerDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     id: Field::Number,
     name: Field::String,
-    forward_primer: Field::Text,
-    reverse_primer: Field::Text,
-    reference: Field::Text,
+    forward_primer: TextEditorField,
+    reverse_primer: TextEditorField,
+    reference: TextEditorField,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze

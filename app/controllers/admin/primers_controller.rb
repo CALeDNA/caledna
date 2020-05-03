@@ -2,5 +2,6 @@
 
 module Admin
   class PrimersController < Admin::ApplicationController
+    layout :resolve_layout
   end
 end

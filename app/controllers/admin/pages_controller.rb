@@ -5,8 +5,7 @@
 
 module Admin
   class PagesController < Admin::ApplicationController
-    require_relative './services/admin_text_editor'
-    include AdminTextEditor
+    layout :resolve_layout
 
     # NOTE: include index so I can use custom pagination params 'page_num'
     # Adminstrate uses 'page' for pagination, which breaks when using Page model

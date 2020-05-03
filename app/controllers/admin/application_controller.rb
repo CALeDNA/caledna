@@ -8,6 +8,9 @@
 # you're free to overwrite the RESTful controller actions.
 module Admin
   class ApplicationController < Administrate::ApplicationController
+    require_relative './services/admin_text_editor'
+    include AdminTextEditor
+
     rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
     before_action :authenticate_researcher!

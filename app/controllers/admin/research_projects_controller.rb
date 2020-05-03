@@ -2,6 +2,8 @@
 
 module Admin
   class ResearchProjectsController < Admin::ApplicationController
+    layout :resolve_layout
+
     def edna_results
       @project = ResearchProject.find(params[:research_project_id])
       @samples = edna_results_samples

@@ -15,7 +15,7 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
     user_authors: ProjectAuthorField,
     reference_barcode_database: Field::Text,
     dryad_link: Field::String,
-    decontamination_method: Field::Text,
+    decontamination_method: TextEditorField,
     slug: Field::String,
     metadata: Field::JSON.with_options(searchable: false),
     map_latitude: Field::Number,
