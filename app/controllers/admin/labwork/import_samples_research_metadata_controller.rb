@@ -27,7 +27,7 @@ module Admin
       def handle_success
         project = ResearchProject.find(research_project_id)
         flash[:success] = "Imported samples metadata for #{project.name}."
-        redirect_to admin_root_path
+        redirect_to admin_labwork_import_csv_status_index_path
       end
 
       def handle_error(results)
