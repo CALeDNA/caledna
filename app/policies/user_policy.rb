@@ -2,11 +2,11 @@
 
 class UserPolicy < ApplicationPolicy
   def index?
-    all_roles
+    upper_level_roles
   end
 
   def show?
-    all_roles
+    upper_level_roles
   end
 
   def create?
