@@ -23,7 +23,7 @@
     <td>DRYAD link</td>
     <td>
       <% if project.dryad_link %>
-      <%= link_to(project.dryad_link, project.dryad_link) %>
+      <%= project.dryad_link %>
       <% end %>
     </td>
   </tr>
@@ -31,13 +31,13 @@
     <td>Decontamination method</td>
     <td>
       <% if project.decontamination_method %>
-      <%= link_to(project.decontamination_method, project.decontamination_method) %>
+      <%= sanitize project.decontamination_method %>
       <% end %>
     </td>
   </tr>
   <tr>
     <td>Primers</td>
-    <td><%= project.primers.join(', ') %></td>
+    <td><%= project.primers_string %></td>
   </tr>
 
   <% project.metadata_display.each do |data| %>

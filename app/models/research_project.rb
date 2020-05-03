@@ -42,4 +42,9 @@ class ResearchProject < ApplicationRecord
       'primers'
     )
   end
+
+  def primers_string
+    sample_primers.joins(:primer).select('distinct(primers.name)')
+                  .map(&:name).join(', ')
+  end
 end
