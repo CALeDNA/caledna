@@ -409,7 +409,9 @@ module ProcessEdnaResults
     new_barcodes = []
 
     data.entries.each do |row|
-      barcode = row[barcode_field]
+      next if row[barcode_field].blank?
+
+      barcode = convert_raw_barcode(row[barcode_field])
       next if barcode.blank?
 
       sample = Sample.find_by(barcode: barcode)

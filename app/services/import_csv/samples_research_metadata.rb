@@ -32,10 +32,14 @@ module ImportCsv
 
     def create_or_update_research_proj_sources(data, research_project_id)
       data.entries.each do |row|
-        barcode = row['sum.taxonomy']
+        next if row['sum.taxonomy'].blank?
+
+        barcode = convert_raw_barcode(row['sum.taxonomy'])
         next if barcode.blank?
 
-        sample = Sample.find_by(barcode: barcode)
+        sample = Sample.approved.find_by(barcode: barcode)
+        next if sample.blank?
+
         create_or_update_research_proj_source(row, sample, research_project_id)
       end
     end

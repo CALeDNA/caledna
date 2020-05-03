@@ -47,8 +47,8 @@ describe ImportCsv::SamplesResearchMetadata do
     end
 
     context 'when CSV barcodes are all in the database' do
-      let!(:sample1) { create(:sample, barcode: barcode1) }
-      let!(:sample2) { create(:sample, barcode: barcode2) }
+      let!(:sample1) { create(:sample, :approved, barcode: barcode1) }
+      let!(:sample2) { create(:sample, :approved, barcode: barcode2) }
 
       it 'returns valid' do
         results = subject(file, research_project_id)
