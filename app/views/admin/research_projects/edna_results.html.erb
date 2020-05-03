@@ -26,7 +26,7 @@
   <tr>
     <td><%= link_to sample.barcode, admin_sample_path(sample.id) %></td>
     <td><%= sample.count %> organisms</td>
-    <td><%= sample.latitude %> / <%= sample.longitude %></td>
+    <td><%= sample.latitude || 'missing latitude' %> / <%= sample.longitude || 'missing longitude' %></td>
   </tr>
   <% if sample.metadata.present? && sample.metadata != {}%>
     <tr>

@@ -178,5 +178,98 @@ describe ImportCsv::SamplesResearchMetadata do
         end
       end
     end
+
+    context 'when row has latitude and longitude' do
+      let(:latitude) { '0.000001' }
+      let(:longitude) { '0.000005' }
+
+      context 'and row coordinates do not match sample coordinate' do
+        it 'updates the sample coordinates' do
+          row1 = { 'sum.taxonomy' => barcode1, 'latitude' => latitude,
+                   'longitude' => longitude }
+          sample = create(
+            :sample,
+            :approved,
+            barcode: barcode1,
+            latitude: latitude.to_f + 0.0000001,
+            longitude: longitude.to_f - 0.000001
+          )
+
+          expect { subject(row1, barcode1, research_project_id) }
+            .to change { sample.reload.latitude }
+            .to(latitude.to_f)
+            .and change { sample.reload.longitude }
+            .to(longitude.to_f)
+        end
+
+        it 'updates nil coordinates' do
+          row1 = { 'sum.taxonomy' => barcode1, 'latitude' => latitude,
+                   'longitude' => longitude }
+          sample = create(
+            :sample,
+            :approved,
+            barcode: barcode1,
+            latitude: nil,
+            longitude: nil
+          )
+
+          expect { subject(row1, barcode1, research_project_id) }
+            .to change { sample.reload.latitude }
+            .to(latitude.to_f)
+            .and change { sample.reload.longitude }
+            .to(longitude.to_f)
+        end
+
+        it 'works with capitalized coordinate names' do
+          row1 = { 'sum.taxonomy' => barcode1, 'Latitude' => latitude,
+                   'Longitude' => longitude }
+          sample = create(
+            :sample,
+            :approved,
+            barcode: barcode1,
+            latitude: latitude.to_f - 0.000001,
+            longitude: longitude.to_f + 0.000001
+          )
+
+          expect { subject(row1, barcode1, research_project_id) }
+            .to change { sample.reload.latitude }
+            .to(latitude.to_f)
+            .and change { sample.reload.longitude }
+            .to(longitude.to_f)
+        end
+      end
+
+      context 'and row coordinates do match sample coordinate' do
+        it 'does not update the sample latitude' do
+          row1 = { 'sum.taxonomy' => barcode1, 'latitude' => latitude,
+                   'Longitude' => longitude }
+          sample = create(
+            :sample,
+            :approved,
+            barcode: barcode1,
+            latitude: latitude.to_f,
+            longitude: longitude.to_f
+          )
+
+          expect { subject(row1, barcode1, research_project_id) }
+            .to_not(change { sample.reload.latitude })
+        end
+
+        it 'does not update the sample longitude' do
+          row1 = { 'sum.taxonomy' => barcode1, 'latitude' => latitude,
+                   'Longitude' => longitude }
+          sample = create(
+            :sample,
+            :approved,
+            barcode: barcode1,
+            latitude: latitude.to_f,
+            longitude: longitude.to_f
+          )
+
+          expect { subject(row1, barcode1, research_project_id) }
+            .to_not(change { sample.reload.longitude })
+        end
+      end
+    end
   end
 end

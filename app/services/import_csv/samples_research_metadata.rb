@@ -34,6 +34,8 @@ module ImportCsv
       sample = Sample.approved.find_by(barcode: barcode)
       return if sample.blank?
 
+      update_coordinates(row, sample)
+
       source =
         ResearchProjectSource.where(sourceable: sample)
                              .where(research_project_id: research_project_id)
@@ -44,7 +46,32 @@ module ImportCsv
       source.save
     end
 
+    def different_coordinates?(sample, lat, lon)
+      return true if sample.latitude.blank?
+      return true if sample.longitude.blank?
+
+      (sample.latitude - lat).abs >= 0.000001 ||
+        (sample.longitude - lon).abs >= 0.000001
+    end
+
     private
+
+    def update_coordinates(row, sample)
+      longitude = row['Longitude'] || row['longitude']
+      latitude = row['Latitude'] || row['latitude']
+
+      return if latitude.blank?
+      return if latitude.blank?
+
+      latitude = latitude.to_f
+      longitude = longitude.to_f
+      return unless different_coordinates?(sample, latitude, longitude)
+
+      sample.latitude = latitude
+      sample.longitude = longitude
+      sample.save
+    end
+
 
     def create_or_update_research_proj_sources(data, research_project_id)
       data.entries.each do |row|
