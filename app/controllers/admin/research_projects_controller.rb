@@ -60,6 +60,7 @@ module Admin
       end
     end
 
+    # rubocop:disable Metrics/MethodLength
     def edna_results_samples
       @edna_results_samples ||= begin
         id = params[:research_project_id]
@@ -70,14 +71,14 @@ module Admin
           .joins(:asvs)
           .where('asvs.research_project_id = ?', id)
           .group('samples.barcode', 'latitude', 'longitude', 'samples.id',
-            'research_project_sources.metadata')
+                 'research_project_sources.metadata')
           .order('barcode')
           .joins('LEFT JOIN research_project_sources ' \
-            'ON samples.id = research_project_sources.sourceable_id ' \
-            "AND research_project_sources.sourceable_type = 'Sample' " \
-            "AND research_project_sources.research_project_id = ", id)
-
+                 'ON samples.id = research_project_sources.sourceable_id ' \
+                 "AND research_project_sources.sourceable_type = 'Sample' " \
+                 'AND research_project_sources.research_project_id = ', id)
       end
+      # rubocop:enable Metrics/MethodLength
     end
 
     def resource

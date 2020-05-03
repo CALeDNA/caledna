@@ -85,7 +85,6 @@ class ResearchProjectsController < ApplicationController
     SQL
   end
 
-
   # =======================
   # show
   # =======================

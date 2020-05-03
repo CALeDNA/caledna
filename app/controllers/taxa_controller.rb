@@ -6,7 +6,6 @@ class TaxaController < ApplicationController
     @top_animal_taxa = top_animal_taxa
 
     @taxa_count = Asv.select('DISTINCT(taxon_id)').count
-    join_sql = 'JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs.taxon_id'
     @families_count = families_count
     @species_count = species_count
   end
