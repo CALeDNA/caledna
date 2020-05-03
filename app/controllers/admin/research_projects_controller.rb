@@ -62,13 +62,21 @@ module Admin
 
     def edna_results_samples
       @edna_results_samples ||= begin
+        id = params[:research_project_id]
         Sample
           .select('count(asvs.id) as count', 'samples.barcode')
           .select('latitude', 'longitude', 'samples.id')
+          .select('research_project_sources.metadata')
           .joins(:asvs)
-          .where('asvs.research_project_id = ?', params[:research_project_id])
-          .group('samples.barcode', 'latitude', 'longitude', 'samples.id')
+          .where('asvs.research_project_id = ?', id)
+          .group('samples.barcode', 'latitude', 'longitude', 'samples.id',
+            'research_project_sources.metadata')
           .order('barcode')
+          .joins('LEFT JOIN research_project_sources ' \
+            'ON samples.id = research_project_sources.sourceable_id ' \
+            "AND research_project_sources.sourceable_type = 'Sample' " \
+            "AND research_project_sources.research_project_id = ", id)
+
       end
     end
 
