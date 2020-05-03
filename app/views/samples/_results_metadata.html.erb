@@ -1,16 +1,21 @@
 <% sample.research_projects.each do |project| %>
   <h2><%= link_to project.name, research_project_path(id: project.slug) %></h2>
   <%= render partial: "research_projects/pages/metadata", locals: { project: project } %>
+
+  <% if  sample.research_project_sources.where(research_project_id: project.id).any? {|s| s.metadata != {} } %>
+    <h3>Sample Metadata</h3>
+    <table class="table">
+      <% sample.research_project_sources.where(research_project_id: project.id).each do |source| %>
+        <% source.metadata.each do |field, value| %>
+          <tr>
+            <td><%= field.tr('_', ' ') %></td>
+            <td><%= value %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+  <% end %>
+
+  <hr>
 <% end %>
 
-<h3>Sample Metadata</h3>
-<table class="table">
-<% sample.research_project_sources.each do |source| %>
-  <% source.metadata.each do |field, value| %>
-    <tr>
-      <td><%= field.tr('_', ' ') %></td>
-      <td><%= value %></td>
-    </tr>
-  <% end %>
-<% end %>
-</table>
