@@ -71,5 +71,23 @@ module Admin
       return relation if resource_includes.empty?
       relation.includes(*resource_includes)
     end
+
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def scoped_resource
+      if current_researcher.director? || current_researcher.superadmin?
+        resource_class.default_scoped
+      elsif current_researcher.esie_postdoc?
+        resource_class.default_scoped.where('research_project_id is not null')
+      else
+        resource_class.default_scoped
+                      .joins(research_project: :research_project_authors)
+                      .where(
+                        research_project:
+                          { research_project_authors:
+                            { authorable_id: current_researcher.id } }
+                      )
+      end
+    end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
 end

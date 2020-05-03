@@ -17,6 +17,10 @@ module ValidUserRequestHelper
     login(FactoryBot.create(:user))
   end
 
+  def login_for(user)
+    login(user)
+  end
+
   private
 
   def login(user)
