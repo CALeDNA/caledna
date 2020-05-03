@@ -88,6 +88,4 @@ group :test do
   gem 'timecop', '~> 0.9'
 end
 
-# gem 'river', path: 'river'
-
-gem 'pour', path: 'pour'
+gem 'river', path: 'river'
