@@ -3,7 +3,9 @@
 module Admin
   module Labwork
     class HomeController < Admin::ApplicationController
-      def index; end
+      def index
+        @page = Page.find_by(slug: 'admin-process-samples')
+      end
     end
   end
 end
