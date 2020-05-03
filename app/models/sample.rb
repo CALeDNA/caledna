@@ -171,6 +171,11 @@ class Sample < ApplicationRecord
   end
   # rubocop:enable Metrics/MethodLength
 
+  def primers_string
+    sample_primers.joins(:primer).select('distinct(primers.name)')
+                  .map(&:name).join(', ')
+  end
+
   private
 
   def unique_approved_barcodes

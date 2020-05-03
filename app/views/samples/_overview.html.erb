@@ -40,6 +40,12 @@
     <td>Collection Date</td>
     <td><%= long_date(sample.collection_date) %></td>
   </tr>
+  <% if division_counts.present? %>
+  <tr>
+   <td>Primers</td>
+   <td><%= sample.primers_string %></td>
+  </tr>
+  <% end %>
 </table>
 
 <div class="row">
