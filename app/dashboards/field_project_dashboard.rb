@@ -23,6 +23,7 @@ class FieldProjectDashboard < Administrate::BaseDashboard
     :samples,
     :published,
     :last_import_date,
+    :updated_at
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [

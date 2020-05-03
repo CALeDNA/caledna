@@ -14,6 +14,12 @@ class PageDashboard < Administrate::BaseDashboard
     research_project: Field::BelongsTo.with_options(
       searchable: true,
       searchable_field: 'name',
+      optional: true
+    ),
+    website: Field::BelongsTo.with_options(
+      searchable: true,
+      searchable_field: 'name',
+      optional: true
     ),
     menu_text: Field::String,
     show_map: Field::Boolean,
@@ -23,6 +29,7 @@ class PageDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :title,
     :research_project,
+    :website,
     :published,
     :updated_at,
   ].freeze

@@ -26,7 +26,7 @@ class ResearchProjectDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :name,
     :published,
-    :created_at
+    :updated_at
   ].freeze
 
   SHOW_PAGE_ATTRIBUTES = [
