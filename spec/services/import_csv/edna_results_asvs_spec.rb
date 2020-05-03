@@ -46,7 +46,7 @@ describe ImportCsv::EdnaResultsAsvs do
         end
           .to have_enqueued_job.with(
             data.to_json,
-            [nil, nil, csv_barcode1, csv_barcode2],
+            [nil, nil, csv_barcode1, csv_barcode2, nil, nil],
             { csv_barcode1 => 999, csv_barcode2 => 888 },
             research_project_id: research_project.id, primer_id: primer
           )
@@ -266,7 +266,8 @@ describe ImportCsv::EdnaResultsAsvs do
       delimiter = "\t"
       data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
-      expect(subject(data)).to eq([nil, nil, csv_barcode1, csv_barcode2])
+      expect(subject(data))
+        .to eq([nil, nil, csv_barcode1, csv_barcode2, nil, nil])
     end
   end
 end

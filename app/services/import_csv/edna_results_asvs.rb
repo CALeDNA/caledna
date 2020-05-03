@@ -59,6 +59,8 @@ module ImportCsv
 
     def convert_header_row_to_barcodes(data)
       data.first.headers.map do |raw_barcode|
+        next if raw_barcode.blank?
+
         convert_raw_barcode(raw_barcode)
       end
     end

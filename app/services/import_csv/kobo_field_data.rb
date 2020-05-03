@@ -42,7 +42,9 @@ module ImportCsv
       data.entries.each do |row|
         next if row['barcode'].blank?
 
-        sample_data = process_sample(row, field_project_id)
+        clean_row = row.to_h.reject { |k, _v| k.blank? }
+        sample_data = process_sample(clean_row, field_project_id)
+
         Sample.create(sample_data)
       end
     end

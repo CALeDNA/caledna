@@ -71,7 +71,7 @@ describe ImportCsv::KoboFieldData do
         expect(sample.has_permit.to_s).to eq(row['has_permit'])
         expect(sample.field_project_id).to eq(field_project_id)
         expect(sample.status_cd).to eq('approved')
-        expect(sample.csv_data).to eq(row.to_h)
+        expect(sample.csv_data).to eq(row.to_h.reject { |k, _v| k.blank? })
       end
     end
   end
