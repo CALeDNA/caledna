@@ -254,7 +254,7 @@ module Admin
           canonical_name = result_taxon.canonical_name
           NcbiNode.joins('JOIN external.ncbi_merged_taxa ON ' \
                          'ncbi_merged_taxa.taxon_id = ncbi_nodes.ncbi_id')
-                  .joins('JOIN external.ncbi_names_2017 ON as names_17' \
+                  .joins('JOIN external.ncbi_names_2017 as names_17 ON ' \
                          'names_17.taxon_id = ncbi_merged_taxa.old_taxon_id')
                   .where('names_17.name = ?', canonical_name)
         end
