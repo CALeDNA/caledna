@@ -11,6 +11,12 @@ module ImportCsv
     def import_csv(file, research_project_id)
       data = my_csv_read(file)
 
+      unless data.headers.include?('sum.taxonomy')
+        message =
+          'The column with the samples names must be called "sum.taxonomy"'
+        return OpenStruct.new(valid?: false, errors: message)
+      end
+
       new_barcodes =
         process_barcodes_for_csv_table(data, 'sum.taxonomy')[:new_barcodes]
       if new_barcodes.present?

@@ -16,6 +16,19 @@ describe ImportCsv::SamplesResearchMetadata do
     let(:barcode1) { 'K9999-A1' }
     let(:barcode2) { 'K9999-A2' }
 
+    context 'when CSV does not have sum.taxonomy column' do
+      it 'returns an error' do
+        csv = './spec/fixtures/import_csv/samples_metadata_bad.csv'
+        file = fixture_file_upload(csv, 'text/csv')
+
+        results = subject(file, research_project_id)
+        expect(results.valid?).to eq(false)
+        message =
+          'The column with the samples names must be called "sum.taxonomy"'
+        expect(results.errors).to eq(message)
+      end
+    end
+
     context 'when CSV has barcodes that are not in the database' do
       before(:each) do
         create(:sample, barcode: barcode1)
