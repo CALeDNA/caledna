@@ -8,10 +8,16 @@ $brand-primary: darken($theme-base-color, 35%) !default;
 @import "bootstrap";
 @import "font_awesome5";
 
+// @import "events";
+// @import "devise";
 @import "samples";
 @import "searches";
 @import "taxa";
-@import "home";
+@import "river_home";
+// @import "profile";
+// @import "auth";
+// @import "surveys";
+@import "map";
 @import "text_editor";
 @import "tree-chart";
 @import "research_projects";
