@@ -65,23 +65,32 @@ module ApplicationHelper
 
   def about_active?
     paths = []
+    if CheckWebsite.pour_site?
+      paths = [faq_path, our_mission_path, our_team_path,
+               why_protect_biodiversity_path]
+    end
     dropdown_active?(paths)
   end
 
   def explore_data_active?
-    paths = [samples_path, field_projects_path,
-             research_projects_path, taxa_path]
+    paths = [samples_path, research_projects_path, taxa_path]
+    paths << field_projects_path if CheckWebsite.caledna_site?
     dropdown_active?(paths)
   end
 
   def news_active?
     paths = []
+    paths = [site_news_index_path] if CheckWebsite.pour_site?
     dropdown_active?(paths)
   end
 
   # rubocop:disable Naming/AccessorMethodName
   def get_involved_active?
-    paths = [events_path]
+    paths = if CheckWebsite.caledna_site?
+              [events_path]
+            else
+              [get_involved_path]
+            end
     dropdown_active?(paths)
   end
   # rubocop:enable Naming/AccessorMethodName
