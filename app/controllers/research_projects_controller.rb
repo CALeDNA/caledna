@@ -2,6 +2,8 @@
 
 class ResearchProjectsController < ApplicationController
   include CustomPagination
+  include CheckWebsite
+  layout 'river/application' if CheckWebsite.pour_site?
 
   def index
     @projects = projects
@@ -23,7 +25,7 @@ class ResearchProjectsController < ApplicationController
 
   # NOTE: this query provides the samples count per project
   def projects_sql
-    <<-SQL
+    sql = <<-SQL
     SELECT research_projects.id, research_projects.name,
     research_projects.slug,
     COUNT(DISTINCT(samples.id))
@@ -37,6 +39,13 @@ class ResearchProjectsController < ApplicationController
       AND latitude IS NOT NULL
       AND longitude IS NOT NULL
     WHERE published = TRUE
+    SQL
+
+    if CheckWebsite.pour_site?
+      sql += "AND research_projects.id = #{ResearchProject::LA_RIVER.id}"
+    end
+
+    sql + <<-SQL
     GROUP BY research_projects.id
     ORDER BY research_projects.name
     LIMIT $1 OFFSET $2;

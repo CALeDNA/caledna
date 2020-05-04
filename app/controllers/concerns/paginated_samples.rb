@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
+# used for search, api/v1/samples_search, reaearcc projects
 module PaginatedSamples
   extend ActiveSupport::Concern
+  include CheckWebsite
 
   private
 
+  def website_sample
+    CheckWebsite.caledna_site? ? Sample : Sample.la_river
+  end
+
   def all_samples(query_string: {})
-    Sample.la_river.approved.with_coordinates
-          .order(:created_at)
-          .where(query_string)
+    website_sample.approved.with_coordinates
+                  .order(:created_at)
+                  .where(query_string)
   end
 
   def paginated_samples(query_string: {})

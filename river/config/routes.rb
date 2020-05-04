@@ -4,7 +4,9 @@ Rails.application.routes.draw do
   resources :samples, only: %i[index show], controller: 'samples'
   resources :taxa, only: %i[index show create], controller: 'taxa'
   resources :site_news, only: %i[index show], controller: 'river/site_news'
-  resources :research_projects, only: %i[index show edit], controller: 'research_projects' do
+
+  resources :research_projects, only: %i[index show edit],
+                                controller: 'research_projects' do
     resources :pages, only: %i[show edit update],
                       controller: 'research_projects/pages'
   end

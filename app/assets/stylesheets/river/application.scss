@@ -9,9 +9,11 @@ $brand-primary: darken($theme-base-color, 35%) !default;
 @import "font_awesome5";
 
 @import "samples";
+@import "taxa";
 @import "home";
 @import "text_editor";
 @import "tree-chart";
+@import "research_projects";
 
 // =============
 // custom up to 320px

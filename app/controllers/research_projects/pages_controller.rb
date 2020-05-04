@@ -4,6 +4,8 @@ module ResearchProjects
   class PagesController < ApplicationController
     include BatchData
     include PaginatedSamples
+    include CheckWebsite
+    layout 'river/application' if CheckWebsite.pour_site?
 
     def show
       @project = project
