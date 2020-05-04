@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
+  include CheckWebsite
+
+  def caledna_site?
+    CheckWebsite.caledna_site?
+  end
+
+  def pour_site?
+    CheckWebsite.pour_site?
+  end
+
   # NOTE: can't use "l(field) format: :short" because it crashes if field is nil
   def long_date(date)
     format_date(date, I18n.t('time.formats.long'))
