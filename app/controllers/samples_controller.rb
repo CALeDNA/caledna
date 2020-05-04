@@ -2,6 +2,8 @@
 
 class SamplesController < ApplicationController
   include AsvTreeFormatter
+  include CheckWebsite
+  layout 'river/application' if CheckWebsite.pour_site?
 
   def index
     @samples_count = Sample.approved.with_coordinates.count
@@ -68,8 +70,12 @@ class SamplesController < ApplicationController
     end
   end
 
+  def website_sample
+    CheckWebsite.caledna_site? ? Sample : Sample.la_river
+  end
+
   def sample
-    @sample ||= Sample.approved.with_coordinates.find(params[:id])
+    @sample ||= website_sample.approved.with_coordinates.find(params[:id])
   end
 
   def asv_tree_taxa

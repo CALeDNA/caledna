@@ -1,9 +1,11 @@
 <h2>Overview</h2>
 <table class="table">
-  <tr>
-    <td>Field Project</td>
-    <td><%= link_to sample.field_project.name, field_project_path(sample.field_project) %></td>
-  </tr>
+  <% if caledna_site? %>
+    <tr>
+      <td>Field Project</td>
+      <td><%= link_to sample.field_project.name, field_project_path(sample.field_project) %></td>
+    </tr>
+  <% end %>
   <tr>
     <td>Research Projects</td>
     <td>

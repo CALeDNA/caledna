@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :samples, only: %i[index show], controller: 'samples'
+  resources :taxa, only: %i[index show create], controller: 'taxa'
   resources :site_news, only: %i[index show], controller: 'river/site_news'
+  resources :research_projects, only: %i[index show edit], controller: 'research_projects' do
+    resources :pages, only: %i[show edit update],
+                      controller: 'research_projects/pages'
+  end
+
   resources :pages, only: %i[edit update], controller: 'river/pages'
 
   get '/faq', to: 'river/pages#faq', defaults: { id: 'faq' }

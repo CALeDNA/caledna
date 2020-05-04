@@ -1,14 +1,20 @@
 # frozen_string_literal: true
 
+# used for api/v1/samples, api/v1/field_projects
 module FilterSamples
   extend ActiveSupport::Concern
+  include CheckWebsite
 
   private
 
+  def website_sample
+    CheckWebsite.caledna_site? ? Sample : Sample.la_river
+  end
+
   def approved_samples
     @approved_samples ||= begin
-      samples = Sample.approved.with_coordinates.order(:created_at)
-                      .where(query_string)
+      samples = website_sample.approved.with_coordinates.order(:created_at)
+                              .where(query_string)
 
       samples = samples_for_primers(samples) if params[:primer]
       samples

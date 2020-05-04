@@ -6,7 +6,7 @@ module PaginatedSamples
   private
 
   def all_samples(query_string: {})
-    Sample.approved.with_coordinates
+    Sample.la_river.approved.with_coordinates
           .order(:created_at)
           .where(query_string)
   end

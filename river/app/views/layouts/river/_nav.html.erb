@@ -28,7 +28,18 @@
             <li><%= link_to 'FAQ', faq_path %></li>
           </ul>
         </li>
+
+        <li role="presentation" class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            Explore Data
+          </a>
+          <ul class="dropdown-menu">
+            <%= nav_link 'Sites', samples_path %>
+          </ul>
+        </li>
+
         <li><%= link_to 'Get Invovled', get_involved_path %></li>
+
         <li role="presentation" class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
             News
