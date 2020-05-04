@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :site_news, only: %i[index show], controller: 'river/site_news'
   resources :pages, only: %i[edit update], controller: 'river/pages'
 
   get '/faq', to: 'river/pages#faq', defaults: { id: 'faq' }
