@@ -3,11 +3,11 @@
 
 <h2>
   <%= @page.title %>
-  <% if current_researcher %>
-  <%= link_to 'Edit',
-    edit_research_project_page_path(research_project_id: params[:research_project_id], id: params[:id]) ,
-    class: "btn btn-primary"
-  %>
+  <% if @page.show_edit_link?(current_researcher) %>
+    <%= link_to 'Edit',
+      edit_research_project_page_path(research_project_id: params[:research_project_id], id: params[:id]) ,
+      class: "btn btn-primary"
+    %>
   <% end %>
 </h2>
 <%= sanitize @page.body %>

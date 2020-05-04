@@ -129,4 +129,71 @@ describe Page do
       end
     end
   end
+
+  describe '#show_edit_link?' do
+    context 'when page is a normal page' do
+      let(:page) { create(:page) }
+
+      it 'returns true if user is director' do
+        user = create(:director)
+
+        expect(page.show_edit_link?(user)).to eq(true)
+      end
+
+      it 'returns true if user is superadmin' do
+        user = create(:superadmin)
+
+        expect(page.show_edit_link?(user)).to eq(true)
+      end
+
+      it 'returns false researchers' do
+        user = create(:researcher)
+
+        expect(page.show_edit_link?(user)).to eq(false)
+      end
+
+      it 'returns false if no user' do
+        user = nil
+
+        expect(page.show_edit_link?(user)).to eq(false)
+      end
+    end
+
+    context 'when page is a research project page' do
+      let(:project) { create(:research_project) }
+      let(:page) { create(:page, research_project: project) }
+
+      it 'returns true if user is director' do
+        user = create(:director)
+
+        expect(page.show_edit_link?(user)).to eq(true)
+      end
+
+      it 'returns true if user is superadmin' do
+        user = create(:superadmin)
+
+        expect(page.show_edit_link?(user)).to eq(true)
+      end
+
+      it 'returns true if user is an author of the page' do
+        user = create(:researcher)
+        create(:research_project_author, authorable: user,
+                                         research_project_id: project.id)
+
+        expect(page.show_edit_link?(user)).to eq(true)
+      end
+
+      it 'returns false for researchers' do
+        user = create(:researcher)
+
+        expect(page.show_edit_link?(user)).to eq(false)
+      end
+
+      it 'returns false if no user' do
+        user = nil
+
+        expect(page.show_edit_link?(user)).to eq(false)
+      end
+    end
+  end
 end
