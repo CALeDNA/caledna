@@ -2,6 +2,8 @@
 
 class TaxaSearchesController < ApplicationController
   include CustomPagination
+  include CheckWebsite
+  layout 'river/application' if CheckWebsite.pour_site?
 
   def show
     if query

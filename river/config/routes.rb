@@ -3,6 +3,7 @@
 Rails.application.routes.draw do
   resources :samples, only: %i[index show], controller: 'samples'
   resources :taxa, only: %i[index show create], controller: 'taxa'
+  resource :taxa_search, only: %i[show]
   resources :site_news, only: %i[index show], controller: 'river/site_news'
 
   resources :research_projects, only: %i[index show edit],

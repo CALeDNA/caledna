@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class TaxaController < ApplicationController
+  include CheckWebsite
+  layout 'river/application' if CheckWebsite.pour_site?
+
   def index
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa

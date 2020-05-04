@@ -3,6 +3,7 @@
 class NcbiNode < ApplicationRecord
   include GlobiService
   include CommonNames
+  include CheckWebsite
 
   LINKS = %i[
     bold_link
@@ -177,7 +178,7 @@ class NcbiNode < ApplicationRecord
   end
 
   def asvs_count_display
-    asvs_count
+    CheckWebsite.caledna_site? ? asvs_count : asvs_count_la_river
   end
 
   private

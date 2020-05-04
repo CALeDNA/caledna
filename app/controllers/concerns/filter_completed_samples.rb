@@ -2,12 +2,17 @@
 
 module FilterCompletedSamples
   extend ActiveSupport::Concern
+  include CheckWebsite
 
   private
 
+  def website_sample
+    CheckWebsite.caledna_site? ? Sample : Sample.la_river
+  end
+
   def completed_samples
     @completed_samples ||= begin
-      samples = Sample.results_completed.where(query_string)
+      samples = website_sample.results_completed.where(query_string)
 
       samples = samples_for_primers(samples) if params[:primer]
       samples
