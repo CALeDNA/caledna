@@ -6,8 +6,6 @@ module River
     before_action :configure_permitted_parameters, if: :devise_controller?
     before_action :set_raven_context
 
-    def index; end
-
     protected
 
     # rubocop:disable Metrics/MethodLength

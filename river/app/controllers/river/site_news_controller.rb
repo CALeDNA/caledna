@@ -2,6 +2,8 @@
 
 module River
   class SiteNewsController < ApplicationController
+    layout 'river/application'
+
     def index
       @news = SiteNews.current_site.published
     end

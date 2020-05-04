@@ -2,6 +2,8 @@
 
 module River
   class PagesController < ApplicationController
+    layout 'river/application'
+
     def edit
       redirect_to research_projects_path unless current_researcher
 
