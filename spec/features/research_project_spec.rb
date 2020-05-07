@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'Research Project' do
+  before(:each) do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   context 'when project does not have published pages' do
     let(:project) do
       create(:research_project, slug: 'project-slug', name: 'project-name')

@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'Research Projects' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   describe 'projects index page' do
     it 'returns OK when there are no projects' do
       get research_projects_path

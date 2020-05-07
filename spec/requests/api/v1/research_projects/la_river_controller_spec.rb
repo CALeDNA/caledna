@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'LaRiver' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   let(:slug) { 'los-angeles-river' }
   let!(:research_project) { create(:research_project, slug: slug) }
 

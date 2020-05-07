@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'ResearchProjects' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   describe 'show' do
     let(:target_id) { 'project-slug' }
     def create_project_samples(project, sample_id: rand(1...100_000_000),

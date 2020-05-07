@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'PillarPoint' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   let(:slug) { 'pillar-point' }
   let!(:research_project) { create(:research_project, slug: slug) }
 

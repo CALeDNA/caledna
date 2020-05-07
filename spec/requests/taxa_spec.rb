@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'Taxa' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   describe 'taxa index page' do
     it 'returns OK when there are no taxa' do
       get taxa_path

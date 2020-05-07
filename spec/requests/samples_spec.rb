@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'Samples' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   describe 'samples index page' do
     it 'returns OK' do
       get samples_path

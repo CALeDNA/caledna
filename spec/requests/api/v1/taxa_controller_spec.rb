@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'Taxa' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   describe 'index' do
     it 'returns OK' do
       get api_v1_taxa_path

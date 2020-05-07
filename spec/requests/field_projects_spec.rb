@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'Field Projects' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   describe 'projects index page' do
     it 'returns OK when there are no projects' do
       get field_projects_path

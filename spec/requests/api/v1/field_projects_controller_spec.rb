@@ -3,6 +3,10 @@
 require 'rails_helper'
 
 describe 'FieldProjecs' do
+  before do
+    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  end
+
   describe 'show' do
     let(:target_id) { 10 }
 
