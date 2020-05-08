@@ -10,6 +10,12 @@ AllCops:
     - "db/data/*.sql"
     - "z_ignore/**/*"
     - "node_modules/**/*"
+    - "river/bin/**/*"
+    - "river/config/initializers/*.rb"
+    - "river/config/environments/*.rb"
+    - "river/z_ignore/**/*"
+    - "river/test/dummy/**/*"
+    - "river/lib/river/**/*"
 
 Style/Documentation:
   Enabled: false

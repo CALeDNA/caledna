@@ -33,8 +33,8 @@ module River
         can_contact
       ]
 
-      devise_parameter_sanitizer.permit(:sign_up,
-                                        keys: profile_attrs + demographics_attrs)
+      devise_parameter_sanitizer
+        .permit(:sign_up, keys: profile_attrs + demographics_attrs)
       devise_parameter_sanitizer.permit(:account_update, keys: profile_attrs)
       devise_parameter_sanitizer.permit(:invite, keys: profile_attrs)
     end

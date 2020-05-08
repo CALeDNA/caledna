@@ -72,7 +72,6 @@ module ImportCsv
       sample.save
     end
 
-
     def create_or_update_research_proj_sources(data, research_project_id)
       data.entries.each do |row|
         next if row['sum.taxonomy'].blank?

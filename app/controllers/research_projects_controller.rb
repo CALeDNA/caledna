@@ -24,6 +24,7 @@ class ResearchProjectsController < ApplicationController
   # =======================
 
   # NOTE: this query provides the samples count per project
+  # rubocop:disable Metrics/MethodLength
   def projects_sql
     sql = <<-SQL
     SELECT research_projects.id, research_projects.name,
@@ -51,6 +52,7 @@ class ResearchProjectsController < ApplicationController
     LIMIT $1 OFFSET $2;
     SQL
   end
+  # rubocop:enable Metrics/MethodLength
 
   def projects
     @projects ||= begin
