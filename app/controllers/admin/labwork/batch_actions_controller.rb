@@ -3,6 +3,8 @@
 module Admin
   module Labwork
     class BatchActionsController < Admin::ApplicationController
+      skip_before_action :verify_authenticity_token
+
       def approve_samples
         authorize 'Labwork::ApproveSamples'.to_sym, :create?
 
