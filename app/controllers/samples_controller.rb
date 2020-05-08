@@ -6,9 +6,9 @@ class SamplesController < ApplicationController
   layout 'river/application' if CheckWebsite.pour_site?
 
   def index
-    @samples_count = Sample.approved.with_coordinates.count
-    @samples_with_results_count = Sample.results_completed.count
-    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
+    @samples_count = website_sample.approved.with_coordinates.count
+    @samples_with_results_count = website_sample.results_completed.count
+    @taxa_count = website_asv.select('DISTINCT(taxon_id)').count
   end
 
   def show
@@ -19,6 +19,15 @@ class SamplesController < ApplicationController
   end
 
   private
+
+  def website_sample
+    CheckWebsite.caledna_site? ? Sample : Sample.la_river
+  end
+
+  def website_asv
+    CheckWebsite.caledna_site? ? Asv : Asv.la_river
+  end
+
 
   # =======================
   # show
