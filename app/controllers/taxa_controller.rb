@@ -43,13 +43,22 @@ class TaxaController < ApplicationController
     end
   end
 
+  def website_count
+    if CheckWebsite.caledna_site?
+      'ncbi_nodes.asvs_count'
+    else
+      'ncbi_nodes.asvs_count_la_river'
+    end
+  end
+
   def top_sql(kingdom_sql = nil)
     <<-SQL
     SELECT
     ARRAY_AGG(DISTINCT eol_image) AS eol_images,
     ARRAY_AGG(DISTINCT inat_image) AS inat_images,
     ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images,
-    ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.asvs_count,
+    ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
+    #{website_count} as asvs_count,
     ncbi_nodes.hierarchy_names, ncbi_nodes.common_names,
     ncbi_divisions.name as division_name
     FROM "ncbi_nodes"
@@ -58,11 +67,11 @@ class TaxaController < ApplicationController
     JOIN ncbi_divisions
       ON ncbi_nodes.cal_division_id = ncbi_divisions.id
     WHERE "ncbi_nodes"."rank" = 'species'
-    AND (asvs_count > 5)
+    AND (#{website_count} > 3)
     #{kingdom_sql}
     GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
-    ncbi_nodes.asvs_count, ncbi_divisions.name
-    ORDER BY "ncbi_nodes"."asvs_count" DESC
+    #{website_count}, ncbi_divisions.name
+    ORDER BY #{website_count} DESC
     LIMIT 12;
     SQL
   end
@@ -124,7 +133,11 @@ class TaxaController < ApplicationController
 
   def total_records
     @total_records ||= begin
-      NcbiNode.find_by(taxon_id: id).asvs_count || 0
+      if CheckWebsite.caledna_site?
+        NcbiNode.find_by(taxon_id: id).asvs_count || 0
+      else
+        NcbiNode.find_by(taxon_id: id).asvs_count_la_river || 0
+      end
     end
   end
 
