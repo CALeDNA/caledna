@@ -2,22 +2,22 @@
 
 class SiteNewsPolicy < ApplicationPolicy
   def index?
-    user.superadmin?
+    admin_roles
   end
 
   def show?
-    user.superadmin?
+    admin_roles
   end
 
   def create?
-    user.superadmin?
+    admin_roles
   end
 
   def update?
-    user.superadmin?
+    admin_roles
   end
 
   def destroy?
-    user.superadmin?
+    admin_roles
   end
 end
