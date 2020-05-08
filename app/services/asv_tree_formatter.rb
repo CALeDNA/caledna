@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module AsvTreeFormatter
+  include CheckWebsite
+
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
   def create_taxon_object(taxon)
@@ -124,13 +126,24 @@ module AsvTreeFormatter
 
   def fetch_asv_tree
     @fetch_asv_tree ||= begin
-      NcbiNode.joins('join asvs on asvs.taxon_id = ncbi_nodes.taxon_id')
-              .joins(:ncbi_division)
-              .where('cal_division_id IS NOT NULL')
-              .select('ncbi_divisions.name as domain')
-              .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
-              .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
-              .select('ncbi_nodes.common_names')
+      taxa = base_asv_tree_taxa
+      if CheckWebsite.pour_site?
+        taxa = taxa.where('research_project_id', ResearchProject::LA_RIVER.id)
+      end
+      taxa
+    end
+  end
+
+  def base_asv_tree_taxa
+    @base_asv_tree_taxa ||= begin
+      NcbiNode
+        .joins('join asvs on asvs.taxon_id = ncbi_nodes.taxon_id')
+        .joins(:ncbi_division)
+        .where('cal_division_id IS NOT NULL')
+        .select('ncbi_divisions.name as domain')
+        .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
+        .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
+        .select('ncbi_nodes.common_names')
     end
   end
 

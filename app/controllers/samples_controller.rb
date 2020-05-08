@@ -28,13 +28,13 @@ class SamplesController < ApplicationController
     CheckWebsite.caledna_site? ? Asv : Asv.la_river
   end
 
-
   # =======================
   # show
   # =======================
 
+  # rubocop:disable Metrics/MethodLength
   def organisms_sql
-    <<-SQL
+    sql = <<-SQL
       SELECT canonical_name,
       hierarchy_names,
       ncbi_nodes.taxon_id, iucn_status,
@@ -47,6 +47,13 @@ class SamplesController < ApplicationController
       LEFT JOIN external_resources
         ON external_resources.ncbi_id = ncbi_nodes.taxon_id
       WHERE asvs.sample_id = $1
+    SQL
+
+    if CheckWebsite.pour_site?
+      sql += "AND research_project_id = #{ResearchProject::LA_RIVER.id}"
+    end
+
+    sql + <<-SQL
       GROUP BY ncbi_nodes.taxon_id, external_resources.iucn_status,
       ncbi_divisions.name
       ORDER BY division_name,
@@ -58,6 +65,7 @@ class SamplesController < ApplicationController
       hierarchy_names ->>'species';
     SQL
   end
+  # rubocop:enable Metrics/MethodLength
 
   def organisms
     @organisms ||= begin
@@ -71,16 +79,12 @@ class SamplesController < ApplicationController
 
   def division_counts
     @division_counts ||= begin
-      Asv.joins(ncbi_node: :ncbi_division)
-         .select(:name)
-         .where(sample: sample)
-         .group(:name)
-         .count
+      website_asv.joins(ncbi_node: :ncbi_division)
+                 .select(:name)
+                 .where(sample: sample)
+                 .group(:name)
+                 .count
     end
-  end
-
-  def website_sample
-    CheckWebsite.caledna_site? ? Sample : Sample.la_river
   end
 
   def sample
