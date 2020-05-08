@@ -30,7 +30,6 @@ module CustomCounter
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
         JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id
-        JOIN samples ON samples.id = asvs.sample_id
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
       GROUP BY foo.taxon_id;
@@ -52,8 +51,7 @@ module CustomCounter
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
         JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id
-        JOIN samples ON samples.id = asvs.sample_id
-        AND samples.field_project_id = #{FieldProject::LA_RIVER.id}
+        where asvs.research_project_id = #{ResearchProject::LA_RIVER.id}
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
       GROUP BY foo.taxon_id;
