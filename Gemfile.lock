@@ -28,6 +28,11 @@ GIT
       momentjs-rails (~> 2.8)
       sassc-rails (~> 2.1)
       selectize-rails (~> 0.6)
+PATH
+  remote: river
+  specs:
+    river (0.1.0)
+      rails (~> 5.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -571,6 +576,7 @@ DEPENDENCIES
   rgeo (~> 2.1.1)
   rgeo-geojson (~> 2.1.1)
   rgeo-shapefile (~> 2.0.1)
+  river!
   rspec-rails (~> 4.0, >= 4.0.1)
   rspec-sidekiq (~> 3.1)
   rspec-support (~> 3.9)

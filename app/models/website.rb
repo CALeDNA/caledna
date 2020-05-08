@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Website < ApplicationRecord
-  DEFAULT_SITE = 'CALeDNA'
+  DEFAULT_SITE = 'Protecting Our River'
   has_many :pages
   has_many :site_news
 
