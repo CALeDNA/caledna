@@ -13,19 +13,17 @@
 
 //= require_tree .
 
-$(function() {
-
+$(function () {
   // setup clickable rows
-  function clickableTableRows () {
-    function clickRow (el) {
-      el.addEventListener("click", function(e) {
+  function clickableTableRows() {
+    function clickRow(el) {
+      el.addEventListener("click", function (e) {
         e.stopPropagation();
-        window.location = el.parentElement.dataset['path'];
-      })
+        window.location = el.parentElement.dataset["path"];
+      });
     }
 
-    document.querySelectorAll('.clickable_row td')
-      .forEach(clickRow)
+    document.querySelectorAll(".clickable_row td").forEach(clickRow);
   }
 
   clickableTableRows();

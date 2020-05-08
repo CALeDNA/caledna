@@ -6,7 +6,7 @@ ruby '2.4.0'
 gem 'rails', '~> 5.2'
 
 # use my fork to fix using left join intead of join on search
-gem 'administrate', git: 'https://github.com/wykhuh/administrate.git'
+gem 'administrate', '~>0.13.0', git: 'https://github.com/wykhuh/administrate.git'
 gem 'administrate-field-image'
 # gem 'administrate-field-jsonb'
 
@@ -79,7 +79,7 @@ group :production, :staging do
 end
 
 group :test do
-  # gem 'capybara-webkit', '~> 1.14'
+  gem 'capybara-webkit', '~> 1.14'
   gem 'database_cleaner', '~> 1.6'
   gem 'launchy', '~> 2.4'
   gem 'rails-controller-testing', '~> 1.0.2'
