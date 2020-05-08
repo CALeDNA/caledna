@@ -1,15 +1,13 @@
-<% content_for :hero_container do %>
-<div class="cal-hero-container">
+<h1>Research Projects</h1>
+
+<div class="cal-stats-container">
   <ul>
     <li><%= pluralize(number_with_delimiter(@samples_with_results_count), 'Site') %></li>
     <li><%= pluralize(number_with_delimiter(@taxa_count), 'Taxon') %></li>
     <li><%= pluralize(number_with_delimiter(@families_count), 'Family') %></li>
   </ul>
 </div>
-<% end %>
 
-
-<h1>Research Projects</h1>
 <p class="page-description">
   Here's some of scientific reasearch projects that are studying our eDNA data.
 </p>

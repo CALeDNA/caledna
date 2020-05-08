@@ -196,13 +196,14 @@ h1.border {
   margin-bottom: 2em;
 }
 
-.cal-hero-container {
+.cal-stats-container {
   background: $light-grey-background;
   display: flex;
   justify-content: center;
+  margin: 1em 0;
 
   ul {
-    padding: 1em 0;
+    padding: 0.75em 1em;
     list-style: none;
     font-size: 1.1em;
     margin-bottom: 0;
