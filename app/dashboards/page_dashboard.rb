@@ -29,6 +29,7 @@ class PageDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :title,
     :research_project,
+    :website,
     :published,
     :updated_at,
   ].freeze
@@ -41,8 +42,10 @@ class PageDashboard < Administrate::BaseDashboard
     :slug,
     :display_order,
     :research_project,
+    :website,
     :show_map,
     :show_edna_results_metadata,
+    :website,
     :body,
     :created_at,
     :updated_at
@@ -57,6 +60,7 @@ class PageDashboard < Administrate::BaseDashboard
     :research_project,
     :show_map,
     :show_edna_results_metadata,
+    :website,
     :body,
   ].freeze
 

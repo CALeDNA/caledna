@@ -77,7 +77,7 @@ module Admin
       if current_researcher.superadmin?
         resource_class.default_scoped
       elsif current_researcher.director?
-        resource_class.default_scoped.current_site
+        resource_class.default_scoped
       elsif current_researcher.esie_postdoc?
         resource_class.default_scoped.current_site
                       .where('research_project_id is not null')
