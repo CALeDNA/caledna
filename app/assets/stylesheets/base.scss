@@ -25,51 +25,6 @@
 */
 
 // =============
-// layout
-// =============
-
-.main-container {
-  padding-top: 4rem;
-}
-
-// =============
-// footer at bottom of page or end of content
-// https://stackoverflow.com/a/12253099
-// =============
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: #fff;
-}
-
-#main-wrapper {
-  min-height: 100%;
-  position: relative;
-  padding: 0;
-  padding-bottom: 24rem;
-}
-
-footer {
-  width: 100%;
-  bottom: 0;
-  position: absolute;
-  min-height: 19rem;
-}
-
-@media (max-width: 768px) {
-  #main-wrapper {
-    padding-bottom: 37rem;
-  }
-
-  footer {
-    min-height: 29rem;
-  }
-}
-
-// =============
 // typography
 // =============
 
