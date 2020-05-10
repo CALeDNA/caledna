@@ -8,121 +8,201 @@ describe 'ResearchProjects' do
   end
 
   describe 'show' do
-    let(:target_id) { 'project-slug' }
+    let(:project_slug) { 'project-slug' }
+    let(:primer1_id) { 100 }
+    let(:primer2_id) { 200 }
+    let(:primer1_name) { 'primer1' }
+    let(:primer2_name) { 'primer2' }
+    let(:sample1_id) { 10 }
+    let(:sample2_id) { 20 }
+    let(:taxon1_id) { 1000 }
+    let(:taxon2_id) { 2000 }
+
     def create_project_samples(project, sample_id: rand(1...100_000_000),
                                substrate: :soil, status: :results_completed,
                                primer: create(:primer))
       sample = create(:sample, id: sample_id, substrate: substrate,
                                status: status)
-      create(:asv, sample: sample)
-      create(:asv, sample: sample)
-      create(:asv, sample: sample)
-      create(:research_project_source, sourceable: sample,
-                                       research_project_id: project.id)
+      create(:asv, sample: sample, research_project: project, primer: primer)
       create(:sample_primer, primer: primer, sample: sample,
-                             research_project_id: project.id)
+                             research_project: project)
     end
 
     it 'returns OK' do
-      create(:research_project, slug: target_id)
-      get api_v1_research_project_path(id: target_id)
+      create(:research_project, slug: project_slug)
+      get api_v1_research_project_path(id: project_slug)
 
       expect(response.status).to eq(200)
     end
 
     context 'when project does not have samples' do
       it 'returns empty array for samples' do
-        create(:research_project, slug: target_id)
+        create(:research_project, slug: project_slug)
 
-        get api_v1_research_project_path(id: target_id)
+        get api_v1_research_project_path(id: project_slug)
         data = JSON.parse(response.body)
 
         expect(data['samples']['data']).to eq([])
-      end
-
-      it 'returns empty array for asvs' do
-        create(:research_project, slug: target_id)
-
-        get api_v1_research_project_path(id: target_id)
-        data = JSON.parse(response.body)
-
-        expect(data['asvs_count']).to eq([])
       end
     end
 
     context 'when project has samples with results' do
       it 'returns the associated samples' do
-        project = create(:research_project, slug: target_id)
-        create_project_samples(project, sample_id: 1)
-        create_project_samples(project, sample_id: 2)
+        project = create(:research_project, slug: project_slug)
+        primer = create(:primer, name: primer1_name, id: primer1_id)
+        create_project_samples(project, sample_id: sample1_id, primer: primer)
+        create_project_samples(project, sample_id: sample2_id, primer: primer)
 
-        get api_v1_research_project_path(id: target_id)
-        data = JSON.parse(response.body)
+        get api_v1_research_project_path(id: project.slug)
+        data = JSON.parse(response.body)['samples']['data']
 
-        expect(data['samples']['data'].length).to eq(2)
+        expect(data.length).to eq(2)
 
-        ids = data['samples']['data'].map { |s| s['id'].to_i }
-        expect(ids).to match_array([1, 2])
+        ids = data.map { |s| s['id'].to_i }
+        expect(ids).to match_array([sample1_id, sample2_id])
+
+        primer_ids = data.map { |s| s['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id], [primer1_id]])
+
+        primer_names = data.map { |s| s['attributes']['primer_names'] }
+        expect(primer_names).to match_array([[primer1_name], [primer1_name]])
+
+        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        expect(taxa_count).to match_array([1, 1])
       end
 
-      it 'returns the number of associated asvs for asv count' do
-        project = create(:research_project, slug: target_id)
-        create_project_samples(project, sample_id: 1)
-        create_project_samples(project, sample_id: 2)
+      it 'only includes one instance of a sample' do
+        project = create(:research_project, slug: project_slug)
+        sample = create(:sample, :results_completed, id: sample1_id)
+        primer1 = create(:primer, name: primer1_name, id: primer1_id)
+        primer2 = create(:primer, name: primer2_name, id: primer2_id)
+        taxon1 = create(:ncbi_node, taxon_id: taxon1_id)
 
-        get api_v1_research_project_path(id: target_id)
+        create(:asv, sample: sample, research_project: project, primer: primer1,
+                     taxon_id: taxon1.taxon_id)
+        create(:asv, sample: sample, research_project: project, primer: primer2,
+                     taxon_id: taxon1.taxon_id)
+
+        get api_v1_research_project_path(id: project.slug)
+        data = JSON.parse(response.body)['samples']['data']
+
+        expect(data.length).to eq(1)
+
+        ids = data.map { |i| i['attributes']['id'] }
+        expect(ids).to match_array([sample1_id])
+
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([%w[primer1 primer2]])
+
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id, primer2_id]])
+
+        taxa_count = data.map { |i| i['attributes']['taxa_count'] }
+        expect(taxa_count).to match_array([1])
+      end
+
+      it 'ignores samples from other projects' do
+        project = create(:research_project, slug: project_slug)
+        other_project = create(:research_project, slug: 'other')
+        create_project_samples(other_project)
+
+        get api_v1_research_project_path(id: project.slug)
         data = JSON.parse(response.body)
 
-        expect(data['asvs_count'].length).to eq(2)
-
-        expected = [
-          { 'sample_id' => 1, 'count' => 3 }, { 'sample_id' => 2, 'count' => 3 }
-        ]
-        expect(data['asvs_count']).to match_array(expected)
+        expect(data['samples']['data']).to eq([])
       end
-    end
 
-    it 'ignores samples from other projects' do
-      create(:research_project, slug: target_id)
-      other_project = create(:research_project, slug: 'other')
-      create_project_samples(other_project)
+      it 'returns correct info for multiple primers, samples, projects' do
+        primer3_name = 'primer3'
+        primer3_id = 300
+        taxon3_id = 3000
+        sample1 = create(:sample, :results_completed, id: sample1_id)
+        sample2 = create(:sample, :results_completed, id: sample2_id)
+        proj1 = create(:research_project, slug: project_slug)
+        proj2 = create(:research_project, slug: 'other')
+        taxon1 = create(:ncbi_node, taxon_id: taxon1_id)
+        taxon2 = create(:ncbi_node, taxon_id: taxon2_id)
+        taxon3 = create(:ncbi_node, taxon_id: taxon3_id)
+        primer1 = create(:primer, name: primer1_name, id: primer1_id)
+        primer2 = create(:primer, name: primer2_name, id: primer2_id)
+        primer3 = create(:primer, name: primer3_name, id: primer3_id)
 
-      get api_v1_research_project_path(id: target_id)
-      data = JSON.parse(response.body)
+        create(:asv, sample: sample1, primer: primer1, research_project: proj1,
+                     taxon_id: taxon1.id)
+        create(:asv, sample: sample1, primer: primer1, research_project: proj1,
+                     taxon_id: taxon2.id)
+        create(:asv, sample: sample1, primer: primer2, research_project: proj1,
+                     taxon_id: taxon1.id)
+        create(:sample_primer, primer: primer1, sample: sample1,
+                               research_project: proj1)
+        create(:sample_primer, primer: primer2, sample: sample1,
+                               research_project: proj1)
 
-      expect(data['samples']['data']).to eq([])
+        create(:asv, sample: sample2, primer: primer2, research_project: proj1,
+                     taxon_id: taxon2.id)
+        create(:asv, sample: sample2, primer: primer3, research_project: proj1,
+                     taxon_id: taxon3.id)
+        create(:sample_primer, primer: primer3, sample: sample2,
+                               research_project: proj1)
+        create(:sample_primer, primer: primer2, sample: sample2,
+                               research_project: proj1)
+
+        create(:asv, sample: sample1, primer: primer3, research_project: proj2,
+                     taxon_id: taxon1.id)
+        create(:sample_primer, primer: primer3, sample: sample1,
+                               research_project: proj2)
+
+        get api_v1_research_project_path(id: proj1.slug)
+        data = JSON.parse(response.body)['samples']['data']
+
+        expect(data.length).to eq(2)
+
+        ids = data.map { |i| i['attributes']['id'] }
+        expect(ids).to match_array([sample1_id, sample2_id])
+
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names)
+          .to match_array([%w[primer1 primer2], %w[primer2 primer3]])
+
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids)
+          .to match_array([[primer1_id, primer2_id], [primer2_id, primer3_id]])
+
+        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        expect(taxa_count).to match_array([2, 2])
+      end
     end
 
     context 'keyword query param' do
-      let(:project) { create(:research_project, slug: target_id) }
+      let(:project) { create(:research_project, slug: project_slug) }
 
       before(:each) do
-        create_project_samples(project, sample_id: 1)
-        create_project_samples(project, sample_id: 2)
+        create_project_samples(project, sample_id: sample1_id)
+        create_project_samples(project, sample_id: sample2_id)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
           INSERT INTO "pg_search_documents"
           ("content", "searchable_type", "searchable_id", "created_at",
           "updated_at")
-          VALUES('match', 'Sample', 1, '2018-10-20', '2018-10-20');
+          VALUES('match', 'Sample', #{sample1_id}, '2018-10-20', '2018-10-20');
           SQL
         )
       end
 
       it 'does not affect the associated samples' do
-        get api_v1_research_project_path(id: target_id, keyword: 'match')
+        get api_v1_research_project_path(id: project.slug, keyword: 'match')
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(2)
 
         ids = data.map { |i| i['attributes']['id'] }
-        expect(ids).to match_array([1, 2])
+        expect(ids).to match_array([sample1_id, sample2_id])
       end
     end
 
     context 'substrate query param' do
-      let(:project) { create(:research_project, slug: target_id) }
+      let(:project) { create(:research_project, slug: project_slug) }
 
       before(:each) do
         create_project_samples(project, substrate: :soil)
@@ -130,7 +210,7 @@ describe 'ResearchProjects' do
       end
 
       it 'returns samples when there is one substrate' do
-        get api_v1_research_project_path(id: target_id, substrate: :soil)
+        get api_v1_research_project_path(id: project.slug, substrate: :soil)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(1)
@@ -140,7 +220,7 @@ describe 'ResearchProjects' do
       end
 
       it 'returns samples when there are multiple substrate' do
-        get api_v1_research_project_path(id: target_id,
+        get api_v1_research_project_path(id: project.slug,
                                          substrate: 'soil|sediment')
         data = JSON.parse(response.body)['samples']['data']
 
@@ -152,150 +232,125 @@ describe 'ResearchProjects' do
     end
 
     context 'status query param' do
-      let(:project) { create(:research_project, slug: target_id) }
+      let(:project) { create(:research_project, slug: project_slug) }
 
       before(:each) do
-        create_project_samples(project, sample_id: 1, status: :approved)
-        create_project_samples(project, sample_id: 2,
+        create_project_samples(project, sample_id: sample1_id,
+                                        status: :approved)
+        create_project_samples(project, sample_id: sample2_id,
                                         status: :results_completed)
       end
 
       it 'ignores status params and only returns completed samples ' do
-        get api_v1_research_project_path(id: target_id, status: 'foo')
-        json = JSON.parse(response.body)
-
-        expect(json['samples']['data'].length).to eq(1)
-        expect(json['samples']['data'].first['id'].to_i).to eq(2)
-      end
-    end
-
-    context 'primer query param' do
-      let(:primer1_id) { 10 }
-      let(:primer2_id) { 20 }
-      let(:project) { create(:research_project, slug: target_id) }
-      let(:primer1) { create(:primer, name: 'primer1', id: primer1_id) }
-      let(:primer2) { create(:primer, name: 'primer2', id: primer2_id) }
-
-      it 'returns samples when there is one primer' do
-        create_project_samples(project, primer: primer1)
-        create_project_samples(project, primer: primer2)
-
-        get api_v1_research_project_path(id: target_id, primer: '10')
+        get api_v1_research_project_path(id: project.slug, status: 'foo')
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(1)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [{ 'id' => primer1_id, 'name' => 'primer1' }]
-        )
+        ids = data.map { |i| i['attributes']['id'] }
+        expect(ids).to match_array([sample2_id])
+      end
+    end
+
+    context 'primer query param' do
+      let(:project) { create(:research_project, slug: project_slug) }
+      let(:primer1) { create(:primer, name: primer1_name, id: primer1_id) }
+      let(:primer2) { create(:primer, name: primer2_name, id: primer2_id) }
+
+      it 'returns samples when there is one primer' do
+        create_project_samples(project, primer: primer1, sample_id: sample1_id)
+        create_project_samples(project, primer: primer2)
+
+        get api_v1_research_project_path(id: project.slug, primer: primer1_id)
+        data = JSON.parse(response.body)['samples']['data']
+
+        expect(data.length).to eq(1)
+
+        ids = data.map { |i| i['attributes']['id'] }
+        expect(ids).to match_array([sample1_id])
+
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([['primer1']])
+
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id]])
+
+        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        expect(taxa_count).to match_array([1])
       end
 
       it 'returns samples when there are multiple primer' do
-        create_project_samples(project, primer: primer1)
-        create_project_samples(project, primer: primer2)
+        sample3_id = 300
+        sample1 = create(:sample, :results_completed, id: sample1_id)
+        create(:asv, sample: sample1, research_project: project,
+                     primer: primer1)
+        create(:asv, sample: sample1, research_project: project,
+                     primer: primer2)
+        create(:sample_primer, primer: primer1, sample: sample1,
+                               research_project: project)
+        create(:sample_primer, primer: primer2, sample: sample1,
+                               research_project: project)
 
-        get api_v1_research_project_path(id: target_id,
+        create_project_samples(project, primer: primer1, sample_id: sample2_id)
+        create_project_samples(project, primer: primer2, sample_id: sample3_id)
+
+        get api_v1_research_project_path(id: project.slug,
                                          primer: "#{primer1_id}|#{primer2_id}")
         data = JSON.parse(response.body)['samples']['data']
 
-        expect(data.length).to eq(2)
+        expect(data.length).to eq(3)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' },
-            { 'id' => primer2_id, 'name' => 'primer2' }
-          ]
-        )
+        ids = data.map { |i| i['attributes']['id'] }
+        expect(ids).to match_array([sample1_id, sample2_id, sample3_id])
+
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names)
+          .to match_array([%w[primer1 primer2], ['primer2'], ['primer1']])
+
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids)
+          .to match_array([[primer1_id, primer2_id], [primer2_id],
+                           [primer1_id]])
+
+        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        expect(taxa_count).to match_array([2, 1, 1])
       end
 
       it 'ignores invalid primers' do
         create_project_samples(project, primer: primer1)
         create_project_samples(project, primer: primer2)
 
-        get api_v1_research_project_path(id: target_id, primer: 999)
+        get api_v1_research_project_path(id: project.slug, primer: 999)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(0)
       end
-
-      it 'ignores primers from other research projects' do
-        sample = create(:sample, :results_completed, id: 1)
-        create(:research_project, slug: 'proj1', id: 100)
-        create(:research_project, slug: 'proj2', id: 200)
-        create(:research_project_source, sourceable: sample,
-                                         research_project_id: 100)
-        create(:sample_primer, primer: primer1, sample: sample,
-                               research_project_id: 100)
-        create(:research_project_source, sourceable: sample,
-                                         research_project_id: 200)
-        create(:sample_primer, primer: primer2, sample: sample,
-                               research_project_id: 200)
-
-        get api_v1_research_project_path(id: 'proj1', primer: primer1_id)
-        data = JSON.parse(response.body)['samples']['data']
-
-        expect(data.length).to eq(1)
-
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [{ 'id' => primer1_id, 'name' => 'primer1' }]
-        )
-      end
-
-      it 'only includes one instance of a sample' do
-        sample = create(:sample, :results_completed, id: 1)
-        create(:research_project, slug: 'proj1', id: 100)
-        create(:research_project_source, sourceable: sample,
-                                         research_project_id: 100)
-        create(:sample_primer, primer: primer1, sample: sample,
-                               research_project_id: 100)
-        create(:sample_primer, primer: primer2, sample: sample,
-                               research_project_id: 100)
-
-        get api_v1_research_project_path(id: 'proj1',
-                                         primer: "#{primer1_id}|#{primer2_id}")
-        data = JSON.parse(response.body)['samples']['data']
-
-        expect(data.length).to eq(1)
-
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' },
-            { 'id' => primer2_id, 'name' => 'primer2' }
-          ]
-        )
-      end
     end
 
     context 'multiple query params' do
-      let(:primer1_id) { 10 }
-      let(:primer2_id) { 20 }
-      let(:project) { create(:research_project, slug: target_id) }
-
-      before(:each) do
-        p1 = create(:primer, id: primer1_id)
-        p2 = create(:primer, id: primer2_id)
-        create_project_samples(project, sample_id: 1, substrate: :soil,
-                                        primer: p1)
-        create_project_samples(project, sample_id: 2, substrate: :foo,
-                                        primer: p1)
-        create_project_samples(project, sample_id: 3, substrate: :soil,
-                                        primer: p2)
-        create(:sample, :approved, id: 5)
-      end
+      let(:project) { create(:research_project, slug: project_slug) }
 
       it 'returns samples that match substrate & primer' do
-        get api_v1_research_project_path(id: target_id, substrate: 'soil',
+        sample3_id = 30
+        sample4_id = 40
+        primer1 = create(:primer, id: primer1_id)
+        primer2 = create(:primer, id: primer2_id)
+        create_project_samples(project, sample_id: sample1_id, substrate: :soil,
+                                        primer: primer1)
+        create_project_samples(project, sample_id: sample2_id, substrate: :foo,
+                                        primer: primer1)
+        create_project_samples(project, sample_id: sample3_id, substrate: :soil,
+                                        primer: primer2)
+        create(:sample, :approved, id: sample4_id)
+
+        get api_v1_research_project_path(id: project.slug, substrate: 'soil',
                                          primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
         expect(data.length).to eq(1)
 
         ids = data.map { |i| i['attributes']['id'] }
-        expect(ids).to match_array([1])
+        expect(ids).to match_array([sample1_id])
       end
     end
   end

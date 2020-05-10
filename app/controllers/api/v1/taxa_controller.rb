@@ -3,8 +3,7 @@
 module Api
   module V1
     class TaxaController < Api::V1::ApplicationController
-      include BatchData
-      include FilterCompletedSamples
+      include FilterSamples
 
       def index
         render json: NcbiNodeSerializer.new(taxa).serializable_hash
@@ -13,7 +12,6 @@ module Api
       def show
         render json: {
           samples: TaxonSampleSerializer.new(samples),
-          asvs_count: asvs_count,
           base_samples: BasicSampleSerializer.new(completed_samples),
           taxon: BasicTaxonSerializer.new(taxon)
         }, status: :ok
@@ -52,22 +50,22 @@ module Api
         @taxon ||= NcbiNode.find_by(taxon_id: params[:id])
       end
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def select_sql
+        <<~SQL.chomp
+          (array_agg("ncbi_nodes"."canonical_name" || ' | ' ||
+          ncbi_nodes.taxon_id))[0:10] AS taxa
+        SQL
+      end
+
       def samples
         @samples ||= begin
           completed_samples
-            .select(:id).select(:barcode).select(:status_cd)
-            .select(:latitude).select(:longitude).select(:substrate_cd)
-            .select(:gps_precision).select(:location)
-            .select('array_agg( "ncbi_nodes"."canonical_name"|| ' \
-              "' | ' ||ncbi_nodes.taxon_id) AS taxa")
-            .joins('JOIN asvs on asvs.sample_id = samples.id')
+            .select(select_sql)
             .joins('JOIN ncbi_nodes on ncbi_nodes.taxon_id = asvs.taxon_id')
             .where('ids @> ?', "{#{params[:id]}}")
             .group(:id)
         end
       end
-      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
     end
   end
 end

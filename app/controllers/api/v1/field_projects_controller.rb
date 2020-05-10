@@ -4,26 +4,21 @@ module Api
   module V1
     class FieldProjectsController < Api::V1::ApplicationController
       before_action :add_cors_headers
-      include BatchData
       include FilterSamples
 
       def show
         render json: {
-          samples: SampleSerializer.new(approved_samples),
-          asvs_count: asvs_count
+          samples: SampleSerializer.new(field_project_samples)
         }, status: :ok
       end
 
       private
 
-      def query_string
-        query = {}
-        query[:field_project_id] = params[:id]
-        query[:status_cd] = params[:status] if params[:status]
-        if params[:substrate]
-          query[:substrate_cd] = params[:substrate].split('|')
+      def field_project_samples
+        @field_project_samples ||= begin
+          approved_samples
+            .where('samples.field_project_id = ?', params[:id])
         end
-        query
       end
     end
   end

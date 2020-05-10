@@ -60,7 +60,8 @@ describe 'Taxa' do
                          research_project: create(:research_project))
 
       sample = create(:sample, status: status, substrate_cd: substrate)
-      create(:asv, sample: sample, taxon_id: taxon.taxon_id)
+      create(:asv, sample: sample, taxon_id: taxon.taxon_id,
+                   research_project: research_project, primer: primer)
       create(:sample_primer, primer: primer, sample: sample,
                              research_project: research_project)
       sample
@@ -68,10 +69,9 @@ describe 'Taxa' do
 
     def parse_response(response)
       samples = JSON.parse(response.body)['samples']['data']
-      asvs_count = JSON.parse(response.body)['asvs_count']
       base_samples = JSON.parse(response.body)['base_samples']['data']
 
-      [samples, asvs_count, base_samples]
+      [samples, base_samples]
     end
 
     it 'returns OK' do
@@ -86,10 +86,9 @@ describe 'Taxa' do
       create_occurence(taxon)
 
       get api_v1_taxon_path(id: target_id)
-      samples, asvs_count, base_samples = parse_response(response)
+      samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(1)
-      expect(asvs_count.length).to eq(1)
       expect(base_samples.length).to eq(1)
     end
 
@@ -98,10 +97,9 @@ describe 'Taxa' do
       create_occurence(taxon)
 
       get api_v1_taxon_path(id: target_id)
-      samples, asvs_count, base_samples = parse_response(response)
+      samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(1)
-      expect(asvs_count.length).to eq(1)
       expect(base_samples.length).to eq(1)
     end
 
@@ -114,10 +112,9 @@ describe 'Taxa' do
       create(:asv, sample: sample1, taxon_id: taxon2.taxon_id)
 
       get api_v1_taxon_path(id: target_id)
-      samples, asvs_count, base_samples = parse_response(response)
+      samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(1)
-      expect(asvs_count.length).to eq(1)
       expect(base_samples.length).to eq(1)
     end
 
@@ -126,10 +123,9 @@ describe 'Taxa' do
       create_occurence(taxon)
 
       get api_v1_taxon_path(id: target_id)
-      samples, asvs_count, base_samples = parse_response(response)
+      samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(0)
-      expect(asvs_count.length).to eq(1)
       expect(base_samples.length).to eq(1)
     end
 
@@ -144,10 +140,9 @@ describe 'Taxa' do
       create_occurence(taxon)
 
       get api_v1_taxon_path(id: target_id)
-      samples, asvs_count, base_samples = parse_response(response)
+      samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(2)
-      expect(asvs_count.length).to eq(3)
       expect(base_samples.length).to eq(3)
 
       sample_ids = samples.map { |i| i['attributes']['id'] }
@@ -172,10 +167,9 @@ describe 'Taxa' do
         sample2 = create_occurence(taxon)
 
         get api_v1_taxon_path(id: target_id, keyword: 'match')
-        samples, asvs_count, base_samples = parse_response(response)
+        samples, base_samples = parse_response(response)
 
         expect(samples.length).to eq(2)
-        expect(asvs_count.length).to eq(2)
         expect(base_samples.length).to eq(2)
 
         sample_ids = samples.map { |i| i['attributes']['id'] }
@@ -193,10 +187,9 @@ describe 'Taxa' do
 
       it 'returns samples when there is one substrate' do
         get api_v1_taxon_path(id: target_id, substrate: :soil)
-        samples, asvs_count, base_samples = parse_response(response)
+        samples, base_samples = parse_response(response)
 
         expect(samples.length).to eq(1)
-        expect(asvs_count.length).to eq(3)
         expect(base_samples.length).to eq(1)
 
         substrate = samples.map { |i| i['attributes']['substrate'] }
@@ -205,10 +198,9 @@ describe 'Taxa' do
 
       it 'returns samples when there is multiple substrate' do
         get api_v1_taxon_path(id: target_id, substrate: 'soil|sediment')
-        samples, asvs_count, base_samples = parse_response(response)
+        samples, base_samples = parse_response(response)
 
         expect(samples.length).to eq(2)
-        expect(asvs_count.length).to eq(3)
         expect(base_samples.length).to eq(2)
 
         substrate = samples.map { |i| i['attributes']['substrate'] }
@@ -227,10 +219,9 @@ describe 'Taxa' do
 
       it 'ignores status params and only returns completed samples ' do
         get api_v1_taxon_path(id: target_id, status: 'foo')
-        samples, asvs_count, base_samples = parse_response(response)
+        samples, base_samples = parse_response(response)
 
         expect(samples.length).to eq(1)
-        expect(asvs_count.length).to eq(2)
         expect(base_samples.length).to eq(1)
 
         substrate = samples.map { |i| i['attributes']['status'] }
@@ -241,11 +232,13 @@ describe 'Taxa' do
     describe 'primer query param' do
       let(:primer1_id) { 10 }
       let(:primer2_id) { 20 }
+      let(:primer1_name) { 'primer1' }
+      let(:primer2_name) { 'primer2' }
 
       def create_samples
         taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-        primer1 = create(:primer, id: primer1_id, name: 'primer1')
-        primer2 = create(:primer, id: primer2_id, name: 'primer2')
+        primer1 = create(:primer, id: primer1_id, name: primer1_name)
+        primer2 = create(:primer, id: primer2_id, name: primer2_name)
         create_occurence(taxon, primer: primer1)
         create_occurence(taxon, primer: primer2)
         create_occurence(taxon, primer: create(:primer, id: 30))
@@ -255,18 +248,16 @@ describe 'Taxa' do
         create_samples
 
         get api_v1_taxon_path(id: target_id, primer: primer1_id)
-        samples, asvs_count, base_samples = parse_response(response)
+        samples, base_samples = parse_response(response)
 
         expect(samples.length).to eq(1)
-        expect(asvs_count.length).to eq(3)
         expect(base_samples.length).to eq(1)
 
-        primer = samples.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' }
-          ]
-        )
+        primer_ids = samples.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id]])
+
+        primer_names = samples.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([[primer1_name]])
       end
 
       it 'returns samples when there is multiple primers' do
@@ -274,19 +265,16 @@ describe 'Taxa' do
 
         get api_v1_taxon_path(id: target_id,
                               primer: "#{primer1_id}|#{primer2_id}")
-        samples, asvs_count, base_samples = parse_response(response)
+        samples, base_samples = parse_response(response)
 
         expect(samples.length).to eq(2)
-        expect(asvs_count.length).to eq(3)
         expect(base_samples.length).to eq(2)
 
-        primer = samples.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' },
-            { 'id' => primer2_id, 'name' => 'primer2' }
-          ]
-        )
+        primer_ids = samples.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id], [primer2_id]])
+
+        primer_names = samples.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([[primer1_name], [primer2_name]])
       end
 
       it 'ignores invalid primers' do
@@ -303,9 +291,12 @@ describe 'Taxa' do
         primer1 = create(:primer, id: primer1_id, name: 'primer1')
         primer2 = create(:primer, id: primer2_id, name: 'primer2')
         sample = create(:sample, :results_completed)
+
         research_project = create(:research_project)
-        create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer1)
-        create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer2)
+        create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer1,
+                     research_project: research_project)
+        create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer2,
+                     research_project: research_project)
         create(:sample_primer, primer: primer1, sample: sample,
                                research_project: research_project)
         create(:sample_primer, primer: primer2, sample: sample,
@@ -313,17 +304,16 @@ describe 'Taxa' do
 
         get api_v1_taxon_path(id: target_id,
                               primer: "#{primer1_id}|#{primer2_id}")
-        data = JSON.parse(response.body)['samples']['data']
+        samples, base_samples = parse_response(response)
 
-        expect(data.length).to eq(1)
+        expect(samples.length).to eq(1)
+        expect(base_samples.length).to eq(1)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' },
-            { 'id' => primer2_id, 'name' => 'primer2' }
-          ]
-        )
+        primer_ids = samples.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id, primer2_id]])
+
+        primer_names = samples.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([[primer1_name, primer2_name]])
       end
     end
   end

@@ -5,14 +5,12 @@ module Api
     module ResearchProjects
       class LaRiverController < Api::V1::ApplicationController
         before_action :add_cors_headers
-        include FilterCompletedSamples
-        include BatchData
+        include FilterSamples
         include AsvTreeFormatter
 
         def sites
           render json: {
-            samples: SampleSerializer.new(samples),
-            asvs_count: asvs_count
+            samples: SampleSerializer.new(samples)
           }, status: :ok
         end
 

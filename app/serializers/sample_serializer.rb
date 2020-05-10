@@ -3,20 +3,17 @@
 class SampleSerializer
   include FastJsonapi::ObjectSerializer
   attributes :id, :latitude, :longitude, :barcode, :status, :substrate,
-             :gps_precision, :location, :collection_date
+             :location, :collection_date
 
-  attribute :primers do |object, params|
-    if params[:research_project_id]
-      object.sample_primers
-            .joins(:primer)
-            .where(research_project_id: params[:research_project_id])
-            .select('primers.name, primers.id')
-            .uniq
-    else
-      object.sample_primers
-            .joins(:primer)
-            .select('primers.name, primers.id')
-            .uniq
-    end
+  attribute :primer_ids do |object|
+    object.primer_ids if object.attributes.include?('primer_ids')
+  end
+
+  attribute :primer_names do |object|
+    object.primer_names if object.attributes.include?('primer_names')
+  end
+
+  attribute :taxa_count do |object|
+    object.taxa_count if object.attributes.include?('taxa_count')
   end
 end

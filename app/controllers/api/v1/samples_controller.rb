@@ -4,20 +4,17 @@ module Api
   module V1
     class SamplesController < Api::V1::ApplicationController
       before_action :add_cors_headers
-      include BatchData
       include FilterSamples
 
       def index
         render json: {
-          samples: SampleSerializer.new(samples),
-          asvs_count: asvs_count
+          samples: SampleSerializer.new(samples)
         }, status: :ok
       end
 
       def show
         render json: {
-          sample: SampleSerializer.new(sample),
-          asvs_count: [sample_asv_count]
+          sample: SampleSerializer.new(sample)
         }, status: :ok
       end
 
@@ -27,13 +24,15 @@ module Api
       # show
       # =======================
 
-      def sample_asv_count
-        count = Asv.where(sample_id: params[:id]).count
-        { sample_id: params[:id], count: count }
-      end
-
       def sample
-        @sample ||= Sample.approved.with_coordinates.find(params[:id])
+        @sample ||= begin
+          Sample.approved
+                .left_joins(:asvs)
+                .select('COUNT(DISTINCT taxon_id) AS taxa_count')
+                .select(FilterSamples.sample_columns)
+                .group(:id)
+                .find(params[:id])
+        end
       end
 
       # =======================

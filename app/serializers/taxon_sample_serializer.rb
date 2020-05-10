@@ -3,19 +3,21 @@
 class TaxonSampleSerializer
   include FastJsonapi::ObjectSerializer
   attributes :id, :barcode, :status, :latitude, :longitude, :substrate,
-             :gps_precision, :location, :taxa
-
-  attribute :primers do |object|
-    object.sample_primers
-          .joins(:primer)
-          .select('primers.name, primers.id')
-          .uniq
-  end
+             :location
 
   attribute :taxa do |object|
-    # HACK: can't access taxa using object.attributes[' as taxa'], so using the
-    # this hack of object.attributes.keys.last to access taxa
-    taxa_key = object.attributes.keys.last
-    object.attributes[taxa_key]
+    object.taxa if object.attributes.include?('taxa')
+  end
+
+  attribute :primer_ids do |object|
+    object.primer_ids if object.attributes.include?('primer_ids')
+  end
+
+  attribute :primer_names do |object|
+    object.primer_names if object.attributes.include?('primer_names')
+  end
+
+  attribute :taxa_count do |object|
+    object.taxa_count if object.attributes.include?('taxa_count')
   end
 end

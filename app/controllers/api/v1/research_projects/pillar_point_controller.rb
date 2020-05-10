@@ -5,8 +5,7 @@ module Api
     module ResearchProjects
       class PillarPointController < Api::V1::ApplicationController
         before_action :add_cors_headers
-        include FilterCompletedSamples
-        include BatchData
+        include FilterSamples
         include ResearchProjectService::PillarPointServices::CommonTaxaMap
 
         def sites
@@ -70,8 +69,7 @@ module Api
 
         def sites_data
           json = {
-            samples: SampleSerializer.new(all_samples),
-            asvs_count: asvs_count
+            samples: SampleSerializer.new(all_samples)
           }
           json.merge!(gbif_data) if include_research?
           json

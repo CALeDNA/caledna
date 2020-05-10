@@ -26,15 +26,6 @@ describe 'FieldProjecs' do
 
         expect(data['samples']['data']).to eq([])
       end
-
-      it 'returns empty array for asvs' do
-        create(:field_project, id: target_id)
-
-        get api_v1_field_project_path(id: target_id)
-        data = JSON.parse(response.body)
-
-        expect(data['asvs_count']).to eq([])
-      end
     end
 
     context 'when project has approved samples' do
@@ -51,16 +42,6 @@ describe 'FieldProjecs' do
         ids = data['samples']['data'].map { |s| s['id'].to_i }
         expect(ids).to match_array([sample1.id, sample2.id])
       end
-
-      it 'returns empty array for asvs' do
-        project = create(:field_project, id: target_id)
-        create(:sample, :approved, field_project: project)
-
-        get api_v1_field_project_path(id: target_id)
-        data = JSON.parse(response.body)
-
-        expect(data['asvs_count']).to eq([])
-      end
     end
 
     context 'when project has samples with results' do
@@ -76,20 +57,6 @@ describe 'FieldProjecs' do
 
         ids = data['samples']['data'].map { |s| s['id'].to_i }
         expect(ids).to match_array([sample1.id, sample2.id])
-      end
-
-      it 'returns the number of associated asvs for asv count' do
-        project = create(:field_project, id: target_id)
-        sample = create(:sample, :results_completed, field_project: project)
-        create(:asv, sample: sample)
-        create(:asv, sample: sample)
-        create(:asv, sample: sample)
-
-        get api_v1_field_project_path(id: target_id)
-        data = JSON.parse(response.body)
-
-        expect(data['asvs_count'].length).to eq(1)
-        expect(data['asvs_count'].first['count']).to eq(3)
       end
     end
 
@@ -189,10 +156,13 @@ describe 'FieldProjecs' do
     context 'primer query param' do
       let(:primer1_id) { 10 }
       let(:primer2_id) { 20 }
-      let(:primer1) { create(:primer, name: 'primer1', id: primer1_id) }
-      let(:primer2) { create(:primer, name: 'primer2', id: primer2_id) }
+      let(:primer1_name) { 'primer1' }
+      let(:primer2_name) { 'primer2' }
+      let(:primer1) { create(:primer, name: primer1_name, id: primer1_id) }
+      let(:primer2) { create(:primer, name: primer2_name, id: primer2_id) }
       let(:project) { create(:field_project, id: target_id) }
 
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def create_samples
         s1 = create(:sample, :approved, field_project: project)
         s2 = create(:sample, :approved, field_project: project)
@@ -200,10 +170,16 @@ describe 'FieldProjecs' do
         p2 = primer2
         rproj1 = create(:research_project)
         rproj2 = create(:research_project)
+
+        create(:asv, sample: s1, research_project: rproj1, primer: p1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
+        create(:asv, sample: s1, research_project: rproj2, primer: p1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+
+        create(:asv, sample: s2, research_project: rproj1, primer: p2)
         create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
       end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       it 'returns samples when there is one primer' do
         create_samples
@@ -213,12 +189,11 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(1)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' }
-          ]
-        )
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id]])
+
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([[primer1_name]])
       end
 
       it 'returns samples when there are multiple primer' do
@@ -230,13 +205,13 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(2)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' },
-            { 'id' => primer2_id, 'name' => 'primer2' }
-          ]
-        )
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids)
+          .to match_array([[primer1_id], [primer2_id]])
+
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names)
+          .to match_array([[primer1_name], [primer2_name]])
       end
 
       it 'ignores invalid primers' do
@@ -250,11 +225,13 @@ describe 'FieldProjecs' do
 
       it 'only includes one instance of a sample' do
         sample = create(:sample, :approved, id: 1, field_project: project)
-        create(:research_project, slug: 'proj1', id: 100)
+        rproj = create(:research_project, slug: 'proj1')
+        create(:asv, sample: sample, primer: primer1, research_project: rproj)
         create(:sample_primer, primer: primer1, sample: sample,
-                               research_project_id: 100)
+                               research_project: rproj)
+        create(:asv, sample: sample, primer: primer2, research_project: rproj)
         create(:sample_primer, primer: primer2, sample: sample,
-                               research_project_id: 100)
+                               research_project: rproj)
 
         get api_v1_field_project_path(id: target_id,
                                       primer: "#{primer1_id}|#{primer2_id}")
@@ -262,13 +239,13 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(1)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' },
-            { 'id' => primer2_id, 'name' => 'primer2' }
-          ]
-        )
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids)
+          .to match_array([[primer1_id, primer2_id]])
+
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names)
+          .to match_array([[primer1_name, primer2_name]])
       end
     end
 
@@ -292,10 +269,15 @@ describe 'FieldProjecs' do
         p1 = create(:primer, name: '12S', id: primer1_id)
         rproj1 = create(:research_project)
         rproj2 = create(:research_project)
+        create(:asv, sample: s1, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
+        create(:asv, sample: s1, primer: p1, research_project: rproj2)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+        create(:asv, sample: s2, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s2, primer: p1, research_project: rproj1)
+        create(:asv, sample: s3, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s3, primer: p1, research_project: rproj1)
+        create(:asv, sample: s5, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s5, primer: p1, research_project: rproj1)
       end
 

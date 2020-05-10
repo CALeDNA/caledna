@@ -123,17 +123,22 @@ describe 'Samples' do
     context 'primer query param' do
       let(:primer1_id) { 10 }
       let(:primer2_id) { 20 }
+      let(:primer1_name) { 'primer1' }
+      let(:primer2_name) { 'primer2' }
 
       before(:each) do
         s1 = create(:sample, :approved)
         s2 = create(:sample, :results_completed)
-        p1 = create(:primer, name: 'primer1', id: primer1_id)
-        p2 = create(:primer, name: 'primer2', id: primer2_id)
+        p1 = create(:primer, name: primer1_name, id: primer1_id)
+        p2 = create(:primer, name: primer2_name, id: primer2_id)
 
         rproj1 = create(:research_project)
         rproj2 = create(:research_project)
+        create(:asv, sample: s1, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
+        create(:asv, sample: s1, primer: p1, research_project: rproj2)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+        create(:asv, sample: s2, primer: p2, research_project: rproj1)
         create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
       end
 
@@ -143,12 +148,11 @@ describe 'Samples' do
 
         expect(data.length).to eq(1)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' }
-          ]
-        )
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([[primer1_name]])
+
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id]])
       end
 
       it 'returns samples when there are multiple primer' do
@@ -157,13 +161,11 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        primer = data.flat_map { |i| i['attributes']['primers'] }
-        expect(primer).to match_array(
-          [
-            { 'id' => primer1_id, 'name' => 'primer1' },
-            { 'id' => primer2_id, 'name' => 'primer2' }
-          ]
-        )
+        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        expect(primer_names).to match_array([[primer1_name], [primer2_name]])
+
+        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        expect(primer_ids).to match_array([[primer1_id], [primer2_id]])
       end
 
       it 'ignores invalid primers' do
@@ -182,21 +184,25 @@ describe 'Samples' do
         s1 = create(:sample, :results_completed, id: 1, substrate_cd: :soil)
         s2 = create(:sample, :results_completed, id: 2, substrate_cd: :soil)
         s3 = create(:sample, :results_completed, id: 3, substrate_cd: :foo)
-        s4 = create(:sample, :geo, id: 4, substrate_cd: :soil,
-                                   status_cd: :rejected)
-        create(:sample, :results_completed, id: 5, substrate_cd: :soil)
-        s6 = create(:sample, :approved, id: 6, substrate_cd: :soil)
+        create(:sample, :geo, id: 4, substrate_cd: :soil, status_cd: :rejected)
+        s5 = create(:sample, :results_completed, id: 5, substrate_cd: :soil)
+        create(:sample, :approved, id: 6, substrate_cd: :soil)
         create(:sample, :approved, id: 7)
         p1 = create(:primer, name: '12S', id: primer1_id)
+        p2 = create(:primer, name: '18S', id: primer2_id)
 
         proj1 = create(:research_project)
         proj2 = create(:research_project)
+        create(:asv, sample: s1, primer: p1, research_project: proj1)
         create(:sample_primer, sample: s1, primer: p1, research_project: proj1)
+        create(:asv, sample: s1, primer: p1, research_project: proj2)
         create(:sample_primer, sample: s1, primer: p1, research_project: proj2)
-        create(:sample_primer, sample: s2, primer: p1, research_project: proj1)
-        create(:sample_primer, sample: s3, primer: p1, research_project: proj1)
-        create(:sample_primer, sample: s4, primer: p1, research_project: proj1)
-        create(:sample_primer, sample: s6, primer: p1, research_project: proj1)
+        create(:asv, sample: s2, primer: p1, research_project: proj2)
+        create(:sample_primer, sample: s2, primer: p1, research_project: proj2)
+        create(:asv, sample: s3, primer: p1, research_project: proj1)
+        create(:sample_primer, sample: s3, primer: p2, research_project: proj1)
+        create(:asv, sample: s5, primer: p1, research_project: proj1)
+        create(:sample_primer, sample: s5, primer: p2, research_project: proj1)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
@@ -232,10 +238,10 @@ describe 'Samples' do
                                 primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
-        expect(data.length).to eq(3)
+        expect(data.length).to eq(2)
 
         ids = data.map { |i| i['attributes']['id'] }
-        expect(ids).to eq([1, 2, 6])
+        expect(ids).to eq([1, 2])
       end
 
       it 'returns samples that match substrate & keyword' do
@@ -281,37 +287,23 @@ describe 'Samples' do
 
         expect(data['sample']['data']['id'].to_i).to eq(sample.id)
       end
-
-      it 'returns 0 for asc count' do
-        sample = create(:sample, :approved)
-
-        get api_v1_sample_path(id: sample.id)
-        data = JSON.parse(response.body)
-
-        expect(data['asvs_count'].first['count']).to eq(0)
-      end
     end
 
     context 'when sample has results' do
       it 'returns the sample data for the given sample' do
         sample = create(:sample, :results_completed)
+        taxon = create(:ncbi_node)
+        primer = create(:primer, id: 10, name: 'primer')
+        create(:asv, sample: sample, taxon_id: taxon.id, primer: primer)
+        create(:asv, sample: sample, taxon_id: taxon.id, primer: primer)
 
         get api_v1_sample_path(id: sample.id)
-        data = JSON.parse(response.body)
+        data = JSON.parse(response.body)['sample']['data']
 
-        expect(data['sample']['data']['id'].to_i).to eq(sample.id)
-      end
-
-      it 'returns the number of associated asvs for asv count' do
-        sample = create(:sample, :results_completed)
-        create(:asv, sample: sample)
-        create(:asv, sample: sample)
-        create(:asv, sample: sample)
-
-        get api_v1_sample_path(id: sample.id)
-        data = JSON.parse(response.body)
-
-        expect(data['asvs_count'].first['count']).to eq(3)
+        expect(data['attributes']['id'].to_i).to eq(sample.id)
+        expect(data['attributes']['primer_ids']).to eq(nil)
+        expect(data['attributes']['primer_names']).to eq(nil)
+        expect(data['attributes']['taxa_count']).to eq(1)
       end
     end
 
@@ -322,12 +314,14 @@ describe 'Samples' do
         .to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it 'raises an error if sample does not have coordinates' do
+    it 'returns a sample if sample does not have coordinates' do
       sample = create(:sample, status_cd: :approved, latitude: nil,
                                longitude: nil)
 
-      expect { get api_v1_sample_path(id: sample.id) }
-        .to raise_error(ActiveRecord::RecordNotFound)
+      get api_v1_sample_path(id: sample.id)
+      data = JSON.parse(response.body)
+
+      expect(data['sample']['data']['id'].to_i).to eq(sample.id)
     end
 
     it 'raises an error for invalid id' do
