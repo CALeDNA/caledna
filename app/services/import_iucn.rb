@@ -19,7 +19,7 @@ class ImportIucn
     taxon = find_taxon(data)
     return if taxon.blank?
 
-    UpdateIucnStatusJob.perform_later(data, taxon)
+    update_iucn_status(data, taxon)
   end
 
   def form_canonical_name(data)
@@ -42,24 +42,18 @@ class ImportIucn
     end
   end
 
+  private
+
   def update_iucn_status(data, taxon)
     status = IucnStatus::CATEGORIES[data[:category].to_sym]
-    resource = ExternalResource.find_by(ncbi_id: taxon.id)
-    iucn_data = { iucn_status: status, iucn_id: data[:taxonid] }
-
-    if resource.present?
-      return if resource.iucn_status.present?
-      resource.update(iucn_data)
-    else
-      ExternalResource.create(iucn_data.merge(ncbi_id: taxon.id))
-    end
+    taxon.iucn_status = status
+    taxon.save
   end
-
-  private
 
   def find_taxon(data)
     rank = find_rank(data)
     canonical_name = form_canonical_name(data)
-    NcbiNode.where(canonical_name: canonical_name, rank: rank).first
+    NcbiNode.where('lower(canonical_name) = ?', canonical_name.downcase)
+            .where(rank: rank).first
   end
 end

@@ -8,7 +8,7 @@ namespace :iunc_data do
     statuses = raw_data['result']
 
     statuses.each_with_index do |status, i|
-      delay = i * 0.25
+      delay = i * 0.2
       ProcessIucnStatusJob.set(wait: delay).perform_later(status)
     end
   end

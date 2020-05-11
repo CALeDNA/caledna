@@ -40,20 +40,41 @@ describe ImportIucn do
       }
     ]
   end
-  #  var 65, subsp 30, ssp 107
 
   describe '#process_iucn_status' do
     include ActiveJob::TestHelper
 
     context 'when taxon exists' do
-      let!(:taxon) do
-        create(:ncbi_node, canonical_name: 'Genus species sub1',
-                           rank: 'variety')
+      it 'updates the taxon iucn_status for species' do
+        taxon = create(:ncbi_node, canonical_name: 'Genus species',
+                                   rank: 'species')
+
+        expect { subject.process_iucn_status(api_data.first) }
+          .to change { taxon.reload.iucn_status }.to('least concern')
       end
 
-      it 'adds UpdateIucnStatusJob to the queue' do
+      it 'updates the taxon iucn_status for variety' do
+        taxon = create(:ncbi_node, canonical_name: 'Genus species sub1',
+                                   rank: 'variety')
+
         expect { subject.process_iucn_status(api_data.second) }
-          .to have_enqueued_job(UpdateIucnStatusJob)
+          .to change { taxon.reload.iucn_status }.to('least concern')
+      end
+
+      it 'updates the taxon iucn_status for subspecies' do
+        taxon = create(:ncbi_node, canonical_name: 'Genus species sub2',
+                                   rank: 'subspecies')
+
+        expect { subject.process_iucn_status(api_data.third) }
+          .to change { taxon.reload.iucn_status }.to('least concern')
+      end
+
+      it 'updates the taxon iucn_status for subspecies' do
+        taxon = create(:ncbi_node, canonical_name: 'Genus species sub3',
+                                   rank: 'subspecies')
+
+        expect { subject.process_iucn_status(api_data.fourth) }
+          .to change { taxon.reload.iucn_status }.to('least concern')
       end
     end
 
@@ -62,65 +83,6 @@ describe ImportIucn do
         result = subject.process_iucn_status(api_data.second)
 
         expect(result).to eq(nil)
-      end
-    end
-  end
-
-  describe '#update_iucn_status' do
-    context 'when taxon exists' do
-      let!(:taxon) do
-        create(:ncbi_node, canonical_name: 'Genus species sub1',
-                           rank: 'variety')
-      end
-
-      context 'and external resource exists' do
-        context 'and external resource has iucn info' do
-          let!(:external_resource) do
-            create(:external_resource, ncbi_id: taxon.id,
-                                       iucn_status: 'status', iucn_id: 1)
-          end
-
-          it 'does not update iucn_status' do
-            expect { subject.update_iucn_status(api_data.second, taxon) }
-              .to_not(change { external_resource.reload.iucn_status })
-          end
-
-          it 'does not update iucn_id' do
-            expect { subject.update_iucn_status(api_data.second, taxon) }
-              .to_not(change { external_resource.reload.iucn_id })
-          end
-        end
-
-        context 'and external resource does not have iucn info' do
-          let!(:external_resource) do
-            create(:external_resource, ncbi_id: taxon.id)
-          end
-
-          it 'updates iucn data' do
-            expect { subject.update_iucn_status(api_data.second, taxon) }
-              .to change { external_resource.reload.iucn_status }
-              .from(nil).to(IucnStatus::CATEGORIES[:LC])
-              .and change { external_resource.reload.iucn_id }
-              .from(nil).to(2)
-          end
-        end
-      end
-
-      context 'and external resource does not exist' do
-        it 'creates an external resource' do
-          expect { subject.update_iucn_status(api_data.second, taxon) }
-            .to change { ExternalResource.count }
-            .by(1)
-        end
-
-        it 'sets iucn data' do
-          subject.update_iucn_status(api_data.second, taxon)
-          external_resource = ExternalResource.first
-
-          expect(external_resource.iucn_status)
-            .to eq(IucnStatus::CATEGORIES[:LC])
-          expect(external_resource.iucn_id).to eq(2)
-        end
       end
     end
   end
