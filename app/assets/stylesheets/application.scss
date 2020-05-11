@@ -9,7 +9,6 @@ $brand-primary: darken($theme-base-color, 35%) !default;
 @import "font_awesome5";
 @import "trix";
 
-@import "base";
 @import "events";
 @import "devise";
 @import "samples";
@@ -22,6 +21,7 @@ $brand-primary: darken($theme-base-color, 35%) !default;
 @import "text_editor";
 @import "tree-chart";
 @import "research_projects";
+@import "base";
 
 // =============
 // layout
