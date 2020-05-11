@@ -5,7 +5,6 @@ module ImportCsv
     require 'csv'
     include ProcessEdnaResults
     include CsvUtils
-
     # rubocop:disable Metrics/MethodLength
     # only import csv if all barcodes are in the database. First or create
     # ResearchProjectSource. First or create ASV.
@@ -20,14 +19,14 @@ module ImportCsv
         return OpenStruct.new(valid?: false, errors: message)
       end
 
-      asv_attributes = {
+      result_metadata = {
         research_project_id: research_project_id,
         primer_id: primer_id
       }
 
       # ImportCsvQueueAsvJob calls queue_asv_job
       ImportCsvQueueAsvJob.perform_later(
-        data.to_json, barcodes, samples[:valid_data], asv_attributes
+        data.to_json, barcodes, samples[:valid_data], result_metadata
       )
 
       OpenStruct.new(valid?: true, errors: nil)
@@ -36,7 +35,7 @@ module ImportCsv
 
     # called by ImportCsvQueueAsvJob
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def queue_asv_job(data_json, barcodes, samples_data, asv_attributes)
+    def queue_asv_job(data_json, barcodes, samples_data, result_metadata)
       data = JSON.parse(data_json)
       data.each do |row|
         next if row.first == 'sum.taxonomy'
@@ -46,14 +45,17 @@ module ImportCsv
         next if invalid_taxon?(taxonomy_string)
 
         result_taxon = find_result_taxon_from_string(taxonomy_string)
-        raise ImportError, 'must import taxa first' if result_taxon.blank?
-        next if result_taxon.taxon_id.blank?
+        if result_taxon.blank?
+          ImportCsvCreateUnmatchedResultJob
+            .perform_later(taxonomy_string, result_metadata)
+          next
+        end
 
-        attributes = asv_attributes.merge(taxon_id: result_taxon.taxon_id)
+        attributes = result_metadata.merge(taxon_id: result_taxon.taxon_id)
         create_asvs_for_row(row, barcodes, samples_data, attributes)
       end
 
-      update_sample_data(samples_data, asv_attributes)
+      update_sample_data(samples_data, result_metadata)
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
@@ -85,9 +87,9 @@ module ImportCsv
 
     private
 
-    def update_sample_data(samples_data, asv_attributes)
+    def update_sample_data(samples_data, result_metadata)
       samples_data.each do |_barcode, sample_id|
-        attributes = asv_attributes.merge(sample_id: sample_id)
+        attributes = result_metadata.merge(sample_id: sample_id)
 
         ImportCsvUpdateSampleStatusJob.perform_later(sample_id)
         ImportCsvFirstOrCreateSamplePrimerJob.perform_later(attributes)
@@ -95,7 +97,7 @@ module ImportCsv
     end
 
     # rubocop:disable Metrics/MethodLength
-    def create_asvs_for_row(row, barcodes, samples_data, asv_attributes)
+    def create_asvs_for_row(row, barcodes, samples_data, result_metadata)
       barcodes.each.with_index do |barcode, i|
         next if barcode.blank?
 
@@ -107,11 +109,11 @@ module ImportCsv
         # calls first_or_create_research_project_source
         ImportCsvFirstOrCreateResearchProjSourceJob
           .perform_later(sample_id, 'Sample',
-                         asv_attributes[:research_project_id])
+                         result_metadata[:research_project_id])
 
         #  calls first_or_create_asv
         ImportCsvFirstOrCreateAsvJob.perform_later(
-          asv_attributes.merge(sample_id: sample_id, count: read_count)
+          result_metadata.merge(sample_id: sample_id, count: read_count)
         )
       end
     end

@@ -138,8 +138,44 @@ describe ImportCsv::EdnaResultsAsvs do
     # rubocop:enable Metrics/MethodLength
 
     context 'when matching ResultTaxon does not exist' do
-      it 'raises an error' do
-        expect { subject }.to raise_error(ImportError)
+      it 'creates a ImportCsvCreateUnmatchedResultJob' do
+        create_taxa
+        ResultTaxon.first.update(clean_taxonomy_string: 'Bad;;;;;taxon')
+
+        expect do
+          subject
+        end
+          .to have_enqueued_job(ImportCsvCreateUnmatchedResultJob)
+          .exactly(1).times
+      end
+
+      it 'pass correct agruments to ImportCsvCreateUnmatchedResultJob' do
+        create_taxa
+        ResultTaxon.first.update(clean_taxonomy_string: 'Bad;;;;;taxon')
+
+        expect do
+          subject
+        end
+          .to have_enqueued_job.with(
+            'Phylum;Class;Order;Family;;',
+            research_project_id: project_id,
+            primer_id: primer_id
+          ).exactly(1).times
+      end
+
+      it 'does not add ImportCsvFirstOrCreateResearchProjSourceJob to queue' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job(ImportCsvFirstOrCreateResearchProjSourceJob)
+          .exactly(0).times
+      end
+
+      it 'does not add ImportCsvFirstOrCreateAsvJob to queue' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job(ImportCsvFirstOrCreateAsvJob).exactly(0).times
       end
     end
 

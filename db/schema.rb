@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_30_051142) do
+ActiveRecord::Schema.define(version: 2020_05_11_122245) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -491,6 +491,16 @@ ActiveRecord::Schema.define(version: 2020_04_30_051142) do
     t.text "description"
     t.integer "passing_score", default: 0
     t.index ["slug"], name: "index_surveys_on_slug"
+  end
+
+  create_table "unmatched_results", force: :cascade do |t|
+    t.string "taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.bigint "primer_id"
+    t.bigint "research_project_id"
+    t.boolean "normalized"
+    t.index ["primer_id"], name: "index_unmatched_results_on_primer_id"
+    t.index ["research_project_id"], name: "index_unmatched_results_on_research_project_id"
   end
 
   create_table "uploads", force: :cascade do |t|
