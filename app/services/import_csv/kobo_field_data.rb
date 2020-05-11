@@ -32,27 +32,11 @@ module ImportCsv
     end
     # rubocop:enable Metrics/MethodLength
 
-    private
-
-    def collection_date(row)
-      DateTime.parse("#{row['collection_date']} #{row['collection_time']}")
-    end
-
-    def create_samples(data, field_project_id)
-      data.entries.each do |row|
-        next if row['barcode'].blank?
-
-        clean_row = row.to_h.reject { |k, _v| k.blank? }
-        sample_data = process_sample(clean_row, field_project_id)
-
-        Sample.create(sample_data)
-      end
-    end
-
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def process_sample(row, field_project_id)
+      barcode = convert_raw_barcode(row['barcode'])
       {
-        barcode: row['barcode'],
+        barcode: barcode,
         collection_date: collection_date(row),
         location: row['location'],
         latitude: row['latitude'],
@@ -72,10 +56,49 @@ module ImportCsv
         has_permit: row['has_permit'],
         field_project_id: field_project_id,
         status_cd: :approved,
-        csv_data: row.to_h
+        csv_data: row.to_h.reject { |k, _v| k.blank? }
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    private
+
+    def format_date_string(date_string)
+      # converts 01-31-2000 to 2000-01-31
+      if /\d\d-\d\d-\d\d\d\d/.match?(date_string)
+        new_date = /(\d\d)-(\d\d)-(\d\d\d\d)/.match(date_string)
+        date_string = "#{new_date[3]}-#{new_date[1]}-#{new_date[2]}"
+      end
+
+      # converts 01/31/2000 to 2000-01-31
+      if /\d\d\/\d\d\/\d\d\d\d/.match?(date_string)
+        new_date = /(\d\d)\/(\d\d)\/(\d\d\d\d)/.match(date_string)
+        date_string = "#{new_date[3]}-#{new_date[1]}-#{new_date[2]}"
+      end
+      date_string
+    end
+
+    def collection_date(row)
+      date = format_date_string(row['collection_date'])
+      raw_date_time = "#{date} #{row['collection_time']}"
+      begin
+        DateTime.parse(raw_date_time)
+      rescue ArgumentError
+        date = Date.strptime(raw_date_time, '%m/%d/%Y %H:%M')
+        date.strftime('%Y-%m%-%d %H:%M')
+      end
+    end
+
+    def create_samples(data, field_project_id)
+      data.entries.each do |row|
+        next if row['barcode'].blank?
+
+        clean_row = row.to_h.reject { |k, _v| k.blank? }
+        sample_data = process_sample(clean_row, field_project_id)
+
+        Sample.create(sample_data)
+      end
+    end
 
     def convert_comma_separated_string(string)
       return if string.blank?

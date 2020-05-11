@@ -46,3 +46,6 @@ Naming/UncommunicativeMethodParamName:
 
 Style/DateTime:
   Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
