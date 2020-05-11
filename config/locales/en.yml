@@ -30,7 +30,7 @@ en:
     models:
       survey_question: Question
       survey_option: Option
-      asv: ASV
+      asv: Taxa Results
 
   pundit:
     default: "You cannot perform this action."
@@ -51,7 +51,7 @@ en:
         substrate_cd: Substrate
         alt_id: "Alt ID"
         kobo_id: "Kobo ID"
-        gps_precision: 'GPS precision'
+        gps_precision: "GPS precision"
       field_project:
         kobo_id: "Kobo ID"
       survey_question:
