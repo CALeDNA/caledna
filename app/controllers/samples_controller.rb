@@ -34,7 +34,7 @@ class SamplesController < ApplicationController
 
   # rubocop:disable Metrics/MethodLength
   def organisms_sql
-    sql = <<-SQL
+    sql = <<~SQL
       SELECT canonical_name,
       hierarchy_names,
       ncbi_nodes.taxon_id, iucn_status,
@@ -42,7 +42,7 @@ class SamplesController < ApplicationController
       common_names
       FROM ncbi_nodes
       JOIN asvs ON asvs.taxon_id = ncbi_nodes.taxon_id
-      JOIN ncbi_divisions
+      LEFT JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
       LEFT JOIN external_resources
         ON external_resources.ncbi_id = ncbi_nodes.taxon_id
@@ -53,7 +53,7 @@ class SamplesController < ApplicationController
       sql += "AND research_project_id = #{ResearchProject::LA_RIVER.id}"
     end
 
-    sql + <<-SQL
+    sql + <<~SQL
       GROUP BY ncbi_nodes.taxon_id, external_resources.iucn_status,
       ncbi_divisions.name
       ORDER BY division_name,
