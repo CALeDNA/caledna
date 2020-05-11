@@ -149,6 +149,75 @@ describe 'Taxa' do
       expect(sample_ids).to eq([sample1.id, sample2.id])
     end
 
+    it 'retuns a max of ten related taxa' do
+      taxon_id = 2
+      sample = create(:sample, :results_completed)
+      research_project = create(:research_project)
+      primer = create(:primer)
+      create(:sample_primer, primer: primer, sample: sample,
+                             research_project: research_project)
+
+      15.times do |n|
+        taxon = create(:ncbi_node, canonical_name: "name#{n + 1}",
+                                   ids: [1, taxon_id, n + 10], id: n + 1)
+
+        create(:asv, sample: sample, research_project: research_project,
+                     taxon_id: taxon.id)
+      end
+
+      get api_v1_taxon_path(id: taxon_id)
+
+      samples, base_samples = parse_response(response)
+      sample = samples.first
+
+      expect(samples.length).to eq(1)
+      expect(base_samples.length).to eq(1)
+
+      expect(sample['attributes']['taxa'].length).to eq(10)
+
+      matching_taxa = [
+        'name1|1', 'name2|2', 'name3|3', 'name4|4', 'name5|5',
+        'name6|6', 'name7|7', 'name8|8', 'name9|9', 'name10|10'
+      ]
+      expect(sample['attributes']['taxa']).to match_array(matching_taxa)
+    end
+
+    it 'does not return related taxa that are IUCN threatened ' do
+      stub_const('IucnStatus::THREATENED', EN: 'endangered')
+      stub_const('IucnStatus::CATEGORIES', VU: 'vulnerable', EN: 'endangered')
+
+      taxon_id = 2
+      sample = create(:sample, :results_completed)
+      proj = create(:research_project)
+      primer = create(:primer)
+
+      taxon1 = create(:ncbi_node, canonical_name: 'name1', ids: [taxon_id, 10],
+                                  id: 1, iucn_status: nil)
+      taxon2 = create(:ncbi_node, canonical_name: 'name2', ids: [taxon_id, 11],
+                                  id: 2, iucn_status: 'vulnerable')
+      taxon3 = create(:ncbi_node, canonical_name: 'name3', ids: [taxon_id, 12],
+                                  id: 3, iucn_status: 'endangered')
+
+      create(:asv, sample: sample, research_project: proj, taxon_id: taxon1.id)
+      create(:asv, sample: sample, research_project: proj, taxon_id: taxon2.id)
+      create(:asv, sample: sample, research_project: proj, taxon_id: taxon3.id)
+      create(:sample_primer, primer: primer, sample: sample,
+                             research_project: proj)
+
+      get api_v1_taxon_path(id: taxon_id)
+
+      samples, base_samples = parse_response(response)
+      sample = samples.first
+
+      expect(samples.length).to eq(1)
+      expect(base_samples.length).to eq(1)
+
+      expect(sample['attributes']['taxa'].length).to eq(2)
+
+      matching_taxa = ['name1|1', 'name2|2']
+      expect(sample['attributes']['taxa']).to match_array(matching_taxa)
+    end
+
     context 'keyword query param' do
       before(:each) do
         ActiveRecord::Base.connection.execute(
