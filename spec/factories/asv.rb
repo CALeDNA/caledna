@@ -2,7 +2,6 @@
 
 FactoryBot.define do
   factory :asv do
-    ncbi_node
     research_project
     primer
   end

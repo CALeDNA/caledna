@@ -16,7 +16,7 @@
 <ul class="organism-list">
   <% organisms.each do |taxon| %>
     <li class="<%= taxon.division_name&.tr(' ', '_') %> item">
-      <% if SamplesHelper.threatened?(taxon.iucn_status) %>
+      <% if taxon.threatened? %>
         (Name not shown because this species is <%= taxon.iucn_status %>)
       <% else %>
         <%= taxon.rank %>:

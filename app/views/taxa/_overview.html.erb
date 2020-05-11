@@ -66,10 +66,14 @@
       <%= taxon.taxa_dataset.citation %>
     </p>
 
-    <% if taxon.conservation_status? %>
+    <% if taxon.iucn_status %>
       <h3>Conservation Status</h3>
-      <p><%= taxon.conservation_status %></p>
-      <p class='data-source'>Conservation Status Source: <a href='www.iucnredlist.org'>IUCN 2017. IUCN Red List of Threatened Species.</a> Version 2017-3</p>
+      <p><%= taxon.iucn_status %></p>
+      <p class='data-source'>Conservation Status Source:
+        IUCN 2020. The IUCN Red List of Threatened Species. Version 2020-1.
+        <a href='www.iucnredlist.org'>https://www.iucnredlist.org.</a>
+        Downloaded on 11 May 2020.
+      </p>
     <% end %>
   </div>
 </div>
@@ -92,7 +96,7 @@
 
       NOTE: In order to protect threatened species, we do not show
       location info for species listed as 'Extinct', 'Extinct in the Wild',
-      'Critically Endangered', 'Endangered', 'Vulnerable', or 'Near Threatened'
+      'Critically Endangered', or 'Endangered'
       by IUCN.
     </p>
   </div>

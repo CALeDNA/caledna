@@ -30,7 +30,7 @@ class NcbiNode < ApplicationRecord
   delegate *LINKS, to: :format_resources
   # rubocop:enable Lint/AmbiguousOperator
   delegate :wikidata_entity, :wikidata_image, :eol_image, :inat_image,
-           :conservation_status, :gbif_id, to: :format_resources
+           :gbif_id, to: :format_resources
 
   def self.taxa_dataset
     OpenStruct.new(
@@ -129,15 +129,11 @@ class NcbiNode < ApplicationRecord
     end
   end
 
-  def conservation_status?
-    conservation_status.present?
-  end
-
   def threatened?
-    return false if conservation_status.blank?
+    return false if iucn_status.blank?
     statuses = IucnStatus::THREATENED.values
 
-    statuses.include?(conservation_status)
+    statuses.include?(iucn_status)
   end
 
   # loops through external_resources *_image to get saved images and

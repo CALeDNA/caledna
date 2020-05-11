@@ -46,10 +46,6 @@ class FormatExternalResources
     )
   end
 
-  def conservation_status
-    @conservation_status ||= resource_value_for(:iucn_status)
-  end
-
   def bold_link
     id = resource_value_for(:bold_id)
     return if id.blank?

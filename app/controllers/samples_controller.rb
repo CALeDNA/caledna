@@ -37,15 +37,13 @@ class SamplesController < ApplicationController
     sql = <<~SQL
       SELECT canonical_name,
       hierarchy_names,
-      ncbi_nodes.taxon_id, iucn_status,
+      ncbi_nodes.taxon_id, ncbi_nodes.iucn_status,
       ncbi_divisions.name AS division_name, rank,
       common_names
       FROM ncbi_nodes
       JOIN asvs ON asvs.taxon_id = ncbi_nodes.taxon_id
       LEFT JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
-      LEFT JOIN external_resources
-        ON external_resources.ncbi_id = ncbi_nodes.taxon_id
       WHERE asvs.sample_id = $1
     SQL
 
@@ -54,7 +52,7 @@ class SamplesController < ApplicationController
     end
 
     sql + <<~SQL
-      GROUP BY ncbi_nodes.taxon_id, external_resources.iucn_status,
+      GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.iucn_status,
       ncbi_divisions.name
       ORDER BY division_name,
       hierarchy_names ->>'phylum',
