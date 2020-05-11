@@ -41,8 +41,8 @@ module Caledna
     #   config.action_view.sanitized_allowed_tags = ['strong', 'em', 'a']
     #   config.action_view.sanitized_allowed_attributes = ['href', 'title']
 
-    tags = Loofah::HTML5::WhiteList::ACCEPTABLE_ELEMENTS.merge(['iframe'])
-    attributes = Loofah::HTML5::WhiteList::ALLOWED_ATTRIBUTES.merge(['style'])
+    tags = Loofah::HTML5::SafeList::ACCEPTABLE_ELEMENTS.merge(['iframe'])
+    attributes = Loofah::HTML5::SafeList::ALLOWED_ATTRIBUTES.merge(['style'])
     config.action_view.sanitized_allowed_tags = tags
     config.action_view.sanitized_allowed_attributes = attributes
   end
