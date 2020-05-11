@@ -157,8 +157,7 @@ export default {
       taxonLayer: null,
       showTaxonLayer: true,
       taxonSamplesData: [],
-      initialTaxonSamplesData: [],
-      asvsCounts: []
+      initialTaxonSamplesData: []
     };
   },
   created() {
@@ -204,7 +203,7 @@ export default {
     //================
     // config table
     //================
-    formatTableData(samples, asvs_counts) {
+    formatTableData(samples) {
       this.rows = samples.map(sample => {
         const {
           id,
@@ -213,15 +212,11 @@ export default {
           longitude,
           location,
           status,
-          gps_precision,
-          primers,
+          primer_names,
           substrate,
-          taxa
+          taxa,
+          taxa_count
         } = sample;
-
-        const asvs_count = asvs_counts.find(
-          asvs_count => asvs_count.sample_id === id
-        );
 
         return {
           id,
@@ -229,10 +224,10 @@ export default {
           coordinates: `${latitude}, ${longitude}`,
           location: location,
           status: status.replace("_", " "),
-          primers: primers.map(p => p.name).join(", "),
+          primers: primer_names ? primer_names.join(", ") : "",
           substrate,
           taxa,
-          asv_count: asvs_count ? asvs_count.count : 0
+          taxa_count: taxa_count ? taxa_count : 0
         };
       });
     },
@@ -269,7 +264,6 @@ export default {
       axios
         .get(url)
         .then(response => {
-          this.asvsCounts = response.data.asvs_count;
           this.taxon = response.data.taxon.data.attributes;
 
           const mapData = baseMap.formatMapData(response.data);
@@ -289,7 +283,7 @@ export default {
         });
     },
     prepareSamplesDisplay() {
-      this.formatTableData(this.taxonSamplesData, this.asvsCounts);
+      this.formatTableData(this.taxonSamplesData);
       this.taxonSamplesCount = this.taxonSamplesData.length;
       this.baseSamplesCount = this.baseSamplesData.length;
 

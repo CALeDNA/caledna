@@ -45,10 +45,7 @@ export default {
       axios
         .get(url)
         .then(response => {
-          const data = baseMap.formatSamplesData(
-            response.data.sample.data,
-            response.data.asvs_count[0].count
-          );
+          const data = baseMap.formatSamplesData(response.data.sample.data);
 
           baseMap.createCircleMarker(data).addTo(this.map);
           this.map.panTo(new L.LatLng(data.lat, data.lng));

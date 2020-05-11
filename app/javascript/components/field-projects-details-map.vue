@@ -115,8 +115,7 @@ export default {
       taxonLayer: null,
       showTaxonLayer: true,
       taxonSamplesData: [],
-      initialTaxonSamplesData: [],
-      asvsCounts: []
+      initialTaxonSamplesData: []
     };
   },
   created() {
@@ -167,7 +166,7 @@ export default {
     //================
     // config table
     //================
-    formatTableData(samples, asvs_counts) {
+    formatTableData(samples) {
       this.rows = samples.map(sample => {
         const {
           id,
@@ -176,14 +175,16 @@ export default {
           longitude,
           location,
           status,
-          gps_precision,
-          primers,
-          substrate
+          primer_names,
+          substrate,
+          collection_date,
+          taxa_count
         } = sample;
 
-        const asvs_count = asvs_counts.find(
-          asvs_count => asvs_count.sample_id === id
-        );
+        const formatDateString = dateString => {
+          let date = new Date(dateString);
+          return date.toLocaleDateString();
+        };
 
         return {
           id,
@@ -191,9 +192,10 @@ export default {
           coordinates: `${latitude}, ${longitude}`,
           location,
           status: status.replace("_", " "),
-          primers: primers.map(p => p.name).join(", "),
+          primers: primer_names ? primer_names.join(", ") : "",
           substrate,
-          asv_count: asvs_count ? asvs_count.count : 0
+          taxa_count: taxa_count ? taxa_count : 0,
+          collection_date: formatDateString(collection_date)
         };
       });
     },
@@ -207,8 +209,6 @@ export default {
       axios
         .get(url)
         .then(response => {
-          this.asvsCounts = response.data.asvs_count;
-
           const mapData = baseMap.formatMapData(response.data);
           if (this.initialTaxonSamplesData.length == 0) {
             this.initialTaxonSamplesData = mapData.taxonSamplesData;
@@ -224,7 +224,7 @@ export default {
         });
     },
     prepareSamplesDisplay() {
-      this.formatTableData(this.taxonSamplesData, this.asvsCounts);
+      this.formatTableData(this.taxonSamplesData);
       this.taxonSamplesCount = this.taxonSamplesData.length;
 
       this.removeTaxonLayer();

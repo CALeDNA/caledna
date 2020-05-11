@@ -26,16 +26,25 @@ export const searchMixins = {
         });
       }
 
-      if (filters.substrate && !filters.substrate.includes("all") && filters.substrate.length > 0) {
+      if (
+        filters.substrate &&
+        !filters.substrate.includes("all") &&
+        filters.substrate.length > 0
+      ) {
         samples = samples.filter((sample) => {
           return filters.substrate.includes(sample.substrate);
         });
       }
 
-      if (filters.primer && !filters.primer.includes("all") && filters.primer.length > 0) {
+      if (
+        filters.primer &&
+        !filters.primer.includes("all") &&
+        filters.primer.length > 0
+      ) {
         samples = samples.filter((sample) => {
           return filters.primer.some((primer) => {
-            return sample.primers.map((p) => p.id).includes(Number(primer));
+            const primer_ids = sample.primer_ids ? sample.primer_ids : [];
+            return primer_ids.includes(Number(primer));
           });
         });
       }

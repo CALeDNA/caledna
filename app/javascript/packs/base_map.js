@@ -162,17 +162,16 @@ function renderIconsLayer(samples, map) {
 // format data
 // =============
 
-function formatSamplesData(rawSample, asvsCount) {
+function formatSamplesData(rawSample) {
   var sample = rawSample.attributes;
   var body;
 
   if (sample.id) {
     var sampleLink = `<a href='/samples/${sample.id}'>${sample.barcode}</a>`;
-    var asvsCount = asvsCount || "--";
     body = `<b>Site:</b> ${sampleLink} <br>
       <b>Lat/Long</b>: ${sample.latitude} , ${sample.longitude} <br>
       <b>Status</b>: ${sample.status} <br>
-      <b>Organism count</b>: ${asvsCount} <br>`;
+      <b>Organism count</b>: ${sample.taxa_count} <br>`;
   } else {
     body = null;
   }
@@ -265,7 +264,6 @@ function formatInatData(rawRecord) {
 
 function formatMapData(data) {
   var samples = data.samples ? data.samples.data : [data.sample.data];
-  var asvsCounts = data.asvs_count;
   var baseSamples = data.base_samples && data.base_samples.data;
   var taxonSamplesData;
   var baseSamplesData;
@@ -276,8 +274,7 @@ function formatMapData(data) {
       return sample.latitude && sample.longitude;
     })
     .map(function (sample) {
-      var asvs_count = findAsvCount(sample, asvsCounts);
-      return formatSamplesData(sample, asvs_count);
+      return formatSamplesData(sample);
     });
 
   if (baseSamples) {
@@ -287,8 +284,7 @@ function formatMapData(data) {
         return sample.latitude && sample.longitude;
       })
       .map(function (sample) {
-        var asvs_count = null;
-        return formatSamplesData(sample, asvs_count);
+        return formatSamplesData(sample);
       });
   }
 
@@ -304,7 +300,6 @@ function fetchSamples(apiEndpoint, map, cb) {
 
   $.get(apiEndpoint, function (data) {
     var samples = data.samples ? data.samples.data : [data.sample.data];
-    var asvsCounts = data.asvs_count;
     var baseSamples = data.base_samples && data.base_samples.data;
     var samplesData;
     var baseSamplesData;
@@ -316,8 +311,7 @@ function fetchSamples(apiEndpoint, map, cb) {
         return sample.latitude && sample.longitude;
       })
       .map(function (sample) {
-        var asvs_count = findAsvCount(sample, asvsCounts);
-        return formatSamplesData(sample, asvs_count);
+        return formatSamplesData(sample);
       });
 
     if (baseSamples) {
@@ -327,8 +321,7 @@ function fetchSamples(apiEndpoint, map, cb) {
           return sample.latitude && sample.longitude;
         })
         .map(function (sample) {
-          var asvs_count = null;
-          return formatSamplesData(sample, asvs_count);
+          return formatSamplesData(sample);
         });
     }
 
@@ -343,7 +336,10 @@ function fetchSamples(apiEndpoint, map, cb) {
 // =============
 
 function createRasterLayer(rasterFile) {
-  var imgBounds = [[32.5325005393, -124.416666666], [42.0158338727, -114.125]];
+  var imgBounds = [
+    [32.5325005393, -124.416666666],
+    [42.0158338727, -114.125],
+  ];
   return new L.imageOverlay(rasterFile, imgBounds);
 }
 
@@ -513,13 +509,6 @@ function addSpinner(map) {
       iconSize: [0, 0],
     }),
   }).addTo(map);
-}
-
-function findAsvCount(sample, asvsCounts) {
-  var asvs_data = asvsCounts.filter(function (counts) {
-    return counts.sample_id == sample.id;
-  })[0];
-  return asvs_data ? asvs_data.count : null;
 }
 
 function retrieveSamplesByStatus(status, samples) {

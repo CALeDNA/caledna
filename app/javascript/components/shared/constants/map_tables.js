@@ -10,7 +10,7 @@ export const samplesTableColumns = [
 
   {
     label: "Organisms from ASV",
-    field: "asv_count",
+    field: "taxa_count",
     type: "number",
   },
   {
@@ -43,7 +43,7 @@ export const taxaTableColumns = [
 
   {
     label: "Organisms from ASV",
-    field: "asv_count",
+    field: "taxa_count",
     type: "number",
   },
   {
