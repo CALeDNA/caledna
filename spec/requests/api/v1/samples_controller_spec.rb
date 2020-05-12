@@ -8,6 +8,13 @@ describe 'Samples' do
   end
 
   describe 'index' do
+    def created_completed_sample(sample_id: 1, substrate: :soil)
+      sample = create(:sample, :results_completed, id: sample_id,
+                                                   substrate: substrate)
+      rproj = create(:research_project, published: true)
+      create(:asv, research_project: rproj, sample: sample)
+    end
+
     it 'returns OK' do
       get api_v1_samples_path
 
@@ -16,7 +23,7 @@ describe 'Samples' do
 
     it 'returns all valid samples' do
       create(:sample, :approved)
-      create(:sample, :results_completed)
+      created_completed_sample
       get api_v1_samples_path
 
       json = JSON.parse(response.body)
@@ -33,11 +40,42 @@ describe 'Samples' do
       expect(json['samples']['data'].length).to eq(0)
     end
 
+    it 'does not return samples from unpublished research projects' do
+      rproj = create(:research_project, published: false)
+      sample = create(:sample, :results_completed)
+      create(:asv, sample: sample, research_project: rproj)
+
+      get api_v1_samples_path
+      data = JSON.parse(response.body)
+
+      expect(data['samples']['data']).to eq([])
+    end
+
+    it 'returns approved samples or published result_completed samples' do
+      sample1 = create(:sample, :results_completed)
+      rproj1 = create(:research_project, published: false)
+      create(:asv, sample: sample1, research_project: rproj1)
+
+      sample2 = create(:sample, :results_completed)
+      rproj2 = create(:research_project, published: true)
+      create(:asv, sample: sample2, research_project: rproj2)
+
+      sample3 = create(:sample, :approved)
+
+      get api_v1_samples_path
+      data = JSON.parse(response.body)
+
+      expect(data['samples']['data'].length).to eq(2)
+
+      ids = data['samples']['data'].map { |s| s['id'].to_i }
+      expect(ids).to match_array([sample3.id, sample2.id])
+    end
+
     context 'keyword query param' do
       before(:each) do
         create(:sample, :approved, id: 1)
         create(:sample, :approved, id: 2)
-        create(:sample, :results_completed, id: 3)
+        created_completed_sample(sample_id: 3)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
@@ -75,7 +113,7 @@ describe 'Samples' do
       before(:each) do
         create(:sample, :approved, substrate_cd: :soil)
         create(:sample, :approved, substrate_cd: :bad)
-        create(:sample, :results_completed, substrate_cd: :sediment)
+        created_completed_sample(substrate: :sediment)
       end
 
       it 'returns samples when there is one substrate' do
@@ -101,8 +139,8 @@ describe 'Samples' do
 
     context 'status query param' do
       before(:each) do
-        create(:sample, :approved, status_cd: :approved)
-        create(:sample, :approved, status_cd: :results_completed)
+        create(:sample, status_cd: :approved)
+        created_completed_sample
       end
 
       it 'returns samples when there is one status' do
@@ -127,17 +165,20 @@ describe 'Samples' do
       let(:primer2_name) { 'primer2' }
 
       before(:each) do
-        s1 = create(:sample, :approved)
+        create(:sample, :approved)
+        s1 = create(:sample, :results_completed)
         s2 = create(:sample, :results_completed)
         p1 = create(:primer, name: primer1_name, id: primer1_id)
         p2 = create(:primer, name: primer2_name, id: primer2_id)
 
-        rproj1 = create(:research_project)
-        rproj2 = create(:research_project)
+        rproj1 = create(:research_project, published: true)
+        rproj2 = create(:research_project, published: true)
+
         create(:asv, sample: s1, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
         create(:asv, sample: s1, primer: p1, research_project: rproj2)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+
         create(:asv, sample: s2, primer: p2, research_project: rproj1)
         create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
       end
@@ -191,8 +232,8 @@ describe 'Samples' do
         p1 = create(:primer, name: '12S', id: primer1_id)
         p2 = create(:primer, name: '18S', id: primer2_id)
 
-        proj1 = create(:research_project)
-        proj2 = create(:research_project)
+        proj1 = create(:research_project, published: true)
+        proj2 = create(:research_project, published: true)
         create(:asv, sample: s1, primer: p1, research_project: proj1)
         create(:sample_primer, sample: s1, primer: p1, research_project: proj1)
         create(:asv, sample: s1, primer: p1, research_project: proj2)
@@ -273,6 +314,7 @@ describe 'Samples' do
   describe 'show' do
     it 'returns OK when sample is approved' do
       sample = create(:sample, :approved)
+
       get api_v1_sample_path(id: sample.id)
 
       expect(response.status).to eq(200)
@@ -290,20 +332,39 @@ describe 'Samples' do
     end
 
     context 'when sample has results' do
-      it 'returns the sample data for the given sample' do
-        sample = create(:sample, :results_completed)
-        taxon = create(:ncbi_node)
-        primer = create(:primer, id: 10, name: 'primer')
-        create(:asv, sample: sample, taxon_id: taxon.id, primer: primer)
-        create(:asv, sample: sample, taxon_id: taxon.id, primer: primer)
+      context 'and research project is published' do
+        it 'returns the sample data for the given sample' do
+          sample = create(:sample, :results_completed)
+          taxon = create(:ncbi_node)
+          primer = create(:primer, id: 10, name: 'primer')
+          rproj = create(:research_project, published: true)
+          create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
+                       research_project: rproj)
+          create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
+                       research_project: rproj)
 
-        get api_v1_sample_path(id: sample.id)
-        data = JSON.parse(response.body)['sample']['data']
+          get api_v1_sample_path(id: sample.id)
+          data = JSON.parse(response.body)['sample']['data']
 
-        expect(data['attributes']['id'].to_i).to eq(sample.id)
-        expect(data['attributes']['primer_ids']).to eq(nil)
-        expect(data['attributes']['primer_names']).to eq(nil)
-        expect(data['attributes']['taxa_count']).to eq(1)
+          expect(data['attributes']['id'].to_i).to eq(sample.id)
+          expect(data['attributes']['primer_ids']).to eq(nil)
+          expect(data['attributes']['primer_names']).to eq(nil)
+          expect(data['attributes']['taxa_count']).to eq(1)
+        end
+      end
+
+      context 'and research project is not published' do
+        it 'raise an error' do
+          sample = create(:sample, :results_completed)
+          taxon = create(:ncbi_node)
+          primer = create(:primer, id: 10, name: 'primer')
+          rproj = create(:research_project, published: false)
+          create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
+                       research_project: rproj)
+
+          expect { get api_v1_sample_path(id: sample.id) }
+            .to raise_error(ActiveRecord::RecordNotFound)
+        end
       end
     end
 

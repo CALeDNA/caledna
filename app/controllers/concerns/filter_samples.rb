@@ -14,11 +14,11 @@ module FilterSamples
     CheckWebsite.caledna_site? ? Sample : Sample.la_river
   end
 
-  def samples_join_sql
-    <<~SQL.chomp
-      LEFT JOIN asvs ON asvs.sample_id = samples.id
-      LEFT JOIN primers ON primers.id = asvs.primer_id
-    SQL
+  module_function def sample_columns
+    %i[
+      id latitude longitude barcode status_cd substrate_cd
+      location collection_date
+    ]
   end
 
   def primer_names_sql
@@ -35,6 +35,13 @@ module FilterSamples
     SQL
   end
 
+  def results_left_join_sql
+    <<~SQL.chomp
+      LEFT JOIN asvs ON asvs.sample_id = samples.id
+      LEFT JOIN primers ON primers.id = asvs.primer_id
+    SQL
+  end
+
   def sample_primers_sql
     <<~SQL.chomp
       JOIN sample_primers ON sample_primers.sample_id = asvs.sample_id
@@ -43,11 +50,25 @@ module FilterSamples
     SQL
   end
 
-  module_function def sample_columns
-    %i[
-      id latitude longitude barcode status_cd substrate_cd
-      location collection_date
-    ]
+  def published_research_project_sql
+    <<~SQL.chomp
+      JOIN research_projects
+        ON asvs.research_project_id = research_projects.id
+        AND research_projects.published = TRUE
+    SQL
+  end
+
+  def optional_published_research_project_sql
+      "LEFT #{published_research_project_sql}"
+  end
+
+  def conditional_status_sql
+    <<~SQL.chomp
+      CASE
+        WHEN research_projects.published IS NULL THEN status_cd = 'approved'
+        ELSE status_cd = 'results_completed'
+        END
+    SQL
   end
 
   def samples_for_primers(samples)
@@ -60,12 +81,12 @@ module FilterSamples
 
   def base_samples
     website_sample
-      .joins(samples_join_sql)
-      .order(:created_at)
       .select(sample_columns)
       .select(primer_names_sql)
       .select(primer_ids_sql)
       .select('COUNT(DISTINCT asvs.taxon_id) as taxa_count')
+      .joins(results_left_join_sql)
+      .order(:created_at)
       .group(:id)
   end
 
@@ -75,7 +96,9 @@ module FilterSamples
 
   def approved_samples
     @approved_samples ||= begin
-      samples = base_samples.approved.where(approved_query_string)
+      samples = base_samples.joins(optional_published_research_project_sql)
+                            .where(approved_query_string)
+                            .where(conditional_status_sql)
 
       samples = samples_for_primers(samples) if params[:primer]
       samples
@@ -90,12 +113,14 @@ module FilterSamples
   end
 
   # ====================
-  # completed_samples: /api/taxa
+  # completed_samples: Taxa#show map
   # ====================
 
   def completed_samples
     @completed_samples ||= begin
-      samples = base_samples.results_completed.where(completed_query_string)
+      samples = base_samples.where(completed_query_string)
+                            .results_completed
+                            .joins(published_research_project_sql)
 
       samples = samples_for_primers(samples) if params[:primer]
       samples

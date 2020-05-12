@@ -47,8 +47,13 @@ describe 'FieldProjecs' do
     context 'when project has samples with results' do
       it 'returns the associated samples' do
         project = create(:field_project, id: target_id)
+        rproj = create(:research_project, published: true)
+
         sample1 = create(:sample, :results_completed, field_project: project)
+        create(:asv, sample: sample1, research_project: rproj)
+
         sample2 = create(:sample, :results_completed, field_project: project)
+        create(:asv, sample: sample2, research_project: rproj)
 
         get api_v1_field_project_path(id: target_id)
         data = JSON.parse(response.body)
@@ -69,6 +74,43 @@ describe 'FieldProjecs' do
       data = JSON.parse(response.body)
 
       expect(data['samples']['data']).to eq([])
+    end
+
+    context 'when field project contains unpublished research projects' do
+      it 'does not return unpublished samples' do
+        rproj1 = create(:research_project, published: false)
+        fproj = create(:field_project, id: target_id)
+
+        sample2 = create(:sample, :results_completed, field_project: fproj)
+        create(:asv, sample: sample2, research_project: rproj1)
+
+        get api_v1_field_project_path(id: target_id)
+        data = JSON.parse(response.body)
+
+        expect(data['samples']['data']).to eq([])
+      end
+    end
+
+    it 'returns approved samples or published result_completed samples' do
+      fproj = create(:field_project, id: target_id)
+
+      sample1 = create(:sample, :results_completed, field_project: fproj)
+      rproj1 = create(:research_project, published: false)
+      create(:asv, sample: sample1, research_project: rproj1)
+
+      sample2 = create(:sample, :results_completed, field_project: fproj)
+      rproj2 = create(:research_project, published: true)
+      create(:asv, sample: sample2, research_project: rproj2)
+
+      sample3 = create(:sample, :approved, field_project: fproj)
+
+      get api_v1_field_project_path(id: target_id)
+      data = JSON.parse(response.body)
+
+      expect(data['samples']['data'].length).to eq(2)
+
+      ids = data['samples']['data'].map { |s| s['id'].to_i }
+      expect(ids).to match_array([sample3.id, sample2.id])
     end
 
     context 'keyword query param' do
@@ -134,7 +176,9 @@ describe 'FieldProjecs' do
 
       before(:each) do
         create(:sample, :approved, field_project: project)
-        create(:sample, :results_completed, field_project: project)
+        sample = create(:sample, :results_completed, field_project: project)
+        rproj = create(:research_project, published: true)
+        create(:asv, sample: sample, research_project: rproj)
       end
 
       it 'returns samples when there is one status' do
@@ -259,26 +303,24 @@ describe 'FieldProjecs' do
                                                  field_project: project)
         s2 = create(:sample, :results_completed, id: 2, substrate_cd: :foo,
                                                  field_project: project)
-        s3 = create(:sample, :geo, id: 3, substrate_cd: :soil,
-                                   status_cd: :foo, field_project: project)
-        create(:sample, :results_completed, id: 4, substrate_cd: :soil,
-                                            field_project: project)
-        s5 = create(:sample, :approved, id: 5, substrate_cd: :soil,
-                                        field_project: project)
+        create(:sample, :geo, id: 3, substrate_cd: :soil,
+                              status_cd: :foo, field_project: project)
+        s4 = create(:sample, :results_completed, id: 4, substrate_cd: :soil,
+                                                 field_project: project)
+        create(:sample, :approved, id: 5, substrate_cd: :soil,
+                                   field_project: project)
         create(:sample, :approved, id: 6)
         p1 = create(:primer, name: '12S', id: primer1_id)
-        rproj1 = create(:research_project)
-        rproj2 = create(:research_project)
+        rproj1 = create(:research_project, published: true)
+        rproj2 = create(:research_project, published: true)
         create(:asv, sample: s1, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
         create(:asv, sample: s1, primer: p1, research_project: rproj2)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
         create(:asv, sample: s2, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s2, primer: p1, research_project: rproj1)
-        create(:asv, sample: s3, primer: p1, research_project: rproj1)
-        create(:sample_primer, sample: s3, primer: p1, research_project: rproj1)
-        create(:asv, sample: s5, primer: p1, research_project: rproj1)
-        create(:sample_primer, sample: s5, primer: p1, research_project: rproj1)
+        create(:asv, sample: s4, primer: p1, research_project: rproj1)
+        create(:sample_primer, sample: s4, primer: p1, research_project: rproj1)
       end
 
       it 'returns samples that match substrate & status' do
@@ -300,7 +342,7 @@ describe 'FieldProjecs' do
         expect(data.length).to eq(2)
 
         ids = data.map { |i| i['attributes']['id'] }
-        expect(ids).to match_array([1, 5])
+        expect(ids).to match_array([1, 4])
       end
 
       it 'returns samples that match all the query params' do
@@ -309,10 +351,10 @@ describe 'FieldProjecs' do
                                       primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
-        expect(data.length).to eq(1)
+        expect(data.length).to eq(2)
 
         ids = data.map { |i| i['attributes']['id'] }
-        expect(ids).to match_array([1])
+        expect(ids).to match_array([1, 4])
       end
     end
   end

@@ -24,9 +24,9 @@ describe 'Taxa' do
     end
 
     it 'returns taxa that has exact canonical_name match' do
-      create(:ncbi_node, canonical_name: 'random', id: 1)
-      create(:ncbi_node, canonical_name: 'match', id: 2)
-      create(:ncbi_node, canonical_name: 'match', id: 3)
+      create(:ncbi_node, canonical_name: 'random', taxon_id: 1)
+      create(:ncbi_node, canonical_name: 'match', taxon_id: 2)
+      create(:ncbi_node, canonical_name: 'match', taxon_id: 3)
 
       get api_v1_taxa_path(query: 'MatCH')
       data = JSON.parse(response.body)['data']
@@ -38,9 +38,9 @@ describe 'Taxa' do
     end
 
     it 'returns taxa that has canonical_name prefix match' do
-      create(:ncbi_node, canonical_name: 'xx match', id: 1)
-      create(:ncbi_node, canonical_name: 'match', id: 2)
-      create(:ncbi_node, canonical_name: 'match xx', id: 3)
+      create(:ncbi_node, canonical_name: 'xx match', taxon_id: 1)
+      create(:ncbi_node, canonical_name: 'match', taxon_id: 2)
+      create(:ncbi_node, canonical_name: 'match xx', taxon_id: 3)
 
       get api_v1_taxa_path(query: 'MatCH')
       data = JSON.parse(response.body)['data']
@@ -57,13 +57,16 @@ describe 'Taxa' do
 
     def create_occurence(taxon, substrate: :soil, primer: create(:primer),
                          status: :results_completed,
-                         research_project: create(:research_project))
+                         research_project:
+                           create(:research_project, published: true))
 
       sample = create(:sample, status: status, substrate_cd: substrate)
-      create(:asv, sample: sample, taxon_id: taxon.taxon_id,
-                   research_project: research_project, primer: primer)
-      create(:sample_primer, primer: primer, sample: sample,
-                             research_project: research_project)
+      if status == :results_completed
+        create(:asv, sample: sample, taxon_id: taxon.taxon_id,
+                     research_project: research_project, primer: primer)
+        create(:sample_primer, primer: primer, sample: sample,
+                               research_project: research_project)
+      end
       sample
     end
 
@@ -75,17 +78,32 @@ describe 'Taxa' do
     end
 
     it 'returns OK' do
-      create(:ncbi_node, ids: [target_id], id: target_id)
-      get api_v1_taxon_path(id: target_id)
+      taxon = create(:ncbi_node, ids: [target_id], taxon_id: target_id)
+      get api_v1_taxon_path(id: taxon.taxon_id)
 
       expect(response.status).to eq(200)
     end
 
+    it 'returns only completed samples in base_samples' do
+      taxon = create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
+      sample = create_occurence(taxon, status: :results_completed)
+      create(:sample, status: :submitted)
+      create(:sample, status: :approved)
+
+      get api_v1_taxon_path(id: taxon.taxon_id)
+      samples, base_samples = parse_response(response)
+
+      expect(samples.length).to eq(1)
+      expect(samples.first['id'].to_i).to eq(sample.id)
+      expect(base_samples.length).to eq(1)
+      expect(base_samples.first['id'].to_i).to eq(sample.id)
+    end
+
     it 'returns samples that exactly match a given taxon' do
-      taxon = create(:ncbi_node, ids: [1, target_id], id: target_id)
+      taxon = create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
       create_occurence(taxon)
 
-      get api_v1_taxon_path(id: target_id)
+      get api_v1_taxon_path(id: taxon.taxon_id)
       samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(1)
@@ -93,10 +111,10 @@ describe 'Taxa' do
     end
 
     it 'returns samples whose ids contain a given taxon' do
-      taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
+      taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
       create_occurence(taxon)
 
-      get api_v1_taxon_path(id: target_id)
+      get api_v1_taxon_path(id: taxon.taxon_id)
       samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(1)
@@ -104,14 +122,17 @@ describe 'Taxa' do
     end
 
     it 'returns unique samples for a given taxon' do
-      taxon1 = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-      taxon2 = create(:ncbi_node, ids: [1, target_id], id: target_id)
+      taxon1 = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
+      taxon2 = create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
 
       sample1 = create(:sample, :results_completed)
-      create(:asv, sample: sample1, taxon_id: taxon1.taxon_id)
-      create(:asv, sample: sample1, taxon_id: taxon2.taxon_id)
+      project = create(:research_project, published: true)
+      create(:asv, sample: sample1, taxon_id: taxon1.taxon_id,
+                   research_project: project)
+      create(:asv, sample: sample1, taxon_id: taxon2.taxon_id,
+                   research_project: project)
 
-      get api_v1_taxon_path(id: target_id)
+      get api_v1_taxon_path(id: taxon2.taxon_id)
       samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(1)
@@ -119,7 +140,7 @@ describe 'Taxa' do
     end
 
     it 'ignores samples that contain other taxa' do
-      taxon = create(:ncbi_node, ids: [4], id: 4)
+      taxon = create(:ncbi_node, ids: [4], taxon_id: 4)
       create_occurence(taxon)
 
       get api_v1_taxon_path(id: target_id)
@@ -130,16 +151,16 @@ describe 'Taxa' do
     end
 
     it 'correctly handles a variety of samples' do
-      taxon = create(:ncbi_node, ids: [1, target_id], id: target_id)
+      taxon = create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
       sample1 = create_occurence(taxon)
 
-      taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-      sample2 = create_occurence(taxon)
+      taxon2 = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
+      sample2 = create_occurence(taxon2)
 
-      taxon = create(:ncbi_node, ids: [4], id: 4)
-      create_occurence(taxon)
+      taxon3 = create(:ncbi_node, ids: [4], taxon_id: 4)
+      create_occurence(taxon3)
 
-      get api_v1_taxon_path(id: target_id)
+      get api_v1_taxon_path(id: taxon.taxon_id)
       samples, base_samples = parse_response(response)
 
       expect(samples.length).to eq(2)
@@ -152,14 +173,14 @@ describe 'Taxa' do
     it 'retuns a max of ten related taxa' do
       taxon_id = 2
       sample = create(:sample, :results_completed)
-      research_project = create(:research_project)
+      research_project = create(:research_project, published: true)
       primer = create(:primer)
       create(:sample_primer, primer: primer, sample: sample,
                              research_project: research_project)
 
       15.times do |n|
         taxon = create(:ncbi_node, canonical_name: "name#{n + 1}",
-                                   ids: [1, taxon_id, n + 10], id: n + 1)
+                                   ids: [1, taxon_id, n + 10], taxon_id: n + 1)
 
         create(:asv, sample: sample, research_project: research_project,
                      taxon_id: taxon.id)
@@ -188,15 +209,15 @@ describe 'Taxa' do
 
       taxon_id = 2
       sample = create(:sample, :results_completed)
-      proj = create(:research_project)
+      proj = create(:research_project, published: true)
       primer = create(:primer)
 
       taxon1 = create(:ncbi_node, canonical_name: 'name1', ids: [taxon_id, 10],
-                                  id: 1, iucn_status: nil)
+                                  taxon_id: 1, iucn_status: nil)
       taxon2 = create(:ncbi_node, canonical_name: 'name2', ids: [taxon_id, 11],
-                                  id: 2, iucn_status: 'vulnerable')
+                                  taxon_id: 2, iucn_status: 'vulnerable')
       taxon3 = create(:ncbi_node, canonical_name: 'name3', ids: [taxon_id, 12],
-                                  id: 3, iucn_status: 'endangered')
+                                  taxon_id: 3, iucn_status: 'endangered')
 
       create(:asv, sample: sample, research_project: proj, taxon_id: taxon1.id)
       create(:asv, sample: sample, research_project: proj, taxon_id: taxon2.id)
@@ -218,6 +239,20 @@ describe 'Taxa' do
       expect(sample['attributes']['taxa']).to match_array(matching_taxa)
     end
 
+    context 'when project is not published' do
+      it 'returns empty array for samples' do
+        taxon = create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
+        project = create(:research_project, published: false)
+        create_occurence(taxon, research_project: project)
+
+        get api_v1_taxon_path(id: taxon.taxon_id)
+        samples, base_samples = parse_response(response)
+
+        expect(samples.length).to eq(0)
+        expect(base_samples.length).to eq(0)
+      end
+    end
+
     context 'keyword query param' do
       before(:each) do
         ActiveRecord::Base.connection.execute(
@@ -231,11 +266,11 @@ describe 'Taxa' do
       end
 
       it 'does not affect the associated samples' do
-        taxon = create(:ncbi_node, ids: [1, target_id], id: target_id)
+        taxon = create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
         sample1 = create_occurence(taxon)
         sample2 = create_occurence(taxon)
 
-        get api_v1_taxon_path(id: target_id, keyword: 'match')
+        get api_v1_taxon_path(id: taxon.taxon_id, keyword: 'match')
         samples, base_samples = parse_response(response)
 
         expect(samples.length).to eq(2)
@@ -248,7 +283,7 @@ describe 'Taxa' do
 
     describe 'substrate query param' do
       before(:each) do
-        taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
+        taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
         create_occurence(taxon, substrate: :soil)
         create_occurence(taxon, substrate: :bad)
         create_occurence(taxon, substrate: :sediment)
@@ -279,8 +314,8 @@ describe 'Taxa' do
 
     context 'status query param' do
       before(:each) do
-        taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
-        project = create(:research_project, slug: target_id)
+        taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
+        project = create(:research_project, slug: target_id, published: true)
         create_occurence(taxon, status: :results_completed,
                                 research_project: project)
         create_occurence(taxon, status: :approved, research_project: project)
@@ -305,7 +340,7 @@ describe 'Taxa' do
       let(:primer2_name) { 'primer2' }
 
       def create_samples
-        taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
+        taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
         primer1 = create(:primer, id: primer1_id, name: primer1_name)
         primer2 = create(:primer, id: primer2_id, name: primer2_name)
         create_occurence(taxon, primer: primer1)
@@ -356,12 +391,12 @@ describe 'Taxa' do
       end
 
       it 'only includes one instance of a sample' do
-        taxon = create(:ncbi_node, ids: [1, target_id, 3], id: 3)
+        taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
         primer1 = create(:primer, id: primer1_id, name: 'primer1')
         primer2 = create(:primer, id: primer2_id, name: 'primer2')
         sample = create(:sample, :results_completed)
 
-        research_project = create(:research_project)
+        research_project = create(:research_project, published: true)
         create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer1,
                      research_project: research_project)
         create(:asv, sample: sample, taxon_id: taxon.taxon_id, primer: primer2,

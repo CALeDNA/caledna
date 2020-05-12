@@ -29,17 +29,30 @@ describe 'ResearchProjects' do
     end
 
     it 'returns OK' do
-      create(:research_project, slug: project_slug)
-      get api_v1_research_project_path(id: project_slug)
+      project = create(:research_project, slug: project_slug)
+      get api_v1_research_project_path(id: project.slug)
 
       expect(response.status).to eq(200)
     end
 
     context 'when project does not have samples' do
       it 'returns empty array for samples' do
-        create(:research_project, slug: project_slug)
+        project = create(:research_project, slug: project_slug)
 
-        get api_v1_research_project_path(id: project_slug)
+        get api_v1_research_project_path(id: project.slug)
+        data = JSON.parse(response.body)
+
+        expect(data['samples']['data']).to eq([])
+      end
+    end
+
+    context 'when project is not published' do
+      it 'returns empty array for samples' do
+        project = create(:research_project, slug: project_slug,
+                                            published: false)
+        create_project_samples(project)
+
+        get api_v1_research_project_path(id: project.slug)
         data = JSON.parse(response.body)
 
         expect(data['samples']['data']).to eq([])
@@ -48,7 +61,7 @@ describe 'ResearchProjects' do
 
     context 'when project has samples with results' do
       it 'returns the associated samples' do
-        project = create(:research_project, slug: project_slug)
+        project = create(:research_project, slug: project_slug, published: true)
         primer = create(:primer, name: primer1_name, id: primer1_id)
         create_project_samples(project, sample_id: sample1_id, primer: primer)
         create_project_samples(project, sample_id: sample2_id, primer: primer)
@@ -72,7 +85,7 @@ describe 'ResearchProjects' do
       end
 
       it 'only includes one instance of a sample' do
-        project = create(:research_project, slug: project_slug)
+        project = create(:research_project, slug: project_slug, published: true)
         sample = create(:sample, :results_completed, id: sample1_id)
         primer1 = create(:primer, name: primer1_name, id: primer1_id)
         primer2 = create(:primer, name: primer2_name, id: primer2_id)
@@ -102,7 +115,7 @@ describe 'ResearchProjects' do
       end
 
       it 'ignores samples from other projects' do
-        project = create(:research_project, slug: project_slug)
+        project = create(:research_project, slug: project_slug, published: true)
         other_project = create(:research_project, slug: 'other')
         create_project_samples(other_project)
 
@@ -118,8 +131,8 @@ describe 'ResearchProjects' do
         taxon3_id = 3000
         sample1 = create(:sample, :results_completed, id: sample1_id)
         sample2 = create(:sample, :results_completed, id: sample2_id)
-        proj1 = create(:research_project, slug: project_slug)
-        proj2 = create(:research_project, slug: 'other')
+        proj1 = create(:research_project, slug: project_slug, published: true)
+        proj2 = create(:research_project, slug: 'other', published: true)
         taxon1 = create(:ncbi_node, taxon_id: taxon1_id)
         taxon2 = create(:ncbi_node, taxon_id: taxon2_id)
         taxon3 = create(:ncbi_node, taxon_id: taxon3_id)
@@ -173,8 +186,21 @@ describe 'ResearchProjects' do
       end
     end
 
+    it 'does not return samples without results' do
+      create(:sample, status: :approved)
+      create(:sample, status: :submitted)
+      project = create(:research_project, slug: project_slug, published: true)
+
+      get api_v1_research_project_path(id: project.slug)
+      data = JSON.parse(response.body)['samples']['data']
+
+      expect(data.length).to eq(0)
+    end
+
     context 'keyword query param' do
-      let(:project) { create(:research_project, slug: project_slug) }
+      let(:project) do
+        create(:research_project, slug: project_slug, published: true)
+      end
 
       before(:each) do
         create_project_samples(project, sample_id: sample1_id)
@@ -202,7 +228,9 @@ describe 'ResearchProjects' do
     end
 
     context 'substrate query param' do
-      let(:project) { create(:research_project, slug: project_slug) }
+      let(:project) do
+        create(:research_project, slug: project_slug, published: true)
+      end
 
       before(:each) do
         create_project_samples(project, substrate: :soil)
@@ -232,7 +260,9 @@ describe 'ResearchProjects' do
     end
 
     context 'status query param' do
-      let(:project) { create(:research_project, slug: project_slug) }
+      let(:project) do
+        create(:research_project, slug: project_slug, published: true)
+      end
 
       before(:each) do
         create_project_samples(project, sample_id: sample1_id,
@@ -253,7 +283,9 @@ describe 'ResearchProjects' do
     end
 
     context 'primer query param' do
-      let(:project) { create(:research_project, slug: project_slug) }
+      let(:project) do
+        create(:research_project, slug: project_slug, published: true)
+      end
       let(:primer1) { create(:primer, name: primer1_name, id: primer1_id) }
       let(:primer2) { create(:primer, name: primer2_name, id: primer2_id) }
 
@@ -328,7 +360,9 @@ describe 'ResearchProjects' do
     end
 
     context 'multiple query params' do
-      let(:project) { create(:research_project, slug: project_slug) }
+      let(:project) do
+        create(:research_project, slug: project_slug, published: true)
+      end
 
       it 'returns samples that match substrate & primer' do
         sample3_id = 30
