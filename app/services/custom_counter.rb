@@ -29,7 +29,11 @@ module CustomCounter
       SELECT taxon_id, count(*) FROM (
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
-        JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id
+        JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+          AND (ncbi_nodes.iucn_status IS NULL OR
+            ncbi_nodes.iucn_status NOT IN
+            ('#{IucnStatus::THREATENED.values.join("','")}')
+          )
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
       GROUP BY foo.taxon_id;
@@ -50,7 +54,11 @@ module CustomCounter
       SELECT taxon_id, count(*) FROM (
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
-        JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id
+        JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+          AND (ncbi_nodes.iucn_status IS NULL OR
+            ncbi_nodes.iucn_status NOT IN
+            ('#{IucnStatus::THREATENED.values.join("','")}')
+          )
         where asvs.research_project_id = #{ResearchProject::LA_RIVER.id}
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
