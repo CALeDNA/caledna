@@ -47,8 +47,10 @@ export default {
         .then(response => {
           const data = baseMap.formatSamplesData(response.data.sample.data);
 
-          baseMap.createCircleMarker(data).addTo(this.map);
-          this.map.panTo(new L.LatLng(data.lat, data.lng));
+          if (data.lat && data.lng) {
+            baseMap.createCircleMarker(data).addTo(this.map);
+            this.map.panTo(new L.LatLng(data.lat, data.lng));
+          }
 
           this.showSpinner = false;
         })

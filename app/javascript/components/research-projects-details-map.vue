@@ -136,10 +136,11 @@ export default {
     },
 
     addTaxonLayer() {
-      this.taxonLayer = baseMap.renderClusterLayer(
-        this.taxonSamplesData,
-        this.map
-      );
+      const samples = this.taxonSamplesData.filter(function(sample) {
+        return sample.latitude && sample.longitude;
+      });
+
+      this.taxonLayer = baseMap.renderClusterLayer(samples, this.map);
     },
 
     //================

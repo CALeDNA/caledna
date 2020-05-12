@@ -268,14 +268,9 @@ function formatMapData(data) {
   var taxonSamplesData;
   var baseSamplesData;
 
-  taxonSamplesData = samples
-    .filter(function (rawSample) {
-      var sample = rawSample.attributes;
-      return sample.latitude && sample.longitude;
-    })
-    .map(function (sample) {
-      return formatSamplesData(sample);
-    });
+  taxonSamplesData = samples.map(function (sample) {
+    return formatSamplesData(sample);
+  });
 
   if (baseSamples) {
     baseSamplesData = baseSamples

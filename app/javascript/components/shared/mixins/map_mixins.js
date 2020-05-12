@@ -46,10 +46,11 @@ export const taxonLayerMixins = {
     },
 
     addTaxonLayer() {
-      this.taxonLayer = baseMap.renderCirclesLayer(
-        this.taxonSamplesData,
-        this.map
-      );
+      const samples = this.taxonSamplesData.filter(function (sample) {
+        return sample.latitude && sample.longitude;
+      });
+
+      this.taxonLayer = baseMap.renderCirclesLayer(samples, this.map);
     },
   },
 };
