@@ -7,6 +7,10 @@ module CustomCounter
   end
 
   def update_asvs_count
+    puts 'reset asvs_count...'
+    reset_counter('asvs_count')
+
+    puts 'update asvs_count...'
     results = fetch_asv_counts_for(asvs_count_sql)
 
     results.each do |result|
@@ -15,6 +19,10 @@ module CustomCounter
   end
 
   def update_asvs_count_la_river
+    puts 'update asvs_count_la_river...'
+    reset_counter('asvs_count_la_river')
+
+    puts 'update asvs_count_la_river...'
     results = fetch_asv_counts_for(asvs_count_la_river_sql)
 
     results.each do |result|
@@ -23,6 +31,11 @@ module CustomCounter
   end
 
   private
+
+  def reset_counter(asvs_field)
+    sql = "UPDATE ncbi_nodes set #{asvs_field} = 0 where #{asvs_field} > 0;"
+    conn.exec_update(sql)
+  end
 
   def hide_threatened
     <<~SQL
@@ -49,8 +62,6 @@ module CustomCounter
   end
 
   def update_count(taxon_id, count)
-    conn = ActiveRecord::Base.connection
-
     # https://stackoverflow.com/a/24520455
     conn.exec_update(<<-SQL, 'my_query', [[nil, count], [nil, taxon_id]])
       UPDATE ncbi_nodes SET asvs_count = $1 where taxon_id = $2;
@@ -74,11 +85,13 @@ module CustomCounter
   end
 
   def update_count_la_river(taxon_id, count)
-    conn = ActiveRecord::Base.connection
-
     # https://stackoverflow.com/a/24520455
     conn.exec_update(<<-SQL, 'my_query', [[nil, count], [nil, taxon_id]])
       UPDATE ncbi_nodes SET asvs_count_la_river = $1 where taxon_id = $2;
     SQL
+  end
+
+  def conn
+    ActiveRecord::Base.connection
   end
 end
