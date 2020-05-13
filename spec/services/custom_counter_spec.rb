@@ -33,34 +33,45 @@ describe 'CustomCounter' do
       create(:sample, missing_coordinates: false)
     end
     let(:sample3) { create(:sample, missing_coordinates: false) }
+    let(:research_project) do
+      create(:research_project, published: true)
+    end
 
     it 'updates asvs_count when NcbiNode has many related asvs' do
-      create(:asv, sample: sample1, taxon_id: ncbi_node2.taxon_id)
-      create(:asv, sample: sample3, taxon_id: ncbi_node2.taxon_id)
+      create(:asv, sample: sample1, taxon_id: ncbi_node2.taxon_id,
+                   research_project: research_project)
+      create(:asv, sample: sample3, taxon_id: ncbi_node2.taxon_id,
+                   research_project: research_project)
       subject
 
       expect(ncbi_node2.reload.asvs_count).to eq(2)
     end
 
     it 'updates asvs_count when NcbiNode has one related asvs' do
-      create(:asv, sample: sample2, taxon_id: ncbi_node3.taxon_id)
+      create(:asv, sample: sample2, taxon_id: ncbi_node3.taxon_id,
+                   research_project: research_project)
       subject
 
       expect(ncbi_node3.reload.asvs_count).to eq(1)
     end
 
     it 'only counts a NcbiNode once per sample' do
-      create(:asv, sample: sample3, taxon_id: ncbi_node1.taxon_id)
-      create(:asv, sample: sample3, taxon_id: ncbi_node1.taxon_id)
+      create(:asv, sample: sample3, taxon_id: ncbi_node1.taxon_id,
+                   research_project: research_project)
+      create(:asv, sample: sample3, taxon_id: ncbi_node1.taxon_id,
+                   research_project: research_project)
       subject
 
       expect(ncbi_node1.reload.asvs_count).to eq(1)
     end
 
     it 'includes descendant NcbiNode in asvs_count' do
-      create(:asv, sample: sample1, taxon_id: ncbi_node1.taxon_id)
-      create(:asv, sample: sample2, taxon_id: ncbi_node1.taxon_id)
-      create(:asv, sample: sample3, taxon_id: ncbi_node2.taxon_id)
+      create(:asv, sample: sample1, taxon_id: ncbi_node1.taxon_id,
+                   research_project: research_project)
+      create(:asv, sample: sample2, taxon_id: ncbi_node1.taxon_id,
+                   research_project: research_project)
+      create(:asv, sample: sample3, taxon_id: ncbi_node2.taxon_id,
+                   research_project: research_project)
       subject
 
       expect(ncbi_node1.reload.asvs_count).to eq(3)

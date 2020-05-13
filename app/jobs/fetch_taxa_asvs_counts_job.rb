@@ -5,10 +5,10 @@ class FetchTaxaAsvsCountsJob < ApplicationJob
   queue_as :default
 
   def perform
-    puts 'reset asvs_count...'
+    puts 'reset asvs_count...' if Rails.env.development?
     reset_counter('asvs_count')
 
-    puts 'update asvs_count...'
+    puts 'update asvs_count...' if Rails.env.development?
     results = fetch_asv_counts_for(asvs_count_sql)
 
     results.each do |result|

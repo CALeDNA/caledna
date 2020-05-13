@@ -131,6 +131,7 @@ module FilterSamples
     @completed_samples ||= begin
       samples = base_samples.results_completed
                             .joins(published_research_project_sql)
+                            .where(completed_query_string)
 
       samples = samples_for_primers(samples) if params[:primer]
       samples

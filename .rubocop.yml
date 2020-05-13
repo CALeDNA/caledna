@@ -49,3 +49,6 @@ Style/DateTime:
 
 Style/RegexpLiteral:
   Enabled: false
+
+Style/ModuleFunction:
+  Enabled: false
