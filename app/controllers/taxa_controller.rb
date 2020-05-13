@@ -2,15 +2,16 @@
 
 class TaxaController < ApplicationController
   include CheckWebsite
+  include FilterSamples
   layout 'river/application' if CheckWebsite.pour_site?
 
   def index
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
 
-    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
-    @families_count = families_count
-    @species_count = species_count
+    @taxa_count = FilterSamples.taxa_count
+    @families_count = FilterSamples.families_count
+    @species_count = FilterSamples.species_count
   end
 
   def show
@@ -93,30 +94,6 @@ class TaxaController < ApplicationController
   #================
   # show
   #================
-
-  def families_count
-    @families_count ||= begin
-      results = conn.exec_query(rank_count('family'))
-      results.entries[0]['count']
-    end
-  end
-
-  def species_count
-    @species_count ||= begin
-      results = conn.exec_query(rank_count('species'))
-      results.entries[0]['count']
-    end
-  end
-
-  def rank_count(rank)
-    <<-SQL
-    SELECT COUNT(DISTINCT(hierarchy_names ->> '#{rank}'))
-    FROM ncbi_nodes
-    WHERE taxon_id IN (
-      SELECT taxon_id FROM asvs GROUP BY taxon_id
-    );
-    SQL
-  end
 
   def taxon
     @taxon ||= NcbiNode.find(params[:id])

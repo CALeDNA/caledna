@@ -2,6 +2,8 @@
 
 # used for api/v1/samples, api/v1/field_projects
 module FilterSamples
+  extend self
+
   include CheckWebsite
 
   private
@@ -10,16 +12,25 @@ module FilterSamples
   # common
   # ====================
 
+  def conn
+    @conn ||= ActiveRecord::Base.connection
+  end
+
   def website_sample
     CheckWebsite.caledna_site? ? Sample : Sample.la_river
   end
 
-  module_function def sample_columns
+  def website_asv
+    CheckWebsite.caledna_site? ? Asv : Asv.la_river
+  end
+
+  def sample_columns
     %i[
       id latitude longitude barcode status_cd substrate_cd
       location collection_date
     ]
   end
+  module_function :sample_columns
 
   def primer_names_sql
     <<~SQL.chomp
@@ -59,7 +70,7 @@ module FilterSamples
   end
 
   def optional_published_research_project_sql
-      "LEFT #{published_research_project_sql}"
+    "LEFT #{published_research_project_sql}"
   end
 
   def conditional_status_sql
@@ -118,8 +129,7 @@ module FilterSamples
 
   def completed_samples
     @completed_samples ||= begin
-      samples = base_samples.where(completed_query_string)
-                            .results_completed
+      samples = base_samples.results_completed
                             .joins(published_research_project_sql)
 
       samples = samples_for_primers(samples) if params[:primer]
@@ -148,5 +158,86 @@ module FilterSamples
 
   def research_project
     @research_project ||= ResearchProject.find_by(slug: params[:id])
+  end
+
+  # ====================
+  # hero counts
+  # ====================
+
+  def base_samples_count_join_sql
+    <<~SQL.chomp
+      LEFT JOIN research_project_sources
+        ON research_project_sources.sourceable_id = samples.id
+        AND research_project_sources.sourceable_type = 'Sample'
+    SQL
+  end
+
+  def optional_published_research_project_count_sql
+    "LEFT #{published_research_project_count_sql}"
+  end
+
+  def published_research_project_count_sql
+    <<~SQL.chomp
+      JOIN research_projects
+        ON research_projects.id = research_project_sources.research_project_id
+        AND research_projects.published = TRUE
+    SQL
+  end
+
+  def base_samples_count
+    website_sample
+      .select('samples.id')
+      .joins(base_samples_count_join_sql)
+  end
+
+  public def approved_samples_count
+    @approved_samples_count ||= begin
+      base_samples_count.joins(optional_published_research_project_count_sql)
+                        .where(conditional_status_sql)
+                        .count
+    end
+  end
+
+  public def completed_samples_count
+    @completed_samples_count ||= begin
+      base_samples_count.results_completed
+                        .joins(published_research_project_count_sql)
+                        .count
+    end
+  end
+
+  public def taxa_count
+    @taxa_count ||= begin
+      website_asv.select('DISTINCT(taxon_id)')
+                 .joins(published_research_project_sql)
+                 .count
+    end
+  end
+
+  public def families_count
+    @families_count ||= begin
+      results = conn.exec_query(rank_count('family'))
+      results.entries[0]['count']
+    end
+  end
+
+  public def species_count
+    @species_count ||= begin
+      results = conn.exec_query(rank_count('species'))
+      results.entries[0]['count']
+    end
+  end
+
+  def rank_count(rank)
+    <<-SQL
+    SELECT COUNT(DISTINCT(hierarchy_names ->> '#{rank}'))
+    FROM ncbi_nodes
+    WHERE taxon_id IN (
+      SELECT taxon_id
+      FROM asvs
+      #{published_research_project_sql}
+      GROUP BY taxon_id
+    );
+    SQL
   end
 end

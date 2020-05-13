@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class FieldProjectsController < ApplicationController
+  include FilterSamples
+
   def index
     @projects =
       FieldProject
@@ -9,7 +11,7 @@ class FieldProjectsController < ApplicationController
       .order(:name)
       .page(params[:page])
 
-    @samples_count = Sample.approved.with_coordinates.count
+    @samples_count = FilterSamples.approved_samples_count
     @users_count = User::EXISTING_USERS + User.count + 500
     @events_count = Event.count
   end

@@ -3,12 +3,14 @@
 class SamplesController < ApplicationController
   include AsvTreeFormatter
   include CheckWebsite
+  include FilterSamples
+
   layout 'river/application' if CheckWebsite.pour_site?
 
   def index
-    @samples_count = website_sample.approved.with_coordinates.count
-    @samples_with_results_count = website_sample.results_completed.count
-    @taxa_count = website_asv.select('DISTINCT(taxon_id)').count
+    @samples_count = FilterSamples.approved_samples_count
+    @samples_with_results_count = FilterSamples.completed_samples_count
+    @taxa_count = FilterSamples.taxa_count
   end
 
   def show
@@ -19,14 +21,6 @@ class SamplesController < ApplicationController
   end
 
   private
-
-  def website_sample
-    CheckWebsite.caledna_site? ? Sample : Sample.la_river
-  end
-
-  def website_asv
-    CheckWebsite.caledna_site? ? Asv : Asv.la_river
-  end
 
   # =======================
   # show
@@ -86,7 +80,15 @@ class SamplesController < ApplicationController
   end
 
   def sample
-    @sample ||= website_sample.approved.with_coordinates.find(params[:id])
+    @sample ||= begin
+      website_sample
+        .select('samples.*')
+        .joins(results_left_join_sql)
+        .joins(optional_published_research_project_sql)
+        .where(conditional_status_sql)
+        .group(:id)
+        .find(params[:id])
+    end
   end
 
   def asv_tree_taxa

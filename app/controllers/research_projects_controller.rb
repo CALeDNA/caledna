@@ -3,13 +3,14 @@
 class ResearchProjectsController < ApplicationController
   include CustomPagination
   include CheckWebsite
+  include FilterSamples
   layout 'river/application' if CheckWebsite.pour_site?
 
   def index
     @projects = projects
-    @taxa_count = Asv.select('DISTINCT(taxon_id)').count
-    @samples_with_results_count = Sample.results_completed.count
-    @families_count = families_count
+    @taxa_count = FilterSamples.taxa_count
+    @families_count = FilterSamples.families_count
+    @samples_with_results_count = FilterSamples.completed_samples_count
   end
 
   def show
