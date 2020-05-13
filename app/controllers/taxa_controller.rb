@@ -9,9 +9,9 @@ class TaxaController < ApplicationController
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
 
-    @taxa_count = FilterSamples.taxa_count
-    @families_count = FilterSamples.families_count
-    @species_count = FilterSamples.species_count
+    @taxa_count = taxa_count
+    @families_count = families_count
+    @species_count = species_count
   end
 
   def show

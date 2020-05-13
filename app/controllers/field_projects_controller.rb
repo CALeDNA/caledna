@@ -11,7 +11,7 @@ class FieldProjectsController < ApplicationController
       .order(:name)
       .page(params[:page])
 
-    @samples_count = FilterSamples.approved_samples_count
+    @samples_count = approved_samples_count
     @users_count = User::EXISTING_USERS + User.count + 500
     @events_count = Event.count
   end

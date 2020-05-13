@@ -8,9 +8,9 @@ class ResearchProjectsController < ApplicationController
 
   def index
     @projects = projects
-    @taxa_count = FilterSamples.taxa_count
-    @families_count = FilterSamples.families_count
-    @samples_with_results_count = FilterSamples.completed_samples_count
+    @taxa_count = taxa_count
+    @families_count = families_count
+    @samples_with_results_count = completed_samples_count
   end
 
   def show

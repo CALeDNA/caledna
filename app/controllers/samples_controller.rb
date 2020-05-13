@@ -8,9 +8,9 @@ class SamplesController < ApplicationController
   layout 'river/application' if CheckWebsite.pour_site?
 
   def index
-    @samples_count = FilterSamples.approved_samples_count
-    @samples_with_results_count = FilterSamples.completed_samples_count
-    @taxa_count = FilterSamples.taxa_count
+    @samples_count = approved_samples_count
+    @samples_with_results_count = completed_samples_count
+    @taxa_count = taxa_count
   end
 
   def show
