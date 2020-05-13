@@ -24,16 +24,24 @@ module CustomCounter
 
   private
 
+  def hide_threatened
+    <<~SQL
+      AND (ncbi_nodes.iucn_status IS NULL OR
+        ncbi_nodes.iucn_status NOT IN
+        ('#{IucnStatus::THREATENED.values.join("','")}')
+      )
+    SQL
+  end
+
   def asvs_count_sql
     <<-SQL
       SELECT taxon_id, count(*) FROM (
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
         JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
-          AND (ncbi_nodes.iucn_status IS NULL OR
-            ncbi_nodes.iucn_status NOT IN
-            ('#{IucnStatus::THREATENED.values.join("','")}')
-          )
+        JOIN research_projects
+          ON asvs.research_project_id = research_projects.id
+          AND research_projects.published = TRUE
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
       GROUP BY foo.taxon_id;
@@ -55,10 +63,9 @@ module CustomCounter
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
         JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
-          AND (ncbi_nodes.iucn_status IS NULL OR
-            ncbi_nodes.iucn_status NOT IN
-            ('#{IucnStatus::THREATENED.values.join("','")}')
-          )
+        JOIN research_projects
+          ON asvs.research_project_id = research_projects.id
+          AND research_projects.published = TRUE
         where asvs.research_project_id = #{ResearchProject::LA_RIVER.id}
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
