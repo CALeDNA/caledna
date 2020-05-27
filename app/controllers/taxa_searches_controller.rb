@@ -46,11 +46,11 @@ class TaxaSearchesController < ApplicationController
       to_tsvector('english', coalesce(alt_names, '')) AS doc
       FROM ncbi_nodes
       LEFT JOIN external_resources
-        ON external_resources.ncbi_id = ncbi_nodes.taxon_id
+        ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
       LEFT JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
       GROUP BY ncbi_nodes.taxon_id, ncbi_divisions.name
-      ORDER BY asvs_count DESC
+      ORDER BY asvs_count DESC NULLS LAST
     ) AS search
     WHERE search.doc @@ plainto_tsquery('simple', $1)
     OR search.doc @@ plainto_tsquery('english', $1)
