@@ -29,14 +29,14 @@ class TaxaSearchesController < ApplicationController
 
   def result_sql
     <<-SQL
-    SELECT taxon_id, canonical_name, rank, asvs_count,
+    SELECT taxon_id, canonical_name, rank, asvs_count_la_river,
     eol_ids, eol_images,
     inat_ids, inat_images,
     wikidata_images, common_names, division_name
     FROM (
       SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name, ncbi_nodes.rank,
       ncbi_divisions.name as division_name,
-      asvs_count, common_names,
+      asvs_count_la_river, common_names,
       ARRAY_AGG(DISTINCT eol_id) AS eol_ids,
       ARRAY_AGG(DISTINCT eol_image) AS eol_images,
       ARRAY_AGG(DISTINCT inaturalist_id) AS inat_ids,
@@ -51,7 +51,7 @@ class TaxaSearchesController < ApplicationController
       LEFT JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
       GROUP BY ncbi_nodes.taxon_id, ncbi_divisions.name
-      ORDER BY asvs_count DESC NULLS LAST
+      ORDER BY asvs_count_la_river DESC NULLS LAST
     ) AS search
     WHERE search.doc @@ plainto_tsquery('simple', $1)
     OR search.doc @@ plainto_tsquery('english', $1)
