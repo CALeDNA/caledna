@@ -196,7 +196,8 @@ describe ImportCsv::EdnaResultsAsvs do
         .exactly(2).times
     end
 
-    it 'adds pass correct agruments to ImportCsvFirstOrCreateResearchProjSourceJob' do
+    it 'adds pass correct agruments to ' \
+    'ImportCsvFirstOrCreateResearchProjSourceJob' do
       expect do
         subject
       end
@@ -204,7 +205,8 @@ describe ImportCsv::EdnaResultsAsvs do
                              .exactly(1).times
     end
 
-    it 'adds pass correct agruments to ImportCsvFirstOrCreateResearchProjSourceJob' do
+    it 'adds pass correct agruments to ' \
+    'ImportCsvFirstOrCreateResearchProjSourceJob' do
       expect do
         subject
       end

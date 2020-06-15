@@ -100,7 +100,6 @@ module ImportCsv
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
     def create_asvs_for_row(row, barcodes, samples_data, result_metadata)
       barcodes.each.with_index do |barcode, i|
         next if barcode.blank?
@@ -116,7 +115,6 @@ module ImportCsv
         )
       end
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end
 

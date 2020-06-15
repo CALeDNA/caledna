@@ -104,7 +104,8 @@ Rails.application.routes.draw do
       resources :import_edna_results_taxa, only: %i[index create]
       resources :import_kobo_field_data, only: %i[index create]
       resources :research_project_results, only: %i[index]
-      delete 'research_project_results' => 'research_project_results#bulk_delete',
+      delete 'research_project_results' =>
+             'research_project_results#bulk_delete',
              as: 'bulk_delete_research_project_results'
 
       resources :normalize_ncbi_taxa, only: %i[index show] do
