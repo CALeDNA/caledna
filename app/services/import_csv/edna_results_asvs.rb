@@ -91,6 +91,10 @@ module ImportCsv
       samples_data.each do |_barcode, sample_id|
         attributes = result_metadata.merge(sample_id: sample_id)
 
+        # calls first_or_create_research_project_source
+        ImportCsvFirstOrCreateResearchProjSourceJob
+          .perform_later(sample_id, 'Sample',
+                         result_metadata[:research_project_id])
         ImportCsvUpdateSampleStatusJob.perform_later(sample_id)
         ImportCsvFirstOrCreateSamplePrimerJob.perform_later(attributes)
       end
@@ -105,11 +109,6 @@ module ImportCsv
         next if read_count < 1
 
         sample_id = samples_data[barcode]
-
-        # calls first_or_create_research_project_source
-        ImportCsvFirstOrCreateResearchProjSourceJob
-          .perform_later(sample_id, 'Sample',
-                         result_metadata[:research_project_id])
 
         #  calls first_or_create_asv
         ImportCsvFirstOrCreateAsvJob.perform_later(

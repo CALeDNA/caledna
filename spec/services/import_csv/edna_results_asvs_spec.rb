@@ -137,6 +137,81 @@ describe ImportCsv::EdnaResultsAsvs do
     end
     # rubocop:enable Metrics/MethodLength
 
+    it 'adds ImportCsvFirstOrCreateSamplePrimerJob to queue' do
+      expect do
+        subject
+      end
+        .to have_enqueued_job(ImportCsvFirstOrCreateSamplePrimerJob)
+        .exactly(2).times
+    end
+
+    it 'passes arguements to ImportCsvFirstOrCreateSamplePrimerJob' do
+      arguements = {
+        sample_id: sample_id1,
+        research_project_id: project_id,
+        primer_id: primer_id
+      }
+
+      expect { subject }
+        .to have_enqueued_job.with(arguements).exactly(1).times
+    end
+
+    it 'passes arguements to ImportCsvFirstOrCreateSamplePrimerJob' do
+      arguements = {
+        sample_id: sample_id2,
+        research_project_id: project_id,
+        primer_id: primer_id
+      }
+
+      expect { subject }
+        .to have_enqueued_job.with(arguements).exactly(1).times
+    end
+
+    it 'adds ImportCsvUpdateSampleStatusJob to queue' do
+      expect do
+        subject
+      end
+        .to have_enqueued_job(ImportCsvUpdateSampleStatusJob).exactly(2).times
+    end
+
+    it 'passes arguements to ImportCsvUpdateSampleStatusJob' do
+      arguements = sample_id1
+
+      expect { subject }
+        .to have_enqueued_job.with(arguements).exactly(1).times
+    end
+
+    it 'passes arguements to ImportCsvUpdateSampleStatusJob' do
+      arguements = sample_id2
+
+      expect { subject }
+        .to have_enqueued_job.with(arguements).exactly(1).times
+    end
+
+    it 'does add ImportCsvFirstOrCreateResearchProjSourceJob to queue' do
+      expect do
+        subject
+      end
+        .to have_enqueued_job(ImportCsvFirstOrCreateResearchProjSourceJob)
+        .exactly(2).times
+    end
+
+    it 'adds pass correct agruments to ImportCsvFirstOrCreateResearchProjSourceJob' do
+      expect do
+        subject
+      end
+        .to have_enqueued_job.with(sample_id1, 'Sample', project_id)
+                             .exactly(1).times
+    end
+
+    it 'adds pass correct agruments to ImportCsvFirstOrCreateResearchProjSourceJob' do
+      expect do
+        subject
+      end
+        .to have_enqueued_job.with(sample_id2, 'Sample', project_id)
+                             .exactly(1).times
+    end
+
     context 'when matching ResultTaxon does not exist' do
       it 'creates a ImportCsvCreateUnmatchedResultJob' do
         create_taxa
@@ -163,14 +238,6 @@ describe ImportCsv::EdnaResultsAsvs do
           ).exactly(1).times
       end
 
-      it 'does not add ImportCsvFirstOrCreateResearchProjSourceJob to queue' do
-        expect do
-          subject
-        end
-          .to have_enqueued_job(ImportCsvFirstOrCreateResearchProjSourceJob)
-          .exactly(0).times
-      end
-
       it 'does not add ImportCsvFirstOrCreateAsvJob to queue' do
         expect do
           subject
@@ -184,19 +251,19 @@ describe ImportCsv::EdnaResultsAsvs do
         create_taxa
       end
 
+      it 'does not add ImportCsvCreateUnmatchedResultJob to queue' do
+        expect do
+          subject
+        end
+          .to have_enqueued_job(ImportCsvCreateUnmatchedResultJob)
+          .exactly(0).times
+      end
+
       it 'adds ImportCsvFirstOrCreateAsvJob to queue' do
         expect do
           subject
         end
           .to have_enqueued_job(ImportCsvFirstOrCreateAsvJob).exactly(2).times
-      end
-
-      it 'does add ImportCsvFirstOrCreateResearchProjSourceJob to queue' do
-        expect do
-          subject
-        end
-          .to have_enqueued_job(ImportCsvFirstOrCreateResearchProjSourceJob)
-          .exactly(2).times
       end
 
       it 'adds pass correct agruments to ImportCsvFirstOrCreateAsvJob' do
@@ -217,73 +284,6 @@ describe ImportCsv::EdnaResultsAsvs do
             research_project_id: project_id, primer_id: primer_id,
             taxon_id: taxon_id2, sample_id: sample_id2, count: 4
           ).exactly(1).times
-      end
-
-      it 'adds pass correct agruments to FirstOrCreateResearchProjSourceJob' do
-        expect do
-          subject
-        end
-          .to have_enqueued_job.with(sample_id1, 'Sample', project_id)
-                               .exactly(1).times
-      end
-
-      it 'adds pass correct agruments to FirstOrCreateResearchProjSourceJob' do
-        expect do
-          subject
-        end
-          .to have_enqueued_job.with(sample_id2, 'Sample', project_id)
-                               .exactly(1).times
-      end
-
-      it 'adds ImportCsvFirstOrCreateSamplePrimerJob to queue' do
-        expect do
-          subject
-        end
-          .to have_enqueued_job(ImportCsvFirstOrCreateSamplePrimerJob)
-          .exactly(2).times
-      end
-
-      it 'passes arguements to ImportCsvFirstOrCreateSamplePrimerJob' do
-        arguements = {
-          sample_id: sample_id1,
-          research_project_id: project_id,
-          primer_id: primer_id
-        }
-
-        expect { subject }
-          .to have_enqueued_job.with(arguements).exactly(1).times
-      end
-
-      it 'passes arguements to ImportCsvFirstOrCreateSamplePrimerJob' do
-        arguements = {
-          sample_id: sample_id2,
-          research_project_id: project_id,
-          primer_id: primer_id
-        }
-
-        expect { subject }
-          .to have_enqueued_job.with(arguements).exactly(1).times
-      end
-
-      it 'adds ImportCsvUpdateSampleStatusJob to queue' do
-        expect do
-          subject
-        end
-          .to have_enqueued_job(ImportCsvUpdateSampleStatusJob).exactly(2).times
-      end
-
-      it 'passes arguements to ImportCsvUpdateSampleStatusJob' do
-        arguements = sample_id1
-
-        expect { subject }
-          .to have_enqueued_job.with(arguements).exactly(1).times
-      end
-
-      it 'passes arguements to ImportCsvUpdateSampleStatusJob' do
-        arguements = sample_id2
-
-        expect { subject }
-          .to have_enqueued_job.with(arguements).exactly(1).times
       end
     end
   end
