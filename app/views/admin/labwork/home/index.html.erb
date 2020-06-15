@@ -4,4 +4,20 @@
 
 <section class="main-content__body">
   <%= sanitize @page.body %>
+
+  <% if policy('Labwork::AdminTasks'.to_sym).index? %>
+    <hr>
+    <h2>Protecting Our River</h2>
+    <p>
+      <%= link_to 'Update LA River Taxa Counts', admin_labwork_la_river_taxa_asvs_count_path %>:
+      For each taxa, update the number of samples that contain that taxa.
+    </p>
+
+    <hr>
+    <h2>Admin Tasks</h2>
+    <p>
+      <%= link_to 'Bulk delete eDNA results', admin_labwork_research_project_results_path %>:
+      Delete all eDNA results for a research project.
+    </p>
+  <% end %>
 </section>

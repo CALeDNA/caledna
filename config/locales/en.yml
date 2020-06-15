@@ -30,7 +30,7 @@ en:
     models:
       survey_question: Question
       survey_option: Option
-      asv: Taxa Results
+      asv: Taxa by Sample Results
 
   pundit:
     default: "You cannot perform this action."
