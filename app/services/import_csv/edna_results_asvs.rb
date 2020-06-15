@@ -45,7 +45,7 @@ module ImportCsv
         next if invalid_taxon?(taxonomy_string)
 
         result_taxon = find_result_taxon_from_string(taxonomy_string)
-        if result_taxon.blank?
+        if result_taxon.blank? || result_taxon.taxon_id.blank?
           ImportCsvCreateUnmatchedResultJob
             .perform_later(taxonomy_string, result_metadata)
           next
