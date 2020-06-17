@@ -158,7 +158,10 @@ module FilterSamples
   end
 
   def research_project
-    @research_project ||= ResearchProject.find_by(slug: params[:id])
+    @research_project ||= begin
+      slug = params[:id] || params[:slug]
+      ResearchProject.find_by(slug: slug)
+    end
   end
 
   # ====================
