@@ -4,8 +4,8 @@
 module CsvUtils
   COMMON_DELIMITERS = ['","', "\"\t\"", '";"'].freeze
 
-  def delimiter_detector(file)
-    first_line = File.open(file.path).first
+  def delimiter_detector(path)
+    first_line = File.open(path, &:readline)
     return nil unless first_line
 
     counts = {}
