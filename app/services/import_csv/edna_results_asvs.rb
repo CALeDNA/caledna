@@ -67,23 +67,16 @@ module ImportCsv
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
     def find_samples_from_barcodes(barcodes)
-      invalid_data = []
       valid_data = {}
-
-      barcodes.compact.each do |barcode|
-        sample = Sample.approved.find_by(barcode: barcode)
-        if sample.present?
-          valid_data[sample.barcode] = sample.id
-        else
-          invalid_data << barcode
-        end
+      Sample.approved.where(barcode: barcodes.compact).each do |sample|
+        valid_data[sample.barcode] = sample.id
       end
+
+      invalid_data = barcodes.compact - valid_data.keys
 
       { invalid_data: invalid_data, valid_data: valid_data }
     end
-    # rubocop:enable Metrics/MethodLength
 
     private
 
