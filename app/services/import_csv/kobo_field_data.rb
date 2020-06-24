@@ -23,7 +23,8 @@ module ImportCsv
       begin
         collection_date(data.entries.first)
       rescue ArgumentError
-        message = 'Date must be in YYYY-MM-DD format.'
+        message = 'Date must be in YYYY-MM-DD, YYYY/MM/DD, MM-DD-YYYY, or ' \
+          'MM/DD/YYYY format.'
         return OpenStruct.new(valid?: false, errors: message)
       end
 
