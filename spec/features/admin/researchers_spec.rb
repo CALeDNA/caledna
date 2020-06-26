@@ -7,7 +7,7 @@ describe 'Researchers' do
     before { login_director }
 
     describe '#GET researchers index page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         create(:researcher, username: 'my name')
         visit admin_researchers_path
 
@@ -19,7 +19,7 @@ describe 'Researchers' do
     end
 
     describe '#GET researchers show page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         researcher = create(:researcher, username: 'my name')
         visit admin_researcher_path(id: researcher.id)
 
@@ -29,7 +29,7 @@ describe 'Researchers' do
     end
 
     describe '#GET researchers new page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         visit new_admin_researcher_path
 
         expect(page).to have_button('Send an invitation')
@@ -37,7 +37,7 @@ describe 'Researchers' do
     end
 
     describe '#GET researchers edit page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         researcher = create(:researcher, username: 'my name')
         visit edit_admin_researcher_path(id: researcher.id)
 
@@ -51,7 +51,7 @@ describe 'Researchers' do
     before { login_esie_postdoc }
 
     describe '#GET researchers index page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         create(:researcher, username: 'my name')
         visit admin_researchers_path
 
@@ -63,7 +63,7 @@ describe 'Researchers' do
     end
 
     describe '#GET researchers show page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         researcher = create(:researcher, username: 'my name')
         visit admin_researcher_path(id: researcher.id)
 
@@ -77,7 +77,7 @@ describe 'Researchers' do
     before { login_researcher }
 
     describe '#GET researchers index page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         create(:researcher, username: 'my name')
         visit admin_researchers_path
 
@@ -89,7 +89,7 @@ describe 'Researchers' do
     end
 
     describe '#GET researchers show page' do
-      it 'display researcher data and actions for researchers' do
+      xit 'display researcher data and actions for researchers' do
         researcher = create(:researcher, username: 'my name')
         visit admin_researcher_path(id: researcher.id)
 

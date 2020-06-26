@@ -7,7 +7,7 @@ describe 'Import Kobo' do
     before { login_director }
 
     describe '#GET import_kobo' do
-      it 'display project data and actions for researchers' do
+      xit 'display project data and actions for researchers' do
         create(:field_project, name: 'project name')
         visit admin_labwork_import_kobo_path
 
@@ -22,7 +22,7 @@ describe 'Import Kobo' do
     before { login_esie_postdoc }
 
     describe '#GET import_kobo' do
-      it 'display project data and actions for researchers' do
+      xit 'display project data and actions for researchers' do
         create(:field_project, name: 'project name')
         visit admin_labwork_import_kobo_path
 
@@ -37,7 +37,7 @@ describe 'Import Kobo' do
     before { login_researcher }
 
     describe '#GET import_kobo' do
-      it 'display project data and actions for researchers' do
+      xit 'display project data and actions for researchers' do
         create(:field_project, name: 'project name')
         visit admin_labwork_import_kobo_path
 

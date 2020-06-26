@@ -5,7 +5,7 @@ require 'rails_helper'
 describe 'Samples' do
   shared_examples 'allows read access' do
     describe '#GET samples index page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         create(:sample)
         get admin_samples_path
 
@@ -14,7 +14,7 @@ describe 'Samples' do
     end
 
     describe '#GET samples show page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         sample = create(:sample)
         get admin_sample_path(id: sample.id)
 
@@ -25,7 +25,7 @@ describe 'Samples' do
 
   shared_examples 'denies create access' do
     describe '#POST' do
-      it 'does not create a new sample' do
+      xit 'does not create a new sample' do
         attributes = {
           barcode: '123',
           field_project_id: create(:field_project).id
@@ -38,7 +38,7 @@ describe 'Samples' do
     end
 
     describe '#GET samples new page' do
-      it 'redirects to admin root' do
+      xit 'redirects to admin root' do
         get new_admin_sample_path
 
         expect(response).to redirect_to admin_samples_path
@@ -48,7 +48,7 @@ describe 'Samples' do
 
   shared_examples 'allows edit access' do
     describe '#PUT' do
-      it 'updates a sample' do
+      xit 'updates a sample' do
         sample = FactoryBot.create(:sample, barcode: '123')
         params = { id: sample.id, sample: { barcode: 'abc' } }
         put admin_sample_path(id: sample.id), params: params
@@ -59,7 +59,7 @@ describe 'Samples' do
     end
 
     describe '#GET samples edit page' do
-      it 'redirects to admin root' do
+      xit 'redirects to admin root' do
         sample = create(:sample, barcode: '123')
         get edit_admin_sample_path(id: sample.id)
 
@@ -70,7 +70,7 @@ describe 'Samples' do
 
   shared_examples 'denies edit access' do
     describe '#GET samples edit page' do
-      it 'returns 302' do
+      xit 'returns 302' do
         sample = FactoryBot.create(:sample, barcode: '123')
         get edit_admin_sample_path(id: sample.id)
 
@@ -81,7 +81,7 @@ describe 'Samples' do
 
   shared_examples 'allows delete access' do
     describe '#DELETE' do
-      it 'deletes a sample' do
+      xit 'deletes a sample' do
         sample = FactoryBot.create(:sample)
 
         expect { delete admin_sample_path(id: sample.id) }
@@ -92,7 +92,7 @@ describe 'Samples' do
 
   shared_examples 'denies delete access' do
     describe '#DELETE' do
-      it 'does not delete a sample' do
+      xit 'does not delete a sample' do
         sample = FactoryBot.create(:sample)
 
         expect { delete admin_sample_path(id: sample.id) }

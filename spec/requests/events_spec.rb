@@ -8,7 +8,7 @@ describe 'Events' do
   end
 
   describe 'events index page' do
-    it 'returns OK' do
+    xit 'returns OK' do
       get events_path
 
       expect(response.status).to eq(200)
@@ -16,14 +16,14 @@ describe 'Events' do
   end
 
   describe 'events show page' do
-    it 'returns OK' do
+    xit 'returns OK' do
       event = create(:event)
       get event_path(id: event.id)
 
       expect(response.status).to eq(200)
     end
 
-    it 'raises an error for invalid id' do
+    xit 'raises an error for invalid id' do
       expect { get event_path(id: 1) }
         .to raise_error(ActiveRecord::RecordNotFound)
     end

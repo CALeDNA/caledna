@@ -5,7 +5,7 @@ require 'rails_helper'
 describe 'Researcher' do
   shared_examples 'allows read access' do
     describe '#GET researchers index page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         create(:researcher, username: 'name1')
         get admin_researchers_path
 
@@ -14,7 +14,7 @@ describe 'Researcher' do
     end
 
     describe '#GET researchers show page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         researcher = create(:researcher, username: 'name1')
         get admin_researcher_path(id: researcher.id)
 
@@ -25,7 +25,7 @@ describe 'Researcher' do
 
   shared_examples 'allows write access' do
     describe '#GET researchers new page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         get new_admin_researcher_path
 
         expect(response.status).to eq(200)
@@ -33,7 +33,7 @@ describe 'Researcher' do
     end
 
     describe '#GET researchers edit page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         researcher = create(:researcher, username: 'name1')
         get edit_admin_researcher_path(id: researcher.id)
 
@@ -42,7 +42,7 @@ describe 'Researcher' do
     end
 
     describe '#POST' do
-      it 'creates a new researcher' do
+      xit 'creates a new researcher' do
         attributes = FactoryBot.attributes_for(:researcher)
         params = { researcher: attributes }
 
@@ -52,7 +52,7 @@ describe 'Researcher' do
     end
 
     describe '#PUT' do
-      it 'updates a researcher' do
+      xit 'updates a researcher' do
         researcher = FactoryBot.create(:researcher, username: 'name1')
         params = { id: researcher.id, researcher: { username: 'name2' } }
         put admin_researcher_path(id: researcher.id), params: params
@@ -63,7 +63,7 @@ describe 'Researcher' do
     end
 
     describe '#DELETE' do
-      it 'deletes a researcher' do
+      xit 'deletes a researcher' do
         researcher = FactoryBot.create(:researcher)
 
         expect { delete admin_researcher_path(id: researcher.id) }
@@ -74,7 +74,7 @@ describe 'Researcher' do
 
   shared_examples 'allows read access to #index' do
     describe '#GET researchers index page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         create(:researcher, username: 'name1')
         get admin_researchers_path
 
@@ -85,7 +85,7 @@ describe 'Researcher' do
 
   shared_examples 'denies read access to #show' do
     describe '#GET researchers show page' do
-      it 'returns 302' do
+      xit 'returns 302' do
         researcher = create(:researcher, username: 'name1')
         get admin_researcher_path(id: researcher.id)
 
@@ -96,7 +96,7 @@ describe 'Researcher' do
 
   shared_examples 'denies write access' do
     describe '#GET researchers new page' do
-      it 'redirects to admin root' do
+      xit 'redirects to admin root' do
         get new_admin_sample_path
 
         expect(response).to redirect_to admin_samples_path
@@ -104,7 +104,7 @@ describe 'Researcher' do
     end
 
     describe '#GET researchers edit page' do
-      it 'redirects to admin root' do
+      xit 'redirects to admin root' do
         researcher = create(:researcher, username: 'name1')
         get edit_admin_researcher_path(id: researcher.id)
 
@@ -113,7 +113,7 @@ describe 'Researcher' do
     end
 
     describe '#POST' do
-      it 'does not create a new researcher' do
+      xit 'does not create a new researcher' do
         attributes = FactoryBot.attributes_for(:researcher)
         params = { researcher: attributes }
 
@@ -123,7 +123,7 @@ describe 'Researcher' do
     end
 
     describe '#PUT' do
-      it 'does not update a researcher' do
+      xit 'does not update a researcher' do
         researcher = FactoryBot.create(:researcher, username: 'name1')
         params = { id: researcher.id, researcher: { username: 'name2' } }
         put admin_researcher_path(id: researcher.id), params: params
@@ -134,7 +134,7 @@ describe 'Researcher' do
     end
 
     describe '#DELETE' do
-      it 'does not delete a researcher' do
+      xit 'does not delete a researcher' do
         researcher = FactoryBot.create(:researcher)
 
         expect { delete admin_researcher_path(id: researcher.id) }

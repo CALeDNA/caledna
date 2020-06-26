@@ -5,7 +5,7 @@ require 'rails_helper'
 describe 'FieldProjects' do
   shared_examples 'allows create and update access' do
     describe '#POST' do
-      it 'does creates a new project' do
+      xit 'does creates a new project' do
         attributes = FactoryBot.attributes_for(:field_project)
         params = { field_project: attributes }
 
@@ -15,7 +15,7 @@ describe 'FieldProjects' do
     end
 
     describe '#PUT' do
-      it 'updates a project' do
+      xit 'updates a project' do
         project = FactoryBot.create(:field_project, name: 'name1')
         params = { id: project.id, field_project: { name: 'name2' } }
         put admin_field_project_path(id: project.id), params: params
@@ -26,7 +26,7 @@ describe 'FieldProjects' do
     end
 
     describe '#GET projects new page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         get new_admin_field_project_path
 
         expect(response.status).to eq(200)
@@ -34,7 +34,7 @@ describe 'FieldProjects' do
     end
 
     describe '#GET projects edit page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         project = create(:field_project, name: 'name1')
         get edit_admin_field_project_path(id: project.id)
 
@@ -45,7 +45,7 @@ describe 'FieldProjects' do
 
   shared_examples 'allows delete access' do
     describe '#DELETE' do
-      it 'deletes a project' do
+      xit 'deletes a project' do
         project = FactoryBot.create(:field_project)
 
         expect { delete admin_field_project_path(id: project.id) }
@@ -56,7 +56,7 @@ describe 'FieldProjects' do
 
   shared_examples 'denies delete access' do
     describe '#DELETE' do
-      it 'does not delete a project' do
+      xit 'does not delete a project' do
         project = FactoryBot.create(:field_project)
 
         expect { delete admin_field_project_path(id: project.id) }
@@ -67,7 +67,7 @@ describe 'FieldProjects' do
 
   shared_examples 'allows read access' do
     describe '#GET projects index page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         create(:field_project)
         get admin_field_projects_path
 
@@ -76,7 +76,7 @@ describe 'FieldProjects' do
     end
 
     describe '#GET projects show page' do
-      it 'returns 200' do
+      xit 'returns 200' do
         project = create(:field_project)
         get admin_field_project_path(id: project.id)
 

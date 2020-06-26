@@ -18,13 +18,13 @@ describe Admin::Labwork::KoboController do
   end
 
   describe '#GET import_kobo' do
-    it 'returns success' do
+    xit 'returns success' do
       get :import_kobo
 
       expect(response).to have_http_status(200)
     end
 
-    it 'assigns projects' do
+    xit 'assigns projects' do
       project = create(:field_project)
       get :import_kobo
 
@@ -33,7 +33,7 @@ describe Admin::Labwork::KoboController do
   end
 
   describe '#POST import_projects' do
-    it 'calls KoboApi::Process and KoboApi::Connect methods' do
+    xit 'calls KoboApi::Process and KoboApi::Connect methods' do
       kobo_data = [
         { 'id' => 123, 'title' => 'title', 'description' => 'description' }
       ]
@@ -46,7 +46,7 @@ describe Admin::Labwork::KoboController do
       post :import_projects
     end
 
-    it 'displays flash message if there is socket connection error' do
+    xit 'displays flash message if there is socket connection error' do
       allow(KoboApi::Connect)
         .to receive_message_chain(:projects, :parsed_response) {
           raise SocketError
@@ -62,7 +62,7 @@ describe Admin::Labwork::KoboController do
     let(:kobo_id) { 10 }
     let(:project) { create(:field_project, kobo_id: kobo_id) }
 
-    it 'calls KoboApi::Process and KoboApi::Connect methods' do
+    xit 'calls KoboApi::Process and KoboApi::Connect methods' do
       kobo_data = [
         { 'id' => 123, 'title' => 'title', 'description' => 'description' }
       ]
@@ -77,7 +77,7 @@ describe Admin::Labwork::KoboController do
       post :import_samples, params: { id: project.id }
     end
 
-    it 'displays flash message if there is socket connection error' do
+    xit 'displays flash message if there is socket connection error' do
       allow(KoboApi::Connect)
         .to receive_message_chain(:project, :parsed_response) {
           raise SocketError

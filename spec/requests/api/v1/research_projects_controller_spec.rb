@@ -24,7 +24,8 @@ describe 'ResearchProjects' do
                                substrate: :soil,
                                primer: create(:primer))
       sample = create(:sample, id: sample_id, substrate: substrate,
-                               status: :results_completed)
+                               status: results_completed,
+                               field_project: FieldProject.la_river)
       create(:asv, sample: sample, research_project: project, primer: primer)
       create(:sample_primer, primer: primer, sample: sample,
                              research_project: project)
@@ -32,7 +33,7 @@ describe 'ResearchProjects' do
     end
 
     it 'returns OK' do
-      project = create(:research_project, slug: project_slug)
+      project = ResearchProject::LA_RIVER
       get api_v1_research_project_path(id: project.slug)
 
       expect(response.status).to eq(200)
@@ -40,7 +41,7 @@ describe 'ResearchProjects' do
 
     context 'when project does not have samples' do
       it 'returns empty array for samples' do
-        project = create(:research_project, slug: project_slug)
+        project = ResearchProject::LA_RIVER
 
         get api_v1_research_project_path(id: project.slug)
         data = JSON.parse(response.body)
@@ -51,8 +52,8 @@ describe 'ResearchProjects' do
 
     context 'when project is not published' do
       it 'returns empty array for samples' do
-        project = create(:research_project, slug: project_slug,
-                                            published: false)
+        project = ResearchProject::LA_RIVER
+        project.update(published: false)
         create_project_samples(project)
 
         get api_v1_research_project_path(id: project.slug)
@@ -64,7 +65,8 @@ describe 'ResearchProjects' do
 
     context 'when project has samples with results' do
       it 'returns the associated samples' do
-        project = create(:research_project, slug: project_slug, published: true)
+        project = ResearchProject::LA_RIVER
+        project.update(published: true)
         primer = create(:primer, name: primer1_name, id: primer1_id)
         create_project_samples(project, sample_id: sample1_id, primer: primer)
         create_project_samples(project, sample_id: sample2_id, primer: primer)
@@ -88,8 +90,12 @@ describe 'ResearchProjects' do
       end
 
       it 'only includes one instance of a sample' do
-        project = create(:research_project, slug: project_slug, published: true)
-        sample = create(:sample, :results_completed, id: sample1_id)
+        project = ResearchProject::LA_RIVER
+        project.update(published: true)
+        sample = create(:sample,
+                        :results_completed,
+                        id: sample1_id,
+                        field_project: FieldProject::LA_RIVER)
         primer1 = create(:primer, name: primer1_name, id: primer1_id)
         primer2 = create(:primer, name: primer2_name, id: primer2_id)
         taxon1 = create(:ncbi_node, taxon_id: taxon1_id)
@@ -123,7 +129,8 @@ describe 'ResearchProjects' do
       end
 
       it 'ignores samples from other projects' do
-        project = create(:research_project, slug: project_slug, published: true)
+        project = ResearchProject::LA_RIVER
+        project.update(published: true)
         other_project = create(:research_project, slug: 'other')
         create_project_samples(other_project)
 
@@ -137,9 +144,16 @@ describe 'ResearchProjects' do
         primer3_name = 'primer3'
         primer3_id = 300
         taxon3_id = 3000
-        sample1 = create(:sample, :results_completed, id: sample1_id)
-        sample2 = create(:sample, :results_completed, id: sample2_id)
-        proj1 = create(:research_project, slug: project_slug, published: true)
+        sample1 = create(:sample,
+                         :results_completed,
+                         id: sample1_id,
+                         field_project: FieldProject::LA_RIVER)
+        sample2 = create(:sample,
+                         :results_completed,
+                         id: sample2_id,
+                         field_project: FieldProject::LA_RIVER)
+        proj1 = ResearchProject::LA_RIVER
+        proj1.update(published: true)
         proj2 = create(:research_project, slug: 'other', published: true)
         taxon1 = create(:ncbi_node, taxon_id: taxon1_id)
         taxon2 = create(:ncbi_node, taxon_id: taxon2_id)
@@ -196,9 +210,10 @@ describe 'ResearchProjects' do
     end
 
     it 'does not return samples without results' do
-      create(:sample, status: :approved)
-      create(:sample, status: :submitted)
-      project = create(:research_project, slug: project_slug, published: true)
+      create(:sample, status: :approved, field_project: FieldProject.la_river)
+      create(:sample, status: :submitted, field_project: FieldProject.la_river)
+      project = ResearchProject.la_river
+      project.update(published: true)
       refresh_samples_map
 
       get api_v1_research_project_path(id: project.slug)
@@ -209,7 +224,9 @@ describe 'ResearchProjects' do
 
     context 'keyword query param' do
       let(:project) do
-        create(:research_project, slug: project_slug, published: true)
+        tmp = ResearchProject::LA_RIVER
+        tmp.update(published: true)
+        tmp
       end
 
       before(:each) do
@@ -240,7 +257,9 @@ describe 'ResearchProjects' do
 
     context 'substrate query param' do
       let(:project) do
-        create(:research_project, slug: project_slug, published: true)
+        tmp = ResearchProject::LA_RIVER
+        tmp.update(published: true)
+        tmp
       end
 
       before(:each) do
@@ -272,7 +291,9 @@ describe 'ResearchProjects' do
 
     context 'status query param' do
       let(:project) do
-        create(:research_project, slug: project_slug, published: true)
+        tmp = ResearchProject::LA_RIVER
+        tmp.update(published: true)
+        tmp
       end
 
       before(:each) do
@@ -294,7 +315,9 @@ describe 'ResearchProjects' do
 
     context 'primer query param' do
       let(:project) do
-        create(:research_project, slug: project_slug, published: true)
+        tmp = ResearchProject::LA_RIVER
+        tmp.update(published: true)
+        tmp
       end
       let(:primer1) { create(:primer, name: primer1_name, id: primer1_id) }
       let(:primer2) { create(:primer, name: primer2_name, id: primer2_id) }
@@ -323,7 +346,10 @@ describe 'ResearchProjects' do
 
       it 'returns samples when there are multiple primer' do
         sample3_id = 300
-        sample1 = create(:sample, :results_completed, id: sample1_id)
+        sample1 = create(:sample,
+                         :results_completed,
+                         id: sample1_id,
+                         field_project: FieldProject::LA_RIVER)
         create(:asv, sample: sample1, research_project: project,
                      primer: primer1)
         create(:asv, sample: sample1, research_project: project,
@@ -372,7 +398,9 @@ describe 'ResearchProjects' do
 
     context 'multiple query params' do
       let(:project) do
-        create(:research_project, slug: project_slug, published: true)
+        tmp = ResearchProject::LA_RIVER
+        tmp.update(published: true)
+        tmp
       end
 
       it 'returns samples that match substrate & primer' do

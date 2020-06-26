@@ -27,7 +27,7 @@ describe 'ImportKobo' do
 
   shared_examples 'allows import access' do
     describe '#GET import_kobo' do
-      it 'returns 200' do
+      xit 'returns 200' do
         get admin_labwork_import_kobo_path
 
         expect(response.status).to eq(200)
@@ -35,7 +35,7 @@ describe 'ImportKobo' do
     end
 
     describe '#POST import_projects' do
-      it 'creates a new project' do
+      xit 'creates a new project' do
         stub_connect_projects
 
         expect { post admin_labwork_import_kobo_projects_path }
@@ -44,7 +44,7 @@ describe 'ImportKobo' do
     end
 
     describe '#POST import_samples' do
-      it 'creates a new ImportKoboSampleJob' do
+      xit 'creates a new ImportKoboSampleJob' do
         stub_connect_project
         ActiveJob::Base.queue_adapter = :test
         include ActiveJob::TestHelper
@@ -59,7 +59,7 @@ describe 'ImportKobo' do
 
   shared_examples 'denies import access' do
     describe '#GET import_kobo' do
-      it 'redirects to admin root page' do
+      xit 'redirects to admin root page' do
         get admin_labwork_import_kobo_path
 
         expect(response).to redirect_to admin_samples_path
@@ -67,7 +67,7 @@ describe 'ImportKobo' do
     end
 
     describe '#POST import_projects' do
-      it 'does not create a new project' do
+      xit 'does not create a new project' do
         stub_connect_projects
 
         expect { post admin_labwork_import_kobo_projects_path }
@@ -76,7 +76,7 @@ describe 'ImportKobo' do
     end
 
     describe '#POST import_samples' do
-      it 'does not create a new sample' do
+      xit 'does not create a new sample' do
         stub_connect_project
 
         project = create(:field_project, kobo_id: 1)

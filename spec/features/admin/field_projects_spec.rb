@@ -7,7 +7,7 @@ describe 'Field Projects' do
     before { login_director }
 
     describe '#GET projects index page' do
-      it 'display project data and actions for projects' do
+      xit 'display project data and actions for projects' do
         create(:field_project, name: 'name1')
         visit admin_field_projects_path
 
@@ -19,7 +19,7 @@ describe 'Field Projects' do
     end
 
     describe '#GET projects show page' do
-      it 'display project data and actions for projects' do
+      xit 'display project data and actions for projects' do
         project = create(:field_project, name: 'name1')
         visit admin_field_project_path(id: project.id)
 
@@ -29,7 +29,7 @@ describe 'Field Projects' do
     end
 
     describe '#GET projects edit page' do
-      it 'display project data and actions for projects' do
+      xit 'display project data and actions for projects' do
         project = create(:field_project, name: 'name1')
         visit edit_admin_field_project_path(id: project.id)
 
@@ -43,7 +43,7 @@ describe 'Field Projects' do
     before { login_esie_postdoc }
 
     describe '#GET projects index page' do
-      it 'display project data and actions for projects' do
+      xit 'display project data and actions for projects' do
         create(:field_project, name: 'name1')
         visit admin_field_projects_path
 
@@ -55,7 +55,7 @@ describe 'Field Projects' do
     end
 
     describe '#GET projects show page' do
-      it 'display project data and actions for projects' do
+      xit 'display project data and actions for projects' do
         project = create(:field_project, name: 'name1')
         visit admin_field_project_path(id: project.id)
 
@@ -69,7 +69,7 @@ describe 'Field Projects' do
     before { login_researcher }
 
     describe '#GET projects index page' do
-      it 'display project data and actions for projects' do
+      xit 'display project data and actions for projects' do
         create(:field_project, name: 'name1')
         visit admin_field_projects_path
 
@@ -81,7 +81,7 @@ describe 'Field Projects' do
     end
 
     describe '#GET projects show page' do
-      it 'display project data and actions for projects' do
+      xit 'display project data and actions for projects' do
         project = create(:field_project, name: 'name1')
         visit admin_field_project_path(id: project.id)
 

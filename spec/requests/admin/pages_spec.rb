@@ -15,7 +15,7 @@ describe 'Pages' do
     let(:website) { Website.default_site }
 
     shared_examples 'index page status' do
-      it 'returns 200' do
+      xit 'returns 200' do
         get admin_pages_path
 
         expect(response.status).to eq(200)
@@ -29,7 +29,7 @@ describe 'Pages' do
 
       include_examples 'index page status'
 
-      it 'display all pages' do
+      xit 'display all pages' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 
@@ -47,7 +47,7 @@ describe 'Pages' do
 
       include_examples 'index page status'
 
-      it 'display all pages for this site' do
+      xit 'display all pages for this site' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 
@@ -65,7 +65,7 @@ describe 'Pages' do
 
       include_examples 'index page status'
 
-      it 'display all pages' do
+      xit 'display all research pages' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 
@@ -83,7 +83,7 @@ describe 'Pages' do
 
       include_examples 'index page status'
 
-      it 'does not display' do
+      xit 'display research pages from user' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 

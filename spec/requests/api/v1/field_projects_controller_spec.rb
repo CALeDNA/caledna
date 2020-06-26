@@ -12,7 +12,7 @@ describe 'FieldProjecs' do
   describe 'show' do
     let(:target_id) { 10 }
 
-    it 'returns OK' do
+    xit 'returns OK' do
       create(:field_project, id: target_id)
       get api_v1_field_project_path(id: target_id)
 
@@ -20,7 +20,7 @@ describe 'FieldProjecs' do
     end
 
     context 'when project does not have samples' do
-      it 'returns empty array for samples' do
+      xit 'returns empty array for samples' do
         create(:field_project, id: target_id)
 
         get api_v1_field_project_path(id: target_id)
@@ -31,7 +31,7 @@ describe 'FieldProjecs' do
     end
 
     context 'when project has approved samples' do
-      it 'returns the associated samples' do
+      xit 'returns the associated samples' do
         project = create(:field_project, id: target_id)
         sample1 = create(:sample, :approved, field_project: project)
         sample2 = create(:sample, :approved, field_project: project)
@@ -48,7 +48,7 @@ describe 'FieldProjecs' do
     end
 
     context 'when project has samples with results' do
-      it 'returns the associated samples' do
+      xit 'returns the associated samples' do
         project = create(:field_project, id: target_id)
         rproj = create(:research_project, published: true)
 
@@ -71,7 +71,7 @@ describe 'FieldProjecs' do
       end
     end
 
-    it 'ignores samples from other projects' do
+    xit 'ignores samples from other projects' do
       create(:field_project, id: target_id)
       other_project = create(:field_project, id: 20)
       create(:sample, :approved, field_project: other_project)
@@ -84,7 +84,7 @@ describe 'FieldProjecs' do
     end
 
     context 'when field project contains unpublished research projects' do
-      it 'does not return unpublished samples' do
+      xit 'does not return unpublished samples' do
         rproj1 = create(:research_project, published: false)
         fproj = create(:field_project, id: target_id)
 
@@ -102,7 +102,7 @@ describe 'FieldProjecs' do
       end
     end
 
-    it 'returns approved samples or published result_completed samples' do
+    xit 'returns approved samples or published result_completed samples' do
       fproj = create(:field_project, id: target_id)
 
       sample1 = create(:sample, :results_completed, field_project: fproj)
@@ -149,7 +149,7 @@ describe 'FieldProjecs' do
         )
       end
 
-      it 'does not affect the associated samples' do
+      xit 'does not affect the associated samples' do
         get api_v1_field_project_path(id: target_id, keyword: 'match')
         data = JSON.parse(response.body)['samples']['data']
 
@@ -170,7 +170,7 @@ describe 'FieldProjecs' do
         refresh_samples_map
       end
 
-      it 'returns samples when there is one substrate' do
+      xit 'returns samples when there is one substrate' do
         get api_v1_field_project_path(id: target_id, substrate: :soil)
         data = JSON.parse(response.body)['samples']['data']
 
@@ -180,7 +180,7 @@ describe 'FieldProjecs' do
         expect(substrate).to match_array(['soil'])
       end
 
-      it 'returns samples when there are multiple substrate' do
+      xit 'returns samples when there are multiple substrate' do
         get api_v1_field_project_path(id: target_id, substrate: 'soil|sediment')
         data = JSON.parse(response.body)['samples']['data']
 
@@ -205,14 +205,14 @@ describe 'FieldProjecs' do
         refresh_samples_map
       end
 
-      it 'returns samples when there is one status' do
+      xit 'returns samples when there is one status' do
         get api_v1_field_project_path(id: target_id, status: :results_completed)
         json = JSON.parse(response.body)
 
         expect(json['samples']['data'].length).to eq(1)
       end
 
-      it 'ignores multiple status' do
+      xit 'ignores multiple status' do
         get api_v1_field_project_path(id: target_id,
                                       status: 'approved|results_completed')
         json = JSON.parse(response.body)
@@ -250,7 +250,7 @@ describe 'FieldProjecs' do
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-      it 'returns samples when there is one primer' do
+      xit 'returns samples when there is one primer' do
         create_samples
 
         get api_v1_field_project_path(id: target_id, primer: primer1_id)
@@ -265,7 +265,7 @@ describe 'FieldProjecs' do
         expect(primer_names).to match_array([[primer1_name]])
       end
 
-      it 'returns samples when there are multiple primer' do
+      xit 'returns samples when there are multiple primer' do
         create_samples
 
         get api_v1_field_project_path(id: target_id,
@@ -283,7 +283,7 @@ describe 'FieldProjecs' do
           .to match_array([[primer1_name], [primer2_name]])
       end
 
-      it 'ignores invalid primers' do
+      xit 'ignores invalid primers' do
         create_samples
 
         get api_v1_field_project_path(id: target_id, primer: 999)
@@ -351,7 +351,7 @@ describe 'FieldProjecs' do
         refresh_samples_map
       end
 
-      it 'returns samples that match substrate & status' do
+      xit 'returns samples that match substrate & status' do
         get api_v1_field_project_path(id: target_id, substrate: 'soil',
                                       status: 'results_completed')
         data = JSON.parse(response.body)['samples']['data']
@@ -362,7 +362,7 @@ describe 'FieldProjecs' do
         expect(ids).to match_array([1, 4])
       end
 
-      it 'returns samples that match substrate & primer' do
+      xit 'returns samples that match substrate & primer' do
         get api_v1_field_project_path(id: target_id, substrate: 'soil',
                                       primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
@@ -373,7 +373,7 @@ describe 'FieldProjecs' do
         expect(ids).to match_array([1, 4])
       end
 
-      it 'returns samples that match all the query params' do
+      xit 'returns samples that match all the query params' do
         get api_v1_field_project_path(id: target_id, substrate: 'soil',
                                       status: 'results_completed',
                                       primer: primer1_id)

@@ -16,7 +16,7 @@ describe 'NormalizeNcbiTaxaController' do
   end
 
   describe '#GET index' do
-    it 'returns 200' do
+    xit 'returns 200' do
       get admin_labwork_normalize_ncbi_taxa_path
 
       expect(response.status).to eq(200)
@@ -24,7 +24,7 @@ describe 'NormalizeNcbiTaxaController' do
   end
 
   describe '#GET show' do
-    it 'returns 200' do
+    xit 'returns 200' do
       get admin_labwork_normalize_ncbi_taxon_path(result_taxon)
 
       expect(response.status).to eq(200)
@@ -40,7 +40,7 @@ describe 'NormalizeNcbiTaxaController' do
     end
 
     context 'when user enters in a valid NCBI id' do
-      it 'updates ResultTaxon' do
+      xit 'updates ResultTaxon' do
         params = { normalize_ncbi_taxon:
           { source_id: ncbi_id, source: 'NCBI' } }
         rtaxon = result_taxon
@@ -62,7 +62,7 @@ describe 'NormalizeNcbiTaxaController' do
     end
 
     context 'when user enters in a valid BOLD ID' do
-      it 'updates ResultTaxon' do
+      xit 'updates ResultTaxon' do
         params = { normalize_ncbi_taxon:
           { source_id: bold_id, source: 'BOLD' } }
         rtaxon = result_taxon
@@ -84,7 +84,7 @@ describe 'NormalizeNcbiTaxaController' do
     end
 
     context 'when user enters in an invalid id' do
-      it 'does not update ResultTaxon taxon id' do
+      xit 'does not update ResultTaxon taxon id' do
         params = { normalize_ncbi_taxon: { source_id: 999, source: 'NCBI' } }
         taxon = result_taxon
 
@@ -95,7 +95,7 @@ describe 'NormalizeNcbiTaxaController' do
           .not_to(change { taxon.reload.taxon_id })
       end
 
-      it 'redirects to show page' do
+      xit 'redirects to show page' do
         params = { normalize_ncbi_taxon: { source_id: 999, source: 'NCBI' } }
         taxon = result_taxon
         put admin_labwork_normalize_ncbi_taxon_update_with_id_path(taxon),
@@ -117,7 +117,7 @@ describe 'NormalizeNcbiTaxaController' do
                          bold_id: bold_id)
     end
 
-    it 'updates ResultTaxon' do
+    xit 'updates ResultTaxon' do
       params = { normalize_ncbi_taxon:
         { taxon_id: taxon_id_n, ncbi_id: ncbi_id, bold_id: bold_id,
           ncbi_version_id: ncbi_version_id } }
@@ -182,7 +182,7 @@ describe 'NormalizeNcbiTaxaController' do
                            source: 'NCBI', ncbi_id: ncbi_id)
       end
 
-      it 'does not create NcbiNode' do
+      xit 'does not create NcbiNode' do
         expect do
           put admin_labwork_normalize_ncbi_taxon_update_and_create_taxa_path(result_taxon),
               params: params
@@ -190,7 +190,7 @@ describe 'NormalizeNcbiTaxaController' do
           .to change { NcbiNode.count }.by(0)
       end
 
-      it 'updates  NcbiNode with passed in values' do
+      xit 'updates  NcbiNode with passed in values' do
         taxon = NcbiNode.first
 
         expect do
@@ -223,7 +223,7 @@ describe 'NormalizeNcbiTaxaController' do
         create(:ncbi_node)
       end
 
-      it 'creates NcbiNode' do
+      xit 'creates NcbiNode' do
         expect do
           put admin_labwork_normalize_ncbi_taxon_update_and_create_taxa_path(result_taxon),
               params: params
@@ -231,7 +231,7 @@ describe 'NormalizeNcbiTaxaController' do
           .to change { NcbiNode.count }.by(1)
       end
 
-      it 'creates  NcbiNode with passed in values' do
+      xit 'creates  NcbiNode with passed in values' do
         put admin_labwork_normalize_ncbi_taxon_update_and_create_taxa_path(result_taxon),
             params: params
         expected = params[:normalize_ncbi_taxon]
@@ -243,7 +243,7 @@ describe 'NormalizeNcbiTaxaController' do
     end
 
     context 'when update_result_taxa is true' do
-      it 'updates ResultTaxon' do
+      xit 'updates ResultTaxon' do
         params[:normalize_ncbi_taxon][:update_result_taxa] = true
 
         expect do
@@ -256,7 +256,7 @@ describe 'NormalizeNcbiTaxaController' do
           .to(ncbi_id)
       end
 
-      it 'uses NcbiNode values to update ResultTaxon' do
+      xit 'uses NcbiNode values to update ResultTaxon' do
         params[:normalize_ncbi_taxon][:update_result_taxa] = true
 
         put admin_labwork_normalize_ncbi_taxon_update_and_create_taxa_path(result_taxon),
@@ -273,7 +273,7 @@ describe 'NormalizeNcbiTaxaController' do
     end
 
     context 'when update_result_taxa is false' do
-      it 'does not update ResultTaxon' do
+      xit 'does not update ResultTaxon' do
         params[:normalize_ncbi_taxon][:update_result_taxa] = false
 
         expect do
@@ -287,7 +287,7 @@ describe 'NormalizeNcbiTaxaController' do
   # rubocop:enable Metrics/LineLength
 
   describe '#PUT ignore_taxon' do
-    it 'updates ResultTaxon' do
+    xit 'updates ResultTaxon' do
       expect do
         put admin_labwork_normalize_ncbi_taxon_ignore_taxon_path(result_taxon)
       end

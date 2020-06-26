@@ -8,13 +8,13 @@ describe 'Field Projects' do
   end
 
   describe 'projects index page' do
-    it 'returns OK when there are no projects' do
+    xit 'returns OK when there are no projects' do
       get field_projects_path
 
       expect(response.status).to eq(200)
     end
 
-    it 'returns OK when there are projects' do
+    xit 'returns OK when there are projects' do
       create(:field_project)
       get field_projects_path
 
@@ -23,14 +23,14 @@ describe 'Field Projects' do
   end
 
   describe 'projects show page' do
-    it 'returns OK for valid id' do
+    xit 'returns OK for valid id' do
       project = create(:field_project)
       get field_project_path(id: project.id)
 
       expect(response.status).to eq(200)
     end
 
-    it 'raises an error invalid id' do
+    xit 'raises an error invalid id' do
       expect { get field_project_path(id: 1) }
         .to raise_error(ActiveRecord::RecordNotFound)
     end

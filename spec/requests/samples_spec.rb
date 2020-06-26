@@ -9,6 +9,8 @@ describe 'Samples' do
     create(:website, name: Website::DEFAULT_SITE)
   end
 
+  let(:field_river) { FieldProject::LA_RIVER }
+
   describe 'samples index page' do
     it 'returns OK' do
       get samples_path
@@ -20,7 +22,7 @@ describe 'Samples' do
   describe 'samples show page' do
     it 'returns OK when sample is approved' do
       sample = create(:sample, status_cd: :approved, latitude: 1, longitude: 1,
-                               kobo_data: {})
+                               kobo_data: {}, field_project: field_river)
       refresh_samples_map
 
       get sample_path(id: sample.id)
@@ -29,7 +31,8 @@ describe 'Samples' do
     end
 
     it 'raises an error if sample is not approved' do
-      sample = create(:sample, status_cd: :submitted, latitude: 1, longitude: 1)
+      sample = create(:sample, status_cd: :submitted, latitude: 1, longitude: 1,
+                               field_project: field_river)
       refresh_samples_map
 
       expect { get sample_path(id: sample.id) }

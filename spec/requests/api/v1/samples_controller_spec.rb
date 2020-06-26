@@ -9,11 +9,18 @@ describe 'Samples' do
     create(:website, name: Website::DEFAULT_SITE)
   end
 
+  let(:field_river) { FieldProject.la_river }
+  let(:research_river) { ResearchProject.la_river }
+
   describe 'index' do
     def created_completed_sample(sample_id: 1, substrate: :soil)
-      sample = create(:sample, :results_completed, id: sample_id,
-                                                   substrate: substrate)
-      rproj = create(:research_project, published: true)
+      sample = create(:sample,
+                      :results_completed,
+                      id: sample_id,
+                      substrate: substrate,
+                      field_project: field_river)
+      rproj = research_river
+      rproj.update(published: true)
       primer = create(:primer)
       create(:sample_primer, research_project: rproj, sample: sample,
                              primer: primer)
@@ -29,7 +36,7 @@ describe 'Samples' do
     end
 
     it 'returns all valid samples' do
-      create(:sample, :approved)
+      create(:sample, :approved, field_project: field_river)
       created_completed_sample
 
       get api_v1_samples_path
@@ -40,9 +47,8 @@ describe 'Samples' do
     end
 
     it 'ignores invalid samples' do
-      create_list(:sample, 3)
+      create_list(:sample, 3, field_project: field_river)
       refresh_samples_map
-
       get api_v1_samples_path
 
       json = JSON.parse(response.body)
@@ -51,9 +57,9 @@ describe 'Samples' do
     end
 
     it 'does not return samples from unpublished research projects' do
-      rproj = create(:research_project, published: false)
-      sample = create(:sample, :results_completed)
-      primer = create(:primer)
+      rproj = research_river
+      rproj.update(published: false)
+      sample = create(:sample, :results_completed, field_project: field_river)
       create(:asv, sample: sample, research_project: rproj, primer: primer)
       create(:sample_primer, sample: sample, research_project: rproj,
                              primer: primer)
@@ -74,13 +80,14 @@ describe 'Samples' do
                              primer: primer)
       create(:asv, research_project: rproj1, sample: sample1, primer: primer)
 
-      sample2 = create(:sample, :results_completed)
-      rproj2 = create(:research_project, published: true)
+      sample2 = create(:sample, :results_completed, field_project: field_river)
+      rproj2 = research_river
+      rproj.update(published: true)
       create(:sample_primer, research_project: rproj2, sample: sample2,
                              primer: primer)
       create(:asv, research_project: rproj2, sample: sample2, primer: primer)
 
-      sample3 = create(:sample, :approved)
+      sample3 = create(:sample, :approved, field_project: field_river)
       refresh_samples_map
 
       get api_v1_samples_path
@@ -94,8 +101,8 @@ describe 'Samples' do
 
     context 'keyword query param' do
       before(:each) do
-        create(:sample, :approved, id: 1)
-        create(:sample, :approved, id: 2)
+        create(:sample, :approved, id: 1, field_project: field_river)
+        create(:sample, :approved, id: 2, field_project: field_river)
         created_completed_sample(sample_id: 3)
 
         ActiveRecord::Base.connection.execute(
@@ -133,8 +140,10 @@ describe 'Samples' do
 
     context 'substrate query param' do
       before(:each) do
-        create(:sample, :approved, substrate_cd: :soil)
-        create(:sample, :approved, substrate_cd: :bad)
+        create(:sample, :approved, substrate_cd: :soil,
+                                   field_project: field_river)
+        create(:sample, :approved, substrate_cd: :bad,
+                                   field_project: field_river)
         created_completed_sample(substrate: :sediment)
         refresh_samples_map
       end
@@ -162,7 +171,7 @@ describe 'Samples' do
 
     context 'status query param' do
       before(:each) do
-        create(:sample, status_cd: :approved)
+        create(:sample, status_cd: :approved, field_project: field_river)
         created_completed_sample
         refresh_samples_map
       end
@@ -189,24 +198,26 @@ describe 'Samples' do
       let(:primer2_name) { 'primer2' }
 
       before(:each) do
-        create(:sample, :approved)
+        create(:sample, :approved, field_project: field_river)
+        s1 = create(:sample, :results_completed, field_project: field_river)
+        s2 = create(:sample, :results_completed, field_project: field_river)
         p1 = create(:primer, name: primer1_name, id: primer1_id)
         p2 = create(:primer, name: primer2_name, id: primer2_id)
-        s1 = create(:sample, :results_completed, primers: [primer1_name],
-                                                 primer_ids: [primer1_id])
-        s2 = create(:sample, :results_completed, primers: [primer2_name],
-                                                 primer_ids: [primer2_id])
+        rproj = research_river
+        rproj.update(published: true)
 
-        rproj1 = create(:research_project, published: true)
-        rproj2 = create(:research_project, published: true)
+        create(:asv, sample: s1, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj)
+        create(:asv, sample: s1, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj)
 
         create(:asv, sample: s1, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
         create(:asv, sample: s1, primer: p1, research_project: rproj2)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
 
-        create(:asv, sample: s2, primer: p2, research_project: rproj1)
-        create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
+        create(:asv, sample: s2, primer: p2, research_project: rproj)
+        create(:sample_primer, sample: s2, primer: p2, research_project: rproj)
         refresh_samples_map
       end
 
@@ -249,28 +260,34 @@ describe 'Samples' do
       let(:primer2_id) { 20 }
 
       before(:each) do
-        s1 = create(:sample, :results_completed, id: 1, substrate_cd: :soil)
-        s2 = create(:sample, :results_completed, id: 2, substrate_cd: :soil)
-        s3 = create(:sample, :results_completed, id: 3, substrate_cd: :foo)
-        create(:sample, :geo, id: 4, substrate_cd: :soil, status_cd: :rejected)
-        s5 = create(:sample, :results_completed, id: 5, substrate_cd: :soil)
-        create(:sample, :approved, id: 6, substrate_cd: :soil)
-        create(:sample, :approved, id: 7)
+        s1 = create(:sample, :results_completed, id: 1, substrate_cd: :soil,
+                                                 field_project: field_river)
+        s2 = create(:sample, :results_completed, id: 2, substrate_cd: :soil,
+                                                 field_project: field_river)
+        s3 = create(:sample, :results_completed, id: 3, substrate_cd: :foo,
+                                                 field_project: field_river)
+        create(:sample, :geo, id: 4, substrate_cd: :soil, status_cd: :rejected,
+                              field_project: field_river)
+        s5 = create(:sample, :results_completed, id: 5, substrate_cd: :soil,
+                                                 field_project: field_river)
+        create(:sample, :approved, id: 6, substrate_cd: :soil,
+                                   field_project: field_river)
+        create(:sample, :approved, id: 7, field_project: field_river)
         p1 = create(:primer, name: '12S', id: primer1_id)
         p2 = create(:primer, name: '18S', id: primer2_id)
+        rproj = research_river
+        rproj.update(published: true)
 
-        proj1 = create(:research_project, published: true)
-        proj2 = create(:research_project, published: true)
-        create(:asv, sample: s1, primer: p1, research_project: proj1)
-        create(:sample_primer, sample: s1, primer: p1, research_project: proj1)
-        create(:asv, sample: s1, primer: p1, research_project: proj2)
-        create(:sample_primer, sample: s1, primer: p1, research_project: proj2)
-        create(:asv, sample: s2, primer: p1, research_project: proj2)
-        create(:sample_primer, sample: s2, primer: p1, research_project: proj2)
-        create(:asv, sample: s3, primer: p1, research_project: proj1)
-        create(:sample_primer, sample: s3, primer: p2, research_project: proj1)
-        create(:asv, sample: s5, primer: p1, research_project: proj1)
-        create(:sample_primer, sample: s5, primer: p2, research_project: proj1)
+        create(:asv, sample: s1, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj)
+        create(:asv, sample: s1, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj)
+        create(:asv, sample: s2, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s2, primer: p1, research_project: rproj)
+        create(:asv, sample: s3, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s3, primer: p2, research_project: rproj)
+        create(:asv, sample: s5, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s5, primer: p2, research_project: rproj)
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
@@ -341,7 +358,7 @@ describe 'Samples' do
 
   describe 'show' do
     it 'returns OK when sample is approved' do
-      sample = create(:sample, :approved)
+      sample = create(:sample, :approved, field_project: field_river)
       refresh_samples_map
 
       get api_v1_sample_path(id: sample.id)
@@ -351,7 +368,7 @@ describe 'Samples' do
 
     context 'when sample is approved' do
       it 'returns the sample data for the given sample' do
-        sample = create(:sample, :approved)
+        sample = create(:sample, :approved, field_project: field_river)
         refresh_samples_map
 
         get api_v1_sample_path(id: sample.id)
@@ -364,8 +381,10 @@ describe 'Samples' do
     context 'when sample has results' do
       context 'and research project is published' do
         it 'returns the sample data for the given sample' do
-          sample = create(:sample, :results_completed)
-          rproj = create(:research_project, published: true)
+          sample = create(:sample, :results_completed,
+                          field_project: field_river)
+          rproj = research_river
+          rproj.update(published: true)
           primer = create(:primer)
           create(:sample_primer, sample: sample, primer: primer,
                                  research_project: rproj)
@@ -382,8 +401,10 @@ describe 'Samples' do
 
       context 'and research project is not published' do
         it 'returns nil' do
-          sample = create(:sample, :results_completed)
-          rproj = create(:research_project, published: false)
+          sample = create(:sample, :results_completed,
+                          field_project: field_river)
+          rproj = research_river
+          rproj.update(published: false)
           primer = create(:primer)
           create(:sample_primer, sample: sample, primer: primer,
                                  research_project: rproj)
@@ -400,7 +421,8 @@ describe 'Samples' do
     end
 
     it 'returns nil if sample is not approved' do
-      sample = create(:sample, status_cd: :submitted, latitude: 1, longitude: 1)
+      sample = create(:sample, status_cd: :submitted, latitude: 1, longitude: 1,
+                               field_project: field_river)
       refresh_samples_map
 
       get api_v1_sample_path(id: sample.id)
@@ -411,7 +433,7 @@ describe 'Samples' do
 
     it 'returns a sample if sample does not have coordinates' do
       sample = create(:sample, status_cd: :approved, latitude: nil,
-                               longitude: nil)
+                               longitude: nil, field_project: field_river)
       refresh_samples_map
 
       get api_v1_sample_path(id: sample.id)
