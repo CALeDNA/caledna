@@ -21,15 +21,32 @@ namespace :mass_delete do
     end
   end
 
-  # https://rubyinrails.com/2019/07/12/postgres-reset-sequence-to-max-id-in-rails/
-  task reset_sequence: :environment do
-    conn.tables.each do |table|
-      puts table
-      conn.reset_pk_sequence!(table)
+  task truncate_samples_tables: :environment do
+    return unless Rails.env.development?
+
+    sqls = [
+      'TRUNCATE asvs restart identity;',
+      'TRUNCATE pages restart identity;',
+      'TRUNCATE sample_primers restart identity;',
+      'TRUNCATE result_taxa restart identity;',
+      'TRUNCATE research_project_authors restart identity;',
+      'TRUNCATE research_project_sources restart identity;',
+      'TRUNCATE kobo_photos restart identity;',
+      'TRUNCATE event_registrations restart identity;',
+      'TRUNCATE events restart identity CASCADE;',
+      'TRUNCATE research_projects restart identity CASCADE;',
+      'TRUNCATE samples restart identity CASCADE;',
+      'TRUNCATE field_projects restart identity CASCADE;'
+    ]
+
+    sqls.each do |sql|
+      ActiveRecord::Base.connection.exec_query(sql)
     end
   end
 
   def truncate(table)
+    return unless Rails.env.development?
+
     sql = "TRUNCATE TABLE #{table} RESTART IDENTITY CASCADE;"
 
     conn.exec_query(sql)
