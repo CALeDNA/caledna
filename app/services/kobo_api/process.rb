@@ -248,7 +248,9 @@ module KoboApi
       end
 
       if non_kobo_barcodes.include?(data.barcode)
-        ::Sample.update(sample_data).where(barcode: data.barcode)
+        sample = ::Sample.find_by(barcode: data.barcode)
+        sample.update(sample_data)
+        sample
       else
         sample_data[:status] = :submitted
         sample_data[:barcode] = data.barcode
