@@ -5,13 +5,18 @@ TRUNCATE result_taxa restart identity;
 TRUNCATE research_project_authors restart identity;
 TRUNCATE research_project_sources restart identity;
 TRUNCATE kobo_photos restart identity;
-TRUNCATE event_registrations, events restart identity;
-delete from research_projects;
-ALTER SEQUENCE research_projects_id_seq RESTART WITH 1;
-delete from samples;
-ALTER SEQUENCE samples_id_seq RESTART WITH 1;
-delete from field_projects;
-ALTER SEQUENCE field_projects_id_seq RESTART WITH 1;
+TRUNCATE event_registrations restart identity;
+TRUNCATE events restart identity CASCADE;TRUNCATE research_projects restart identity CASCADE;
+TRUNCATE samples restart identity CASCADE;
+TRUNCATE field_projects restart identity CASCADE;
+
+
+pg_restore  --verbose --no-acl --no-owner -n public -t field_projects -t samples -t research_projects   -d caledna_development  rollback.dmp
+
+pg_restore  --verbose --no-acl --no-owner -n public  -t events  -t kobo_photos -t research_project_sources -t research_project_authors -t result_taxa -t sample_primers -t  pages -t asvs -d caledna_development  rollback.dmp
+
+pg_restore  --verbose --no-acl --no-owner -n public  -t event_registrations -d caledna_development  rollback.dmp
+
 
 
 - note can't copy samples because of json error. Use postico manual field projects,
