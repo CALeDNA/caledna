@@ -23,4 +23,18 @@ namespace :fix_records do
       sample.update(attributes)
     end
   end
+
+  task fix_malformed_csv_data: :environment do
+    samples = Sample.where("csv_data != '{}'")
+    samples.each do |sample|
+      puts sample.id
+      if sample.csv_data == '{}'
+        sample.csv_data = {}
+        sample.save
+      elsif sample.csv_data.is_a? String
+        sample.csv_data = JSON.parse(sample.csv_data)
+        sample.save
+      end
+    end
+  end
 end

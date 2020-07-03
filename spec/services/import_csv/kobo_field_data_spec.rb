@@ -77,74 +77,71 @@ describe ImportCsv::KoboFieldData do
   end
 
   describe '#process_sample' do
-    def subject(hash, field_project_id)
-      dummy_class.process_sample(hash, field_project_id)
+    def subject(row, field_project_id)
+      dummy_class.process_sample(row, field_project_id)
     end
 
-    let(:hash) do
-      {
-        'collection_date' => '2020-01-09',
-        'collection_time' => '12:00',
-        'environmental_features' => 'a, b, c',
-        'environmental_settings' => 'd, e, f',
-        'barcode' => 'K1234B1',
-        'substrate' => 'Water',
-        nil => nil
-      }
+    let(:row) do
+      data = CSV.parse(<<~ROWS, headers: true)
+        collection_date,collection_time,environmental_features,environmental_settings,barcode,substrate,
+        2020-01-09,12:00,"a, b, c","d, e, f",K1234B1,Water,
+      ROWS
+
+      data.entries.first
     end
     let(:field_project_id) { 10 }
 
     it 'converts sample names' do
       expected = 'K1234-LB-S1'
 
-      expect(subject(hash, field_project_id)[:barcode]).to eq(expected)
+      expect(subject(row, field_project_id)[:barcode]).to eq(expected)
     end
 
     it 'accepts dates in YYYY-MM-DD HH:MM format' do
       expected = '2020-01-09 12:00'
 
-      expect(subject(hash, field_project_id)[:collection_date]).to eq(expected)
+      expect(subject(row, field_project_id)[:collection_date]).to eq(expected)
     end
 
     it 'accepts dates in YYYY/MM/DD HH:MM format' do
-      hash['collection_date'] = '2020/01/09 12:00'
+      row['collection_date'] = '2020/01/09 12:00'
       expected = '2020-01-09 12:00'
 
-      expect(subject(hash, field_project_id)[:collection_date]).to eq(expected)
+      expect(subject(row, field_project_id)[:collection_date]).to eq(expected)
     end
 
     it 'accepts dates in MM/DD/YYYY HH:MM format' do
-      hash['collection_date'] = '01/09/2020 12:00'
+      row['collection_date'] = '01/09/2020 12:00'
       expected = '2020-01-09 12:00'
 
-      expect(subject(hash, field_project_id)[:collection_date]).to eq(expected)
+      expect(subject(row, field_project_id)[:collection_date]).to eq(expected)
     end
 
     it 'accepts dates in MM-DD-YYYY HH:MM format' do
-      hash['collection_date'] = '01-09-2020 12:00'
+      row['collection_date'] = '01-09-2020 12:00'
       expected = '2020-01-09 12:00'
 
-      expect(subject(hash, field_project_id)[:collection_date]).to eq(expected)
+      expect(subject(row, field_project_id)[:collection_date]).to eq(expected)
     end
 
     it 'converts comma separated environmental_features into an array' do
       expected = %w[a b c]
 
-      expect(subject(hash, field_project_id)[:environmental_features])
+      expect(subject(row, field_project_id)[:environmental_features])
         .to eq(expected)
     end
 
     it 'converts comma separated environmental_settings into an array' do
       expected = %w[d e f]
 
-      expect(subject(hash, field_project_id)[:environmental_settings])
+      expect(subject(row, field_project_id)[:environmental_settings])
         .to eq(expected)
     end
 
     it 'converts substrate to lowercase' do
       expected = 'water'
 
-      expect(subject(hash, field_project_id)[:substrate_cd]).to eq(expected)
+      expect(subject(row, field_project_id)[:substrate_cd]).to eq(expected)
     end
 
     it 'store original hash except nil key value pairs in csv_data' do
@@ -157,7 +154,7 @@ describe ImportCsv::KoboFieldData do
         'substrate' => 'Water'
       }
 
-      expect(subject(hash, field_project_id)[:csv_data]).to eq(expected)
+      expect(subject(row, field_project_id)[:csv_data]).to eq(expected)
     end
   end
 end
