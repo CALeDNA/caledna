@@ -20,6 +20,8 @@ namespace :fix_records do
       puts id
       attributes = row.to_h.except('id')
       attributes['kobo_data'] = JSON.parse(attributes['kobo_data'])
+      attributes['csv_data'] = JSON.parse(attributes['csv_data'])
+      attributes['metadata'] = JSON.parse(attributes['metadata'])
       sample.update(attributes)
     end
   end
@@ -35,6 +37,29 @@ namespace :fix_records do
         sample.csv_data = JSON.parse(sample.csv_data)
         sample.save
       end
+    end
+  end
+
+  task fix_malformed_metadata: :environment do
+    samples = Sample.where("metadata != '{}'")
+    samples.each do |sample|
+      puts sample.id
+      if sample.metadata == '{}'
+        sample.metadata = {}
+        sample.save
+      elsif sample.metadata.is_a? String
+        sample.metadata = JSON.parse(sample.metadata)
+        sample.save
+      end
+    end
+  end
+
+  task fix_malformed_kobo_data: :environment do
+    samples = Sample.where("kobo_data = '\"{}\"'")
+    samples.each do |sample|
+      puts sample.id
+      sample.kobo_data = {}
+      sample.save
     end
   end
 end
