@@ -151,7 +151,9 @@ class Sample < ApplicationRecord
   # rubocop:disable Metrics/MethodLength
   def csv_data_display
     return {} if csv_data == '{}'
+    return {} if csv_data.blank?
 
+    csv_data = JSON.parse(csv_data) if csv_data.is_a? String
     csv_data.except(
       'sample_id',
       'sampling_date',
