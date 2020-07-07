@@ -1,5 +1,11 @@
-<h1><%= @event.name %></h1>
-
+<h1><%= @event.name %>
+<% if @event.show_edit_link?(current_researcher) %>
+  <%= link_to 'Edit',
+    edit_admin_event_path(@event) ,
+    class: "btn btn-primary"
+  %>
+<% end %>
+</h1>
 <% if @event.upcoming_event? %>
   <% if current_user %>
     <% if @event.registration_canceled?(current_user) %>

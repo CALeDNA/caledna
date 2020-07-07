@@ -30,4 +30,11 @@ class Event < ApplicationRecord
   def upcoming_event?
     end_date > Time.zone.now
   end
+
+  def show_edit_link?(current_researcher)
+    return false if current_researcher.blank?
+    return true if current_researcher.director?
+    return true if current_researcher.superadmin?
+    false
+  end
 end
