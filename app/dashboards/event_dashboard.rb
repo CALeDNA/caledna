@@ -14,6 +14,7 @@ class EventDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     event_registrations: Field::HasMany,
+    registration_required: Field::Boolean,
   }.freeze
 
   COLLECTION_ATTRIBUTES = [
@@ -26,6 +27,7 @@ class EventDashboard < Administrate::BaseDashboard
    SHOW_PAGE_ATTRIBUTES = [
     :id,
     :name,
+    :registration_required,
     :start_date,
     :end_date,
     :description,
@@ -41,6 +43,7 @@ class EventDashboard < Administrate::BaseDashboard
 
   FORM_ATTRIBUTES = [
     :name,
+    :registration_required,
     :start_date,
     :end_date,
     :description,

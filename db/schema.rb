@@ -10,10 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_231051) do
+ActiveRecord::Schema.define(version: 2020_07_07_135732) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
+  enable_extension "tablefunc"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -71,6 +73,7 @@ ActiveRecord::Schema.define(version: 2020_05_11_231051) do
     t.bigint "field_project_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "registration_required", default: true
     t.index ["field_project_id"], name: "index_events_on_field_project_id"
   end
 
@@ -89,7 +92,6 @@ ActiveRecord::Schema.define(version: 2020_05_11_231051) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "source"

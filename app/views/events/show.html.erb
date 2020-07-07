@@ -16,10 +16,12 @@
       <% end %>
     <% end %>
   <% else %>
-    <p>
-      <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
-      You must sign in to register for the event.
-    </p>
+    <% if @event.registration_required? %>
+      <p>
+        <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
+        You must sign in to register for the event.
+      </p>
+    <% end %>
   <% end %>
 <% else %>
   <p>This event has ended.</p>
