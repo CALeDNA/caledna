@@ -30,17 +30,13 @@ class ResearchProjectsController < ApplicationController
     sql = <<-SQL
     SELECT research_projects.id, research_projects.name,
     research_projects.slug,
-    COUNT(DISTINCT(samples.id))
+    COUNT(*)
     FROM research_projects
-    LEFT JOIN research_project_sources
+    JOIN research_project_sources
       ON research_projects.id = research_project_sources.research_project_id
       AND sourceable_type = 'Sample'
-    LEFT JOIN samples
-      ON research_project_sources.sourceable_id = samples.id
-      AND samples.status_cd = 'results_completed'
-      AND latitude IS NOT NULL
-      AND longitude IS NOT NULL
-    WHERE published = TRUE
+    WHERE research_projects.published = TRUE
+    AND sourceable_id IN (SELECT DISTINCT sample_id FROM sample_primers)
     SQL
 
     if CheckWebsite.pour_site?
