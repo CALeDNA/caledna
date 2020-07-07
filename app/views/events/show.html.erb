@@ -7,29 +7,29 @@
 <% end %>
 </h1>
 <% if @event.upcoming_event? %>
-  <% if current_user %>
-    <% if @event.registration_canceled?(current_user) %>
-      <%= simple_form_for :event_registration, url: event_event_registrations_update_status_path(@event, { status: :registered }), method: :put do |f| %>
-        <%= f.submit 'Register', class: 'btn btn-primary' %>
+  <% if @event.registration_required? %>
+    <% if current_user %>
+      <% if @event.registration_canceled?(current_user) %>
+        <%= simple_form_for :event_registration, url: event_event_registrations_update_status_path(@event, { status: :registered }), method: :put do |f| %>
+          <%= f.submit 'Register', class: 'btn btn-primary' %>
+        <% end %>
+      <% elsif @event.registered?(current_user) %>
+        <%= simple_form_for :event_registration, url: event_event_registrations_update_status_path(@event, { status: :canceled }), method: :put do |f| %>
+          <%= f.submit 'Cancel Registration', class: 'btn btn-primary' %>
+        <% end %>
+      <% else %>
+        <%= simple_form_for :event_registration, url: event_event_registrations_path(@event), method: :post do |f| %>
+          <%= f.submit 'Register', class: 'btn btn-primary' %>
+        <% end %>
       <% end %>
-    <% elsif @event.registered?(current_user) %>
-      <%= simple_form_for :event_registration, url: event_event_registrations_update_status_path(@event, { status: :canceled }), method: :put do |f| %>
-        <%= f.submit 'Cancel Registration', class: 'btn btn-primary' %>
-      <% end %>
-    <% else %>
-      <%= simple_form_for :event_registration, url: event_event_registrations_path(@event), method: :post do |f| %>
-        <%= f.submit 'Register', class: 'btn btn-primary' %>
-      <% end %>
-    <% end %>
-  <% else %>
-    <% if @event.registration_required? %>
+    <% else # current_user %>
       <p>
         <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
         You must sign in to register for the event.
       </p>
-    <% end %>
-  <% end %>
-<% else %>
+    <% end # no current_user %>
+  <% end # registration_required? %>
+<% else # upcoming_event? %>
   <p>This event has ended.</p>
 <% end %>
 
