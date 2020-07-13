@@ -183,16 +183,24 @@ describe ImportCsv::SamplesResearchMetadata do
       let(:latitude) { '0.000001' }
       let(:longitude) { '0.000005' }
 
+      def point_factory(lon, lat)
+        RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)
+      end
+
       context 'and row coordinates do not match sample coordinate' do
         it 'updates the sample coordinates' do
           row1 = { 'sum.taxonomy' => barcode1, 'latitude' => latitude,
                    'longitude' => longitude }
+
+          old_lat = latitude.to_f + 0.5
+          old_lon = longitude.to_f - 0.5
           sample = create(
             :sample,
             :approved,
             barcode: barcode1,
-            latitude: latitude.to_f + 0.0000001,
-            longitude: longitude.to_f - 0.000001
+            latitude: old_lat,
+            longitude: old_lon,
+            geom: "POINT(#{old_lon} #{old_lat})"
           )
 
           expect { subject(row1, barcode1, research_project_id) }
@@ -200,6 +208,8 @@ describe ImportCsv::SamplesResearchMetadata do
             .to(latitude.to_f)
             .and change { sample.reload.longitude }
             .to(longitude.to_f)
+            .and change { sample.reload.geom }
+            .to(point_factory(longitude.to_f, latitude.to_f))
         end
 
         it 'updates nil coordinates' do

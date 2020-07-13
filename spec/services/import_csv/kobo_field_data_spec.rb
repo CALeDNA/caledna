@@ -33,6 +33,10 @@ describe ImportCsv::KoboFieldData do
     end
 
     context 'when samples in the CSV are not in the database' do
+      def point_factory(lon, lat)
+        RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)
+      end
+
       it 'returns valid' do
         result = subject(file, field_project_id)
 
@@ -71,6 +75,8 @@ describe ImportCsv::KoboFieldData do
         expect(sample.has_permit.to_s).to eq(row['has_permit'])
         expect(sample.field_project_id).to eq(field_project_id)
         expect(sample.status_cd).to eq('approved')
+        expect(sample.geom)
+          .to eq(point_factory(row['longitude'].to_f, row['latitude'].to_f))
         expect(sample.csv_data).to eq(row.to_h.reject { |k, _v| k.blank? })
       end
     end
