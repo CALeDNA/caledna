@@ -124,4 +124,38 @@ describe 'Samples' do
     include_examples 'allows edit access'
     include_examples 'denies delete access'
   end
+
+  describe '#UPDATE' do
+    before { login_researcher }
+
+    def point_factory(lon, lat)
+      RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)
+    end
+
+    let(:lat) { 1 }
+    let(:lon) { 2 }
+    let(:new_value) { 100 }
+
+    it 'updates geom if longitude changes' do
+      sample = create(:sample, latitude: lat, longitude: lon)
+      params = { id: sample.id,
+                 sample: { latitude: lat, longitude: new_value } }
+
+      put admin_sample_path(id: sample.id), params: params
+      sample.reload
+
+      expect(sample.geom).to eq(point_factory(new_value, lat))
+    end
+
+    it 'updates geom if latitude changes' do
+      sample = create(:sample, latitude: lat, longitude: lon)
+      params = { id: sample.id,
+                 sample: { latitude: new_value, longitude: lon } }
+
+      put admin_sample_path(id: sample.id), params: params
+      sample.reload
+
+      expect(sample.geom).to eq(point_factory(lon, new_value))
+    end
+  end
 end
