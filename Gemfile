@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 ruby '2.4.0'
 gem 'rails', '~> 5.2'
 
+gem 'activerecord-postgis-adapter', '~> 5.2.2'
 # use my fork to fix using left join intead of join on search
 gem 'administrate', '~>0.13.0', git: 'https://github.com/wykhuh/administrate.git'
 gem 'administrate-field-image'
