@@ -4,6 +4,8 @@ class Sample < ApplicationRecord
   include PgSearch
   include InsidePolygon
 
+  before_save :update_geom
+
   REJECTED_STATUS = %i[rejected duplicate_barcode field_blanks].freeze
 
   multisearchable against: %i[
@@ -188,5 +190,11 @@ class Sample < ApplicationRecord
 
     errors.add(:unique_approved_barcodes,
                "barcode #{barcode} is already taken")
+  end
+
+  def update_geom
+    if latitude_changed? || longitude_changed?
+      self.geom = "POINT(#{longitude} #{latitude})"
+    end
   end
 end

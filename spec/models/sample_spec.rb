@@ -68,6 +68,43 @@ describe Sample do
     end
   end
 
+  describe 'before_save: update_geom' do
+    def point_factory(lon, lat)
+      RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)
+    end
+
+    let(:lat) { 1 }
+    let(:lon) { 2 }
+    let(:new_value) { 100 }
+
+    it 'sets geom when creating sample' do
+      sample = create(:sample, latitude: lat, longitude: lon)
+
+      expect(sample.geom).to eq(point_factory(lon, lat))
+    end
+
+    it 'updates geom if latitude changes' do
+      sample = create(:sample, latitude: lat, longitude: lon)
+
+      expect { sample.update(latitude: new_value) }
+        .to change { sample.geom }.to(point_factory(lon, new_value))
+    end
+
+    it 'updates geom if longitude changes' do
+      sample = create(:sample, latitude: lat, longitude: lon)
+
+      expect { sample.update(longitude: new_value) }
+        .to change { sample.geom }.to(point_factory(new_value, lat))
+    end
+
+    it 'does not update geom if longitude or latitude are not changed' do
+      sample = create(:sample, latitude: lat, longitude: lon)
+
+      expect { sample.update(id: 50) }
+        .to_not(change { sample.geom })
+    end
+  end
+
   describe '#valid_barcode?' do
     it 'returns true if barcode is Kxxxx-Lx-Sx format' do
       barcodes = %w[K0000-LA-S1 K9999-LB-S1 K1234-LC-S2]
