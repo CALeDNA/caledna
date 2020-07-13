@@ -77,11 +77,11 @@ describe KoboApi::Process do
     let(:data) do
       [
         {
-          'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
           '_id' => kobo_id
         },
         {
-          'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
           '_id' => 200
         }
       ]
@@ -115,10 +115,14 @@ describe KoboApi::Process do
     end
   end
 
-  describe '.save_sample_data' do
+  describe '.save_or_update_sample_data' do
     def subject(project_id, kobo_id, hash_payload)
       dummy_class.stub(:open_and_read).and_return(Tempfile.new('foo'))
-      dummy_class.save_sample_data(project_id, kobo_id, hash_payload)
+      dummy_class.save_or_update_sample_data(project_id, kobo_id, hash_payload)
+    end
+
+    def point_factory(lon, lat)
+      RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)
     end
 
     let(:field_project) { create(:field_project) }
@@ -131,7 +135,7 @@ describe KoboApi::Process do
           'What_is_your_kit_number_e_g_K0021' => 'K2',
           'Which_location_lette_codes_LA_LB_or_LC' => 'LB',
           'You_re_at_your_first_r_barcodes_S1_or_S2' => 'S2',
-          'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
           'What_type_of_substrate_did_you' => 'soil',
           'Notes_on_recent_mana_the_sample_location' => 'notes',
           '_Optional_Regarding_rns_to_share_with_us' => 'notes2',
@@ -163,6 +167,8 @@ describe KoboApi::Process do
         expect(sample.gps_precision).to eq(0)
         expect(sample.substrate).to eq(:soil)
         expect(sample.field_notes).to eq('notes notes2')
+        expect(sample.geom)
+          .to eq(point_factory(sample.longitude, sample.latitude))
         expect(sample.kobo_data).to eq(data)
       end
     end
@@ -191,7 +197,7 @@ describe KoboApi::Process do
           'What_is_your_kit_number_e_g_K0021' => 'K2',
           'Which_location_lette_codes_LA_LB_or_LC' => 'LB',
           'You_re_at_your_first_r_barcodes_S1_or_S2' => 'S2',
-          'Get_the_GPS_Location_e_this_more_accurate' => '90, 40, 10, 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
           'What_type_of_substrate_did_you' => 'soil',
           '_Optional_Regarding_rns_to_share_with_us' => 'notes',
           'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
@@ -209,96 +215,149 @@ describe KoboApi::Process do
         }
       end
 
-      it 'creates a sample with incoming data' do
-        expect { subject(project_id, kobo_id, data) }
-          .to change { Sample.count }.by(1)
+      context 'and incoming barcode is not in database' do
+        it 'creates a sample with incoming data' do
+          expect { subject(project_id, kobo_id, data) }
+            .to change { Sample.count }.by(1)
 
-        sample = Sample.first
-        expect(sample.field_project_id).to eq(project_id)
-        expect(sample.collection_date).to eq('2010-01-01')
-        expect(sample.submission_date).to eq('2010-01-02')
-        expect(sample.location)
-          .to eq("#{location}; #{ucnr}")
-        expect(sample.status_cd).to eq('submitted')
-        expect(sample.barcode).to eq('K2-LB-S2')
-        expect(sample.latitude).to eq(90)
-        expect(sample.longitude).to eq(40)
-        expect(sample.altitude).to eq(10)
-        expect(sample.gps_precision).to eq(0)
-        expect(sample.substrate).to eq(:soil)
-        expect(sample.field_notes).to eq('notes')
-        expect(sample.habitat_cd).to eq(habitat)
-        expect(sample.depth_cd).to eq(depth)
-        expect(sample.environmental_features).to eq([feature])
-        expect(sample.environmental_settings).to eq([settings])
-        expect(sample.kobo_data).to eq(data)
+          sample = Sample.first
+          expect(sample.field_project_id).to eq(project_id)
+          expect(sample.collection_date).to eq('2010-01-01')
+          expect(sample.submission_date).to eq('2010-01-02')
+          expect(sample.location)
+            .to eq("#{location}; #{ucnr}")
+          expect(sample.status_cd).to eq('submitted')
+          expect(sample.barcode).to eq('K2-LB-S2')
+          expect(sample.latitude).to eq(90)
+          expect(sample.longitude).to eq(40)
+          expect(sample.altitude).to eq(10)
+          expect(sample.gps_precision).to eq(0)
+          expect(sample.substrate).to eq(:soil)
+          expect(sample.field_notes).to eq('notes')
+          expect(sample.habitat_cd).to eq(habitat)
+          expect(sample.depth_cd).to eq(depth)
+          expect(sample.environmental_features).to eq([feature])
+          expect(sample.environmental_settings).to eq([settings])
+          expect(sample.kobo_data).to eq(data)
+          expect(sample.geom)
+            .to eq(point_factory(sample.longitude, sample.latitude))
+        end
+
+        it 'handles Coachella Valley locations' do
+          location_raw = KoboValues::LOCATION_HASH.keys.second
+          location = KoboValues::LOCATION.second
+          data = {
+            'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
+            'Location' => cvmshcp_raw
+          }
+
+          expect { subject(project_id, kobo_id, data) }
+            .to change { Sample.count }.by(1)
+          sample = Sample.first
+
+          expect(sample.location).to eq("#{location}; #{cvmshcp}")
+        end
+
+        it 'handles LA River locations' do
+          location_raw = KoboValues::LOCATION_HASH.keys.fourth
+          location = KoboValues::LOCATION.fourth
+          data = {
+            'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
+            'If_at_LA_River_water_which_body_of_water' => la_river_raw
+          }
+
+          expect { subject(project_id, kobo_id, data) }
+            .to change { Sample.count }.by(1)
+          sample = Sample.first
+
+          expect(sample.location).to eq("#{location}; #{la_river}")
+        end
+
+        it 'handles multiple environmental features' do
+          feature2_raw = KoboValues::ENVIRONMENTAL_FEATURES_HASH.keys.second
+          feature2 = KoboValues::ENVIRONMENTAL_FEATURES.second
+          feature3_raw = KoboValues::ENVIRONMENTAL_FEATURES_HASH.keys.third
+          feature3 = KoboValues::ENVIRONMENTAL_FEATURES.third
+
+          data = {
+            'Choose_from_common_environment' =>
+              "#{feature_raw} #{feature2_raw}",
+            'environment_feature' => feature3_raw,
+            'If_other_describe_t_nvironmental_feature' => 'custom feature'
+          }
+
+          expect { subject(project_id, kobo_id, data) }
+            .to change { Sample.count }.by(1)
+          sample = Sample.first
+
+          expect(sample.environmental_features)
+            .to eq([feature, feature2, feature3, 'custom feature'])
+        end
+
+        it 'handles multiple environmental settings' do
+          settings2_raw = KoboValues::ENVIRONMENTAL_SETTINGS_HASH.keys.second
+          settings2 = KoboValues::ENVIRONMENTAL_SETTINGS.second
+
+          data = {
+            'Describe_the_environ_tions_from_this_list' =>
+              "#{settings_raw} #{settings2_raw}"
+          }
+
+          expect { subject(project_id, kobo_id, data) }
+            .to change { Sample.count }.by(1)
+          sample = Sample.first
+
+          expect(sample.environmental_settings)
+            .to eq([settings, settings2])
+        end
       end
 
-      it 'handles Coachella Valley locations' do
-        location_raw = KoboValues::LOCATION_HASH.keys.second
-        location = KoboValues::LOCATION.second
-        data = {
-          'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
-          'Location' => cvmshcp_raw
-        }
+      context 'and incoming barcode is in the database w/o kobo_id' do
+        it 'does not create a new sample' do
+          create(:sample, status: :results_completed,
+                          barcode: 'K2-LB-S2', kobo_id: nil,
+                          field_project_id: project_id)
 
-        expect { subject(project_id, kobo_id, data) }
-          .to change { Sample.count }.by(1)
-        sample = Sample.first
+          expect { subject(project_id, kobo_id, data) }
+            .to change { Sample.count }.by(0)
+        end
 
-        expect(sample.location).to eq("#{location}; #{cvmshcp}")
-      end
+        it 'updates a sample with incoming data' do
+          sample = create(:sample, status: :results_completed,
+                                   barcode: 'K2-LB-S2', kobo_id: nil,
+                                   field_project_id: project_id)
 
-      it 'handles LA River locations' do
-        location_raw = KoboValues::LOCATION_HASH.keys.fourth
-        location = KoboValues::LOCATION.fourth
-        data = {
-          'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
-          'If_at_LA_River_water_which_body_of_water' => la_river_raw
-        }
+          expect { subject(project_id, kobo_id, data) }
+            .to change { sample.reload.location }
+            .to("#{location}; #{ucnr}")
+            .and change { sample.reload.latitude }
+            .to(90)
+            .and change { sample.reload.longitude }
+            .to(40)
+            .and change { sample.reload.altitude }
+            .to(10)
+            .and change { sample.reload.gps_precision }
+            .to(0)
+            .and change { sample.reload.substrate }
+            .to(:soil)
+            .and change { sample.reload.field_notes }
+            .to('notes')
+            .and change { sample.reload.habitat_cd }
+            .to(habitat)
+            .and change { sample.reload.depth_cd }
+            .to(depth)
+            .and change { sample.reload.environmental_features }
+            .to([feature])
+            .and change { sample.reload.environmental_settings }
+            .to([settings])
+            .and change { sample.reload.kobo_data }
+            .to(data)
+            .and change { sample.geom }
+            .to(point_factory(40, 90))
 
-        expect { subject(project_id, kobo_id, data) }
-          .to change { Sample.count }.by(1)
-        sample = Sample.first
-
-        expect(sample.location).to eq("#{location}; #{la_river}")
-      end
-
-      it 'handles multiple environmental features' do
-        feature2_raw = KoboValues::ENVIRONMENTAL_FEATURES_HASH.keys.second
-        feature2 = KoboValues::ENVIRONMENTAL_FEATURES.second
-        feature3_raw = KoboValues::ENVIRONMENTAL_FEATURES_HASH.keys.third
-        feature3 = KoboValues::ENVIRONMENTAL_FEATURES.third
-
-        data = {
-          'Choose_from_common_environment' => "#{feature_raw} #{feature2_raw}",
-          'environment_feature' => feature3_raw,
-          'If_other_describe_t_nvironmental_feature' => 'custom feature'
-        }
-
-        expect { subject(project_id, kobo_id, data) }
-          .to change { Sample.count }.by(1)
-        sample = Sample.first
-
-        expect(sample.environmental_features)
-          .to eq([feature, feature2, feature3, 'custom feature'])
-      end
-
-      it 'handles multiple environmental settings' do
-        settings2_raw = KoboValues::ENVIRONMENTAL_SETTINGS_HASH.keys.second
-        settings2 = KoboValues::ENVIRONMENTAL_SETTINGS.second
-
-        data = {
-          'Describe_the_environ_tions_from_this_list' =>
-            "#{settings_raw} #{settings2_raw}"
-        }
-
-        expect { subject(project_id, kobo_id, data) }
-          .to change { Sample.count }.by(1)
-        sample = Sample.first
-
-        expect(sample.environmental_settings)
-          .to eq([settings, settings2])
+          expect(sample.collection_date).to eq('2010-01-01')
+          expect(sample.submission_date).to eq('2010-01-02')
+        end
       end
     end
 

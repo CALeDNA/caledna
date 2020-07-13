@@ -35,7 +35,7 @@ module KoboApi
       project.save
     end
 
-    def save_sample_data(field_project_id, kobo_id, hash_payload)
+    def save_or_update_sample_data(field_project_id, kobo_id, hash_payload)
       case kobo_id
       when 95_481, 87_534, 95_664, 83_937
         process_multi_samples(field_project_id, hash_payload)
@@ -141,7 +141,7 @@ module KoboApi
       ].compact.join(' ')
       data.field_project_id = field_project_id
 
-      sample = save_sample(data, hash_payload)
+      sample = save_or_update_sample(data, hash_payload)
       save_photos(sample.id, hash_payload)
     end
 
@@ -187,7 +187,7 @@ module KoboApi
         clean_kobo_multi_field(data.Describe_the_environ_tions_from_this_list,
                                KoboValues::ENVIRONMENTAL_SETTINGS_HASH)
 
-      sample = save_sample(data, hash_payload)
+      sample = save_or_update_sample(data, hash_payload)
       save_photos(sample.id, hash_payload)
     end
 
@@ -204,7 +204,7 @@ module KoboApi
           [data.somewhere, data.where, data.reserves].compact.join('; ')
         data.field_project_id = field_project_id
 
-        sample = save_sample(data, hash_payload)
+        sample = save_or_update_sample(data, hash_payload)
         photo_payload = find_photos(prefix[:other], hash_payload)
         save_photos(sample.id, _attachments: photo_payload)
       end
@@ -222,7 +222,7 @@ module KoboApi
       end
     end
 
-    def save_sample(data, hash_payload)
+    def save_or_update_sample(data, hash_payload)
       sample_data = {
         field_project_id: data.field_project_id,
         kobo_id: data._id,
