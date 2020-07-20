@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_09_071249) do
+ActiveRecord::Schema.define(version: 2020_07_15_135246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -51,6 +51,20 @@ ActiveRecord::Schema.define(version: 2020_07_09_071249) do
     t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxon_id"], name: "index_asvs_on_taxon_id"
+  end
+
+  create_table "cal_taxa_old", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "sources", array: true
   end
 
   create_table "event_registrations", force: :cascade do |t|
@@ -269,6 +283,33 @@ ActiveRecord::Schema.define(version: 2020_07_09_071249) do
     t.index ["searchable_type", "searchable_id"], name: "index_pg_search_documents_on_searchable_type_and_searchable_id"
   end
 
+  create_table "place_sources", force: :cascade do |t|
+    t.string "name"
+    t.string "url"
+    t.string "file_name"
+    t.string "place_source_type_cd"
+  end
+
+  create_table "places", force: :cascade do |t|
+    t.string "name"
+    t.integer "state_fips"
+    t.integer "county_fips"
+    t.integer "place_fips"
+    t.integer "lsad"
+    t.string "place_type_cd"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_polygon"}
+    t.string "place_source_type_cd"
+    t.bigint "place_source_id"
+    t.string "huc8"
+    t.string "uc_campus"
+    t.string "gnis_id"
+    t.index "lower((name)::text) text_pattern_ops", name: "index_places_on_name"
+    t.index ["geom"], name: "index_places_on_geom", using: :gist
+    t.index ["place_source_id"], name: "index_places_on_place_source_id"
+  end
+
   create_table "primers", force: :cascade do |t|
     t.string "name", null: false
     t.text "forward_primer"
@@ -390,6 +431,25 @@ ActiveRecord::Schema.define(version: 2020_07_09_071249) do
     t.index ["taxon_id"], name: "index_result_taxa_on_taxon_id"
   end
 
+  create_table "result_taxa_with_pcr", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.text "original_taxonomy_string", array: true
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
+  end
+
   create_table "sample_primers", force: :cascade do |t|
     t.bigint "sample_id"
     t.bigint "primer_id"
@@ -436,6 +496,70 @@ ActiveRecord::Schema.define(version: 2020_07_09_071249) do
     t.index ["metadata"], name: "samples_metadata_idx", using: :gin
     t.index ["primers"], name: "index_samples_on_primer", using: :gin
     t.index ["status_cd"], name: "index_samples_on_status_cd"
+  end
+
+  create_table "samples_prod", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.integer "field_project_id"
+    t.integer "kobo_id"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.datetime "submission_date"
+    t.string "barcode"
+    t.jsonb "kobo_data"
+    t.text "field_notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "collection_date"
+    t.string "status_cd"
+    t.string "substrate_cd"
+    t.decimal "altitude"
+    t.integer "gps_precision"
+    t.string "location"
+    t.text "director_notes"
+    t.string "habitat_cd"
+    t.string "depth_cd"
+    t.boolean "missing_coordinates"
+    t.jsonb "metadata"
+    t.string "primers", array: true
+    t.jsonb "csv_data"
+    t.string "country"
+    t.string "country_code"
+    t.boolean "has_permit"
+    t.string "environmental_features", array: true
+    t.string "environmental_settings", array: true
+  end
+
+  create_table "samples_rollback", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.integer "field_project_id"
+    t.integer "kobo_id"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.datetime "submission_date"
+    t.string "barcode"
+    t.jsonb "kobo_data"
+    t.text "field_notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "collection_date"
+    t.string "status_cd"
+    t.string "substrate_cd"
+    t.decimal "altitude"
+    t.integer "gps_precision"
+    t.string "location"
+    t.text "director_notes"
+    t.string "habitat_cd"
+    t.string "depth_cd"
+    t.boolean "missing_coordinates"
+    t.jsonb "metadata"
+    t.string "primers", array: true
+    t.jsonb "csv_data"
+    t.string "country"
+    t.string "country_code"
+    t.boolean "has_permit"
+    t.string "environmental_features", array: true
+    t.string "environmental_settings", array: true
   end
 
   create_table "site_news", force: :cascade do |t|
