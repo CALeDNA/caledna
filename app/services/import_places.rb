@@ -22,6 +22,7 @@ module ImportPlaces
          .where('place_sources.file_name = ?', file_name)
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
   def build_new_place(shape, options)
     case options[:place_source_type]
     when 'census'
@@ -40,6 +41,7 @@ module ImportPlaces
       new_from_shape(shape, options)
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
 
   def find_place_source(file_name, options)
     PlaceSource.where(
@@ -48,6 +50,7 @@ module ImportPlaces
     ).first_or_create
   end
 
+  # rubocop:disable Metrics/MethodLength
   def new_place_from_census(shape, options)
     data = shape.respond_to?(:data) ? shape.data : shape.attributes
     options[:name] = if options[:place_type] == 'county'
@@ -62,6 +65,7 @@ module ImportPlaces
 
     new_from_shape(shape, options)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def new_place_from_zip_code(shape, options)
     data = shape.respond_to?(:data) ? shape.data : shape.attributes
@@ -97,6 +101,7 @@ module ImportPlaces
     new_from_shape(shape, options)
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def new_place_from_ecoregion(shape, options)
     data = shape.respond_to?(:data) ? shape.data : shape.attributes
     options[:name] = data['US_L4NAME'] || data['US_L3NAME']
@@ -113,7 +118,10 @@ module ImportPlaces
 
     new_from_shape(shape, options)
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
   def new_from_shape(shape, options = {})
     data = shape.respond_to?(:data) ? shape.data : shape.attributes
     name_column = options[:name_column] || 'name'
@@ -131,5 +139,6 @@ module ImportPlaces
     )
     Place.new(attributes)
   end
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
 end
-

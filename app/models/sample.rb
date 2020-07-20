@@ -193,8 +193,7 @@ class Sample < ApplicationRecord
   end
 
   def update_geom
-    if latitude_changed? || longitude_changed?
-      self.geom = "POINT(#{longitude} #{latitude})"
-    end
+    return if !latitude_changed? && !longitude_changed?
+    self.geom = "POINT(#{longitude} #{latitude})"
   end
 end

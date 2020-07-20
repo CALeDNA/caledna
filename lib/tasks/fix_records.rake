@@ -114,7 +114,8 @@ namespace :fix_records do
     CSV.foreach(full_path, headers: true, col_sep: ';') do |row|
       next if row[kit_column].blank?
 
-      kit = row[kit_column].upcase.strip.tr('O', '0').tr(' ', '').split('-').first
+      kit = row[kit_column].upcase.strip.tr('O', '0').tr(' ', '')
+                           .split('-').first
 
       if version == 1
         location = row[location_column]&.strip
