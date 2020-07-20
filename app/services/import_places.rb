@@ -28,6 +28,8 @@ module ImportPlaces
       new_place_from_census(shape, options)
     when 'LA_zip_code'
       new_place_from_zip_code(shape, options)
+    when 'USGS'
+      new_place_from_watershed(shape, options)
     else
       new_from_shape(shape, options)
     end
@@ -61,6 +63,15 @@ module ImportPlaces
 
     new_from_shape(shape, options)
   end
+
+  def new_place_from_watershed(shape, options)
+    data = shape.respond_to?(:data) ? shape.data : shape.attributes
+    options[:name] = data['Name']
+    options[:huc8] = data['HUC8']
+
+    new_from_shape(shape, options)
+  end
+
 
   def new_from_shape(shape, options = {})
     data = shape.respond_to?(:data) ? shape.data : shape.attributes

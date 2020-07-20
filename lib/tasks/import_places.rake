@@ -54,4 +54,14 @@ namespace :import_places do
                      state_fips: Geospatial::CA_FIPS,
                      county_fips: Geospatial::LA_COUNTY_FIPS)
   end
+
+  task import_watersheds: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/WBDHU8.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'USGS',
+                     place_type: 'watershed',
+                     state_fips: Geospatial::CA_FIPS)
+  end
 end
