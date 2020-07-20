@@ -32,6 +32,8 @@ module ImportPlaces
       new_place_from_watershed(shape, options)
     when 'LA_river'
       new_place_from_la_river(shape, options)
+    when 'UCNRS'
+      new_place_from_ucnrs(shape, options)
     else
       new_from_shape(shape, options)
     end
@@ -82,6 +84,16 @@ module ImportPlaces
     new_from_shape(shape, options)
   end
 
+  def new_place_from_ucnrs(shape, options)
+    data = shape.respond_to?(:data) ? shape.data : shape.attributes
+    options[:name] = data['Name']
+    options[:uc_campus] = data['Campus']
+    county = Place.where(name: data['County'])
+                  .where(place_type_cd: 'county').first
+    options[:county_fips] = county.county_fips if county.present?
+
+    new_from_shape(shape, options)
+  end
 
   def new_from_shape(shape, options = {})
     data = shape.respond_to?(:data) ? shape.data : shape.attributes

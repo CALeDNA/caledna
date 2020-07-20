@@ -74,4 +74,14 @@ namespace :import_places do
                      place_type: 'river',
                      state_fips: Geospatial::CA_FIPS)
   end
+
+  task import_ucnrs: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/nrs_boundaries_final_4326_fix.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'UCNRS',
+                     place_type: 'UCNRS',
+                     state_fips: Geospatial::CA_FIPS)
+  end
 end
