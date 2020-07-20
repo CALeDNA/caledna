@@ -34,6 +34,8 @@ module ImportPlaces
       new_place_from_la_river(shape, options)
     when 'UCNRS'
       new_place_from_ucnrs(shape, options)
+    when 'EPA'
+      new_place_from_ecoregion(shape, options)
     else
       new_from_shape(shape, options)
     end
@@ -91,6 +93,23 @@ module ImportPlaces
     county = Place.where(name: data['County'])
                   .where(place_type_cd: 'county').first
     options[:county_fips] = county.county_fips if county.present?
+
+    new_from_shape(shape, options)
+  end
+
+  def new_place_from_ecoregion(shape, options)
+    data = shape.respond_to?(:data) ? shape.data : shape.attributes
+    options[:name] = data['US_L4NAME'] || data['US_L3NAME']
+    options[:us_l4code] = data['US_L4CODE']
+    options[:us_l4name] = data['US_L4NAME']
+    options[:us_l3code] = data['US_L3CODE']
+    options[:us_l3name] = data['US_L3NAME']
+    options[:na_l3code] = data['NA_L3CODE']
+    options[:na_l3name] = data['NA_L3NAME']
+    options[:na_l2code] = data['NA_L2CODE']
+    options[:na_l2name] = data['NA_L2NAME']
+    options[:na_l1code] = data['NA_L1CODE']
+    options[:na_l1name] = data['NA_L1NAME']
 
     new_from_shape(shape, options)
   end

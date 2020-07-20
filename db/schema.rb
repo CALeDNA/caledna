@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_15_135246) do
+ActiveRecord::Schema.define(version: 2020_07_20_110732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -299,12 +299,22 @@ ActiveRecord::Schema.define(version: 2020_07_15_135246) do
     t.string "place_type_cd"
     t.decimal "latitude"
     t.decimal "longitude"
-    t.geometry "geom", limit: {:srid=>4326, :type=>"multi_polygon"}
+    t.geometry "geom", limit: {:srid=>4326, :type=>"geometry"}
     t.string "place_source_type_cd"
     t.bigint "place_source_id"
     t.string "huc8"
     t.string "uc_campus"
     t.string "gnis_id"
+    t.string "us_l4code"
+    t.string "us_l4name"
+    t.string "us_l3code"
+    t.string "us_l3name"
+    t.string "na_l3code"
+    t.string "na_l3name"
+    t.string "na_l2code"
+    t.string "na_l2name"
+    t.string "na_l1code"
+    t.string "na_l1name"
     t.index "lower((name)::text) text_pattern_ops", name: "index_places_on_name"
     t.index ["geom"], name: "index_places_on_geom", using: :gist
     t.index ["place_source_id"], name: "index_places_on_place_source_id"

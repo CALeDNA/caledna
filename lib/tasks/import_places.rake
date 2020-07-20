@@ -84,4 +84,24 @@ namespace :import_places do
                      place_type: 'UCNRS',
                      state_fips: Geospatial::CA_FIPS)
   end
+
+  task import_ecoregions_l3: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/ca_eco_l3.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'EPA',
+                     place_type: 'ecoregions_l3',
+                     state_fips: Geospatial::CA_FIPS)
+  end
+
+  task import_ecoregions_l4: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/ca_eco_l4.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'EPA',
+                     place_type: 'ecoregions_l4',
+                     state_fips: Geospatial::CA_FIPS)
+  end
 end
