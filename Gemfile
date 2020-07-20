@@ -35,6 +35,7 @@ gem 'puma', '~> 3.11'
 gem 'pundit', '~> 1.1.0'
 gem 'rack-canonical-host', '~> 0.2'
 gem 'recipient_interceptor', '~> 0.1'
+gem 'rgeo-shapefile', '~> 2.0.1'
 gem 'sass-rails', '~> 5.0' # required by bootstrap-sass
 gem 'sentry-raven', '~> 2.7.4'
 gem 'sidekiq', '~> 5.0'
