@@ -32,4 +32,26 @@ namespace :import_places do
                      place_source_type: 'census',
                      place_type: 'place')
   end
+
+  task import_la_neighborhoods: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/LA_Times_neighborhoods.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'LA_neighborhood',
+                     place_type: 'neighborhood',
+                     state_fips: Geospatial::CA_FIPS,
+                     county_fips: Geospatial::LA_COUNTY_FIPS)
+  end
+
+  task import_la_zip_codes: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/LA_County_zipcodes.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'LA_zip_code',
+                     place_type: 'zip_code',
+                     state_fips: Geospatial::CA_FIPS,
+                     county_fips: Geospatial::LA_COUNTY_FIPS)
+  end
 end

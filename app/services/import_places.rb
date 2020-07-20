@@ -26,6 +26,8 @@ module ImportPlaces
     case options[:place_source_type]
     when 'census'
       new_place_from_census(shape, options)
+    when 'LA_zip_code'
+      new_place_from_zip_code(shape, options)
     else
       new_from_shape(shape, options)
     end
@@ -53,6 +55,12 @@ module ImportPlaces
     new_from_shape(shape, options)
   end
 
+  def new_place_from_zip_code(shape, options)
+    data = shape.respond_to?(:data) ? shape.data : shape.attributes
+    options[:name] = data['zipcode']
+
+    new_from_shape(shape, options)
+  end
 
   def new_from_shape(shape, options = {})
     data = shape.respond_to?(:data) ? shape.data : shape.attributes
