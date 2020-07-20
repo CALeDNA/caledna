@@ -30,6 +30,8 @@ module ImportPlaces
       new_place_from_zip_code(shape, options)
     when 'USGS'
       new_place_from_watershed(shape, options)
+    when 'LA_river'
+      new_place_from_la_river(shape, options)
     else
       new_from_shape(shape, options)
     end
@@ -68,6 +70,14 @@ module ImportPlaces
     data = shape.respond_to?(:data) ? shape.data : shape.attributes
     options[:name] = data['Name']
     options[:huc8] = data['HUC8']
+
+    new_from_shape(shape, options)
+  end
+
+  def new_place_from_la_river(shape, options)
+    data = shape.respond_to?(:data) ? shape.data : shape.attributes
+    options[:name] = data['GNIS_NAME']
+    options[:gnis_id] = data['GNIS_ID']
 
     new_from_shape(shape, options)
   end

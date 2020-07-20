@@ -64,4 +64,14 @@ namespace :import_places do
                      place_type: 'watershed',
                      state_fips: Geospatial::CA_FIPS)
   end
+
+  task import_la_river: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/LA_River_no_mz.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'LA_river',
+                     place_type: 'river',
+                     state_fips: Geospatial::CA_FIPS)
+  end
 end
