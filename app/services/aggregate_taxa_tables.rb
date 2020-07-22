@@ -9,7 +9,7 @@ class AggregateTaxaTables
   end
 
   # rubocop:disable Metrics/AbcSize
-  def create_taxa_table_csv
+  def create_taxa_results_csv
     return if barcodes.blank?
 
     obj = s3_object(create_taxa_key)
@@ -24,6 +24,22 @@ class AggregateTaxaTables
     end
   end
   # rubocop:enable Metrics/AbcSize
+
+  def create_sample_metadata_csv
+    date = Time.zone.today.strftime('%Y-%m-%d')
+
+    CSV.open("CALeDNA_#{date}_samples.csv", 'wb') do |csv|
+      csv << %i[
+        barcode latitude longitude location gps_precision collection_date
+        submission_date field_notes substrate depth habitat
+        environmental_features
+      ]
+
+      execute(samples_sql).each do |record|
+        csv << record.values
+      end
+    end
+  end
 
   private
 
@@ -90,5 +106,16 @@ class AggregateTaxaTables
     barcodes.map do |barcode|
       "\"#{barcode}\" int"
     end.join(',')
+  end
+
+  def samples_sql
+    <<~SQL
+      SELECT barcode, latitude, longitude, location, gps_precision,
+      collection_date, submission_date, field_notes,
+      substrate_cd AS substrate, depth_cd AS depth, habitat_cd AS habitat,
+      array_to_string(environmental_features, '; ') AS  environmental_features
+      FROM samples
+      WHERE status_cd = 'results_completed'
+    SQL
   end
 end
