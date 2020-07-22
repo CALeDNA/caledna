@@ -104,4 +104,15 @@ namespace :import_places do
                      place_type: 'ecoregions_l4',
                      state_fips: Geospatial::CA_FIPS)
   end
+
+  task import_la_ecotopes: :environment do
+    file_path = "#{IMPORT_GIS_BASE}/2020_LASAN_Ecotopes.shp"
+    puts "import #{file_path}"
+
+    import_shapefile(file_path,
+                     place_source_type: 'LASAN',
+                     place_type: 'ecotopes',
+                     state_fips: Geospatial::CA_FIPS,
+                     county_fips: Geospatial::LA_COUNTY_FIPS)
+  end
 end

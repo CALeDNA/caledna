@@ -37,6 +37,8 @@ module ImportPlaces
       new_place_from_ucnrs(shape, options)
     when 'EPA'
       new_place_from_ecoregion(shape, options)
+    when 'LASAN'
+      new_place_from_la_ecotopes(shape, options)
     else
       new_from_shape(shape, options)
     end
@@ -119,6 +121,13 @@ module ImportPlaces
     new_from_shape(shape, options)
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+
+  def new_place_from_la_ecotopes(shape, options)
+    data = shape.respond_to?(:data) ? shape.data : shape.attributes
+    options[:name] = data['ET_LndsZon']
+
+    new_from_shape(shape, options)
+  end
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
