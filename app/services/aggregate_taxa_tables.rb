@@ -1,26 +1,36 @@
 # frozen_string_literal: true
 
 class AggregateTaxaTables
+  include ProcessFileUploads
   attr_reader :primer
 
   def initialize(primer)
     @primer = primer
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create_taxa_table_csv
     return if barcodes.blank?
 
-    date = Time.zone.today.strftime('%Y-%m-%d')
-    CSV.open("CALeDNA_#{date}_#{primer.name}.csv", 'wb') do |csv|
-      csv << ['sum.taxonomy'] + barcodes
+    obj = s3_object(create_taxa_key)
+    obj.upload_stream(acl: 'public-read') do |write_stream|
+      CSV(write_stream) do |csv|
+        csv << ['sum.taxonomy'] + barcodes
 
-      execute(taxa_table_sql).entries.each do |record|
-        csv << record.values
+        execute(taxa_table_sql).entries.each do |record|
+          csv << record.values
+        end
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   private
+
+  def create_taxa_key
+    date = Time.zone.today.strftime('%Y-%m-%d')
+    "aggregate_csvs/taxa_#{date}_#{primer.name}.csv"
+  end
 
   def execute(sql)
     ActiveRecord::Base.connection.exec_query(sql)
@@ -46,10 +56,7 @@ class AggregateTaxaTables
         WHERE primer_id = #{primer.id}
         ORDER BY 1,2',
 
-        'SELECT DISTINCT(samples.barcode)
-        FROM asvs
-        JOIN samples ON asvs.sample_id = samples.id
-        WHERE primer_id = #{primer.id}'
+        '#{barcodes_sql}'
       ) AS foo (
         "sum.taxonomy" text,
         #{columns_sql}
@@ -59,10 +66,18 @@ class AggregateTaxaTables
 
   def barcodes
     @barcodes ||= begin
-      Asv.joins(:sample).select('DISTINCT(barcode)')
-         .where(primer_id: primer.id)
-         .map(&:barcode)
+      results = ActiveRecord::Base.connection.exec_query(barcodes_sql)
+      results.map { |r| r['barcode'] }
     end
+  end
+
+  def barcodes_sql
+    <<~SQL
+      SELECT DISTINCT(samples.barcode)
+      FROM asvs
+      JOIN samples ON asvs.sample_id = samples.id
+      WHERE primer_id = #{primer.id}
+    SQL
   end
 
   def select_barcode_sql
