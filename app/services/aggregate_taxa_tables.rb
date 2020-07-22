@@ -17,7 +17,7 @@ class AggregateTaxaTables
       CSV(write_stream) do |csv|
         csv << ['sum.taxonomy'] + barcodes
 
-        execute(taxa_table_sql).entries.each do |record|
+        execute(taxa_table_sql).each do |record|
           csv << record.values
         end
       end
@@ -25,27 +25,37 @@ class AggregateTaxaTables
   end
   # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/MethodLength
   def create_sample_metadata_csv
-    date = Time.zone.today.strftime('%Y-%m-%d')
+    obj = s3_object(create_samples_key)
+    obj.upload_stream(acl: 'public-read') do |write_stream|
+      CSV(write_stream) do |csv|
+        csv << %i[
+          barcode latitude longitude location gps_precision collection_date
+          submission_date field_notes substrate depth habitat
+          environmental_features
+        ]
 
-    CSV.open("CALeDNA_#{date}_samples.csv", 'wb') do |csv|
-      csv << %i[
-        barcode latitude longitude location gps_precision collection_date
-        submission_date field_notes substrate depth habitat
-        environmental_features
-      ]
-
-      execute(samples_sql).each do |record|
-        csv << record.values
+        execute(samples_sql).each do |record|
+          csv << record.values
+        end
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
+  def today
+    Time.zone.today.strftime('%Y-%m-%d')
+  end
+
   def create_taxa_key
-    date = Time.zone.today.strftime('%Y-%m-%d')
-    "aggregate_csvs/taxa_#{date}_#{primer.name}.csv"
+    "aggregate_csvs/CALeDNA_#{today}_#{primer.name}.csv"
+  end
+
+  def create_samples_key
+    "aggregate_csvs/CALeDNA_#{today}_samples_metadata.csv"
   end
 
   def execute(sql)
