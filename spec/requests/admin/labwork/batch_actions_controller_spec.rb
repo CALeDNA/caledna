@@ -22,7 +22,7 @@ describe 'BatchActionController' do
         RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)
       end
 
-      it 'changes multiple sample longitude' do
+      xit 'changes multiple sample longitude' do
         sample1 = create(:sample, barcode: 'KOOO1', id: 1,
                                   longitude: 1, latitude: 2)
         sample2 = create(:sample, barcode: 'KOOO2', id: 2,
