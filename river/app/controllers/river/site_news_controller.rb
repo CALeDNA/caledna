@@ -5,7 +5,7 @@ module River
     layout 'river/application'
 
     def index
-      @news = SiteNews.current_site.published
+      @news = SiteNews.current_site.published.order('published_date DESC')
     end
 
     def show
