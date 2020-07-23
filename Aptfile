@@ -1,0 +1,4 @@
+# use heroku-buildpack-apt to install libgeos-dev and libproj-dev instead.
+# https://github.com/cyberdelia/heroku-geo-buildpack/issues/50
+libgeos-dev
+libproj-dev
