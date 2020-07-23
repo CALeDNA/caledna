@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module ImportPlaces
+  require 'rgeo'
+
   def import_shapefile(file_path, options = {})
     RGeo::Shapefile::Reader.open(file_path, srid: Geospatial::SRID) do |file|
       file_name = File.basename(file_path)
