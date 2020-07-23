@@ -1,8 +1,26 @@
 <footer>
   <div class="container">
-    <p>Protecting Our River</p>
-    <ul class="social-media">
-      <li>Contact: <span class="contact-email"></span></li>
-    <ul>
+    <div class="row">
+      <div class="col-sm-3">
+        <div id="social-media-links">
+          <a href="https://www.facebook.com/ucconservationgenomics/">
+            <%= fa_icon(:facebook, size: 'lg', type: :brand)%>
+          </a>
+          <a href="https://www.instagram.com/cal.e.dna/">
+            <%= fa_icon(:instagram, size: 'lg', type: :brand)%>
+          </a>
+          <a href="https://twitter.com/CALeDNA_biodiv">
+            <%= fa_icon(:twitter, size: 'lg', type: :brand)%>
+          </a>
+        </div>
+
+        <ul>
+        </ul>
+      </div>
+
+      <div class="col-sm-9">
+        <%= sanitize PageBlock.find_by(slug: 'pour-footer')&.content %>
+      </div>
+    </div>
   </div>
 </footer>
