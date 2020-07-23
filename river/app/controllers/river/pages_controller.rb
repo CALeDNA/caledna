@@ -52,6 +52,11 @@ module River
       render 'river/pages/show'
     end
 
+    def donate
+      @page = page
+      render 'river/pages/show'
+    end
+
     private
 
     def page

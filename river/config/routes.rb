@@ -22,6 +22,7 @@ Rails.application.routes.draw do
                                    defaults: { id: 'why-protect-biodiversity' }
   get '/get-involved', to: 'river/pages#get_involved',
                        defaults: { id: 'get-involved' }
+  get '/donate', to: 'river/pages#donate', defaults: { id: 'donate' }
 
   get '/contact-us', to: 'river/contacts#new'
   resources :contacts, only: [:create], controller: 'river/contacts'
