@@ -21,7 +21,9 @@
 
 <div class="taxa-image-gallery">
 <% @top_animal_taxa.each do |taxon| %>
-  <%= render partial: './shared/taxa_gallery_item', locals: { taxon: taxon } %>
+  <% cache taxon do %>
+    <%= render partial: './shared/taxa_gallery_item', locals: { taxon: taxon } %>
+  <% end %>
 <% end %>
 </div>
 
@@ -29,6 +31,8 @@
 
 <div class="taxa-image-gallery">
 <% @top_plant_taxa.each do |taxon| %>
-  <%= render partial: './shared/taxa_gallery_item', locals: { taxon: taxon } %>
+  <% cache taxon do %>
+    <%= render partial: './shared/taxa_gallery_item', locals: { taxon: taxon } %>
+  <% end %>
 <% end %>
 </div>
