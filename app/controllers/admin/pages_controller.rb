@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# NOTE: When page is created, a new route is also created.
-# use Rails.application.reload_routes! so that app knows about the new routes.
-
 module Admin
   class PagesController < Admin::ApplicationController
     layout :resolve_layout
@@ -47,22 +44,8 @@ module Admin
           page: Administrate::Page::Form.new(dashboard, resource)
         }
       end
-
-      Rails.application.reload_routes!
     end
     # rubocop:enable Metrics/MethodLength
-
-    def update
-      super
-      Rails.application.reload_routes!
-    end
-
-    def destroy
-      super
-      Rails.application.reload_routes!
-    end
-
-    layout :resolve_layout
 
     private
 
