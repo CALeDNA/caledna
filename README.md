@@ -44,8 +44,7 @@ $ ./bin/webpack-dev-server
 
 ## Data Sources
 
-We are using [Global Biodiversity Information Facility (GBIF)](http://gbif.org) as
-the basis for our taxonomy data.
+We are using NCBI as the basis for our taxonomy data.
 
 ## Misc
 
