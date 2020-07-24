@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 class AggregateTaxaTables
-  include ProcessFileUploads
+  include ConnectAws
   attr_reader :primer
 
-  def initialize(primer)
+  def initialize(primer = nil)
     @primer = primer
   end
 
-  # rubocop:disable Metrics/AbcSize
   def create_taxa_results_csv
     return if barcodes.blank?
 
@@ -23,7 +22,6 @@ class AggregateTaxaTables
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 
   # rubocop:disable Metrics/MethodLength
   def create_sample_metadata_csv
@@ -43,6 +41,14 @@ class AggregateTaxaTables
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  def fetch_file_list(prefix)
+    bucket = s3_resource.bucket(ENV.fetch('S3_BUCKET'))
+    bucket.objects(prefix: prefix).map do |item|
+      { name: item.key.split(prefix).second.tr('/', ''),
+        url: item.presigned_url(:get) }
+    end
+  end
 
   private
 

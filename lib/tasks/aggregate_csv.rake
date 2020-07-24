@@ -9,7 +9,13 @@ namespace :aggregate_csv do
   end
 
   task samples_table: :environment do
-    taxa_table = AggregateTaxaTables.new(nil)
+    taxa_table = AggregateTaxaTables.new
     taxa_table.create_sample_metadata_csv
+  end
+
+  task fetch_files: :environment do
+    taxa_table = AggregateTaxaTables.new
+    results = taxa_table.fetch_file_list('aggregate_csvs')
+    puts results
   end
 end
