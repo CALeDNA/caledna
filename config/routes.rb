@@ -72,7 +72,7 @@ Rails.application.routes.draw do
     end
     resources :researchers
     resources :samples
-    resources :site_news
+    # resources :site_news
     resources :surveys
     resources :survey_responses
     resources :users
