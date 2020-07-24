@@ -265,6 +265,10 @@ legend.border {
   padding: 10px 10px;
 }
 
+.navbar-default .navbar-nav > li > a {
+  color: lighten($main-text, 10%);
+}
+
 .dropdown-menu {
   .divider {
     background-color: #aaa;
