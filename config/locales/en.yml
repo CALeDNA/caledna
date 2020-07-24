@@ -22,8 +22,8 @@
 en:
   time:
     formats:
-      long: "%b %d, %Y"
-      short: "%b %d"
+      long: "%B %d, %Y"
+      short: "%B %d"
       long_datetime: "%a %b %d, %Y %l:%M %P"
       default: "%m/%d/%Y, %l:%M %P"
   activerecord:
