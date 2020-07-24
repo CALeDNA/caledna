@@ -13,7 +13,7 @@ class AggregateTaxaTables
     return if barcodes.blank?
 
     obj = s3_object(create_taxa_key)
-    obj.upload_stream(acl: 'public-read') do |write_stream|
+    obj.upload_stream do |write_stream|
       CSV(write_stream) do |csv|
         csv << ['sum.taxonomy'] + barcodes
 
@@ -28,7 +28,7 @@ class AggregateTaxaTables
   # rubocop:disable Metrics/MethodLength
   def create_sample_metadata_csv
     obj = s3_object(create_samples_key)
-    obj.upload_stream(acl: 'public-read') do |write_stream|
+    obj.upload_stream do |write_stream|
       CSV(write_stream) do |csv|
         csv << %i[
           barcode latitude longitude location gps_precision collection_date
