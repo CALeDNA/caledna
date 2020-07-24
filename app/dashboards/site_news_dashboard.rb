@@ -16,7 +16,6 @@ class SiteNewsDashboard < Administrate::BaseDashboard
 
   COLLECTION_ATTRIBUTES = [
     :title,
-    :website,
     :published_date
   ].freeze
 

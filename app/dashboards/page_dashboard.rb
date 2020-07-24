@@ -29,7 +29,6 @@ class PageDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :title,
     :research_project,
-    :website,
     :published,
     :updated_at,
   ].freeze

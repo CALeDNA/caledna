@@ -19,7 +19,6 @@ class PageBlockDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
   slug
   page
-  website
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
