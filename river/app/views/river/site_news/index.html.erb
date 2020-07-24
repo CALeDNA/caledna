@@ -1,8 +1,19 @@
 <h1>Site News</h1>
 
 <% @news.each do |news| %>
-  <h3><%= link_to news.title, site_news_path(news) %></h3>
-  <p class="news-meta">Posted on <%= long_date(news.published_date) %></p>
-  <div><%= truncate(news.body, length: 250, omission: "..." , escape: false) %></div>
-  <p><%= link_to "Read more.", site_news_path(news) %></p>
+  <div class="row p-t-sm p-b-sm">
+    <div class="col-md-4">
+      <% if news.image.attachment %>
+        <%= link_to(image_tag(news.image.variant(resize: "400x400"), class: "img-responsive"),
+          site_news_path(news))
+        %>
+      <% end %>
+    </div>
+    <div class="col-md-8">
+      <h3><%= link_to news.title, site_news_path(news) %></h3>
+      <p class="news-meta">Posted on <%= long_date(news.published_date) %></p>
+      <div><%= truncate(strip_tags(news.body), length: 250, omission: "..." , escape: false) %></div>
+      <p><%= link_to "Read more.", site_news_path(news) %></p>
+    </div>
+  </div>
 <% end %>

@@ -1,3 +1,6 @@
 <h1><%= @news.title %></h1>
-
+<p class="news-meta">Posted on <%= long_date(@news.published_date) %></p>
+<% if @news.image.attachment %>
+  <%= image_tag(@news.image.variant(resize: "800x800"), class: "img-responsive news-hero") %>
+<% end %>
 <%= sanitize @news.body %>
