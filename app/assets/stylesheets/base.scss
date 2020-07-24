@@ -81,6 +81,14 @@ h4 {
 // common
 // =============
 
+img.note-float-right {
+  margin: 10px 0 10px 10px;
+}
+
+img.note-float-left {
+  margin: 10px 10px 10px 0;
+}
+
 .my-btn-default {
   background-color: #f6f6f6;
   border-color: $grey-border;
