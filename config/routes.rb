@@ -83,6 +83,14 @@ Rails.application.routes.draw do
     get 'users_download_csv', to: 'users#download_csv',
                               as: 'users_download_csv'
 
+    namespace :tasks do
+      resources :research_project_results, only: %i[index]
+      delete 'research_project_results' =>
+             'research_project_results#bulk_delete',
+             as: 'bulk_delete_research_project_results'
+
+    end
+
     namespace :labwork do
       get '/' => 'home#index'
 
@@ -104,11 +112,6 @@ Rails.application.routes.draw do
       resources :import_edna_results_asvs, only: %i[index create]
       resources :import_edna_results_taxa, only: %i[index create]
       resources :import_kobo_field_data, only: %i[index create]
-      resources :research_project_results, only: %i[index]
-      delete 'research_project_results' =>
-             'research_project_results#bulk_delete',
-             as: 'bulk_delete_research_project_results'
-
       resources :normalize_ncbi_taxa, only: %i[index show] do
         put 'update_with_suggestion' =>
           'normalize_ncbi_taxa#update_with_suggestion'

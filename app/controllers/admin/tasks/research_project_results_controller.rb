@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Admin
-  module Labwork
+  module Tasks
     class ResearchProjectResultsController < Admin::ApplicationController
       # skip_before_action :verify_authenticity_token
 

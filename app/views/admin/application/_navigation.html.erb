@@ -17,6 +17,7 @@
       non_model_dashboards = ['user_author', 'researcher_author']
       next if non_model_dashboards.include?(resource.resource)
       next if resource.resource.starts_with?('labwork')
+      next if resource.resource.starts_with?('tasks')
 
       next unless policy(resource.name.to_s.singularize.to_sym).index?
     %>
