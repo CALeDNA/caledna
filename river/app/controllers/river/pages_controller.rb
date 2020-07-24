@@ -44,6 +44,7 @@ module River
 
     def home
       @stats = project_service.home_page_stats
+      @news = SiteNews.current_site.published.order('published_date DESC').limit(3)
       render layout: 'river/home'
     end
 

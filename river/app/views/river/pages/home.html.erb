@@ -1,95 +1,117 @@
 <% content_for :page_id do %>home<% end %>
-<div class="container">
-  <div class="col-md-8">
-    <h1>Protecting Our River</h1>
 
-    <p>
-    Protecting Our River is a community engagement project that mobilizes L.A.
-    residents from a variety of backgrounds to help monitor the biodiversity of
-    the L.A. River and its tributaries. We aim to increase community awareness
-    and participation in conservation of biodiversity by merging science, art,
-    and community involvement.
-    </p>
-  </div>
-
-  <div class="col-md-4">
-    <figure>
-      <%= image_tag 'river/blue_heron_plants.jpg', class: "img-responsive" %>
-      <figcaption><span class="meta">© NHMLA Community Science Program, some rights reserved (CC-BY-NC)</span></figcaption>
-    </figure>
-  </div>
-</div>
-
-<div class="our-work">
+<section>
   <div class="container">
-    <h2>Biodiversity Monitoring</h2>
-
     <div class="col-md-8">
-      <p>
-        We use a variety of methods to collect
-        biodiversity data including photographic
-        observations and environmental DNA (the DNA organisms shed into the
-        environment).
-      </p>
-      <p>
-        For our summer 2019 pilot program, we collected 52 sediment
-        and water samples from two locations along the river. For 2020-2021,
-        we will have three rounds of sampling from twelve locations.
-        UCLA researchers examined the environmental DNA (eDNA) in the samples
-        to identify the microbes, fungi, plants, and animals in the area.
-      </p>
+      <h1>Protecting Our River</h1>
+
+      <p>Protecting Our River is a community engagement project that mobilizes L.A. residents from a variety of backgrounds to help monitor the biodiversity of the L.A. River and its tributaries. We aim to increase community participation in conservation of biodiversity by merging science, art, and community involvement.</p>
+
+      <p>This project is a collaboration between UCLA, UC Santa Cruz, conservation groups, government agencies, local high schools, and the general public.</p>
     </div>
+
     <div class="col-md-4">
-      <ul>
+
+      <%= image_tag 'river/blue_heron_plants.jpg', class: "img-responsive" %>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="col-md-8">
+      <h2>Biodiversity Monitoring</h2>
+
+      <p>We collect biodiversity data using  environmental DNA (the DNA organisms shed into the environment) and photographic observations. UC
+      researchers analyze the eDNA in sediment and water samples to identify organisms from all seven kingdoms of life.</p>
+
+      <p>During the summer 2019, we collected 52 sediment and water samples from two locations along the river. In the next year we will add 360 samples from 12 locations!</p>
+
+      <h2>L.A. River Data Portal</h2>
+
+      <p>We provide free access to biological and environmental data about the L.A. River. The data is collected from various researchers, conservation groups, and government agencies.</p>
+
+    </div>
+
+    <div class="col-md-4">
+      <ul class="home-stats">
+        <h4>What we've sampled so far.</h4>
         <li><%= pluralize(@stats[:locations], 'L.A. river location') %></li>
         <li><%= pluralize(@stats[:sites], 'sampling site') %></li>
         <li><%= pluralize(@stats[:taxa], 'identified organism') %></li>
       </ul>
     </div>
   </div>
-</div>
+</section>
 
 
-<div class="container">
-  <div class="activities">
-    <div class="item">
-      <%= link_to our_mission_path do %>
-        <%= image_tag 'river/bird_circle.jpg' %>
-        <h3>Our Mission</h3>
-        <p>Learn more about this project's goals and roadmap.</p>
-      <% end %>
-    </div>
+<section>
+  <div class="container">
+    <div class="activities">
+      <div class="item">
+        <%= link_to our_mission_path do %>
+          <%= image_tag 'river/bird_circle.jpg' %>
+          <h3>Our Mission</h3>
+          <p>Learn more about this project's goals and roadmap.</p>
+        <% end %>
+      </div>
 
-    <div class="item">
-      <%= link_to research_project_path(id: 'los-angeles-river') do %>
-        <%= image_tag 'river/pilot_results.jpg' %>
-        <h3>Pilot Results</h3>
-        <p>Browse through the results from our summer 2019 pilot.</p>
-      <% end %>
-    </div>
+      <div class="item">
+        <%= link_to research_project_path(id: 'los-angeles-river') do %>
+          <%= image_tag 'river/pilot_results.jpg' %>
+          <h3>Pilot Results</h3>
+          <p>Browse through the results from our summer 2019 pilot.</p>
+        <% end %>
+      </div>
 
-    <div class="item">
-      <%= link_to samples_path do %>
-        <%= image_tag 'river/explore_data.jpg' %>
-        <h3>Explore our Data</h3>
-        <p>Explore biological and environmental data about the LA River.</p>
-      <% end %>
-    </div>
+      <div class="item">
+        <%= link_to samples_path do %>
+          <%= image_tag 'river/explore_data.jpg' %>
+          <h3>Explore our Data</h3>
+          <p>Explore biological and environmental data about the LA River.</p>
+        <% end %>
+      </div>
 
-    <div class="item">
-      <%= link_to get_involved_path do %>
-        <%= image_tag 'river/get_involved.jpg' %>
-        <h3>Getting Involved</h3>
-        <p>Discover the various ways to get involved in this project.</p>
-      <% end %>
-    </div>
+      <div class="item">
+        <%= link_to get_involved_path do %>
+          <%= image_tag 'river/get_involved.jpg' %>
+          <h3>Getting Involved</h3>
+          <p>Discover the various ways to get involved in this project.</p>
+        <% end %>
+      </div>
 
-    <div class="item">
-      <%= link_to site_news_index_path do %>
-        <%= image_tag 'river/news.png' %>
-        <h3>News</h3>
-        <p>Read the latest news about this project.</p>
-      <% end %>
+      <div class="item">
+        <%= link_to site_news_index_path do %>
+          <%= image_tag 'river/news.png' %>
+          <h3>News</h3>
+          <p>Read the latest news about this project.</p>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<section class="news">
+  <div class="container">
+    <h2 class="p-l-sm p-r-sm">Latest News</h2>
+    <% @news.each do |site_news| %>
+      <div class="col-md-4 col-sm-6">
+        <% if site_news.image.attachment %>
+          <%= link_to(image_tag(site_news.image.variant(resize: "400x400"), class: "img-responsive p-b-sm"),
+            site_news_path(site_news))
+          %>
+        <% end %>
+         <p><%= link_to site_news.title, site_news_path(site_news) %>
+         <br><%= long_date(site_news.published_date) %>
+         </p>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<section class="donate-block  text-center">
+  <div class="container">
+    <h2>Support Our Program</h2>
+     <a href="/donate" class="btn btn-lg btn-primary">Donate</a>
+  </div>
+</section>
