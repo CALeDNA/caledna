@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  devise_for :researchers, controllers: {
+    sessions: 'researchers/sessions',
+    invitations: 'researchers/invitations',
+    passwords: 'researchers/passwords',
+    unlocks: 'researchers/unlocks'
+  }
+
   resources :samples, only: %i[index show], controller: 'samples'
   resources :taxa, only: %i[index show create], controller: 'taxa'
   resource :taxa_search, only: %i[show]
@@ -28,4 +35,12 @@ Rails.application.routes.draw do
   resources :contacts, only: [:create], controller: 'river/contacts'
 
   root 'river/pages#home'
+
+  namespace :admin do
+    root to: 'pages#index'
+    resources :pages
+    resources :page_blocks
+    resources :site_news
+    resources :websites
+  end
 end

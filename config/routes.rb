@@ -4,12 +4,6 @@
 Rails.application.routes.draw do
   mount River::Engine, at: '/'
 
-  devise_for :researchers, controllers: {
-    sessions: 'researchers/sessions',
-    invitations: 'researchers/invitations',
-    passwords: 'researchers/passwords'
-  }
-
   # require 'sidekiq/web'
   # authenticate :researcher, ->(u) { u.view_sidekiq? } do
   #   mount Sidekiq::Web => '/sidekiq'

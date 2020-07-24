@@ -2,6 +2,8 @@
 
 module Researchers
   class InvitationsController < Devise::InvitationsController
+    layout 'river/application'
+
     # path after inviter submits invite form
     def after_invite_path_for(_, _)
       admin_researchers_path
