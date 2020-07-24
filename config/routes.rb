@@ -4,10 +4,6 @@
 Rails.application.routes.draw do
   mount River::Engine, at: '/'
 
-  devise_for :users, controllers: {
-    registrations: 'users/registrations',
-    sessions: 'users/sessions'
-  }
   devise_for :researchers, controllers: {
     sessions: 'researchers/sessions',
     invitations: 'researchers/invitations',
