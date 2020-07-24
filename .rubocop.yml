@@ -55,3 +55,6 @@ Style/ModuleFunction:
 
 Style/AsciiComments:
   Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false

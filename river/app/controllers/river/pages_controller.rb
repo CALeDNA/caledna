@@ -44,7 +44,11 @@ module River
 
     def home
       @stats = project_service.home_page_stats
-      @news = SiteNews.current_site.published.order('published_date DESC').limit(3)
+      @block_1 = home_blocks.find { |b| b.slug == 'pour-home-1' }
+      @block_2 = home_blocks.find { |b| b.slug == 'pour-home-2' }
+      @block_3 = home_blocks.find { |b| b.slug == 'pour-home-3' }
+      @block_donate = home_blocks.find { |b| b.slug == 'pour-home-donate' }
+      @news = home_news
       render layout: 'river/home'
     end
 
@@ -59,6 +63,15 @@ module River
     end
 
     private
+
+    def home_news
+      @home_news ||=
+        SiteNews.current_site.published.order('published_date DESC').limit(3)
+    end
+
+    def home_blocks
+      @home_blocks ||= Page.find_by(slug: 'pour-home-page').page_blocks
+    end
 
     def page
       @page ||= Page.current_site.published.find_by(slug: params[:id])
