@@ -27,26 +27,6 @@ module Admin
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-    # rubocop:disable Metrics/MethodLength
-    def create
-      create_params = resource_params.merge(website: Website::DEFAULT_SITE)
-
-      resource = resource_class.new(create_params)
-      authorize_resource(resource)
-
-      if resource.save
-        redirect_to(
-          [namespace, resource],
-          notice: translate_with_resource('create.success')
-        )
-      else
-        render :new, locals: {
-          page: Administrate::Page::Form.new(dashboard, resource)
-        }
-      end
-    end
-    # rubocop:enable Metrics/MethodLength
-
     private
 
     def apply_collection_includes(relation)
@@ -60,7 +40,7 @@ module Admin
       if current_researcher.superadmin?
         resource_class.default_scoped
       elsif current_researcher.director?
-        resource_class.default_scoped
+        resource_class.default_scoped.current_site
       elsif current_researcher.esie_postdoc?
         resource_class.default_scoped.current_site
                       .where('research_project_id is not null')
