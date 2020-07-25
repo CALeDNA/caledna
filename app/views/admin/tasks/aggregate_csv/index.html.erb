@@ -1,0 +1,25 @@
+
+<% content_for(:title) { 'List of aggregate CSVs' } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <p>There are <%= @count %> samples with results.</p>
+
+  <ol>
+    <% @files.each do |file| %>
+      <li><a href="<%= file[:url] %>"><%= file[:name] %></a></li>
+    <% end %>
+  </ol>
+
+  <% if policy('Tasks::AggregateCsv'.to_sym).create? %>
+    <br>
+    <%= form_tag admin_tasks_aggregate_csv_index_path do %>
+      <%= submit_tag "Create CSVs" %>
+    <% end %>
+  <%end %>
+</section>

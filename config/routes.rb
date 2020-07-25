@@ -84,6 +84,7 @@ Rails.application.routes.draw do
                               as: 'users_download_csv'
 
     namespace :tasks do
+      resources :aggregate_csv, only: %i[index create]
       resources :research_project_results, only: %i[index]
       delete 'research_project_results' =>
              'research_project_results#bulk_delete',

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AggregateTaxaTables
+class AggregateCsv
   include ConnectAws
   attr_reader :primer
 
@@ -50,6 +50,10 @@ class AggregateTaxaTables
     end
   end
 
+  def completed_samples_count
+    @completed_samples_count ||= Sample.results_completed.count
+  end
+
   private
 
   def today
@@ -57,11 +61,13 @@ class AggregateTaxaTables
   end
 
   def create_taxa_key
-    "aggregate_csvs/CALeDNA_#{today}_#{primer.name}.csv"
+    count = completed_samples_count
+    "aggregate_csvs/#{today}_#{count}_samples_#{primer.name}.csv"
   end
 
   def create_samples_key
-    "aggregate_csvs/CALeDNA_#{today}_samples_metadata.csv"
+    count = completed_samples_count
+    "aggregate_csvs/#{today}_#{count}_samples_metadata.csv"
   end
 
   def execute(sql)
