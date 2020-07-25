@@ -142,3 +142,70 @@ order by 1'
 "K0352-LC-S1" int,
 "K0352-LC-S2" int
 );
+
+
+-------------
+
+
+--- fixing  aggregate 1000 samples tables
+
+select count(*), primers.name, barcode, primer_id, sample_id
+ from asvs
+ join primers on asvs.primer_id = primers.id
+ join samples on asvs.sample_id = samples.id
+ group by primers.name, barcode , primer_id, sample_id
+ order by name, barcode;
+
+
+
+ -- M3C1 has taxon_id listed twice
+
+select
+COALESCE(ncbi_nodes.hierarchy_names ->> 'superkingdom', '') || ';' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> 'phylum', '') || ';' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> 'class', '') || ';' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> 'order', '') || ';' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> 'family', '') || ';' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> 'genus', '') || ';' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> 'species', '')  ,
+samples.barcode, asvs.count
+FROM asvs
+JOIN samples ON asvs.sample_id = samples.id
+JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+WHERE primer_id = 1
+and sample_id = 9117
+;
+
+ -- M3C1 has taxon_id listed twice whoch screws up cross joins
+SELECT
+"taxonomy", "M3C1"
+FROM CROSSTAB(
+'SELECT
+COALESCE(ncbi_nodes.hierarchy_names ->> ''superkingdom'', '''') || '';'' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> ''phylum'', '''') || '';'' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> ''class'', '''') || '';'' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> ''order'', '''') || '';'' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> ''family'', '''') || '';'' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> ''genus'', '''') || '';'' ||
+COALESCE(ncbi_nodes.hierarchy_names ->> ''species'', '''')|| ''<>''||asvs.id,
+samples.barcode, asvs.count
+FROM asvs
+JOIN samples ON asvs.sample_id = samples.id
+JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+WHERE primer_id = 1
+ ORDER BY 1,2'
+) AS foo (
+"taxonomy" text,
+"M3C1" int
+);
+
+-- create new asv table that sums the  read counts
+select taxon_id,
+sample_id, primer_id, research_project_id, sum(asvs.count) as sum
+FROM asvs
+WHERE primer_id = 1
+and sample_id = 9117
+group by taxon_id, sample_id, primer_id, research_project_id
+;
+
+
