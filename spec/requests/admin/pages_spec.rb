@@ -66,7 +66,6 @@ describe 'Samples' do
         expect(response.body).to include('normal')
         expect(response.body).to include('research1')
         expect(response.body).to include('my research2')
-        expect(response.body).to include('other')
       end
     end
 
