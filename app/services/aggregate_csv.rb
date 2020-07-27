@@ -8,39 +8,15 @@ class AggregateCsv
     @primer = primer
   end
 
-  def create_taxa_results_csv
+  def create_taxa_results_csv(aws: true)
     return if barcodes.blank?
 
-    obj = s3_object(create_taxa_key)
-    obj.upload_stream do |write_stream|
-      CSV(write_stream) do |csv|
-        csv << ['sum.taxonomy'] + barcodes
-
-        execute(taxa_table_sql).each do |record|
-          csv << record.values
-        end
-      end
-    end
+    aws ? create_taxa_results_csv_aws : create_taxa_results_csv_local
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def create_sample_metadata_csv
-    obj = s3_object(create_samples_key)
-    obj.upload_stream do |write_stream|
-      CSV(write_stream) do |csv|
-        csv << %i[
-          barcode latitude longitude location gps_precision collection_date
-          submission_date field_notes substrate depth habitat
-          environmental_features
-        ]
-
-        execute(samples_sql).each do |record|
-          csv << record.values
-        end
-      end
-    end
+  def create_sample_metadata_csv(aws: true)
+    aws ? create_sample_metadata_csv_aws : create_sample_metadata_csv_local
   end
-  # rubocop:enable Metrics/MethodLength
 
   def fetch_file_list(prefix)
     bucket = s3_resource.bucket(ENV.fetch('S3_BUCKET'))
@@ -56,22 +32,82 @@ class AggregateCsv
 
   private
 
+  def samples_metadata_fields
+    %i[
+      barcode latitude longitude location gps_precision collection_date
+      submission_date field_notes substrate depth habitat
+      environmental_features
+    ]
+  end
+
+  def create_sample_metadata_csv_aws
+    obj = s3_object(create_samples_key)
+    obj.upload_stream do |write_stream|
+      CSV(write_stream) do |csv|
+        csv << samples_metadata_fields
+
+        execute(samples_sql).each do |record|
+          csv << record.values
+        end
+      end
+    end
+  end
+
+  def create_sample_metadata_csv_local
+    CSV.open(samples_file_name, 'wb') do |csv|
+      csv << samples_metadata_fields
+
+      execute(samples_sql).each do |record|
+        csv << record.values
+      end
+    end
+  end
+
+  def create_taxa_results_csv_aws
+    obj = s3_object(create_taxa_key)
+    obj.upload_stream do |write_stream|
+      CSV(write_stream) do |csv|
+        csv << ['sum.taxonomy'] + barcodes
+
+        execute(taxa_table_sql).each do |record|
+          csv << record.values
+        end
+      end
+    end
+  end
+
+  def create_taxa_results_csv_local
+    CSV.open(taxa_file_name, 'wb') do |csv|
+      csv << ['sum.taxonomy'] + barcodes
+
+      execute(taxa_table_sql).each do |record|
+        csv << record.values
+      end
+    end
+  end
+
   def today
     Time.zone.today.strftime('%Y-%m-%d')
   end
 
+  def taxa_file_name
+    "#{today}_#{completed_samples_count}_samples_#{primer.name}.csv"
+  end
+
   def create_taxa_key
-    count = completed_samples_count
-    "aggregate_csvs/#{today}_#{count}_samples_#{primer.name}.csv"
+    "aggregate_csvs/#{taxa_file_name}"
+  end
+
+  def samples_file_name
+    "#{today}_#{completed_samples_count}_samples_metadata.csv"
   end
 
   def create_samples_key
-    count = completed_samples_count
-    "aggregate_csvs/#{today}_#{count}_samples_metadata.csv"
+    "aggregate_csvs/#{samples_file_name}"
   end
 
   def execute(sql)
-    ActiveRecord::Base.connection.exec_query(sql)
+    PgConnect.execute(sql)
   end
 
   def taxa_table_sql
