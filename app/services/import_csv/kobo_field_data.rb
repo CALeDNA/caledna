@@ -13,10 +13,16 @@ module ImportCsv
     def import_csv(file, field_project_id)
       data = my_csv_read(file)
 
-      existing_barcodes =
-        process_barcodes_for_csv_table(data, 'barcode')[:existing_barcodes]
+      barcodes = process_barcode_column(data, 'barcode')
+      existing_barcodes = barcodes[:existing_barcodes]
       if existing_barcodes.present?
         message = "#{existing_barcodes.join(', ')} already in the database"
+        return OpenStruct.new(valid?: false, errors: message)
+      end
+
+      duplicate_barcodes = barcodes[:duplicate_barcodes]
+      if duplicate_barcodes.present?
+        message = "#{duplicate_barcodes.join(', ')} listed multiple times"
         return OpenStruct.new(valid?: false, errors: message)
       end
 

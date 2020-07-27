@@ -52,6 +52,22 @@ describe ImportCsv::SamplesResearchMetadata do
       end
     end
 
+    context 'when CSV has duplicate samples' do
+      let(:csv) { './spec/fixtures/import_csv/samples_metadata_dup.csv' }
+      before(:each) do
+        create(:sample, barcode: barcode1)
+        create(:sample, barcode: barcode2)
+      end
+
+      it 'returns an error' do
+        result = subject(file, research_project_id)
+        message = 'K9999-A2 listed multiple times'
+
+        expect(result.valid?).to eq(false)
+        expect(result.errors).to eq(message)
+      end
+    end
+
     context 'when CSV barcodes are all in the database' do
       before(:each) do
         create(:sample, barcode: barcode1)

@@ -32,6 +32,18 @@ describe ImportCsv::KoboFieldData do
       end
     end
 
+    context 'when CSV has duplicate samples' do
+      let(:csv) { './spec/fixtures/import_csv/samples_dup_names.csv' }
+
+      it 'returns an error' do
+        result = subject(file, field_project_id)
+        message = 'K9999-A2 listed multiple times'
+
+        expect(result.valid?).to eq(false)
+        expect(result.errors).to eq(message)
+      end
+    end
+
     context 'when samples in the CSV are not in the database' do
       def point_factory(lon, lat)
         RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)

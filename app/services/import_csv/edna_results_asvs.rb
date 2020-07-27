@@ -19,6 +19,12 @@ module ImportCsv
         return OpenStruct.new(valid?: false, errors: message)
       end
 
+      duplicate_barcodes = find_duplicate_barcodes(data)
+      if duplicate_barcodes.present?
+        message = "#{duplicate_barcodes.join(', ')} listed multiple times"
+        return OpenStruct.new(valid?: false, errors: message)
+      end
+
       result_metadata = {
         research_project_id: research_project_id,
         primer_id: primer_id
@@ -73,12 +79,17 @@ module ImportCsv
         valid_data[sample.barcode] = sample.id
       end
 
-      invalid_data = barcodes.compact - valid_data.keys
+      invalid_data = (barcodes.compact - valid_data.keys).uniq
 
       { invalid_data: invalid_data, valid_data: valid_data }
     end
 
     private
+
+    def find_duplicate_barcodes(data)
+      counts = data.headers.compact.group_by(&:itself).transform_values(&:count)
+      counts.select { |_k, v| v > 1 }.keys
+    end
 
     def update_sample_data(samples_data, result_metadata)
       samples_data.each do |_barcode, sample_id|

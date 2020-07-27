@@ -18,10 +18,16 @@ module ImportCsv
         return OpenStruct.new(valid?: false, errors: message)
       end
 
-      new_barcodes =
-        process_barcodes_for_csv_table(data, 'sum.taxonomy')[:new_barcodes]
+      barcodes = process_barcode_column(data, 'sum.taxonomy')
+      new_barcodes = barcodes[:new_barcodes]
       if new_barcodes.present?
         message = "#{new_barcodes.join(', ')} not in the database"
+        return OpenStruct.new(valid?: false, errors: message)
+      end
+
+      duplicate_barcodes = barcodes[:duplicate_barcodes]
+      if duplicate_barcodes.present?
+        message = "#{duplicate_barcodes.join(', ')} listed multiple times"
         return OpenStruct.new(valid?: false, errors: message)
       end
 

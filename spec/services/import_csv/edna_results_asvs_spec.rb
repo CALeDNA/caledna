@@ -24,6 +24,33 @@ describe ImportCsv::EdnaResultsAsvs do
     let(:csv_barcode1) { 'K0001-LA-S1' }
     let(:csv_barcode2) { 'K0001-LA-S2' }
 
+    context 'when CSV contains duplicate barcodes' do
+      let(:csv) { './spec/fixtures/import_csv/dna_results_tabs_dup.csv' }
+
+      it 'and samples are in the database, it returns error message' do
+        create(:sample, barcode: csv_barcode1, status: 'approved', id: 999)
+        create(:sample, barcode: csv_barcode2, status: 'approved', id: 888)
+
+        results = subject(file, research_project.id, primer)
+        message = 'K0001A2.S1.L001 listed multiple times'
+
+        expect(results.valid?).to eq(false)
+        expect(results.errors).to eq(message)
+      end
+
+      it 'and samples are not in the database, it returns error message' do
+        create(:sample, barcode: csv_barcode1, status: 'approved', id: 999)
+        # create(:sample, barcode: csv_barcode2, status: 'approved', id: 888)
+
+        results = subject(file, research_project.id, primer)
+        message = "#{csv_barcode2} not in the database"
+
+        expect(results.valid?).to eq(false)
+        expect(results.errors).to eq(message)
+      end
+    end
+
+
     context 'when barcodes in CSV match samples in the database' do
       before(:each) do
         create(:sample, barcode: csv_barcode1, status: 'approved', id: 999)
@@ -78,6 +105,7 @@ describe ImportCsv::EdnaResultsAsvs do
       end
     end
   end
+
 
   describe('#queue_asv_job') do
     include ActiveJob::TestHelper

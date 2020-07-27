@@ -307,7 +307,6 @@ module ProcessEdnaResults
     parts = cell.split('.')
     sample = parts[0]
     ksample = sample.tr('_', '-')
-    # return nil
 
     # NOTE: KxxxxLS, barcode v1
     if /^[K]?\d{1,4}[ABC][12]$/i.match?(ksample)
@@ -344,10 +343,7 @@ module ProcessEdnaResults
 
     # NOTE: ASWS-A1 or MWWS-A1, barcode v2
     elsif /^((ASWS)|(MWWS))-(\w\d)$/i.match?(ksample)
-      match = /(\w{4})-(\w\d)/i.match(ksample)
-      kit = match[1]
-      sample_number = match[2]
-      "#{kit}-#{sample_number}".upcase
+      ksample.upcase
 
     # NOTE: neg or blank
     elsif /(neg)|(blank)/i.match?(cell)
@@ -404,20 +400,29 @@ module ProcessEdnaResults
     new_string
   end
 
-  def process_barcodes_for_csv_table(data, barcode_field)
-    existing_barcodes = []
-    new_barcodes = []
+  def process_barcode_column(data, barcode_field)
+    existing_barcodes = Set.new
+    new_barcodes = Set.new
+    counts = {}
 
     data.entries.each do |row|
-      next if row[barcode_field].blank?
+      raw_barcode = row[barcode_field]
+      next if raw_barcode.blank?
 
-      barcode = convert_raw_barcode(row[barcode_field])
+      barcode = convert_raw_barcode(raw_barcode)
       next if barcode.blank?
+
+      counts[barcode].blank? ? counts[barcode] = 1 : counts[barcode] += 1
 
       sample = Sample.find_by(barcode: barcode)
       sample.present? ? existing_barcodes << barcode : new_barcodes << barcode
     end
-    { existing_barcodes: existing_barcodes, new_barcodes: new_barcodes }
+
+    {
+      existing_barcodes: existing_barcodes.to_a,
+      new_barcodes: new_barcodes.to_a,
+      duplicate_barcodes: counts.select { |_k, v| v > 1 }.keys
+    }
   end
 
   private
