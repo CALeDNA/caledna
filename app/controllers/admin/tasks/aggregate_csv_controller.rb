@@ -21,7 +21,7 @@ module Admin
       private
 
       def create_csv
-        [Primer.find(1)].each do |primer|
+        Primer.all.each do |primer|
           CreateAggregateTaxaCsvJob.perform_later(primer)
         end
         CreateAggregateSamplesCsvJob.perform_later
