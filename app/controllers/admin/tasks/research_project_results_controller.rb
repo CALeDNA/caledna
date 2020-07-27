@@ -6,13 +6,13 @@ module Admin
       # skip_before_action :verify_authenticity_token
 
       def index
-        authorize 'Labwork::AdminTasks'.to_sym, :index?
+        authorize 'AdminDashboard'.to_sym, :admin?
         @projects = ResearchProject.order(:name)
                                    .collect { |p| [p.name, p.id] }
       end
 
       def bulk_delete
-        authorize 'Labwork::AdminTasks'.to_sym, :index?
+        authorize 'AdminDashboard'.to_sym, :admin?
         if project_id.present?
           delete_asvs
           flash[:success] = 'Research project eDNA results were deleted.'

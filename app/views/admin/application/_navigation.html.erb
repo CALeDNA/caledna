@@ -12,6 +12,11 @@
       class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
   <% end %>
 
+  <% if policy('Tasks::Home'.to_sym).index? %>
+    <%= link_to 'Misc Tasks', admin_tasks_path,
+      class: "navigation__link navigation__link--#{action_name == 'list_projects' ? 'active' : 'inactive'}" %>
+  <% end %>
+
   <% Administrate::Namespace.new(namespace).resources.each do |resource| %>
     <%
       non_model_dashboards = ['user_author', 'researcher_author']

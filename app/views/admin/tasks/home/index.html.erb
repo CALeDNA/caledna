@@ -1,0 +1,18 @@
+<header class="main-content__header" role="banner">
+  <h1>Misc Tasks</h1>
+</header>
+
+<section class="main-content__body">
+  <% if policy('Tasks::AggregateCsv'.to_sym).index? %>
+    <p>
+    <%= link_to 'Aggregate CSVs', admin_tasks_aggregate_csv_index_path %>
+    </p>
+  <% end %>
+
+  <% if policy('AdminDashboard'.to_sym).admin? %>
+    <p>
+      <%= link_to 'Bulk delete eDNA results', admin_tasks_bulk_delete_research_project_results_path %>:
+      Delete all eDNA results for a research project.
+    </p>
+  <% end %>
+</section>
