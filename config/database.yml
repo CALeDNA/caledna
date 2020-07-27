@@ -15,4 +15,4 @@ production:
   <<: *default
   database: caledna_production
   username: caledna
-  url: <%= ENV['DATABASE_URL'].sub(/^postgres/, "postgis") %>
+  url: <%= ENV.fetch('DATABASE_URL', '').sub(/^postgres/, "postgis") %>
