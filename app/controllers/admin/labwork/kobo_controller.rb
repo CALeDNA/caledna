@@ -6,14 +6,14 @@ module Admin
       include KoboApi::Process
 
       def import_kobo
-        authorize 'Labwork::Kobo'.to_sym, :import_kobo?
+        authorize 'Labwork::Kobo'.to_sym, :import?
 
         @projects = ::FieldProject.published.where.not(kobo_id: nil)
                                   .order('last_import_date DESC')
       end
 
       def import_projects
-        authorize 'Labwork::Kobo'.to_sym, :import_projects?
+        authorize 'Labwork::Kobo'.to_sym, :import?
 
         hash_data = ::KoboApi::Connect.projects.parsed_response
         results = import_kobo_projects(hash_data)
@@ -27,7 +27,7 @@ module Admin
 
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def import_samples
-        authorize 'Labwork::Kobo'.to_sym, :import_samples?
+        authorize 'Labwork::Kobo'.to_sym, :import?
 
         hash_data = ::KoboApi::Connect.project(project.kobo_id).parsed_response
         if hash_data.class == Hash && hash_data['detail'] == 'Not found.'
