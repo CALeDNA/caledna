@@ -87,11 +87,12 @@ class AggregateCsv
         COALESCE(ncbi_nodes.hierarchy_names ->> ''family'', '''') || '';'' ||
         COALESCE(ncbi_nodes.hierarchy_names ->> ''genus'', '''') || '';'' ||
         COALESCE(ncbi_nodes.hierarchy_names ->> ''species'', ''''),
-        samples.barcode, asvs.count
+        samples.barcode, sum(asvs.count)
         FROM asvs
         JOIN samples ON asvs.sample_id = samples.id
         JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
         WHERE primer_id = #{primer.id}
+        GROUP BY ncbi_nodes.hierarchy_names, samples.barcode
         ORDER BY 1,2',
 
         '#{barcodes_sql}'
