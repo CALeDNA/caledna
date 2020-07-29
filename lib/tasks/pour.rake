@@ -35,6 +35,11 @@ namespace :pour do
     include CsvUtils
 
     path = args[:path]
+    if path.blank?
+      puts 'Must pass in path for taxa csv'
+      next
+    end
+
     puts 'importing taxa...'
 
     delim = delimiter_detector(OpenStruct.new(path: path))
@@ -64,5 +69,58 @@ namespace :pour do
       PourGbifTaxon.create(attributes)
     end
   end
-end
 
+  task :import_gbif_occurrences, [:path] => :environment do |_t, args|
+    include CsvUtils
+
+    path = args[:path]
+    if path.blank?
+      puts 'Must pass in path for occurences csv'
+      next
+    end
+
+    puts 'importing occurences...'
+
+    dataset_id = PourGbifDataset.first.id
+
+    delim = delimiter_detector(OpenStruct.new(path: path))
+    def convert_date(field)
+      return if field.blank?
+      DateTime.parse(field)
+    end
+
+    CSV.foreach(path, headers: true, col_sep: delim,
+                      encoding: 'bom|utf-8') do |row|
+      attributes = {
+        gbif_id: row['gbifID'],
+        gbif_dataset_id: dataset_id,
+        occurrence_id: row['occurrenceID'],
+        infraspecific_epithet: row['infraspecificEpithet'],
+        taxon_rank: row['taxonRank'].downcase,
+        scientific_name: row['scientificName'],
+        verbatim_scientific_name: row['verbatimScientificName'],
+        country_code: row['countryCode'],
+        state_province: row['stateProvince'],
+        latitude: row['decimalLatitude'],
+        longitude: row['decimalLongitude'],
+        coordinate_uncertainty_in_meters: row['coordinateUncertaintyInMeters'],
+        geom: "POINT(#{row['decimalLongitude']} #{row['decimalLatitude']})",
+        taxon_id: row['taxonKey'],
+        species_id: row['speciesKey'],
+        basis_of_record: row['basisOfRecord'],
+        catalog_number: row['catalogNumber'],
+        identified_by: row['identifiedBy'],
+        license: row['license'],
+        rights_holder: row['rightsHolder'],
+        recorded_by: row['recordedBy'],
+        media_type: row['mediaType'],
+        issue: row['issue'],
+        event_date: convert_date(row['eventDate']),
+        date_identified: convert_date(row['dateIdentified']),
+        last_interpreted: convert_date(row['lastInterpreted'])
+      }
+
+      PourGbifOccurrence.create(attributes)
+    end
+  end
+end
