@@ -8,7 +8,7 @@ module ImportCsv
 
     # only import csv if all barcodes are in database. create or update
     # research project sources
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file, research_project_id)
       data = my_csv_read(file)
 
@@ -34,7 +34,7 @@ module ImportCsv
       create_or_update_research_proj_sources(data, research_project_id)
       OpenStruct.new(valid?: true, errors: nil)
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def create_or_update_research_proj_source(row, barcode, research_project_id)
       sample = Sample.approved.find_by(barcode: barcode)

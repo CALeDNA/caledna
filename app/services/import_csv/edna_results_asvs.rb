@@ -5,9 +5,10 @@ module ImportCsv
     require 'csv'
     include ProcessEdnaResults
     include CsvUtils
-    # rubocop:disable Metrics/MethodLength
+
     # only import csv if all barcodes are in the database. First or create
     # ResearchProjectSource. First or create ASV.
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file, research_project_id, primer_id)
       data = my_csv_read(file)
 
@@ -37,7 +38,7 @@ module ImportCsv
 
       OpenStruct.new(valid?: true, errors: nil)
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # called by ImportCsvQueueAsvJob
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize

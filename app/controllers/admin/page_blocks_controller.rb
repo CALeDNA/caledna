@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Admin
   class PageBlocksController < Admin::ApplicationController
     layout :resolve_layout
 
-    # Overwrite any of the RESTful controller actions to implement custom behavior
+    # Overwrite any of the controller actions to implement custom behavior
     # For example, you may want to send an email after a foo is updated.
     #
     # def update
@@ -37,8 +39,5 @@ module Admin
     #     permit(dashboard.permitted_attributes).
     #     transform_values { |value| value == "" ? nil : value }
     # end
-
-    # See https://administrate-prototype.herokuapp.com/customizing_controller_actions
-    # for more information
   end
 end

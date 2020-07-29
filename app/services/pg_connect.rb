@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class PgConnect
+  # rubocop:disable Metrics/MethodLength
   def self.execute(sql)
     db_string = if Rails.env.production?
                   'DATABASE_URL'
@@ -18,4 +19,5 @@ class PgConnect
       con&.close
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end

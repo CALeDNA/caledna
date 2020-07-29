@@ -9,7 +9,7 @@ module ImportCsv
     # TODO: find a way to deal with image upload
     # Import csv if all barcodes are not in database. Create new sample for
     # each record.
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file, field_project_id)
       data = my_csv_read(file)
 
@@ -37,7 +37,7 @@ module ImportCsv
       create_samples(data, field_project_id)
       OpenStruct.new(valid?: true, errors: nil)
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def process_sample(row, field_project_id)

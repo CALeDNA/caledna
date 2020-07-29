@@ -11,23 +11,7 @@ describe Labwork::KoboPolicy do
     [director, esie_postdoc, researcher]
   end
 
-  permissions :import_kobo? do
-    it 'grant access to all users' do
-      users.each do |user|
-        expect(subject).to permit(user)
-      end
-    end
-  end
-
-  permissions :import_projects? do
-    it 'grant access to all users' do
-      users.each do |user|
-        expect(subject).to permit(user)
-      end
-    end
-  end
-
-  permissions :import_samples? do
+  permissions :import? do
     it 'grant access to all users' do
       users.each do |user|
         expect(subject).to permit(user)

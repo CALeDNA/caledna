@@ -400,6 +400,7 @@ module ProcessEdnaResults
     new_string
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def process_barcode_column(data, barcode_field)
     existing_barcodes = Set.new
     new_barcodes = Set.new
@@ -424,6 +425,7 @@ module ProcessEdnaResults
       duplicate_barcodes: counts.select { |_k, v| v > 1 }.keys
     }
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
 
