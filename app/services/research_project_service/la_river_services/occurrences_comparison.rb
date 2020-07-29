@@ -55,12 +55,8 @@ module ResearchProjectService
 
       def inat_division_sql
         <<-SQL
-          FROM external.inat_observations as inat_obs
-          JOIN research_project_sources
-          ON sourceable_id = inat_obs.observation_id
-          AND (research_project_sources.sourceable_type = 'InatObservation')
-          AND (research_project_sources.research_project_id =#{project.id})
-          JOIN external.inat_taxa as inat_taxa
+          FROM pour.gbif_occurrences as inat_obs
+          JOIN pour.gbif_taxa as inat_taxa
           ON inat_taxa.taxon_id = inat_obs.taxon_id
           GROUP BY kingdom
           ORDER BY kingdom;
