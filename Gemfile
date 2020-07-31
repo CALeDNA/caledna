@@ -52,8 +52,10 @@ gem 'webpacker', '~> 3.5.3'
 group :development do
   gem 'better_errors', '~> 2.4'
   gem 'binding_of_caller', '~> 0.7'
+  gem 'derailed_benchmarks', '~> 1.7.0'
   gem 'i18n-tasks', '~> 0.9'
   gem 'letter_opener', '~> 1.4.1'
+  gem 'rack-mini-profiler', '~> 2.0.3', require: false
   gem 'spring', '~> 2.0'
   gem 'spring-commands-rspec', '~> 1.0'
   gem 'stairs', '~> 0.10'
