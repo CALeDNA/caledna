@@ -29,8 +29,10 @@ module Caledna
       Administrate::ApplicationController.helper Caledna::Application.helpers
     end
 
-    Raven.configure do |config|
-      config.dsn = ENV.fetch('SENTRY_DSN')
+    if Rails.env.production?
+      Raven.configure do |config|
+        config.dsn = ENV.fetch('SENTRY_DSN')
+      end
     end
 
     # customize "sanitize" helper

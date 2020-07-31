@@ -40,7 +40,6 @@ gem 'recipient_interceptor', '~> 0.1'
 gem 'rgeo', '~> 2.1.1'
 gem 'rgeo-shapefile', '~> 2.0.1'
 gem 'sass-rails', '~> 5.0' # required by bootstrap-sass
-gem 'sentry-raven', '~> 2.7.4'
 gem 'sidekiq', '~> 5.0'
 gem 'simple_enum', '~> 2.3'
 gem 'simple_form', '~> 4.0.1'
@@ -81,6 +80,7 @@ end
 group :production, :staging do
   gem 'scout_apm', '~> 2.4.13'
   gem 'sendgrid-ruby', '~> 5.2.0'
+  gem 'sentry-raven', '~> 2.7.4'
 end
 
 group :test do
