@@ -51,11 +51,12 @@ module ResearchProjectService
           AND metadata ->> 'location' != 'Montara SMR'
         ) as gbif_match,
         #{conn.quote(globi_taxon)} IN(
-          SELECT  unnest(string_to_array(full_taxonomy_string, ';'))
+          SELECT canonical_name
           FROM  pillar_point.asvs as pp_asvs
           JOIN pillar_point.ncbi_nodes
             ON pillar_point.ncbi_nodes.taxon_id = pp_asvs.taxon_id
           WHERE pp_asvs.research_project_id = #{project.id}
+          AND rank = 'species'
         ) as edna_match;
         SQL
 
