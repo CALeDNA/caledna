@@ -2,7 +2,7 @@
 
 class PgConnect
   # rubocop:disable Metrics/MethodLength
-  def self.execute(sql)
+  def self.execute(sql, params = nil)
     db_string = if Rails.env.production?
                   'DATABASE_URL'
                 elsif Rails.env.testing?
@@ -12,7 +12,11 @@ class PgConnect
                 end
     begin
       con = PG.connect(ENV.fetch(db_string))
-      con.exec(sql)
+      if params.present?
+        con.exec_params(sql, params)
+      else
+        con.exec(sql)
+      end
     rescue PG::Error => e
       puts e.message
     ensure
