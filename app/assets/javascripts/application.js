@@ -9,7 +9,6 @@
 //= require photoswipe
 
 //= require font_awesome5
-//= require trix
 
 //= require_tree .
 
