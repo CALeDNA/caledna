@@ -36,7 +36,7 @@ class SamplesController < ApplicationController
       common_names
       FROM ncbi_nodes
       JOIN asvs ON asvs.taxon_id = ncbi_nodes.taxon_id
-      LEFT JOIN ncbi_divisions
+      JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
       WHERE asvs.sample_id = $1
     SQL
@@ -61,21 +61,30 @@ class SamplesController < ApplicationController
 
   def organisms
     @organisms ||= begin
-      sql = organisms_sql
-
       binding = [[nil, params[:id]]]
-      raw_records = ActiveRecord::Base.connection.exec_query(sql, 'q', binding)
+      raw_records = conn.exec_query(organisms_sql, 'q', binding)
       raw_records.map { |r| OpenStruct.new(r) }
     end
   end
 
+  def division_counts_sql
+    <<~SQL
+      SELECT COUNT(*) AS count_name, name
+      FROM asvs
+      JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+      JOIN ncbi_divisions ON ncbi_divisions.id = ncbi_nodes.cal_division_id
+      WHERE asvs.sample_id = #{sample.id}
+      GROUP BY name;
+    SQL
+  end
+
   def division_counts
     @division_counts ||= begin
-      website_asv.joins(ncbi_node: :ncbi_division)
-                 .select(:name)
-                 .where(sample: sample)
-                 .group(:name)
-                 .count
+      counts = {}
+      conn.exec_query(division_counts_sql).each do |record|
+        counts[record['name']] = record['count_name'].to_i
+      end
+      counts
     end
   end
 
@@ -102,5 +111,9 @@ class SamplesController < ApplicationController
     end.flatten
     tree << { 'name': 'Life', 'id': 'Life', 'common_name': nil }
     tree.uniq! { |i| i[:id] }
+  end
+
+  def conn
+    ActiveRecord::Base.connection
   end
 end
