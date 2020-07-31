@@ -4,23 +4,6 @@
 namespace :research_project_pillar_point do
   require 'csv'
 
-  task create_project_sources_for_inat: :environment do
-    path = "#{Rails.root}/db/data/private/pillar_point_sources.csv"
-
-    puts 'import inat...'
-
-    project_id = ResearchProject.find_by(name: 'Pillar Point').id
-
-    CSV.foreach(path, headers: true) do |row|
-      attributes = {
-        research_project_id: project_id,
-        sourceable_id: row['id'].to_i,
-        sourceable_type: 'InatObservation'
-      }
-      ResearchProjectSource.create(attributes)
-    end
-  end
-
   task import_samples_metadata: :environment do
     path = "#{Rails.root}/db/data/private/pillarpoint_metadata.csv"
 

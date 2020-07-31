@@ -1,24 +1,6 @@
 # frozen_string_literal: true
 
 namespace :global_names do
-  task import_pillar_point_inat_taxa: :environment do
-    include ImportGlobalNames
-    global_names_api = ::GlobalNamesApi.new
-
-    inat_taxa =
-      InatObservation
-      .select(:scientificName, :taxon_id)
-      .joins(:research_project_sources)
-      .where("research_project_sources.sourceable_type = 'InatObservation'")
-      .group(:scientificName, :taxon_id)
-
-    inat_taxa.each do |taxon|
-      results = global_names_api.names(taxon.scientificName)
-      create_external_resource(results: results, taxon_id: taxon.id,
-                               id_name: 'inaturalist_id', rank: taxon.taxonRank)
-    end
-  end
-
   task create_external_resources_for_gbif_taxa: :environment do
     include ImportGlobalNames
     global_names_api = ::GlobalNamesApi.new
@@ -241,32 +223,6 @@ namespace :global_names do
 
       create_external_resource(
         results: results, taxon_id: record['inat_id'],
-        id_name: 'inaturalist_id'
-      )
-    end
-  end
-
-  task create_external_resource_for_inat: :environment do
-    desc 'create ExternalResource for InatObservations species'
-
-    include ImportGlobalNames
-    global_names_api = ::GlobalNamesApi.new
-    source_ids = ExternalResource::GLOBAL_NAMES_SOURCE_IDS.join('|')
-
-    join_sql = <<-SQL
-      LEFT JOIN external_resources ON inat_observations."taxon_id" =
-      external_resources.inaturalist_id
-    SQL
-    inat_obs =
-      InatObservation.select('DISTINCT inat_observations."taxon_id", species')
-                     .joins(join_sql)
-                     .where('external_resources.id IS NULL')
-
-    inat_obs.each do |inat_ob|
-      results = global_names_api.names(inat_ob.species, source_ids)
-
-      create_external_resource(
-        results: results, taxon_id: inat_ob.taxon_id,
         id_name: 'inaturalist_id'
       )
     end
