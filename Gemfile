@@ -80,6 +80,7 @@ group :production, :staging do
   gem 'scout_apm', '~> 2.4.13'
   gem 'sendgrid-ruby', '~> 5.2.0'
   gem 'sentry-raven', '~> 2.7.4'
+  gem 'tunemygc'
 end
 
 group :test do
