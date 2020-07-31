@@ -9,8 +9,6 @@ gem 'activerecord-postgis-adapter', '~> 5.2.2'
 # use my fork to fix using left join intead of join on search
 gem 'administrate', '~>0.13.0', git: 'https://github.com/wykhuh/administrate.git'
 gem 'administrate-field-image'
-# gem 'administrate-field-jsonb'
-
 gem 'administrate-field-json', git: 'https://github.com/eddietejeda/administrate-field-json.git'
 gem 'administrate-field-nested_has_many', '~> 1.0.0'
 gem 'autoprefixer-rails', '~> 7.2'
@@ -29,14 +27,13 @@ gem 'jquery-rails', '~> 4.3.3' # required by bootstrap-sass
 gem 'kaminari', '~> 1.1.1'
 gem 'lograge', '~> 0.10.0'
 gem 'mail_form', '~> 1.8.0'
-gem 'mini_magick', '~> 4.10.1'
+gem 'mini_magick', '~> 4.10.1' # resize ActiveStorage images
 gem 'pg', '~> 0.21'
 gem 'pg_search', '~> 2.1.2'
 gem 'photoswipe-rails', '~> 4.1', '>= 4.1.2'
 gem 'puma', '~> 3.11'
 gem 'pundit', '~> 1.1.0'
 gem 'rack-canonical-host', '~> 0.2'
-gem 'recipient_interceptor', '~> 0.1'
 gem 'rgeo', '~> 2.1.1'
 gem 'rgeo-shapefile', '~> 2.0.1'
 gem 'sass-rails', '~> 5.0' # required by bootstrap-sass
