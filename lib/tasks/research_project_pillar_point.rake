@@ -301,6 +301,33 @@ namespace :research_project_pillar_point do
     end
   end
 
+  task add_missing_gbif_occ_taxa: :environment do
+    sql = <<~SQL
+      INSERT INTO external.gbif_occ_taxa (kingdom, phylum, classname,
+      "order", family, genus,
+      species, infraspecificepithet, taxonrank,
+      scientificname, taxonkey)
+
+      SELECT gbif_occurrences.kingdom, gbif_occurrences.phylum,
+      gbif_occurrences.classname, gbif_occurrences."order",
+      gbif_occurrences.family, gbif_occurrences.genus,
+      gbif_occurrences.species, gbif_occurrences.infraspecificepithet,
+      lower(gbif_occurrences.taxonrank) as taxonrank,
+      gbif_occurrences.scientificname, gbif_occurrences.taxonkey
+      FROM external.gbif_occurrences
+      LEFT JOIN external.gbif_occ_taxa
+      ON gbif_occ_taxa.taxonkey = gbif_occurrences.taxonkey
+      WHERE gbif_occ_taxa.taxonkey IS NULL
+      GROUP BY gbif_occurrences.kingdom,  gbif_occurrences.phylum,
+      gbif_occurrences.classname, gbif_occurrences."order",
+      gbif_occurrences.family, gbif_occurrences.genus,
+      gbif_occurrences.species, gbif_occurrences.infraspecificepithet,
+      gbif_occurrences.taxonrank, gbif_occurrences.scientificname,
+      gbif_occurrences.taxonkey;
+    SQL
+    conn.exec_query(sql)
+  end
+
   def conn
     @conn ||= ActiveRecord::Base.connection
   end
