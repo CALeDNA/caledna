@@ -33,15 +33,10 @@ module CombineTaxonHelper
   end
 
   def self.vernaculars(taxon)
-    ncbi = taxon['ncbi_taxa']
-    return if ncbi.blank?
+    common_names = taxon['common_names']
+    return if common_names.blank?
 
-    taxa_array =
-      ncbi.delete('{"').delete('{').delete('"}').delete('}').split('|')
-
-    id = taxa_array.first
-    names = NcbiNodePillarPoint.find(id).common_names
-    names.present? ? "(#{names.split('|').join(', ')})" : ''
+    "(#{taxon['common_names'].split('|').join(', ')})"
   end
 
   # rubocop:disable Metrics/MethodLength

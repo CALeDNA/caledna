@@ -11,7 +11,13 @@ module ResearchProjectService
         @common_taxa_map ||= begin
           sql = <<-SQL
           #{fields_sql('gbif_ct')},
-          #{aggregate_sql}
+          (SELECT pillar_point.ncbi_nodes.common_names
+          FROM pillar_point.ncbi_nodes
+          JOIN pillar_point.ncbi_names
+            ON pillar_point.ncbi_nodes.taxon_id = pillar_point.ncbi_names.taxon_id
+          WHERE lower(pillar_point.ncbi_names.name) =
+            lower(gbif_ct.#{combine_taxon_rank_field})
+          ) AS common_names
           #{join_sql}
           WHERE gbif_ct.source = 'gbif'
           AND gbif_ct.#{combine_taxon_rank_field} IS NOT NULL
@@ -72,6 +78,27 @@ module ResearchProjectService
         conn.exec_query(sql)
       end
       # rubocop:enable Metrics/MethodLength
+
+      def group_fields
+        fields = %w[
+          gbif_ct.phylum
+          gbif_ct.class_name
+          gbif_ct.order
+          gbif_ct.family
+          gbif_ct.genus
+          gbif_ct.species
+        ]
+        sql = 'gbif_ct.superkingdom, gbif_ct.kingdom, '
+        sql += case taxon_rank
+               when 'phylum' then (fields[0..0]).join(', ')
+               when 'class' then (fields[0..1]).join(', ')
+               when 'order' then (fields[0..2]).join(', ')
+               when 'family' then (fields[0..3]).join(', ')
+               when 'genus' then (fields[0..4]).join(', ')
+               when 'species' then (fields[0..5]).join(', ')
+               end
+        sql
+      end
     end
   end
 end
