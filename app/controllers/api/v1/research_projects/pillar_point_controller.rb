@@ -95,7 +95,7 @@ module Api
         end
 
         # =======================
-        #
+        # common_taxa_map
         # =======================
 
         # rubocop:disable Metrics/MethodLength

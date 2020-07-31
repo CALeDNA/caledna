@@ -18,10 +18,17 @@ module ResearchProjectService
           WHERE lower(pillar_point.ncbi_names.name) =
             lower(gbif_ct.#{combine_taxon_rank_field})
           ) AS common_names
-          #{join_sql}
+          FROM pillar_point.combine_taxa as gbif_ct
+          JOIN external.gbif_occurrences
+            ON external.gbif_occurrences.taxonkey = gbif_ct.source_taxon_id
           WHERE gbif_ct.source = 'gbif'
           AND gbif_ct.#{combine_taxon_rank_field} IS NOT NULL
-          AND edna_ct.#{combine_taxon_rank_field} IS NOT NULL
+          AND gbif_ct.#{combine_taxon_rank_field} IN (
+            SELECT combine_taxa.#{combine_taxon_rank_field}
+            FROM  pillar_point.combine_taxa
+            WHERE source = 'ncbi' OR source = 'bold'
+          )
+
           GROUP BY #{group_fields}
           ORDER BY #{sort_fields};
           SQL
