@@ -91,4 +91,4 @@ group :test do
   gem 'timecop', '~> 0.9'
 end
 
-gem 'river', path: 'river'
+# gem 'river', path: 'river'
