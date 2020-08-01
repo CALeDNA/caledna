@@ -11,8 +11,10 @@ test:
   <<: *default
   database: caledna_test
 
+staging:
+  <<: *default
+  url: <%= ENV.fetch('DATABASE_URL', '').sub(/^postgres/, "postgis") %>
+
 production:
   <<: *default
-  database: caledna_production
-  username: caledna
   url: <%= ENV.fetch('DATABASE_URL', '').sub(/^postgres/, "postgis") %>
