@@ -53,7 +53,7 @@ group :development do
   gem 'derailed_benchmarks', '~> 1.7.0'
   gem 'i18n-tasks', '~> 0.9'
   gem 'letter_opener', '~> 1.4.1'
-  gem 'rack-mini-profiler', '~> 2.0.3', require: false
+  gem 'rack-mini-profiler', '~> 2.0.3'
   gem 'spring', '~> 2.0'
   gem 'spring-commands-rspec', '~> 1.0'
   gem 'stairs', '~> 0.10'
