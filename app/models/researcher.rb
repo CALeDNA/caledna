@@ -27,6 +27,10 @@ class Researcher < ApplicationRecord
     superadmin? || director? || esie_postdoc? || researcher?
   end
 
+  def view_pghero?
+    superadmin? || director?
+  end
+
   # NOTE: allow admins to deactive accounts
   def active_for_authentication?
     super && active?

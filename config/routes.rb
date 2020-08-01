@@ -19,6 +19,10 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  authenticate :researcher, ->(u) { u.view_pghero? } do
+    mount PgHero::Engine, at: 'pghero'
+  end
+
   namespace :api do
     namespace :v1 do
       resources :field_projects, only: %i[show]
