@@ -40,7 +40,7 @@ class ResearchProjectsController < ApplicationController
     SQL
 
     if CheckWebsite.pour_site?
-      sql += "AND research_projects.id = #{ResearchProject::LA_RIVER.id}"
+      sql += " AND research_projects.id = #{ResearchProject::LA_RIVER.id}"
     end
 
     sql + <<-SQL
@@ -70,11 +70,11 @@ class ResearchProjectsController < ApplicationController
         ON research_projects.id = research_project_sources.research_project_id
         AND sourceable_type = 'Sample'
       WHERE research_projects.published = TRUE
-      AND sourceable_id IN (SELECT DISTINCT sample_id FROM sample_primers);
+      AND sourceable_id IN (SELECT DISTINCT sample_id FROM sample_primers)
     SQL
 
     if CheckWebsite.pour_site?
-      sql += "AND research_projects.id = #{ResearchProject::LA_RIVER.id}"
+      sql += " AND research_projects.id = #{ResearchProject::LA_RIVER.id};"
     end
     sql
   end
