@@ -8,8 +8,8 @@ class ResearchProjectsController < ApplicationController
 
   def index
     @projects = projects
-    @taxa_count = taxa_count
-    @families_count = families_count
+    @taxa_count = Website::DEFAULT_SITE.taxa_count
+    @families_count = Website::DEFAULT_SITE.families_count
     @samples_with_results_count = completed_samples_count
   end
 
@@ -61,37 +61,24 @@ class ResearchProjectsController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def count_sql
-    <<-SQL
-    SELECT COUNT(DISTINCT(research_projects.id))
-    FROM research_projects
-    JOIN research_project_sources
-      ON research_projects.id = research_project_sources.research_project_id
-    JOIN samples
-      ON research_project_sources.sourceable_id = samples.id
-    WHERE samples.status_cd = 'results_completed'
-    AND latitude IS NOT NULL
-    AND longitude IS NOT NULL
-    AND sourceable_type = 'Sample';
+    sql = <<-SQL
+      SELECT count(DISTINCT research_projects.id)
+      FROM research_projects
+      JOIN research_project_sources
+        ON research_projects.id = research_project_sources.research_project_id
+        AND sourceable_type = 'Sample'
+      WHERE research_projects.published = TRUE
+      AND sourceable_id IN (SELECT DISTINCT sample_id FROM sample_primers);
     SQL
-  end
 
-  def families_count
-    @families_count ||= begin
-      results = conn.exec_query(rank_count('family'))
-      results.entries[0]['count']
+    if CheckWebsite.pour_site?
+      sql += "AND research_projects.id = #{ResearchProject::LA_RIVER.id}"
     end
+    sql
   end
-
-  def rank_count(rank)
-    <<-SQL
-    SELECT COUNT(DISTINCT(hierarchy_names ->> '#{rank}'))
-    FROM ncbi_nodes
-    WHERE taxon_id IN (
-      SELECT taxon_id FROM asvs GROUP BY taxon_id
-    );
-    SQL
-  end
+  # rubocop:enable Metrics/MethodLength
 
   # =======================
   # show

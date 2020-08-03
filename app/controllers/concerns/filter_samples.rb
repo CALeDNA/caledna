@@ -209,39 +209,4 @@ module FilterSamples
                         .count
     end
   end
-
-  public def taxa_count
-    @taxa_count ||= begin
-      website_asv.select('DISTINCT(taxon_id)')
-                 .joins(published_research_project_sql)
-                 .count
-    end
-  end
-
-  public def families_count
-    @families_count ||= begin
-      results = conn.exec_query(rank_count('family'))
-      results.entries[0]['count']
-    end
-  end
-
-  public def species_count
-    @species_count ||= begin
-      results = conn.exec_query(rank_count('species'))
-      results.entries[0]['count']
-    end
-  end
-
-  def rank_count(rank)
-    <<-SQL
-    SELECT COUNT(DISTINCT(hierarchy_names ->> '#{rank}'))
-    FROM ncbi_nodes
-    WHERE taxon_id IN (
-      SELECT taxon_id
-      FROM asvs
-      #{published_research_project_sql}
-      GROUP BY taxon_id
-    );
-    SQL
-  end
 end

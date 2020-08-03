@@ -10,7 +10,7 @@ class SamplesController < ApplicationController
   def index
     @samples_count = approved_samples_count
     @samples_with_results_count = completed_samples_count
-    @taxa_count = taxa_count
+    @taxa_count = Website::DEFAULT_SITE.taxa_count
   end
 
   def show
