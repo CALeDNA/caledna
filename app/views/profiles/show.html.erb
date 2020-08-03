@@ -34,7 +34,9 @@
   <ol>
     <% @user.survey_responses.each do |response| %>
       <li>
-        <%= fa_icon('star', style: 'color: green') if response.passing_score? %>
+        <% if response.passing_score? %>
+          <i class="fas fa-star" style="color: green"></i>
+        <% end %>
         <%= link_to response.survey.name, survey_survey_response_path(survey_id: response.survey.slug, id: response.id) %>:
         <%= response.total_score %> out of <%= response.survey.survey_questions.count %>
         <span class="meta">(<%= long_date(response.created_at) %>)</span>

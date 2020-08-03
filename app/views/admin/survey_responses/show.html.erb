@@ -1,4 +1,4 @@
-<% content_for(:javascript) { javascript_include_tag 'admin/font_awesome5.js' } %>
+<script src="https://kit.fontawesome.com/0919e6a4cb.js" crossorigin="anonymous"></script>
 
 <% content_for(:title) { t("administrate.actions.show_resource", name: page.page_title) } %>
 
@@ -35,9 +35,9 @@
     <% @survey.survey_questions.order(:order_number).each do |question| %>
       <li>
         <% if @user_answers[question.id] == @correct_answers[question.id] %>
-          <%= fa_icon('check-circle', style: 'color: green') %>
+          <i class="fas fa-check-circle" style="color: green"></i>
         <% else %>
-          <%= fa_icon('times-circle', style: 'color: red') %>
+          <i class="fas fa-times-circle" style="color: red"></i>
         <% end %>
         <%= question.content %>
         <ul>

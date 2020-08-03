@@ -4,11 +4,11 @@
   <div class="btn-group" role="group" >
     <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id]) %>"
       class="<%= pill_menu_classes(!list_view) %>">
-      <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Map
+      <i class="fas fa-map-marker-alt"></i> Map
     </a>
     <a href="<%= research_project_page_path(research_project_id: params[:research_project_id], id: params[:id], view: :list) %>"
       class="<%= pill_menu_classes(list_view) %>">
-      <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> List
+      <i class="far fa-list-alt"></i> List
     </a>
   </div>
 </div>
