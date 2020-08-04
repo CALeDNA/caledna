@@ -29,7 +29,7 @@ function init({
   myDuration = duration,
   myNodeTextXOffset = nodeTextXOffset,
   myViewerHeight = viewerHeight,
-  myViewerWidth = viewerWidth
+  myViewerWidth = viewerWidth,
 }) {
   circleColor = myCircleColor;
   circleHasChildrenColor = myCircleHasChildrenColor;
@@ -68,7 +68,7 @@ function updateNodeCount(level, node, childPerLevel) {
     }
 
     childPerLevel[level + 1] += node.children.length;
-    node.children.forEach(function(d) {
+    node.children.forEach(function (d) {
       updateNodeCount(level + 1, d, childPerLevel);
     });
   }
@@ -128,10 +128,7 @@ function centerNode(source, svg) {
       svg.attr("transform", d3.event.transform);
     }
   }
-  let zoomListener = d3
-    .zoom()
-    .scaleExtent([0.1, 3])
-    .on("zoom", zoom);
+  let zoomListener = d3.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
   let t = d3.zoomTransform(svg.node());
   let x = -source.y0;
@@ -168,7 +165,7 @@ function createSvg({ selector, width, height }) {
     .call(
       d3
         .zoom()
-        .filter(function() {
+        .filter(function () {
           // disable double click
           return !d3.event.button && d3.event.type != "dblclick";
         })
@@ -181,14 +178,14 @@ function createSvg({ selector, width, height }) {
 }
 
 function setLevelWidth(nodes, maxLabelLength) {
-  nodes.forEach(function(d) {
+  nodes.forEach(function (d) {
     d.y = d.depth * maxLabelLength;
   });
 }
 
 function handleNodes(svg, source, nodes, toggleChildren) {
   // Update the nodes...
-  let node = svg.selectAll("g.node").data(nodes, function(d) {
+  let node = svg.selectAll("g.node").data(nodes, function (d) {
     return d.id || (d.id = ++i);
   });
 
@@ -197,7 +194,7 @@ function handleNodes(svg, source, nodes, toggleChildren) {
     .enter()
     .append("g")
     .attr("class", "node")
-    .attr("transform", function(d) {
+    .attr("transform", function (d) {
       return "translate(" + source.y0 + "," + source.x0 + ")";
     })
     .on("click", toggleChildren);
@@ -207,7 +204,7 @@ function handleNodes(svg, source, nodes, toggleChildren) {
     .append("circle")
     .attr("class", "node")
     .attr("r", 1e-6)
-    .style("fill", function(d) {
+    .style("fill", function (d) {
       return d._children ? circleHasChildrenColor : circleColor;
     })
     .style("stroke", circleStrokeColor);
@@ -216,14 +213,14 @@ function handleNodes(svg, source, nodes, toggleChildren) {
   nodeEnter
     .append("text")
     .attr("dy", ".35em")
-    .attr("x", function(d) {
+    .attr("x", function (d) {
       return d.children || d._children ? nodeTextXOffset * -1 : nodeTextXOffset;
     })
-    .attr("text-anchor", function(d) {
+    .attr("text-anchor", function (d) {
       return d.children || d._children ? "end" : "start";
     })
     .attr("font-size", circleFontSize)
-    .text(function(d) {
+    .text(function (d) {
       return d.data.name;
     });
 
@@ -234,7 +231,7 @@ function handleNodes(svg, source, nodes, toggleChildren) {
   nodeUpdate
     .transition()
     .duration(duration)
-    .attr("transform", function(d) {
+    .attr("transform", function (d) {
       return "translate(" + d.y + "," + d.x + ")";
     });
 
@@ -242,7 +239,7 @@ function handleNodes(svg, source, nodes, toggleChildren) {
   nodeUpdate
     .select("circle.node")
     .attr("r", circleRadius)
-    .style("fill", function(d) {
+    .style("fill", function (d) {
       return d._children ? circleHasChildrenColor : circleColor;
     })
     .attr("cursor", "pointer");
@@ -252,7 +249,7 @@ function handleNodes(svg, source, nodes, toggleChildren) {
     .exit()
     .transition()
     .duration(duration)
-    .attr("transform", function(d) {
+    .attr("transform", function (d) {
       return "translate(" + source.y + "," + source.x + ")";
     })
     .remove();
@@ -264,14 +261,14 @@ function handleNodes(svg, source, nodes, toggleChildren) {
   nodeExit.select("text").style("fill-opacity", 1e-6);
 
   // Store the old positions for transition.
-  nodes.forEach(function(d) {
+  nodes.forEach(function (d) {
     d.x0 = d.x;
     d.y0 = d.y;
   });
 }
 
 function createRoot(treeData) {
-  const root = d3.hierarchy(treeData, function(d) {
+  const root = d3.hierarchy(treeData, function (d) {
     return d.children;
   });
   root.x0 = 0;
@@ -281,7 +278,7 @@ function createRoot(treeData) {
 
 function calculateLongestLabelLength(data) {
   let maxLabelLength = 0;
-  data.forEach(datum => {
+  data.forEach((datum) => {
     if (datum.name) {
       maxLabelLength = Math.max(datum.name.length, maxLabelLength);
     }
@@ -291,7 +288,7 @@ function calculateLongestLabelLength(data) {
 
 function handleLinks(svg, source, links) {
   // Update the links...
-  let link = svg.selectAll("path.link").data(links, function(d) {
+  let link = svg.selectAll("path.link").data(links, function (d) {
     return d.id;
   });
 
@@ -300,7 +297,7 @@ function handleLinks(svg, source, links) {
     .enter()
     .insert("path", "g")
     .attr("class", "link")
-    .attr("d", function(d) {
+    .attr("d", function (d) {
       let o = { x: source.x0, y: source.y0 };
       return diagonal(o, o);
     });
@@ -312,7 +309,7 @@ function handleLinks(svg, source, links) {
   linkUpdate
     .transition()
     .duration(duration)
-    .attr("d", function(d) {
+    .attr("d", function (d) {
       return diagonal(d, d.parent);
     });
 
@@ -321,7 +318,7 @@ function handleLinks(svg, source, links) {
     .exit()
     .transition()
     .duration(duration)
-    .attr("d", function(d) {
+    .attr("d", function (d) {
       let o = { x: source.x, y: source.y };
       return diagonal(o, o);
     })
@@ -345,5 +342,5 @@ export default {
   createRoot,
   calculateLongestLabelLength,
   setLevelWidth,
-  init
+  init,
 };

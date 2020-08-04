@@ -51,17 +51,15 @@
 
   window.caledna = {
     kingdom_counts: <%= @division_counts.to_json.html_safe %>,
-    asv_tree: <%= @asv_tree.to_json.html_safe %>,
-    asv_count: <%= @asv_tree.try(:length) || 0 %>
   }
 
 })(window)
 </script>
 
-<%= javascript_pack_tag 'samples_details_charts' %>
 <% if @sample.status == :results_completed %>
+  <%= javascript_pack_tag 'samples_details_charts' %>
   <%= javascript_pack_tag 'samples_asv_tree' %>
+  <%= javascript_pack_tag 'samples_details_taxa_list' %>
 <% end%>
 <%= javascript_pack_tag 'samples_details_map' %>
 <%= stylesheet_pack_tag 'samples_details_map'%>
-<%= javascript_pack_tag 'samples_details_taxa_list' %>

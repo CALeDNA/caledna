@@ -2,15 +2,15 @@ export default function convertFlatJsonToFlareJson(flatJson, nestedKey) {
   // Generate (multilevel) flare.json data format from flat json
   // https://stackoverflow.com/a/17849353
 
-  const dataMap = flatJson.reduce(function(map, node) {
+  const dataMap = flatJson.reduce(function (map, node) {
     map[node[nestedKey]] = node;
     return map;
   }, {});
 
   const treeData = [];
-  flatJson.forEach(function(node) {
+  flatJson.forEach(function (node) {
     // add to parent
-    const parent = dataMap[node.parent];
+    const parent = dataMap[node.parent_id];
     if (parent) {
       // create child array if it doesn't exist
       (parent.children || (parent.children = []))

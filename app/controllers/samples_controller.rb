@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class SamplesController < ApplicationController
-  include AsvTreeFormatter
   include CheckWebsite
   include FilterSamples
 
@@ -17,7 +16,6 @@ class SamplesController < ApplicationController
     @division_counts = division_counts
     @sample = sample
     @organisms = organisms
-    @asv_tree = asv_tree_data
   end
 
   private
@@ -98,19 +96,6 @@ class SamplesController < ApplicationController
         .group(:id)
         .find(params[:id])
     end
-  end
-
-  def asv_tree_taxa
-    @asv_tree_taxa ||= fetch_asv_tree_for_sample(sample.id)
-  end
-
-  def asv_tree_data
-    tree = asv_tree_taxa.map do |taxon|
-      taxon_object = create_taxon_object(taxon)
-      create_tree_objects(taxon_object, taxon.rank)
-    end.flatten
-    tree << { 'name': 'Life', 'id': 'Life', 'common_name': nil }
-    tree.uniq! { |i| i[:id] }
   end
 
   def conn

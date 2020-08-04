@@ -15,7 +15,7 @@ module AsvTreeFormatter
     g = taxon.hierarchy_names['genus']
     sp = taxon.hierarchy_names['species']
 
-    k_id = taxon.cal_division_id.try(:to_i)
+    k_id = taxon.domain_id.try(:to_i)
     p_id = taxon.hierarchy['phylum'].try(:to_i)
     c_id = taxon.hierarchy['class'].try(:to_i)
     o_id = taxon.hierarchy['order'].try(:to_i)
@@ -50,8 +50,8 @@ module AsvTreeFormatter
       results[:phylum_id] = p_id || format_blank_rank(results[:class_id], 'p')
     end
     if %w[species genus family order class phylum kingdom].include?(rank)
-      results[:kingdom] = k || format_blank_name(results[:phylum], 'kingdom')
-      results[:kingdom_id] = k_id || format_blank_rank(results[:phylum_id], 'k')
+      results[:kingdom] = k
+      results[:kingdom_id] = "k_#{k_id}"
     end
 
     results = results.reject { |_k, v| v.blank? }
@@ -69,17 +69,21 @@ module AsvTreeFormatter
     common_name = if taxon_object[:original_rank] == rank.to_s
                     taxon_object[:common_name]
                   end
-
     display_name = if common_name.present?
                      "#{taxon_object[rank]} (#{common_name})"
                    else
                      taxon_object[rank]
                    end
+    parent_id = if rank == :phylum
+                  taxon_object[:kingdom_id]
+                else
+                  taxon_object[parent_id]
+                end
     {
       name: display_name,
-      parent: taxon_object[parent_id],
+      parent_id: parent_id,
       id: taxon_object[id],
-      common_name: common_name
+      rank: rank
     }
   end
   # rubocop:enable Metrics/MethodLength
@@ -115,9 +119,9 @@ module AsvTreeFormatter
     end
     if %w[species genus family order class phylum kingdom].include?(rank)
       objects << { name: taxon_object[:kingdom],
-                   parent: 'Life',
+                   parent_id: 'Life',
                    id: taxon_object[:kingdom_id],
-                   common_name: nil }
+                   rank: 'kingdom' }
     end
     objects
   end
@@ -137,18 +141,25 @@ module AsvTreeFormatter
   def base_asv_tree_taxa
     @base_asv_tree_taxa ||= begin
       NcbiNode
-        .joins('join asvs on asvs.taxon_id = ncbi_nodes.taxon_id')
         .joins(:ncbi_division)
-        .where('cal_division_id IS NOT NULL')
         .select('ncbi_divisions.name as domain')
-        .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id')
+        .select('ncbi_nodes.rank, ncbi_nodes.cal_division_id as domain_id')
         .select('ncbi_nodes.hierarchy_names, ncbi_nodes.hierarchy')
         .select('ncbi_nodes.common_names')
     end
   end
 
   def fetch_asv_tree_for_sample(sample_id)
-    fetch_asv_tree.where('asvs.sample_id = ?', sample_id)
+    taxa = fetch_asv_tree.where('ncbi_nodes.taxon_id IN '\
+      '(SELECT DISTINCT taxon_id FROM asvs '\
+      'WHERE asvs.sample_id = ?)', sample_id)
+
+    tree = taxa.map do |taxon|
+      taxon_object = create_taxon_object(taxon)
+      create_tree_objects(taxon_object, taxon.rank)
+    end.flatten
+    tree << { name: 'Life', id: 'Life', rank: nil, parent_id: nil }
+    tree.uniq! { |i| i[:id] }
   end
 
   def fetch_asv_tree_for_research_project(project_id)

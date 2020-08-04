@@ -1,42 +1,62 @@
 import * as d3 from "d3";
+import axios from "axios";
+
 import { Spinner } from "spin.js";
 import convertFlatJsonToFlareJson from "../utils/flare_json";
 import baseTree from "./base_tree.js";
 
+// =================
+// setup
+// =================
+
+const endpoint = `/api/v1${window.location.pathname}/asv_tree`;
+let root;
+let longestLabelLength;
+let maxLabelLength;
+let svg;
+let tree;
 // Set the dimensions and margins of the diagram
 let viewerWidth = baseTree.viewerWidth;
 let longestLabelFactor = 10;
 let nodeHeightFactor = 45;
 
-const initOptions = {
+const treeOptions = {
   myCircleRadius: 14,
   myNodeTextXOffset: 17,
-  myCircleFontSize: "20px"
+  myCircleFontSize: "20px",
 };
-baseTree.init(initOptions);
-
-const opts = { color: "#333", left: "50%", scale: 1.75 };
-let spinner = new Spinner(opts).spin(document.querySelector("#asv-tree"));
-
-var data = window.caledna.asv_tree;
-let flareData = convertFlatJsonToFlareJson(data, "id");
-
+const spinnerOptions = { color: "#333", left: "50%", scale: 1.75 };
 let svgOptions = {
-  selector: "#asv-tree"
+  selector: "#js-asv-tree",
 };
-const svg = baseTree.createSvg(svgOptions);
-let tree = d3.tree();
-const root = baseTree.createRoot(flareData);
-const longestLabelLength = baseTree.calculateLongestLabelLength(data);
-const maxLabelLength = longestLabelLength * longestLabelFactor;
 
-// Collapse after the second level
-root.children.forEach(baseTree.collapse);
+// =================
+// methods
+// =================
 
-update(root, root);
-baseTree.centerNode(root, svg);
+export function asv_tree_init(data) {
+  baseTree.init(treeOptions);
 
-spinner.stop();
+  let spinner = new Spinner(spinnerOptions).spin(
+    document.querySelector("#js-asv-tree")
+  );
+
+  svg = baseTree.createSvg(svgOptions);
+  tree = d3.tree();
+
+  let flareData = convertFlatJsonToFlareJson(data, "id");
+  root = baseTree.createRoot(flareData);
+  longestLabelLength = baseTree.calculateLongestLabelLength(data);
+  maxLabelLength = longestLabelLength * longestLabelFactor;
+
+  // Collapse after the second level
+  root.children.forEach(baseTree.collapse);
+
+  update(root, root);
+  baseTree.centerNode(root, svg);
+
+  spinner.stop();
+}
 
 function update(source, rootNode) {
   // tree, viewerWidth, longestLabelLength, svg, toggleChildren
@@ -71,3 +91,11 @@ function toggleChildren(source) {
   update(source, root);
   baseTree.centerNode(source, svg);
 }
+
+// =================
+// run code
+// =================
+
+axios.get(endpoint).then((res) => {
+  asv_tree_init(res.data.asv_tree);
+});

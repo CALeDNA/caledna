@@ -29,7 +29,9 @@ Rails.application.routes.draw do
       resources :inat_observations, only: %i[index]
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]
-      resources :samples, only: %i[index show]
+      resources :samples, only: %i[index show] do
+        get '/asv_tree', to: 'samples#asv_tree'
+      end
       resource :samples_search, only: %i[show]
       resource :stats, only: [] do
         get '/home_page', to: 'stats#home_page'
