@@ -1,28 +1,4 @@
-<h2><%= organisms.length %> Organisms from ASVs</h2>
+<h2><%= @organisms_count %> Organisms from ASVs</h2>
 
-<div class="kingdom-submenu">
-  <a class="btn my-btn-default " data-kingdom="All">
-    All Kingdoms
-  </a>
-  <% NcbiDivision::SEVEN_KINGDOMS.each do |kingdom| %>
-    <a class="btn my-btn-default kingdom-submenu" data-kingdom="<%=kingdom %>">
-      <%= image_tag "taxa_icons/#{kingdom.downcase}.png", class: 'kingdom-icon' ,
-        'data-kingdom': kingdom %>
-      <%= kingdom %>
-    </a>
-  <% end %>
+<div id="js-organisms-list">
 </div>
-
-<ul class="organism-list">
-  <% organisms.each do |taxon| %>
-    <li class="<%= taxon.division_name&.tr(' ', '_') %> item">
-      <% if taxon.threatened? %>
-        (Name not shown because this species is <%= taxon.iucn_status %>)
-      <% else %>
-        <%= taxon.rank %>:
-        <%= link_to SamplesHelper.taxonomy_string(taxon), taxon_path(taxon.taxon_id) %>
-        <%= TaxaSearchHelper.display_common_names(taxon.common_names) if taxon.common_names %>
-      <% end %>
-    </li>
-  <% end %>
-</ul>

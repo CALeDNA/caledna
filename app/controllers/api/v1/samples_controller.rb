@@ -6,6 +6,7 @@ module Api
       before_action :add_cors_headers
       include FilterSamples
       include AsvTreeFormatter
+      include TreeFormatter
 
       def index
         render json: {
@@ -22,6 +23,12 @@ module Api
       def asv_tree
         render json: {
           asv_tree: asv_tree_taxa
+        }, status: :ok
+      end
+
+      def organisms_list
+        render json: {
+          organisms_list: organisms
         }, status: :ok
       end
 
@@ -50,6 +57,12 @@ module Api
 
       def asv_tree_taxa
         @asv_tree_taxa ||= fetch_asv_tree_for_sample(sample.id)
+      end
+
+      def organisms
+        @organisms ||= begin
+          fetch_nested_taxa_tree_for_sample(sample_id)
+        end
       end
 
       # =======================

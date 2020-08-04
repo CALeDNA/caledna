@@ -15,7 +15,7 @@ class SamplesController < ApplicationController
   def show
     @division_counts = division_counts
     @sample = sample
-    @organisms = organisms
+    @organisms_count = organisms_count
   end
 
   private
@@ -24,44 +24,19 @@ class SamplesController < ApplicationController
   # show
   # =======================
 
-  # rubocop:disable Metrics/MethodLength
-  def organisms_sql
-    sql = <<~SQL
-      SELECT canonical_name,
-      hierarchy_names,
-      ncbi_nodes.taxon_id, ncbi_nodes.iucn_status,
-      ncbi_divisions.name AS division_name, rank,
-      common_names
-      FROM ncbi_nodes
-      JOIN asvs ON asvs.taxon_id = ncbi_nodes.taxon_id
-      JOIN ncbi_divisions
-        ON ncbi_nodes.cal_division_id = ncbi_divisions.id
-      WHERE asvs.sample_id = $1
-    SQL
-
-    if CheckWebsite.pour_site?
-      sql += "AND research_project_id = #{ResearchProject::LA_RIVER.id}"
-    end
-
-    sql + <<~SQL
-      GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.iucn_status,
-      ncbi_divisions.name
-      ORDER BY division_name,
-      hierarchy_names ->>'phylum',
-      hierarchy_names ->>'class',
-      hierarchy_names ->>'order',
-      hierarchy_names ->>'family',
-      hierarchy_names ->>'genus',
-      hierarchy_names ->>'species';
+  def organisms_count_sql
+    <<~SQL
+      SELECT count(*) FROM (
+        SELECT DISTINCT taxon_id
+        FROM asvs
+        where sample_id = #{sample.id}
+      )as temp;
     SQL
   end
-  # rubocop:enable Metrics/MethodLength
 
-  def organisms
-    @organisms ||= begin
-      binding = [[nil, params[:id]]]
-      raw_records = conn.exec_query(organisms_sql, 'q', binding)
-      raw_records.map { |r| OpenStruct.new(r) }
+  def organisms_count
+    @organisms_count ||= begin
+      conn.exec_query(organisms_count_sql).entries.first['count']
     end
   end
 
