@@ -47,6 +47,9 @@ class SamplesController < ApplicationController
       JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
       JOIN ncbi_divisions ON ncbi_divisions.id = ncbi_nodes.cal_division_id
       WHERE asvs.sample_id = #{sample.id}
+      AND ncbi_nodes.taxon_id IN (
+        SELECT DISTINCT taxon_id FROM asvs WHERE sample_id = #{sample.id}
+      )
       GROUP BY name;
     SQL
   end
