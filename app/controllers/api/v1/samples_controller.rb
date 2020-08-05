@@ -40,14 +40,7 @@ module Api
 
       def sample
         @sample ||= begin
-          website_sample
-            .select(sample_columns)
-            .select('COUNT(DISTINCT asvs.taxon_id) as taxa_count')
-            .joins(results_left_join_sql)
-            .joins(optional_published_research_project_sql)
-            .where(conditional_status_sql)
-            .group(:id)
-            .find(sample_id)
+          website_sample.approved.select(sample_columns).find(sample_id)
         end
       end
 
