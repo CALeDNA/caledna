@@ -30,8 +30,7 @@ Rails.application.routes.draw do
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]
       resources :samples, only: %i[index show] do
-        get '/asv_tree', to: 'samples#asv_tree'
-        get '/organisms_list', to: 'samples#organisms_list'
+        get '/taxa_list', to: 'samples#taxa_list'
       end
       resource :samples_search, only: %i[show]
       resource :stats, only: [] do

@@ -20,10 +20,7 @@
       };
     },
     created() {
-      this.taxaData = convertFlatJsonToFlareJson(
-        this.$root.organisms_list,
-        "id"
-      );
+      this.taxaData = this.$root.organisms_list;
     },
 
     mounted() {},

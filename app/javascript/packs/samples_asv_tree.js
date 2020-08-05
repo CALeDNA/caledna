@@ -1,15 +1,13 @@
 import * as d3 from "d3";
-import axios from "axios";
 
 import { Spinner } from "spin.js";
-import convertFlatJsonToFlareJson from "../utils/flare_json";
 import baseTree from "./base_tree.js";
 
 // =================
 // setup
 // =================
 
-const endpoint = `/api/v1${window.location.pathname}/asv_tree`;
+const endpoint = `/api/v1${window.location.pathname}/taxa_list`;
 let root;
 let longestLabelLength;
 let maxLabelLength;
@@ -34,7 +32,7 @@ let svgOptions = {
 // methods
 // =================
 
-export function asv_tree_init(data) {
+export function asv_tree_init(data, nestedData) {
   baseTree.init(treeOptions);
 
   let spinner = new Spinner(spinnerOptions).spin(
@@ -44,8 +42,7 @@ export function asv_tree_init(data) {
   svg = baseTree.createSvg(svgOptions);
   tree = d3.tree();
 
-  let flareData = convertFlatJsonToFlareJson(data, "id");
-  root = baseTree.createRoot(flareData);
+  root = baseTree.createRoot(nestedData);
   longestLabelLength = baseTree.calculateLongestLabelLength(data);
   maxLabelLength = longestLabelLength * longestLabelFactor;
 
@@ -91,11 +88,3 @@ function toggleChildren(source) {
   update(source, root);
   baseTree.centerNode(source, svg);
 }
-
-// =================
-// run code
-// =================
-
-axios.get(endpoint).then((res) => {
-  asv_tree_init(res.data.asv_tree);
-});

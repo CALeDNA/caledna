@@ -57,9 +57,8 @@
 </script>
 
 <% if @sample.status == :results_completed %>
-  <%= javascript_pack_tag 'samples_organisms_list' %>
+  <%= javascript_pack_tag 'samples_details' %>
   <%= javascript_pack_tag 'samples_details_charts' %>
-  <%= javascript_pack_tag 'samples_asv_tree' %>
 <% end%>
 <%= javascript_pack_tag 'samples_details_map' %>
 <%= stylesheet_pack_tag 'samples_details_map'%>

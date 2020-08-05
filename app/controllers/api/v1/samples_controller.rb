@@ -20,15 +20,9 @@ module Api
         }, status: :ok
       end
 
-      def asv_tree
+      def taxa_list
         render json: {
-          asv_tree: asv_tree_taxa
-        }, status: :ok
-      end
-
-      def organisms_list
-        render json: {
-          organisms_list: organisms
+          taxa_list: asv_tree_taxa
         }, status: :ok
       end
 
