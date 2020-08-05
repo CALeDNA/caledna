@@ -16,20 +16,20 @@ describe AsvTreeFormatter do
         family: 'f', genus: 'g', species: 'sp',
         superkingdom_id: 1, kingdom_id: 2, phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6, genus_id: 7, species_id: 8,
-        common_name: 'cn'
+        rank: 'cn'
       }
     end
 
     it 'creates tree objects for species' do
       rank = 'species'
       expected = [
-        { name: 'sp', parent: 7, id: 8, common_name: nil },
-        { name: 'g', parent: 6, id: 7, common_name: nil },
-        { name: 'f', parent: 5, id: 6, common_name: nil },
-        { name: 'o', parent: 4, id: 5, common_name: nil },
-        { name: 'c', parent: 3, id: 4, common_name: nil },
-        { name: 'p', parent: 2, id: 3, common_name: nil },
-        { name: 'k', parent: 'Life', id: 2, common_name: nil }
+        { name: 'sp', parent_id: 7, id: 8, rank: :species },
+        { name: 'g', parent_id: 6, id: 7, rank: :genus },
+        { name: 'f', parent_id: 5, id: 6, rank: :family },
+        { name: 'o', parent_id: 4, id: 5, rank: :order },
+        { name: 'c', parent_id: 3, id: 4, rank: :class },
+        { name: 'p', parent_id: 2, id: 3, rank: :phylum },
+        { name: 'k', parent_id: 'Life', id: 2, rank: :kingdom }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -37,12 +37,12 @@ describe AsvTreeFormatter do
     it 'creates tree objects for genus' do
       rank = 'genus'
       expected = [
-        { name: 'g', parent: 6, id: 7, common_name: nil },
-        { name: 'f', parent: 5, id: 6, common_name: nil },
-        { name: 'o', parent: 4, id: 5, common_name: nil },
-        { name: 'c', parent: 3, id: 4, common_name: nil },
-        { name: 'p', parent: 2, id: 3, common_name: nil },
-        { name: 'k', parent: 'Life', id: 2, common_name: nil }
+        { name: 'g', parent_id: 6, id: 7, rank: :genus },
+        { name: 'f', parent_id: 5, id: 6, rank: :family },
+        { name: 'o', parent_id: 4, id: 5, rank: :order },
+        { name: 'c', parent_id: 3, id: 4, rank: :class },
+        { name: 'p', parent_id: 2, id: 3, rank: :phylum },
+        { name: 'k', parent_id: 'Life', id: 2, rank: :kingdom }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -50,11 +50,11 @@ describe AsvTreeFormatter do
     it 'creates tree objects for family' do
       rank = 'family'
       expected = [
-        { name: 'f', parent: 5, id: 6, common_name: nil },
-        { name: 'o', parent: 4, id: 5, common_name: nil },
-        { name: 'c', parent: 3, id: 4, common_name: nil },
-        { name: 'p', parent: 2, id: 3, common_name: nil },
-        { name: 'k', parent: 'Life', id: 2, common_name: nil }
+        { name: 'f', parent_id: 5, id: 6, rank: :family },
+        { name: 'o', parent_id: 4, id: 5, rank: :order },
+        { name: 'c', parent_id: 3, id: 4, rank: :class },
+        { name: 'p', parent_id: 2, id: 3, rank: :phylum },
+        { name: 'k', parent_id: 'Life', id: 2, rank: :kingdom }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -62,10 +62,10 @@ describe AsvTreeFormatter do
     it 'creates tree objects for order' do
       rank = 'order'
       expected = [
-        { name: 'o', parent: 4, id: 5, common_name: nil },
-        { name: 'c', parent: 3, id: 4, common_name: nil },
-        { name: 'p', parent: 2, id: 3, common_name: nil },
-        { name: 'k', parent: 'Life', id: 2, common_name: nil }
+        { name: 'o', parent_id: 4, id: 5, rank: :order },
+        { name: 'c', parent_id: 3, id: 4, rank: :class },
+        { name: 'p', parent_id: 2, id: 3, rank: :phylum },
+        { name: 'k', parent_id: 'Life', id: 2, rank: :kingdom }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -73,9 +73,9 @@ describe AsvTreeFormatter do
     it 'creates tree objects for class' do
       rank = 'class'
       expected = [
-        { name: 'c', parent: 3, id: 4, common_name: nil },
-        { name: 'p', parent: 2, id: 3, common_name: nil },
-        { name: 'k', parent: 'Life', id: 2, common_name: nil }
+        { name: 'c', parent_id: 3, id: 4, rank: :class },
+        { name: 'p', parent_id: 2, id: 3, rank: :phylum },
+        { name: 'k', parent_id: 'Life', id: 2, rank: :kingdom }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -83,8 +83,8 @@ describe AsvTreeFormatter do
     it 'creates tree objects for phylum' do
       rank = 'phylum'
       expected = [
-        { name: 'p', parent: 2, id: 3, common_name: nil },
-        { name: 'k', parent: 'Life', id: 2, common_name: nil }
+        { name: 'p', parent_id: 2, id: 3, rank: :phylum },
+        { name: 'k', parent_id: 'Life', id: 2, rank: :kingdom }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -92,7 +92,7 @@ describe AsvTreeFormatter do
     it 'creates tree objects for kingdom' do
       rank = 'kingdom'
       expected = [
-        { name: 'k', parent: 'Life', id: 2, common_name: nil }
+        { name: 'k', parent_id: 'Life', id: 2, rank: :kingdom }
       ]
       expect(subject(taxon_object, rank)).to eq(expected)
     end
@@ -120,7 +120,7 @@ describe AsvTreeFormatter do
     end
 
     it 'returns an object for a specified rank' do
-      expected = { name: 'g', parent: 6, id: 7, common_name: nil }
+      expected = { name: 'g', parent_id: 6, id: 7, rank: :genus }
 
       expect(subject(taxon_object, :genus, :family_id, :genus_id))
         .to eq(expected)
@@ -128,7 +128,7 @@ describe AsvTreeFormatter do
 
     it 'add common name if specified rank matches original rank' do
       taxon_object[:original_rank] = 'genus'
-      expected = { name: 'g (cn)', parent: 6, id: 7, common_name: 'cn' }
+      expected = { name: 'g (cn)', parent_id: 6, id: 7, rank: :genus }
 
       expect(subject(taxon_object, :genus, :family_id, :genus_id))
         .to eq(expected)
@@ -136,7 +136,7 @@ describe AsvTreeFormatter do
 
     it 'does not add common name if specified rank != original rank' do
       taxon_object[:original_rank] = 'species'
-      expected = { name: 'g', parent: 6, id: 7, common_name: nil }
+      expected = { name: 'g', parent_id: 6, id: 7, rank: :genus }
 
       expect(subject(taxon_object, :genus, :family_id, :genus_id))
         .to eq(expected)
@@ -174,9 +174,10 @@ describe AsvTreeFormatter do
     def append_taxon(taxon, common_names = nil)
       taxon.instance_eval { class << self; self end }
            .send(:attr_accessor,
-                 :domain, :common_names)
+                 :domain, :common_names, :domain_id)
 
       taxon.domain = 'division'
+      taxon.domain_id = 100
       taxon.common_names = common_names
       taxon
     end
@@ -190,7 +191,7 @@ describe AsvTreeFormatter do
       expected = {
         kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'f', genus: 'g', species: 'sp',
-        kingdom_id: 100, phylum_id: 3, class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6, genus_id: 7, species_id: 8,
         common_name: nil,
         original_rank: rank
@@ -209,7 +210,7 @@ describe AsvTreeFormatter do
       expected = {
         kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'f', genus: 'g',
-        kingdom_id: 100, phylum_id: 3, class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6, genus_id: 7,
         common_name: nil,
         original_rank: rank
@@ -228,7 +229,7 @@ describe AsvTreeFormatter do
       expected = {
         kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'f',
-        kingdom_id: 100, phylum_id: 3, class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6,
         common_name: nil,
         original_rank: rank
@@ -246,7 +247,7 @@ describe AsvTreeFormatter do
       taxon = append_taxon(taxon)
       expected = {
         kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
-        kingdom_id: 100, phylum_id: 3, class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 3, class_id: 4,
         order_id: 5,
         common_name: nil, original_rank: rank
       }
@@ -263,7 +264,7 @@ describe AsvTreeFormatter do
       taxon = append_taxon(taxon)
       expected = {
         kingdom: 'division', phylum: 'p', class: 'c',
-        kingdom_id: 100, phylum_id: 3, class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 3, class_id: 4,
         common_name: nil, original_rank: rank
       }
 
@@ -279,7 +280,7 @@ describe AsvTreeFormatter do
       taxon = append_taxon(taxon)
       expected = {
         kingdom: 'division', phylum: 'p',
-        kingdom_id: 100, phylum_id: 3,
+        kingdom_id: 'k_100', phylum_id: 3,
         common_name: nil, original_rank: rank
       }
 
@@ -295,7 +296,7 @@ describe AsvTreeFormatter do
       taxon = append_taxon(taxon)
       expected = {
         kingdom: 'division',
-        kingdom_id: 100,
+        kingdom_id: 'k_100',
         common_name: nil,
         original_rank: rank
       }
@@ -362,7 +363,7 @@ describe AsvTreeFormatter do
         family: 'family for sp',
         genus: 'genus for sp',
         species: 'sp',
-        kingdom_id: 100,
+        kingdom_id: 'k_100',
         phylum_id: 'p_c_o_f_g_8',
         class_id: 'c_o_f_g_8',
         order_id: 'o_f_g_8',
@@ -386,7 +387,7 @@ describe AsvTreeFormatter do
       expected = {
         kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'f', genus: 'genus for sp', species: 'sp',
-        kingdom_id: 100, phylum_id: 3, class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 6, genus_id: 'g_8', species_id: 8,
         common_name: nil,
         original_rank: rank
@@ -405,7 +406,7 @@ describe AsvTreeFormatter do
       expected = {
         kingdom: 'division', phylum: 'p', class: 'c', order: 'o',
         family: 'family for sp', genus: 'genus for sp', species: 'sp',
-        kingdom_id: 100, phylum_id: 3, class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 3, class_id: 4,
         order_id: 5, family_id: 'f_g_8', genus_id: 'g_8', species_id: 8,
         common_name: nil, original_rank: rank
       }
@@ -424,8 +425,31 @@ describe AsvTreeFormatter do
         kingdom: 'division', phylum: 'phylum for c', class: 'c',
         order: 'o', family: 'family for sp', genus: 'genus for sp',
         species: 'sp',
-        kingdom_id: 100, phylum_id: 'p_4', class_id: 4,
+        kingdom_id: 'k_100', phylum_id: 'p_4', class_id: 4,
         order_id: 5, family_id: 'f_g_8', genus_id: 'g_8', species_id: 8,
+        common_name: nil,
+        original_rank: rank
+      }
+
+      expect(subject(taxon)).to eq(expected)
+    end
+
+    it 'converts taxons that are enviromental samples' do
+      division = create(:ncbi_division, id: 200, name: 'Environmental samples')
+      rank = 'species'
+      taxon = create(:ncbi_node, hierarchy_names: names, hierarchy: ids,
+                                 rank: rank, cal_division_id: division.id)
+      taxon = append_taxon(taxon)
+      taxon.domain = 'Environmental samples'
+      taxon.domain_id = 200
+      taxon.save
+
+      expected = {
+        kingdom: 'Environmental samples', phylum: 'p', class: 'c', order: 'o',
+        family: 'f', genus: 'g', species: 'sp',
+        kingdom_id: 'k_es_200', phylum_id: 'es_3', class_id: 'es_4',
+        order_id: 'es_5', family_id: 'es_6', genus_id: 'es_7',
+        species_id: 'es_8',
         common_name: nil,
         original_rank: rank
       }

@@ -7,6 +7,8 @@ module AsvTreeFormatter
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength
   def create_taxon_object(taxon)
     rank = taxon.rank
+    domain = taxon.domain
+
     k = taxon.domain
     p = taxon.hierarchy_names['phylum']
     c = taxon.hierarchy_names['class']
@@ -15,13 +17,13 @@ module AsvTreeFormatter
     g = taxon.hierarchy_names['genus']
     sp = taxon.hierarchy_names['species']
 
-    k_id = taxon.domain_id.try(:to_i)
-    p_id = taxon.hierarchy['phylum'].try(:to_i)
-    c_id = taxon.hierarchy['class'].try(:to_i)
-    o_id = taxon.hierarchy['order'].try(:to_i)
-    f_id = taxon.hierarchy['family'].try(:to_i)
-    g_id = taxon.hierarchy['genus'].try(:to_i)
-    sp_id = taxon.hierarchy['species'].try(:to_i)
+    k_id = format_taxon_id(taxon.domain_id, domain)
+    p_id = format_taxon_id(taxon.hierarchy['phylum'], domain)
+    c_id = format_taxon_id(taxon.hierarchy['class'], domain)
+    o_id = format_taxon_id(taxon.hierarchy['order'], domain)
+    f_id = format_taxon_id(taxon.hierarchy['family'], domain)
+    g_id = format_taxon_id(taxon.hierarchy['genus'], domain)
+    sp_id = format_taxon_id(taxon.hierarchy['species'], domain)
 
     results = {}
 
@@ -79,6 +81,7 @@ module AsvTreeFormatter
                 else
                   taxon_object[parent_id]
                 end
+    # debugger
     {
       name: display_name,
       parent_id: parent_id,
@@ -121,12 +124,40 @@ module AsvTreeFormatter
       objects << { name: taxon_object[:kingdom],
                    parent_id: 'Life',
                    id: taxon_object[:kingdom_id],
-                   rank: 'kingdom' }
+                   rank: :kingdom }
     end
     objects
   end
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity, Metrics/MethodLength
+
+  def fetch_asv_tree_for_sample(sample_id)
+    taxa = fetch_asv_tree.where('ncbi_nodes.taxon_id IN '\
+      '(SELECT DISTINCT taxon_id FROM asvs '\
+      'WHERE asvs.sample_id = ?)', sample_id)
+
+    format_taxa(taxa)
+  end
+
+  def fetch_asv_tree_for_research_project(project_id)
+    taxa = fetch_asv_tree.joins('join research_project_sources as rps ON ' \
+                                'rps.sourceable_id = asvs.sample_id')
+                         .where('rps.research_project_id = ?', project_id)
+                         .where("rps.sourceable_type = 'Sample'")
+    format_taxa(taxa)
+  end
+
+  private
+
+  def format_taxon_id(taxon_id, domain)
+    return if taxon_id.blank?
+
+    if domain == 'Environmental samples'
+      "es_#{taxon_id}"
+    else
+      taxon_id.to_i
+    end
+  end
 
   def fetch_asv_tree
     @fetch_asv_tree ||= begin
@@ -149,28 +180,14 @@ module AsvTreeFormatter
     end
   end
 
-  def fetch_asv_tree_for_sample(sample_id)
-    taxa = fetch_asv_tree.where('ncbi_nodes.taxon_id IN '\
-      '(SELECT DISTINCT taxon_id FROM asvs '\
-      'WHERE asvs.sample_id = ?)', sample_id)
-
+  def format_taxa(taxa)
     tree = taxa.map do |taxon|
       taxon_object = create_taxon_object(taxon)
       create_tree_objects(taxon_object, taxon.rank)
     end.flatten
     tree << { name: 'Life', id: 'Life', rank: nil, parent_id: nil }
-    tree.uniq! { |i| i[:id] }
+    tree.uniq { |i| [i[:parent_id], i[:id]] }
   end
-
-  def fetch_asv_tree_for_research_project(project_id)
-    fetch_asv_tree.joins('join research_project_sources ON ' \
-                  'research_project_sources.sourceable_id = asvs.sample_id')
-                  .where('research_project_sources.research_project_id = ?',
-                         project_id)
-                  .where("research_project_sources.sourceable_type = 'Sample'")
-  end
-
-  private
 
   def format_blank_rank(name, rank)
     "#{rank}_#{name}"

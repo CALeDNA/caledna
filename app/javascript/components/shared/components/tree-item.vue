@@ -4,7 +4,7 @@
       <span v-if="hasChildren">[{{ isOpen ? "-" : "+" }}] </span>
       {{ displayName }}
     </span>
-    <a v-if="showLink" :href="`/taxa/${itemData.id}`">(link)</a>
+    <a v-if="showLink" :href="taxaLink">(link)</a>
     <ul v-show="isOpen" v-if="hasChildren">
       <tree-item
         v-for="child in itemData.children"
@@ -43,6 +43,14 @@
           return false;
         } else {
           return true;
+        }
+      },
+      taxaLink: function () {
+        let id = this.itemData.id;
+        if (typeof id == "string" && id.includes("es_")) {
+          return `/taxa/${id.replace("es_", "")}`;
+        } else {
+          return `/taxa/${id}`;
         }
       },
     },
