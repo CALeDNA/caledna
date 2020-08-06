@@ -4,6 +4,9 @@ class CreatePillarPointViews < ActiveRecord::Migration[5.2]
 
   def up
     project = ResearchProject.find_by(slug: 'pillar-point')
+    # fallback to project_id = 0 to make sure materialized view is created
+    project_id = project&.id || 0
+
     globi_index_sql = <<-SQL
       CREATE MATERIALIZED VIEW pillar_point.globi_index AS
       SELECT research_project_sources.metadata ->> 'image' AS image,
@@ -17,12 +20,11 @@ class CreatePillarPointViews < ActiveRecord::Migration[5.2]
       ON  external_resources.inaturalist_id =
         (research_project_sources.metadata ->> 'inat_id')::integer
       AND external_resources.source != 'wikidata'
-      WHERE research_project_id = #{project.id}
+      WHERE research_project_id = #{project_id}
       AND sourceable_type = 'GlobiRequest'
       ORDER BY  (research_project_sources.metadata ->>
         'inat_at_pillar_point_count')::integer desc
     SQL
-
     execute(globi_index_sql)
 
     create_table 'pillar_point.globi_show' do |t|
