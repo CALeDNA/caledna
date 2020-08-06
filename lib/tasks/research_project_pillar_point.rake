@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/NumericLiterals
 namespace :research_project_pillar_point do
   require 'csv'
 
@@ -163,8 +162,8 @@ namespace :research_project_pillar_point do
 
   task remove_duplicate_ncbi_taxa: :environment do
     taxa = [
-      { taxon_id: 5043762, bold_id: 515404, ncbi_id: 1405418 },
-      { taxon_id: 5043358, bold_id: 23719, ncbi_id: 4783 }
+      { taxon_id: 5_043_762, bold_id: 515_404, ncbi_id: 1_405_418 },
+      { taxon_id: 5_043_358, bold_id: 23_719, ncbi_id: 4783 }
     ]
 
     taxa.each do |taxon|
@@ -186,65 +185,65 @@ namespace :research_project_pillar_point do
 
   task add_ids_to_bold_taxa: :environment do
     taxa = [
-      { taxon_id: 5043071, bold_id: 491488, ncbi_id: nil },
-      { taxon_id: 5042993, bold_id: 370424, ncbi_id: nil },
-      { taxon_id: 5043237, bold_id: 109576, ncbi_id: nil },
-      { taxon_id: 5043324, bold_id: 461346, ncbi_id: nil },
-      { taxon_id: 5043166, bold_id: 282232, ncbi_id: nil },
-      { taxon_id: 5043144, bold_id: 519820, ncbi_id: nil },
-      { taxon_id: 5043154, bold_id: 217039, ncbi_id: nil },
-      { taxon_id: 5043028, bold_id: 258990, ncbi_id: nil },
-      { taxon_id: 5043434, bold_id: 346023, ncbi_id: nil },
-      { taxon_id: 5043437, bold_id: 527120, ncbi_id: nil },
-      { taxon_id: 5043085, bold_id: 534591, ncbi_id: nil },
-      { taxon_id: 5042985, bold_id: 854055, ncbi_id: nil },
-      { taxon_id: 5043740, bold_id: 268203, ncbi_id: nil },
-      { taxon_id: 5043453, bold_id: 85116, ncbi_id: nil },
-      { taxon_id: 5043751, bold_id: 268558, ncbi_id: nil },
-      { taxon_id: 5043840, bold_id: 275367, ncbi_id: nil },
-      { taxon_id: 5043057, bold_id: 718901, ncbi_id: nil },
-      { taxon_id: 5043841, bold_id: 720297, ncbi_id: nil },
-      { taxon_id: 5043842, bold_id: 720439, ncbi_id: nil },
-      { taxon_id: 5043729, bold_id: 737713, ncbi_id: nil },
-      { taxon_id: 5043697, bold_id: 669159, ncbi_id: nil },
-      { taxon_id: 5042987, bold_id: 510195, ncbi_id: nil },
-      { taxon_id: 5043221, bold_id: 299402, ncbi_id: nil },
-      { taxon_id: 5043633, bold_id: 231769, ncbi_id: nil },
-      { taxon_id: 5043168, bold_id: 542750, ncbi_id: 2203571 },
-      { taxon_id: 5043833, bold_id: 596352, ncbi_id: nil },
-      { taxon_id: 5043788, bold_id: 101974, ncbi_id: nil },
-      { taxon_id: 5043139, bold_id: 726913, ncbi_id: nil },
-      { taxon_id: 5043018, bold_id: 309823, ncbi_id: 2316222 },
-      { taxon_id: 5043353, bold_id: 53944, ncbi_id: nil },
-      { taxon_id: 5043454, bold_id: 276756, ncbi_id: nil },
-      { taxon_id: 5043839, bold_id: 646268, ncbi_id: nil },
-      { taxon_id: 5043421, bold_id: 194539, ncbi_id: nil },
-      { taxon_id: 5043070, bold_id: 641458, ncbi_id: nil },
-      { taxon_id: 5042978, bold_id: 385908, ncbi_id: nil },
-      { taxon_id: 5042975, bold_id: 30651, ncbi_id: 2109251 },
-      { taxon_id: 5043456, bold_id: 343866, ncbi_id: nil },
-      { taxon_id: 5043000, bold_id: 606438, ncbi_id: nil },
-      { taxon_id: 5043153, bold_id: 396830, ncbi_id: 2049150 },
-      { taxon_id: 5043800, bold_id: 353344, ncbi_id: nil },
-      { taxon_id: 5043801, bold_id: 111079, ncbi_id: nil },
-      { taxon_id: 5043803, bold_id: 730955, ncbi_id: nil },
-      { taxon_id: 5043368, bold_id: 311958, ncbi_id: nil },
-      { taxon_id: 5043808, bold_id: 268483, ncbi_id: nil },
-      { taxon_id: 5042998, bold_id: 706900, ncbi_id: nil },
-      { taxon_id: 5043641, bold_id: 234301, ncbi_id: 2183729 },
-      { taxon_id: 5043079, bold_id: 572570, ncbi_id: nil },
-      { taxon_id: 5043395, bold_id: 182772, ncbi_id: nil },
-      { taxon_id: 5043396, bold_id: 179273, ncbi_id: nil },
-      { taxon_id: 5043119, bold_id: 373457, ncbi_id: nil },
-      { taxon_id: 5043812, bold_id: 381019, ncbi_id: nil },
-      { taxon_id: 5043326, bold_id: 655394, ncbi_id: nil },
-      { taxon_id: 5043009, bold_id: 606440, ncbi_id: nil },
-      { taxon_id: 5043146, bold_id: 181364, ncbi_id: nil },
-      { taxon_id: 5043739, bold_id: 735500, ncbi_id: nil },
-      { taxon_id: 5043174, bold_id: 542515, ncbi_id: nil },
-      { taxon_id: 5043680, bold_id: 85217, ncbi_id: nil },
-      { taxon_id: 5043087, bold_id: 271367, ncbi_id: nil },
-      { taxon_id: 5043741, bold_id: 769336, ncbi_id: 2202239 }
+      { taxon_id: 5_043_071, bold_id: 491_488, ncbi_id: nil },
+      { taxon_id: 5_042_993, bold_id: 370_424, ncbi_id: nil },
+      { taxon_id: 5_043_237, bold_id: 109_576, ncbi_id: nil },
+      { taxon_id: 5_043_324, bold_id: 461_346, ncbi_id: nil },
+      { taxon_id: 5_043_166, bold_id: 282_232, ncbi_id: nil },
+      { taxon_id: 5_043_144, bold_id: 519_820, ncbi_id: nil },
+      { taxon_id: 5_043_154, bold_id: 217_039, ncbi_id: nil },
+      { taxon_id: 5_043_028, bold_id: 258_990, ncbi_id: nil },
+      { taxon_id: 5_043_434, bold_id: 346_023, ncbi_id: nil },
+      { taxon_id: 5_043_437, bold_id: 527_120, ncbi_id: nil },
+      { taxon_id: 5_043_085, bold_id: 534_591, ncbi_id: nil },
+      { taxon_id: 5_042_985, bold_id: 854_055, ncbi_id: nil },
+      { taxon_id: 5_043_740, bold_id: 268_203, ncbi_id: nil },
+      { taxon_id: 5_043_453, bold_id: 85_116, ncbi_id: nil },
+      { taxon_id: 5_043_751, bold_id: 268_558, ncbi_id: nil },
+      { taxon_id: 5_043_840, bold_id: 275_367, ncbi_id: nil },
+      { taxon_id: 5_043_057, bold_id: 718_901, ncbi_id: nil },
+      { taxon_id: 5_043_841, bold_id: 720_297, ncbi_id: nil },
+      { taxon_id: 5_043_842, bold_id: 720_439, ncbi_id: nil },
+      { taxon_id: 5_043_729, bold_id: 737_713, ncbi_id: nil },
+      { taxon_id: 5_043_697, bold_id: 669_159, ncbi_id: nil },
+      { taxon_id: 5_042_987, bold_id: 510_195, ncbi_id: nil },
+      { taxon_id: 5_043_221, bold_id: 299_402, ncbi_id: nil },
+      { taxon_id: 5_043_633, bold_id: 231_769, ncbi_id: nil },
+      { taxon_id: 5_043_168, bold_id: 542_750, ncbi_id: 2_203_571 },
+      { taxon_id: 5_043_833, bold_id: 596_352, ncbi_id: nil },
+      { taxon_id: 5_043_788, bold_id: 101_974, ncbi_id: nil },
+      { taxon_id: 5_043_139, bold_id: 726_913, ncbi_id: nil },
+      { taxon_id: 5_043_018, bold_id: 309_823, ncbi_id: 2_316_222 },
+      { taxon_id: 5_043_353, bold_id: 53_944, ncbi_id: nil },
+      { taxon_id: 5_043_454, bold_id: 276_756, ncbi_id: nil },
+      { taxon_id: 5_043_839, bold_id: 646_268, ncbi_id: nil },
+      { taxon_id: 5_043_421, bold_id: 194_539, ncbi_id: nil },
+      { taxon_id: 5_043_070, bold_id: 641_458, ncbi_id: nil },
+      { taxon_id: 5_042_978, bold_id: 385_908, ncbi_id: nil },
+      { taxon_id: 5_042_975, bold_id: 30_651, ncbi_id: 2_109_251 },
+      { taxon_id: 5_043_456, bold_id: 343_866, ncbi_id: nil },
+      { taxon_id: 5_043_000, bold_id: 606_438, ncbi_id: nil },
+      { taxon_id: 5_043_153, bold_id: 396_830, ncbi_id: 2_049_150 },
+      { taxon_id: 5_043_800, bold_id: 353_344, ncbi_id: nil },
+      { taxon_id: 5_043_801, bold_id: 111_079, ncbi_id: nil },
+      { taxon_id: 5_043_803, bold_id: 730_955, ncbi_id: nil },
+      { taxon_id: 5_043_368, bold_id: 311_958, ncbi_id: nil },
+      { taxon_id: 5_043_808, bold_id: 268_483, ncbi_id: nil },
+      { taxon_id: 5_042_998, bold_id: 706_900, ncbi_id: nil },
+      { taxon_id: 5_043_641, bold_id: 234_301, ncbi_id: 2_183_729 },
+      { taxon_id: 5_043_079, bold_id: 572_570, ncbi_id: nil },
+      { taxon_id: 5_043_395, bold_id: 182_772, ncbi_id: nil },
+      { taxon_id: 5_043_396, bold_id: 179_273, ncbi_id: nil },
+      { taxon_id: 5_043_119, bold_id: 373_457, ncbi_id: nil },
+      { taxon_id: 5_043_812, bold_id: 381_019, ncbi_id: nil },
+      { taxon_id: 5_043_326, bold_id: 655_394, ncbi_id: nil },
+      { taxon_id: 5_043_009, bold_id: 606_440, ncbi_id: nil },
+      { taxon_id: 5_043_146, bold_id: 181_364, ncbi_id: nil },
+      { taxon_id: 5_043_739, bold_id: 735_500, ncbi_id: nil },
+      { taxon_id: 5_043_174, bold_id: 542_515, ncbi_id: nil },
+      { taxon_id: 5_043_680, bold_id: 85_217, ncbi_id: nil },
+      { taxon_id: 5_043_087, bold_id: 271_367, ncbi_id: nil },
+      { taxon_id: 5_043_741, bold_id: 769_336, ncbi_id: 2_202_239 }
     ]
 
     taxa.each do |taxon|
@@ -328,8 +327,25 @@ namespace :research_project_pillar_point do
     conn.exec_query(sql)
   end
 
+  task populate_globi_show: :environment do
+    project = ResearchProject.find_by(slug: 'pillar-point')
+
+    sql = 'SELECT taxon_name from pillar_point.globi_index;'
+    taxa = conn.exec_query(sql)
+    taxa.each do |row|
+      taxon = row['taxon_name']
+      puts taxon
+
+      params = { taxon: taxon }
+      pp = ResearchProjectService::PillarPoint.new(project, params)
+      pp.globi_interactions.each do |record|
+        print '.'
+        GlobiShow.create(record.merge(keyword: taxon))
+      end
+    end
+  end
+
   def conn
     @conn ||= ActiveRecord::Base.connection
   end
 end
-# rubocop:enable Style/NumericLiterals
