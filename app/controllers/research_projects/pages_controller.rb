@@ -158,7 +158,11 @@ module ResearchProjects
         @taxon = params[:taxon]
         @gbif_taxa_with_edna_map = pillar_point_service.common_taxa_map
       elsif params[:id] == 'edna_gbif_comparison'
-        @gbif_taxa = pillar_point_service.gbif_taxa
+        ranks = %w[phylum class order family genus species]
+        rank_param = params[:taxon_rank]
+        rank = ranks.include?(rank_param) ? rank_param : 'phylum'
+        order = params[:sort] == 'count' ?  'count DESC' : 'id ASC'
+        @gbif_taxa = PpEdnaGbif.where(rank: rank).order(order)
       elsif params[:id] == 'intro'
         @stats = pillar_point_service.stats
       end
