@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class GlobiIndex < ApplicationRecord
+class PpGlobiIndex < ApplicationRecord
   self.table_name = 'pillar_point.globi_index'
 end

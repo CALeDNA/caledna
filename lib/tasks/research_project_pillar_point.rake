@@ -340,7 +340,7 @@ namespace :research_project_pillar_point do
       pp = ResearchProjectService::PillarPoint.new(project, params)
       pp.globi_interactions.each do |record|
         print '.'
-        GlobiShow.create(record.merge(keyword: taxon))
+        PpGlobiShow.create(record.merge(keyword: taxon))
       end
     end
   end

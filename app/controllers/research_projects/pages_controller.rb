@@ -145,10 +145,10 @@ module ResearchProjects
         taxon = params[:taxon]
         if taxon
           sql = 'edna_match DESC, gbif_match DESC, interaction_type'
-          @interactions = GlobiShow.where(keyword: taxon).order(sql)
+          @interactions = PpGlobiShow.where(keyword: taxon).order(sql)
           @globi_target_taxon = pillar_point_service.globi_target_taxon
         else
-          @taxon_list = GlobiIndex.page(params[:page]).per(48)
+          @taxon_list = PpGlobiIndex.page(params[:page]).per(48)
         end
       elsif params[:view] == 'list'
         @occurrences = occurrences
