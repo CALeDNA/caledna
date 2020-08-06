@@ -345,6 +345,20 @@ namespace :research_project_pillar_point do
     end
   end
 
+  task populate_edna_gbif: :environment do
+    project = ResearchProject.find_by(slug: 'pillar-point')
+    ranks = %w[phylum class order family genus species]
+    ranks.each do |rank|
+      params = { taxon_rank: rank }
+      pp = ResearchProjectService::PillarPoint.new(project, params)
+
+      pp.gbif_taxa.each do |record|
+        puts record
+        PpEdnaGbif.create(record.merge(rank: rank))
+      end
+    end
+  end
+
   def conn
     @conn ||= ActiveRecord::Base.connection
   end
