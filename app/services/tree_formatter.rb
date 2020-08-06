@@ -2,10 +2,9 @@
 
 module TreeFormatter
   def fetch_nested_taxa_tree_for_sample(id)
-    # res = PgConnect.execute(taxa_for_sample_sql, [id, id])
     bindings = [[nil, id], [nil, id]]
     res = conn.exec_query(taxa_for_sample_sql, 'q', bindings)
-    tree_objects = create_nested_tree_objects(res.entries)
+    create_nested_tree_objects(res.entries)
     # create_nested_tree(tree_objects)
   end
 
@@ -56,6 +55,7 @@ module TreeFormatter
     SQL
   end
 
+  # rubocop:disable Metrics/MethodLength
   def create_nested_tree_objects(taxa)
     ranks = %w[species genus family order class phylum]
     tree_objects = []
@@ -90,7 +90,9 @@ module TreeFormatter
                       parent_id: nil }
     tree_objects
   end
+  # rubocop:enable Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def create_nested_tree(taxa)
     taxa_hash = {}
     taxa.each do |taxon|
@@ -111,7 +113,9 @@ module TreeFormatter
     end
     tree_data.sort_by! { |child| child[:name] }
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def get_parent_id(record, ranks)
     record['hierarchy'] = JSON.parse(record['hierarchy'])
     rank = record['rank']
@@ -132,4 +136,5 @@ module TreeFormatter
     end
     parent_id
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end

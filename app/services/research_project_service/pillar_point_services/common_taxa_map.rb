@@ -7,6 +7,7 @@ module ResearchProjectService
         @conn ||= ActiveRecord::Base.connection
       end
 
+      # rubocop:disable Metrics/MethodLength
       def common_taxa_map
         @common_taxa_map ||= begin
           sql = <<-SQL
@@ -35,6 +36,7 @@ module ResearchProjectService
           conn.exec_query(sql)
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       # rubocop:disable Metrics/MethodLength
       def common_taxa_edna
