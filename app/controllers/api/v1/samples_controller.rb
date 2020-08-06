@@ -34,7 +34,17 @@ module Api
 
       def sample
         @sample ||= begin
-          website_sample.approved.select(sample_columns).find(sample_id)
+          sql = <<~SQL
+            LEFT JOIN research_project_sources  as rps
+            ON rps.sourceable_id = samples.id
+            AND sourceable_type = 'Sample'
+            LEFT JOIN research_projects
+            ON research_projects.id = rps.research_project_id
+            AND research_projects.published = true
+          SQL
+          website_sample.select(sample_columns).joins(sql)
+                        .where(conditional_status_sql)
+                        .find(sample_id)
         end
       end
 

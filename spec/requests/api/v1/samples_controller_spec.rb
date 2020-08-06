@@ -335,32 +335,27 @@ describe 'Samples' do
       context 'and research project is published' do
         it 'returns the sample data for the given sample' do
           sample = create(:sample, :results_completed)
-          taxon = create(:ncbi_node)
-          primer = create(:primer, id: 10, name: 'primer')
           rproj = create(:research_project, published: true)
-          create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
-                       research_project: rproj)
-          create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
-                       research_project: rproj)
+          create(:research_project_source, sourceable: sample,
+                                           research_project: rproj)
+          create(:research_project_source, sourceable: sample,
+                                           research_project: rproj)
 
           get api_v1_sample_path(id: sample.id)
           data = JSON.parse(response.body)['sample']['data']
 
           expect(data['attributes']['id'].to_i).to eq(sample.id)
-          expect(data['attributes']['primer_ids']).to eq(nil)
-          expect(data['attributes']['primer_names']).to eq(nil)
-          expect(data['attributes']['taxa_count']).to eq(1)
         end
       end
 
       context 'and research project is not published' do
         it 'raise an error' do
           sample = create(:sample, :results_completed)
-          taxon = create(:ncbi_node)
-          primer = create(:primer, id: 10, name: 'primer')
           rproj = create(:research_project, published: false)
-          create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
-                       research_project: rproj)
+          create(:research_project_source, sourceable: sample,
+                                           research_project: rproj)
+          create(:research_project_source, sourceable: sample,
+                                           research_project: rproj)
 
           expect { get api_v1_sample_path(id: sample.id) }
             .to raise_error(ActiveRecord::RecordNotFound)
