@@ -17,7 +17,7 @@
       <div class="col-md-4 col-sm-6">
         <div class="panel panel-default">
           <div class="panel-body">
-            <% if interaction['is_source'] == 'false' %>
+            <% if interaction['is_source'] == false %>
               <p>
                 <%= interaction['interaction_type'].underscore.humanize.downcase %>
                 <a data-container="body"

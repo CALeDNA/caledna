@@ -5,6 +5,8 @@ module ResearchProjects
     include BatchData
     include PaginatedSamples
     include CheckWebsite
+    include CustomPagination
+
     layout 'river/application' if CheckWebsite.pour_site?
 
     def show
@@ -140,11 +142,13 @@ module ResearchProjects
       elsif params[:id] == 'gbif_breakdown'
         @gbif_breakdown = pillar_point_service.gbif_breakdown
       elsif params[:id] == 'interactions'
-        if params[:taxon]
-          @interactions = pillar_point_service.globi_interactions
+        taxon = params[:taxon]
+        if taxon
+          sql = 'edna_match DESC, gbif_match DESC, interaction_type'
+          @interactions = GlobiShow.where(keyword: taxon).order(sql)
           @globi_target_taxon = pillar_point_service.globi_target_taxon
         else
-          @taxon_list = pillar_point_service.globi_index
+          @taxon_list = GlobiIndex.page(params[:page]).per(48)
         end
       elsif params[:view] == 'list'
         @occurrences = occurrences
