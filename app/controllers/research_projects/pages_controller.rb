@@ -151,7 +151,7 @@ module ResearchProjects
           @taxon_list = PpGlobiIndex.page(params[:page]).per(48)
         end
       elsif params[:view] == 'list'
-        @occurrences = occurrences
+        @occurrences = samples.page(params[:page])
         @stats = pillar_point_service.stats
         @asvs_count = asvs_count
       elsif params[:id] == 'common_taxa'
@@ -171,14 +171,6 @@ module ResearchProjects
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-
-    def occurrences
-      if params[:source] == 'gbif'
-        pillar_point_service.gbif_occurrences.page(params[:page])
-      else
-        samples.page(params[:page])
-      end
-    end
 
     def pillar_point_service
       @pillar_point_service ||= begin

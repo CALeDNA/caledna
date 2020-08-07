@@ -6,12 +6,7 @@
 <% if params[:view] == 'list' %>
   <div class="radio">
     <label>
-      <input type="radio" name="source" class="js-source-list" data-source="cal" <%= 'checked' unless gbif_source %>> CALeDNA
-    </label>
-  </div>
-  <div class="radio">
-    <label>
-      <input type="radio" name="source" class="js-source-list" data-source="gbif" <%= 'checked' if gbif_source %>> GBIF
+      <input type="radio" name="source" bundle exec derailed bundle:objectsdata-source="cal" <%= 'checked' unless gbif_source %>> CALeDNA
     </label>
   </div>
 <% else %>

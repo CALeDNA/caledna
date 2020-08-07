@@ -184,7 +184,7 @@ function formatSamplesData(rawSample) {
   };
 }
 
-function formatGBIFData(rawSample) {
+function formatGBIFData(sample) {
   var colors = {
     Animalia: "rgb(30, 144, 255)",
     Archaea: "rgb(30, 30, 30)",
@@ -196,7 +196,6 @@ function formatGBIFData(rawSample) {
     Viruses: "rgb(30, 30, 30)",
   };
 
-  var sample = rawSample.attributes;
   var lat = sample.latitude;
   var lng = sample.longitude;
   var color;

@@ -26,11 +26,19 @@ module ResearchProjectService
     end
 
     def gbif_occurrences
-      GbifOccurrence
-        .joins(:research_project_sources)
-        .where('research_project_sources.research_project_id = ?', project.id)
-        .where("metadata ->> 'location' != 'Montara SMR'")
-        .where('kingdom is not null')
+      sql = <<-SQL
+        SELECT kingdom, species, decimallatitude as latitude,
+        decimallongitude as longitude, gbifid as id
+        FROM external.gbif_occurrences
+        INNER JOIN research_project_sources
+        ON research_project_sources.sourceable_id =
+        external.gbif_occurrences.gbifid
+        AND research_project_sources.sourceable_type = 'GbifOccurrence'
+        WHERE (research_project_sources.research_project_id = #{project.id})
+        AND (metadata ->> 'location' != 'Montara SMR')
+        AND (kingdom is not null)
+      SQL
+      conn.exec_query(sql).entries
     end
 
     def gbif_occurrences_by_taxa

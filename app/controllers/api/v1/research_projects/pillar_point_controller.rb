@@ -85,7 +85,7 @@ module Api
             ncbi_id ? pp.gbif_occurrences_by_taxa : pp.gbif_occurrences
           {
             research_project_data: {
-              gbif_occurrences: GbifOccurrenceSerializer.new(occurrences)
+              gbif_occurrences: occurrences
             }
           }
         end

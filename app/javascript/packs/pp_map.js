@@ -9,7 +9,7 @@ var calMarkerLayer;
 var source;
 
 var sourceEls = document.querySelectorAll(".js-source");
-sourceEls.forEach(function(el) {
+sourceEls.forEach(function (el) {
   el.addEventListener("click", chooseSourceHandler);
 });
 
@@ -40,12 +40,11 @@ function chooseSourceHandler(e) {
   }
 }
 
-baseMap.fetchSamples(apiEndpoint, map, function(data) {
+baseMap.fetchSamples(apiEndpoint, map, function (data) {
   if (data.researchProjectData) {
-    var gbifOccurrences = data.researchProjectData.gbif_occurrences.data.map(
+    var gbifOccurrences = data.researchProjectData.gbif_occurrences.map(
       baseMap.formatGBIFData
     );
-
     gbifMarkerLayer = baseMap.renderCirclesLayer(gbifOccurrences, map);
     map.addLayer(gbifMarkerLayer);
   }
@@ -83,7 +82,7 @@ var MONTARA_SMCA = [
   [37.50145, -122.56356],
   [37.5009, -122.56356],
   [37.50072, -122.51328],
-  [37.50072, -122.49766]
+  [37.50072, -122.49766],
 ];
 
 var PP_SMCA = [
@@ -107,7 +106,7 @@ var PP_SMCA = [
   [37.48853, -122.5037],
   [37.48938, -122.50315],
   [37.49021, -122.50266],
-  [37.49581, -122.49943]
+  [37.49581, -122.49943],
 ];
 
 var PP_non_protected_exposed = [
@@ -123,7 +122,7 @@ var PP_non_protected_exposed = [
   [37.47573, -122.51144],
   [37.4758, -122.48295],
   [37.49286, -122.49345],
-  [37.49603, -122.49531]
+  [37.49603, -122.49531],
 ];
 
 var PP_non_protected_embayment = [
@@ -148,7 +147,7 @@ var PP_non_protected_embayment = [
   [37.50305, -122.48465],
   [37.50367, -122.4856],
   [37.50368, -122.48846],
-  [37.50194, -122.49346]
+  [37.50194, -122.49346],
 ];
 
 L.polygon(PP_SMCA, { color: "red" }).addTo(map);
