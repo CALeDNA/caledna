@@ -163,7 +163,7 @@ function renderIconsLayer(samples, map) {
 // =============
 
 function formatSamplesData(rawSample) {
-  var sample = rawSample.attributes;
+  var sample = rawSample.attributes || rawSample;
   var body;
 
   if (sample.id) {
@@ -210,7 +210,7 @@ function formatGBIFData(sample) {
       sample.id +
       "</a>";
     body =
-      "<b>Site:</b> " +
+      "<b>GBIF Link:</b> " +
       sampleLink +
       "<br>" +
       "<b>Lat/Long</b>: " +
@@ -301,7 +301,7 @@ function fetchSamples(apiEndpoint, map, cb) {
 
     samplesData = samples
       .filter(function (rawSample) {
-        var sample = rawSample.attributes;
+        var sample = rawSample.attributes || rawSample;
         return sample.latitude && sample.longitude;
       })
       .map(function (sample) {

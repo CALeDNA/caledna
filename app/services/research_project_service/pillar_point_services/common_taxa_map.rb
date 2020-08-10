@@ -51,12 +51,12 @@ module ResearchProjectService
             ON pp_asvs.sample_id = samples.id
           JOIN pillar_point.combine_taxa
             ON pp_asvs.taxon_id = pillar_point.combine_taxa.caledna_taxon_id
-            AND pillar_point.combine_taxa.#{rank} = '#{taxon}'
+            AND pillar_point.combine_taxa.#{rank} = $1
             AND (source = 'ncbi' OR source = 'bold')
           WHERE pp_asvs.research_project_id = #{project.id};
         SQL
-
-        conn.exec_query(sql)
+        bindings = [[nil, taxon]]
+        conn.exec_query(sql, 'q', bindings)
       end
       # rubocop:enable Metrics/MethodLength
 
@@ -87,6 +87,16 @@ module ResearchProjectService
         conn.exec_query(sql)
       end
       # rubocop:enable Metrics/MethodLength
+
+      private
+
+      def taxon
+        params[:taxon]&.tr('_', ' ')
+      end
+
+      def rank
+        taxon_rank == 'class' ? 'class_name' : taxon_rank
+      end
 
       # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def group_fields

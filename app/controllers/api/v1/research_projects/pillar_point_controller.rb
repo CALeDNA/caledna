@@ -6,7 +6,7 @@ module Api
       class PillarPointController < Api::V1::ApplicationController
         before_action :add_cors_headers
         include FilterSamples
-        include ResearchProjectService::PillarPointServices::CommonTaxaMap
+        include ResearchProjectService::PillarPointServices
 
         def sites
           render json: sites_data, status: :ok
@@ -17,21 +17,21 @@ module Api
         end
 
         def area_diversity
-          render json: project_service.area_diversity_data, status: :ok
+          render json: pp.area_diversity_data, status: :ok
         end
 
         def taxonomy_comparison
-          render json: project_service.taxonomy_comparison_data, status: :ok
+          render json: pp.taxonomy_comparison_data, status: :ok
         end
 
         def biodiversity_bias
-          render json: project_service.biodiversity_bias, status: :ok
+          render json: pp.biodiversity_bias, status: :ok
         end
 
         def occurrences
           render json: {
-            occurrences: project_service.division_counts,
-            unique_taxa: project_service.division_counts_unique
+            occurrences: pp.division_counts,
+            unique_taxa: pp.division_counts_unique
           }, status: :ok
         end
 
@@ -41,25 +41,12 @@ module Api
         # shared
         # =======================
 
-        def ncbi_id
-          params[:ncbi_id]
-        end
-
         def project
           @project ||= ResearchProject.find_by(slug: params[:slug])
         end
 
-        def taxon
-          params[:taxon]&.tr('_', ' ')
-        end
-
-        def rank
-          return 'phylum' if params[:taxon_rank].blank?
-          params[:taxon_rank] == 'class' ? 'class_name' : params[:taxon_rank]
-        end
-
-        def project_service
-          @project_service ||=
+        def pp
+          @pp ||=
             ResearchProjectService::PillarPoint.new(project, params)
         end
 
@@ -68,63 +55,38 @@ module Api
         # =======================
 
         def sites_data
-          json = {
-            samples: SampleSerializer.new(all_samples)
-          }
-          json.merge!(gbif_data) if include_research?
-          json
-        end
-
-        def include_research?
-          params[:include_research] == 'true'
-        end
-
-        def gbif_data
-          pp = ResearchProjectService::PillarPoint.new(project, params)
-          occurrences =
-            ncbi_id ? pp.gbif_occurrences_by_taxa : pp.gbif_occurrences
           {
+            samples:  { data: pp_samples },
             research_project_data: {
-              gbif_occurrences: occurrences
+              gbif_occurrences: pp_gbif_occurrences
             }
           }
         end
 
-        def all_samples
-          @all_samples ||= research_project_samples
+        def pp_samples
+          Rails.cache.fetch("pp_samples", expires_in: 1.year) do
+            research_project_samples
+          end
+        end
+
+        def pp_gbif_occurrences
+          Rails.cache.fetch("pp_gbif_occurrences", expires_in: 1.year) do
+            pp.gbif_occurrences
+          end
         end
 
         # =======================
         # common_taxa_map
         # =======================
 
-        # rubocop:disable Metrics/MethodLength
         def common_taxa_data
           {
             research_project_data: {
-              gbif_occurrences: {
-                data: common_taxa_gbif.map do |record|
-                  {
-                    id: record['id'],
-                    type: 'gbif_occurrence',
-                    attributes: record
-                  }
-                end
-              }
+              gbif_occurrences: pp.common_taxa_gbif
             },
-            asvs_count: [],
-            samples: {
-              data: common_taxa_edna.map do |record|
-                {
-                  id: record['id'],
-                  type: 'sample',
-                  attributes: record
-                }
-              end
-            }
+            samples: { data: pp.common_taxa_edna }
           }
         end
-        # rubocop:enable Metrics/MethodLength
       end
     end
   end
