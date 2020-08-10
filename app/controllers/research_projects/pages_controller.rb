@@ -142,10 +142,9 @@ module ResearchProjects
       elsif params[:id] == 'gbif_breakdown'
         @gbif_breakdown = pillar_point_service.gbif_breakdown
       elsif params[:id] == 'interactions'
-        taxon = params[:taxon]
-        if taxon
+        if pp_taxon
           sql = 'edna_match DESC, gbif_match DESC, interaction_type'
-          @interactions = PpGlobiShow.where(keyword: taxon).order(sql)
+          @interactions = PpGlobiShow.where(keyword: pp_taxon).order(sql)
           @globi_target_taxon = pillar_point_service.globi_target_taxon
         else
           @taxon_list = PpGlobiIndex.page(params[:page]).per(48)
@@ -155,14 +154,18 @@ module ResearchProjects
         @stats = pillar_point_service.stats
         @asvs_count = asvs_count
       elsif params[:id] == 'common_taxa'
-        @taxon = params[:taxon]
+        @taxon = pp_taxon
         @gbif_taxa_with_edna_map = pillar_point_service.common_taxa_map
       elsif params[:id] == 'edna_gbif_comparison'
-        ranks = %w[phylum class order family genus species]
-        rank_param = params[:taxon_rank]
-        rank = ranks.include?(rank_param) ? rank_param : 'phylum'
         order = params[:sort] == 'count' ?  'count DESC' : 'id ASC'
-        @gbif_taxa = PpEdnaGbif.where(rank: rank).order(order)
+        @gbif_taxa = PpEdnaGbif.where(rank: pp_rank).order(order)
+                               .page(params[:page]).per(50)
+        @gbif_taxa_count = PpEdnaGbif.where(rank: pp_rank).count
+        @gbif_taxa_with_ncbi_count =
+          PpEdnaGbif.where(rank: pp_rank, ncbi_match: true).count
+        @gbif_taxa_with_edna_count =
+          PpEdnaGbif.where(rank: pp_rank, edna_match: true).count
+
       elsif params[:id] == 'intro'
         @stats = pillar_point_service.stats
       end
@@ -171,6 +174,15 @@ module ResearchProjects
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    def pp_rank
+      rank_param = params[:taxon_rank]
+      rank = NcbiNode::TAXON_RANKS_PHYLUM.include?(rank_param) ? rank_param : 'phylum'
+    end
+
+    def pp_taxon
+      params[:taxon]
+    end
 
     def pillar_point_service
       @pillar_point_service ||= begin

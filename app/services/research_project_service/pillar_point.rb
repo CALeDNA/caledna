@@ -19,7 +19,8 @@ module ResearchProjectService
 
     def initialize(project, params)
       @project = project
-      @taxon_rank = params[:taxon_rank] || 'phylum'
+      rank = params[:taxon_rank]
+      @taxon_rank = NcbiNode::TAXON_RANKS_PHYLUM.include?(rank) ? rank : 'phylum'
       @sort_by = params[:sort]
       @params = params
       @globi_taxon = params[:taxon]&.tr('+', ' ')
