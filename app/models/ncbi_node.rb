@@ -20,6 +20,11 @@ class NcbiNode < ApplicationRecord
     worms_link
   ].freeze
 
+  TAXON_RANKS = %w[
+    superkingdom kingdom phylum class order family genus species
+  ].freeze
+  TAXON_RANKS_PHYLUM = %w[phylum class order family genus species].freeze
+
   has_many :ncbi_names, foreign_key: 'taxon_id'
   has_many :ncbi_citation_nodes
   has_many :ncbi_citations, through: :ncbi_citation_nodes

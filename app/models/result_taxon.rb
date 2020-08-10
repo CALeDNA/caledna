@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class ResultTaxon < ApplicationRecord
-  TAXON_RANK = %w[
-    superkingdom kingdom phylum class order family genus species
-  ].freeze
-
   as_enum :match_type,
           %i[use_suggestion set_id create_new ignore find_canonical_name
              find_with_quotes find_other_names],

@@ -347,8 +347,7 @@ namespace :research_project_pillar_point do
 
   task populate_edna_gbif: :environment do
     project = ResearchProject.find_by(slug: 'pillar-point')
-    ranks = %w[phylum class order family genus species]
-    ranks.each do |rank|
+    NcbiNode::TAXON_RANKS_PHYLUM.each do |rank|
       params = { taxon_rank: rank }
       pp = ResearchProjectService::PillarPoint.new(project, params)
 
