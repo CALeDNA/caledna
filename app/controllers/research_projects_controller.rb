@@ -30,13 +30,13 @@ class ResearchProjectsController < ApplicationController
     sql = <<-SQL
     SELECT research_projects.id, research_projects.name,
     research_projects.slug,
-    COUNT(*)
+    COUNT(sourceable_id)
     FROM research_projects
-    JOIN research_project_sources
+    LEFT JOIN research_project_sources
       ON research_projects.id = research_project_sources.research_project_id
       AND sourceable_type = 'Sample'
+      AND sourceable_id IN (SELECT DISTINCT sample_id FROM sample_primers)
     WHERE research_projects.published = TRUE
-    AND sourceable_id IN (SELECT DISTINCT sample_id FROM sample_primers)
     SQL
 
     if CheckWebsite.pour_site?
