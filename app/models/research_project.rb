@@ -6,7 +6,7 @@ class ResearchProject < ApplicationRecord
 
   has_many :research_project_sources
   has_many :research_project_authors
-  has_many :pages
+  has_many :research_project_pages
   has_many :researcher_authors, through: :research_project_authors,
                                 source: :authorable, source_type: 'Researcher'
   has_many :user_authors, through: :research_project_authors,
@@ -20,7 +20,7 @@ class ResearchProject < ApplicationRecord
   scope :published, -> { where(published: true) }
 
   def project_pages
-    @project_pages ||= pages.published
+    @project_pages ||= research_project_pages.published
                             .order('display_order ASC NULLS LAST') || []
   end
 
@@ -29,7 +29,7 @@ class ResearchProject < ApplicationRecord
   end
 
   def show_pages?
-    pages.published.present?
+    research_project_pages.published.present?
   end
 
   def metadata_display

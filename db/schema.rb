@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_06_081240) do
+ActiveRecord::Schema.define(version: 2020_08_14_020642) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -354,6 +354,22 @@ ActiveRecord::Schema.define(version: 2020_08_06_081240) do
     t.datetime "updated_at", null: false
     t.index ["authorable_id"], name: "index_research_project_authors_on_authorable_id"
     t.index ["research_project_id"], name: "index_research_project_authors_on_research_project_id"
+  end
+
+  create_table "research_project_pages", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "body", null: false
+    t.boolean "published", default: false, null: false
+    t.string "slug"
+    t.integer "display_order"
+    t.bigint "research_project_id"
+    t.string "menu_text"
+    t.boolean "show_map"
+    t.boolean "show_edna_results_metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["research_project_id"], name: "index_research_project_pages_on_research_project_id"
+    t.index ["slug"], name: "index_research_project_pages_on_slug"
   end
 
   create_table "research_project_sources", id: :serial, force: :cascade do |t|

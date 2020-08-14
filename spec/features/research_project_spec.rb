@@ -14,7 +14,7 @@ describe 'Research Project' do
 
     let!(:project_page) do
       create(
-        :page,
+        :research_project_page,
         research_project: project,
         published: false,
         title: 'page title',
@@ -45,10 +45,6 @@ describe 'Research Project' do
   end
 
   context 'when project does have published pages' do
-    let(:project) do
-      create(:research_project, slug: 'project-slug', name: 'project name 1')
-    end
-
     let(:project_with_pages) do
       create(:research_project, slug: 'project-with-pages-slug',
                                 name: 'project name 2')
@@ -56,42 +52,28 @@ describe 'Research Project' do
 
     let!(:project_page_1) do
       create(
-        :page,
+        :research_project_page,
         research_project: project_with_pages,
         published: true,
         title: 'page title 1',
         slug: 'page-slug-1',
         body: 'page body 1',
-        menu: 'page menu text 1',
+        menu_text: 'page menu text 1',
         display_order: 1
       )
     end
 
     let!(:project_page_2) do
       create(
-        :page,
+        :research_project_page,
         research_project: project_with_pages,
         published: true,
         title: 'page title 2',
         slug: 'page-slug-2',
         body: 'page body 2',
-        menu: 'page menu text 2',
+        menu_text: 'page menu text 2',
         display_order: 2
       )
-    end
-
-    context 'when visiting project without pages' do
-      it 'displays submenu' do
-        visit research_project_path(id: project.slug)
-
-        expect(page).to have_content project_page_1.menu_text
-      end
-
-      it 'displays project name' do
-        visit research_project_path(id: project.slug)
-
-        expect(page).to have_content project.name
-      end
     end
 
     context 'when visiting project with pages' do

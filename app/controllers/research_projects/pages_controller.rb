@@ -24,7 +24,8 @@ module ResearchProjects
     def edit
       redirect_to research_projects_path unless current_researcher
 
-      @page = Page.find_by(research_project: project, slug: page_slug)
+      @page = ResearchProjectPage.find_by(research_project: project,
+                                          slug: page_slug)
     end
 
     def update
@@ -69,7 +70,8 @@ module ResearchProjects
 
     def project_page
       @project_page ||= begin
-        Page.where(research_project: project, slug: page_slug).first
+        ResearchProjectPage.where(research_project: project, slug: page_slug)
+                           .first
       end
     end
 

@@ -1,32 +1,35 @@
 <h1><%= @project.name %></h1>
 <%= render partial: "research_projects/submenu" %>
 
-<h2>
-  <%= @page.title %>
-</h2>
+<% if @page %>
+  <h2>
+    <%= @page.title %>
+  </h2>
 
-<%# show pages with maps %>
-<% if @page.show_map? %>
-  <%= sanitize @page.body %>
+  <%# show pages with maps %>
+  <% if @page.show_map? %>
+    <%= sanitize @page.body %>
 
-  <div id="projects-details-map"></div>
-  <%= javascript_pack_tag 'research_projects_details_map' %>
-  <%= stylesheet_pack_tag 'research_projects_details_map' %>
+    <div id="projects-details-map"></div>
+    <%= javascript_pack_tag 'research_projects_details_map' %>
+    <%= stylesheet_pack_tag 'research_projects_details_map' %>
 
-  <% if @page.show_edna_results_metadata? %>
-    <h3>Project Details</h3>
-    <%= render partial: "metadata", locals: { project: @project } %>
+    <% if @page.show_edna_results_metadata? %>
+      <h3>Project Details</h3>
+      <%= render partial: "metadata", locals: { project: @project } %>
+    <% end %>
+
+  <%# show pages with metadata, no maps %>
+  <% elsif  @page.show_edna_results_metadata? %>
+     <h3>Project Details</h3>
+     <%= render partial: "metadata", locals: { project: @project } %>
+     <%= sanitize @page.body %>
+
+  <%# show normal pages %>
+  <% else %>
+    <%= sanitize @page.body %>
   <% end %>
 
-<%# show pages with metadata, no maps %>
-<% elsif  @page.show_edna_results_metadata? %>
-   <h3>Project Details</h3>
-   <%= render partial: "metadata", locals: { project: @project } %>
-   <%= sanitize @page.body %>
-
-<%# show normal pages %>
-<% else %>
- <%= sanitize @page.body %>
 <% end %>
 
 <script>
