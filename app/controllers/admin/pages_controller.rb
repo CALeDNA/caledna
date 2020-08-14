@@ -35,7 +35,6 @@ module Admin
       relation.includes(*resource_includes)
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def scoped_resource
       if current_researcher.superadmin?
         resource_class.default_scoped
@@ -43,6 +42,5 @@ module Admin
         resource_class.default_scoped.current_site
       end
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
 end

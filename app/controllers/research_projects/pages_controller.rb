@@ -180,7 +180,7 @@ module ResearchProjects
 
     def pp_rank
       rank_param = params[:taxon_rank]
-      rank = NcbiNode::TAXON_RANKS_PHYLUM.include?(rank_param) ? rank_param : 'phylum'
+      NcbiNode::TAXON_RANKS_PHYLUM.include?(rank_param) ? rank_param : 'phylum'
     end
 
     def pp_taxon

@@ -7,10 +7,12 @@ describe 'ResearchProjectPages' do
     let!(:project) { create(:research_project) }
     let!(:project2) { create(:research_project) }
     let!(:page1) do
-      create(:page, title: 'research1', research_project: project)
+      create(:research_project_page, title: 'research1',
+                                     research_project: project)
     end
     let!(:page2) do
-      create(:page, title: 'my research2', research_project: project2)
+      create(:research_project_page, title: 'my research2',
+                                     research_project: project2)
     end
 
     shared_examples 'index page status' do

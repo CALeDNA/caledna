@@ -54,6 +54,7 @@ describe 'Pages' do
         get admin_pages_path
 
         expect(response.body).to include('normal')
+        expect(response.body).to_not include('other')
       end
     end
 
@@ -70,7 +71,7 @@ describe 'Pages' do
 
         get admin_pages_path
 
-        expect(response.body).to_not include('normal')
+        expect(response.body).to include('normal')
         expect(response.body).to_not include('other')
       end
     end
@@ -88,7 +89,7 @@ describe 'Pages' do
 
         get admin_pages_path
 
-        expect(response.body).to_not include('normal')
+        expect(response.body).to include('normal')
         expect(response.body).to_not include('other')
       end
     end

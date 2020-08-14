@@ -64,13 +64,13 @@ module Api
         end
 
         def pp_samples
-          Rails.cache.fetch("pp_samples", expires_in: 1.year) do
+          Rails.cache.fetch('pp_samples', expires_in: 1.year) do
             research_project_samples
           end
         end
 
         def pp_gbif_occurrences
-          Rails.cache.fetch("pp_gbif_occurrences", expires_in: 1.year) do
+          Rails.cache.fetch('pp_gbif_occurrences', expires_in: 1.year) do
             pp.gbif_occurrences
           end
         end

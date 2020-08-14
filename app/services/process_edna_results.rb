@@ -122,7 +122,7 @@ module ProcessEdnaResults
   def filtered_ranks_by_number(hierarchy, length, skip_lowest = false)
     start_index = skip_lowest ? 1 : 0
 
-    ranks = NcbiNode::TAXON_RANKS
+    ranks = NcbiNode::TAXON_RANKS.map(&:to_sym)
     hierarchy.keys.sort_by { |k| ranks.index(k) }
              .reverse[start_index, length]
   end

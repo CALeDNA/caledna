@@ -38,12 +38,11 @@ class ResearchProjectPage < ApplicationRecord
     errors.add(:slug, 'has already been taken')
   end
 
-
   def existing_research_pages
     @existing_research_pages ||= begin
       ResearchProjectPage
-          .where(slug: slug)
-          .where(research_project: research_project)
+        .where(slug: slug)
+        .where(research_project: research_project)
     end
   end
 end

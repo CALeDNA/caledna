@@ -20,8 +20,10 @@ class ResearchProject < ApplicationRecord
   scope :published, -> { where(published: true) }
 
   def project_pages
-    @project_pages ||= research_project_pages.published
-                            .order('display_order ASC NULLS LAST') || []
+    @project_pages ||= begin
+      research_project_pages
+        .published.order('display_order ASC NULLS LAST') || []
+    end
   end
 
   def default_page

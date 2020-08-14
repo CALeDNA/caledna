@@ -2,19 +2,19 @@
 
 class PagePolicy < ApplicationPolicy
   def index?
-    all_roles
+    admin_roles
   end
 
   def show?
-    all_roles
+    admin_roles
   end
 
   def create?
-    all_roles
+    admin_roles
   end
 
   def update?
-    all_roles
+    admin_roles
   end
 
   def destroy?
