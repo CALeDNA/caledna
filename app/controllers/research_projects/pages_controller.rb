@@ -89,7 +89,7 @@ module ResearchProjects
     end
 
     def raw_params
-      params.require(:page)
+      params.require(:research_project_page)
             .permit(:body, :title)
     end
 
