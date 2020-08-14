@@ -175,7 +175,7 @@ describe ResearchProject do
   end
 
   describe '#user_authors' do
-    it 'returns users who are authors for a research project' do
+    xit 'returns users who are authors for a research project' do
       project1 = create(:research_project)
       user1 = create(:user)
       create(:user)

@@ -16,7 +16,7 @@ describe SurveysCalculateScore do
                              survey_response: response)
     end
 
-    it 'sums all the answer scores for a given response' do
+    xit 'sums all the answer scores for a given response' do
       survey = create(:survey)
       response = create(:survey_response, survey: survey)
       create_qa(survey, response, score: 1)
@@ -25,13 +25,13 @@ describe SurveysCalculateScore do
       expect(subject(response)).to eq(3)
     end
 
-    it 'returns 0 if there are no answers for a given response' do
+    xit 'returns 0 if there are no answers for a given response' do
       response = create(:survey_response)
 
       expect(subject(response)).to eq(0)
     end
 
-    it 'ignores answers for other responses' do
+    xit 'ignores answers for other responses' do
       survey = create(:survey)
       response1 = create(:survey_response, survey: survey)
       create_qa(survey, response1, score: 1)
