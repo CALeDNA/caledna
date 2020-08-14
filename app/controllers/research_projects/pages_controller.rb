@@ -71,6 +71,7 @@ module ResearchProjects
     def project_page
       @project_page ||= begin
         ResearchProjectPage.where(research_project: project, slug: page_slug)
+                           .where(published: true)
                            .first
       end
     end
