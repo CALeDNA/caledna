@@ -76,6 +76,7 @@ Rails.application.routes.draw do
       get 'edna_results', to: 'research_projects#edna_results',
                           as: 'edna_results'
     end
+    resources :research_project_pages
     resources :researchers
     resources :samples
     # resources :site_news

@@ -26,9 +26,10 @@ add javascript to auto fiil menu text and slug
 <script>
 (function(){
 
-  document.querySelector('#page_title').addEventListener('keyup', (e) => {
+  document.querySelector('#research_project_page_title').addEventListener('keyup', (e) => {
     var title = e.target.value.trim();
-    document.querySelector('#page_slug').value = title.toLocaleLowerCase().replace(/ /g, '-');
+    document.querySelector('#research_project_page_menu_text').value = title;
+    document.querySelector('#research_project_page_slug').value = title.toLocaleLowerCase().replace(/ /g, '-');
   })
 
 })()

@@ -2,21 +2,20 @@
 
 require 'rails_helper'
 
-describe 'Pages' do
+describe 'ResearchProjectPages' do
   describe '#GET pages index page' do
-    before do
-      stub_const('Website::DEFAULT_SITE', create(:website, name: 'demo'))
-    end
-
     let!(:project) { create(:research_project) }
     let!(:project2) { create(:research_project) }
-    let!(:page1) { create(:page, title: 'normal', website: website) }
-    let!(:page2) { create(:page, title: 'other', website: create(:website)) }
-    let(:website) { Website::DEFAULT_SITE }
+    let!(:page1) do
+      create(:page, title: 'research1', research_project: project)
+    end
+    let!(:page2) do
+      create(:page, title: 'my research2', research_project: project2)
+    end
 
     shared_examples 'index page status' do
       it 'returns 200' do
-        get admin_pages_path
+        get admin_research_project_pages_path
 
         expect(response.status).to eq(200)
       end
@@ -33,10 +32,10 @@ describe 'Pages' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 
-        get admin_pages_path
+        get admin_research_project_pages_path
 
-        expect(response.body).to include('normal')
-        expect(response.body).to include('other')
+        expect(response.body).to include('research1')
+        expect(response.body).to include('my research2')
       end
     end
 
@@ -51,9 +50,10 @@ describe 'Pages' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 
-        get admin_pages_path
+        get admin_research_project_pages_path
 
-        expect(response.body).to include('normal')
+        expect(response.body).to include('research1')
+        expect(response.body).to include('my research2')
       end
     end
 
@@ -64,14 +64,14 @@ describe 'Pages' do
 
       include_examples 'index page status'
 
-      it 'display all pages' do
+      it 'display all research pages' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 
-        get admin_pages_path
+        get admin_research_project_pages_path
 
-        expect(response.body).to_not include('normal')
-        expect(response.body).to_not include('other')
+        expect(response.body).to include('research1')
+        expect(response.body).to include('my research2')
       end
     end
 
@@ -82,14 +82,14 @@ describe 'Pages' do
 
       include_examples 'index page status'
 
-      it 'does not display' do
+      it 'display research pages from user' do
         create(:research_project_author, authorable: user,
                                          research_project: project2)
 
-        get admin_pages_path
+        get admin_research_project_pages_path
 
-        expect(response.body).to_not include('normal')
-        expect(response.body).to_not include('other')
+        expect(response.body).to_not include('research1')
+        expect(response.body).to include('my research2')
       end
     end
   end

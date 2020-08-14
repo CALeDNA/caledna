@@ -39,19 +39,8 @@ module Admin
     def scoped_resource
       if current_researcher.superadmin?
         resource_class.default_scoped
-      elsif current_researcher.director?
-        resource_class.default_scoped.current_site
-      elsif current_researcher.esie_postdoc?
-        resource_class.default_scoped.current_site
-                      .where('research_project_id is not null')
       else
         resource_class.default_scoped.current_site
-                      .joins(research_project: :research_project_authors)
-                      .where(
-                        research_project:
-                          { research_project_authors:
-                            { authorable_id: current_researcher.id } }
-                      )
       end
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
