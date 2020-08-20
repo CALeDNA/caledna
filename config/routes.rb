@@ -71,6 +71,8 @@ Rails.application.routes.draw do
     resources :kobo_photos
     resources :pages
     resources :page_blocks
+    resources :places
+    resources :place_pages
     resources :primers
     resources :research_projects do
       get 'edna_results', to: 'research_projects#edna_results',

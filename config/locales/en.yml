@@ -59,6 +59,10 @@ en:
         content: ""
       event_registration:
         status_cd: Status
+      place:
+        place_type_cd: "Place type"
+        place_source_type_cd: "Place source"
+
   # NOTE: adding attributes because error message turns canonicalName
   # into "Canonicalname"
   attributes:
