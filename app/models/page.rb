@@ -2,6 +2,7 @@
 
 class Page < ApplicationRecord
   belongs_to :website
+  has_many :page_blocks
 
   validates :website, :body, :title, :slug, presence: true
   validate :unique_slugs
