@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_19_182145) do
+ActiveRecord::Schema.define(version: 2020_08_20_223312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -563,6 +563,7 @@ ActiveRecord::Schema.define(version: 2020_08_19_182145) do
     t.string "environmental_settings", default: [], array: true
     t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
     t.integer "primer_ids", default: [], array: true
+    t.integer "taxa_count"
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["geom"], name: "index_samples_on_geom", using: :gist

@@ -138,4 +138,17 @@ namespace :samples do
       sample.save
     end
   end
+
+  task add_taxa_count: :environment do
+    sql = 'SELECT COUNT(DISTINCT(taxon_id)), sample_id '\
+      'FROM asvs GROUP BY sample_id;'
+    results = ActiveRecord::Base.connection.exec_query(sql)
+    results.entries.each do |result|
+      puts result['sample_id']
+
+      sample = Sample.find(result['sample_id'])
+      sample.taxa_count = result['count']
+      sample.save
+    end
+  end
 end
