@@ -139,6 +139,20 @@ namespace :samples do
     end
   end
 
+  task add_primers: :environment do
+    Sample.where("primers != '{}'").update(primers: '{}', primer_ids: '{}')
+    Sample.where('primer_ids IS NULL').update(primer_ids: '{}')
+
+    SamplePrimer.joins(:primer).find_each do |sp|
+      puts sp.sample_id
+      sample = Sample.find(sp.sample_id)
+      sample.primers << sp.primer.name
+      sample.primer_ids << sp.primer_id
+
+      sample.save
+    end
+  end
+
   task add_taxa_count: :environment do
     sql = 'SELECT COUNT(DISTINCT(taxon_id)), sample_id '\
       'FROM asvs GROUP BY sample_id;'
