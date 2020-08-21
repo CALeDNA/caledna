@@ -8,8 +8,7 @@ module Api
 
       def show
         render json: {
-          samples:
-            SampleSerializer.new(research_project_samples)
+          samples: { data: research_project_samples }
         }, status: :ok
       end
     end

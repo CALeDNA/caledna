@@ -10,13 +10,13 @@ module Api
 
       def index
         render json: {
-          samples: SampleSerializer.new(samples)
+          samples: { data: samples }
         }, status: :ok
       end
 
       def show
         render json: {
-          sample: SampleSerializer.new(sample)
+          sample: { data: sample }
         }, status: :ok
       end
 
@@ -45,9 +45,7 @@ module Api
 
       def sample
         @sample ||= begin
-          website_sample.select(sample_columns).joins(sample_join_sql)
-                        .where(conditional_status_sql)
-                        .find(sample_id)
+          approved_samples.find(sample_id)
         end
       end
 

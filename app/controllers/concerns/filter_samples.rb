@@ -25,46 +25,24 @@ module FilterSamples
   end
 
   def sample_columns
-    %i[
-      id latitude longitude barcode status_cd substrate_cd
-      location collection_date
+    [
+      'id', 'latitude', 'longitude', 'barcode', 'status_cd', 'substrate_cd',
+      'location', 'collection_date', 'samples.primers as primer_names',
+      'primer_ids', 'taxa_count'
     ]
   end
   module_function :sample_columns
 
-  def primer_names_sql
-    <<~SQL.chomp
-      ARRAY_AGG(DISTINCT(primers.name)) FILTER (WHERE primers.name IS NOT NULL)
-      AS primer_names
-    SQL
-  end
-
-  def primer_ids_sql
-    <<~SQL.chomp
-      ARRAY_AGG(DISTINCT(primers.id)) FILTER (WHERE primers.id IS NOT NULL)
-      AS primer_ids
-    SQL
-  end
-
-  def results_left_join_sql
-    <<~SQL.chomp
-      LEFT JOIN asvs ON asvs.sample_id = samples.id
-      LEFT JOIN primers ON primers.id = asvs.primer_id
-    SQL
-  end
-
   def sample_primers_sql
     <<~SQL.chomp
-      JOIN sample_primers ON sample_primers.sample_id = asvs.sample_id
-      AND sample_primers.primer_id = asvs.primer_id
-      AND sample_primers.research_project_id = asvs.research_project_id
+      LEFT JOIN sample_primers ON sample_primers.sample_id = samples.id
     SQL
   end
 
   def published_research_project_sql
     <<~SQL.chomp
       JOIN research_projects
-        ON asvs.research_project_id = research_projects.id
+        ON sample_primers.research_project_id = research_projects.id
         AND research_projects.published = TRUE
     SQL
   end
@@ -86,17 +64,13 @@ module FilterSamples
     primer_ids = params[:primer].split('|')
 
     samples
-      .joins(sample_primers_sql)
       .where('sample_primers.primer_id IN (?)', primer_ids.map(&:to_i))
   end
 
   def base_samples
     website_sample
       .select(sample_columns)
-      .select(primer_names_sql)
-      .select(primer_ids_sql)
-      .select('COUNT(DISTINCT asvs.taxon_id) as taxa_count')
-      .joins(results_left_join_sql)
+      .joins(sample_primers_sql)
       .order(:created_at)
       .group(:id)
   end
@@ -138,6 +112,48 @@ module FilterSamples
     end
   end
 
+  def taxa_select
+    <<~SQL.chomp
+      (ARRAY_AGG("ncbi_nodes"."canonical_name" || '|' ||
+      ncbi_nodes.taxon_id))[0:10] AS taxa
+    SQL
+  end
+
+  def taxa_join_sql
+    <<~SQL.chomp
+      JOIN asvs ON asvs.sample_id = samples.id
+      JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+      AND (ncbi_nodes.iucn_status IS NULL OR
+        ncbi_nodes.iucn_status NOT IN
+        ('#{IucnStatus::THREATENED.values.join("','")}')
+      )
+    SQL
+  end
+
+  def taxa_published_research_project_sql
+    <<~SQL.chomp
+      JOIN research_projects
+        ON asvs.research_project_id = research_projects.id
+        AND research_projects.published = TRUE
+    SQL
+  end
+
+  def taxa_samples
+    @taxa_samples ||= begin
+      samples = website_sample.results_completed
+                              .select(sample_columns)
+                              .select(taxa_select)
+                              .joins(taxa_join_sql)
+                              .joins(taxa_published_research_project_sql)
+                              .where(completed_query_string)
+                              .order(:created_at)
+                              .group(:id)
+
+      samples = samples_for_primers(samples) if params[:primer]
+      samples
+    end
+  end
+
   def completed_query_string
     query = {}
     query[:substrate_cd] = params[:substrate].split('|') if params[:substrate]
@@ -153,7 +169,7 @@ module FilterSamples
       return [] if research_project.blank?
 
       completed_samples
-        .where('asvs.research_project_id = ?', research_project.id)
+        .where('sample_primers.research_project_id = ?', research_project.id)
     end
   end
 

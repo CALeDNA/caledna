@@ -50,28 +50,9 @@ module Api
         @taxon ||= NcbiNode.find_by(taxon_id: params[:id])
       end
 
-      def select_sql
-        <<~SQL.chomp
-          (array_agg("ncbi_nodes"."canonical_name" || '|' ||
-          ncbi_nodes.taxon_id))[0:10] AS taxa
-        SQL
-      end
-
-      def join_sql
-        <<~SQL.chomp
-          JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
-          AND (ncbi_nodes.iucn_status IS NULL OR
-            ncbi_nodes.iucn_status NOT IN
-            ('#{IucnStatus::THREATENED.values.join("','")}')
-          )
-        SQL
-      end
-
       def samples
         @samples ||= begin
-          completed_samples
-            .select(select_sql)
-            .joins(join_sql)
+          taxa_samples
             .where('ids @> ?', "{#{params[:id]}}")
             .group(:id)
         end

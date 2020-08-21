@@ -66,12 +66,8 @@ class SamplesController < ApplicationController
 
   def sample
     @sample ||= begin
-      website_sample
+      approved_samples
         .select('samples.*')
-        .joins(results_left_join_sql)
-        .joins(optional_published_research_project_sql)
-        .where(conditional_status_sql)
-        .group(:id)
         .find(params[:id])
     end
   end
