@@ -44,7 +44,7 @@
           perPage: 25,
           position: 'bottom',
           perPageDropdown: [25, 50],
-          dropdownAllowAll: false
+          dropdownAllowAll: false,
         }"
         :columns="columns"
         :rows="rows"
@@ -94,11 +94,11 @@ export default {
     MapTableToggle,
     FiltersLayout,
     Spinner,
-    MapLayersModal
+    MapLayersModal,
   },
   mixins: [mapMixins, searchMixins, taxonLayerMixins],
   filters: {
-    pluralize
+    pluralize,
   },
   data() {
     return {
@@ -115,7 +115,7 @@ export default {
       taxonLayer: null,
       showTaxonLayer: true,
       taxonSamplesData: [],
-      initialTaxonSamplesData: []
+      initialTaxonSamplesData: [],
     };
   },
   created() {
@@ -132,7 +132,7 @@ export default {
     },
 
     addTaxonLayer() {
-      const samples = this.taxonSamplesData.filter(function(sample) {
+      const samples = this.taxonSamplesData.filter(function (sample) {
         return sample.latitude && sample.longitude;
       });
 
@@ -168,21 +168,21 @@ export default {
     // config table
     //================
     formatTableData(samples) {
-      this.rows = samples.map(sample => {
+      this.rows = samples.map((sample) => {
         const {
           id,
           barcode,
           latitude,
           longitude,
           location,
-          status,
+          status_cd,
           primer_names,
-          substrate,
+          substrate_cd,
           collection_date,
-          taxa_count
+          taxa_count,
         } = sample;
 
-        const formatDateString = dateString => {
+        const formatDateString = (dateString) => {
           let date = new Date(dateString);
           return date.toLocaleDateString();
         };
@@ -192,11 +192,11 @@ export default {
           barcode,
           coordinates: `${latitude}, ${longitude}`,
           location,
-          status: status.replace("_", " "),
+          status: status_cd.replace("_", " "),
           primers: primer_names ? primer_names.join(", ") : "",
-          substrate,
+          substrate: substrate_cd,
           taxa_count: taxa_count ? taxa_count : 0,
-          collection_date: formatDateString(collection_date)
+          collection_date: formatDateString(collection_date),
         };
       });
     },
@@ -209,7 +209,7 @@ export default {
       this.showSpinner = true;
       axios
         .get(url)
-        .then(response => {
+        .then((response) => {
           const mapData = baseMap.formatMapData(response.data);
           if (this.initialTaxonSamplesData.length == 0) {
             this.initialTaxonSamplesData = mapData.taxonSamplesData;
@@ -220,7 +220,7 @@ export default {
 
           this.showSpinner = false;
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
         });
     },
@@ -232,7 +232,7 @@ export default {
       if (this.showTaxonLayer) {
         this.addTaxonLayer();
       }
-    }
-  }
+    },
+  },
 };
 </script>

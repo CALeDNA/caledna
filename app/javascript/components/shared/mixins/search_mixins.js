@@ -22,7 +22,7 @@ export const searchMixins = {
     filterSamples(filters, samples) {
       if (filters.status && filters.status !== "all") {
         samples = samples.filter((sample) => {
-          return filters.status == sample.status;
+          return filters.status == sample.status_cd;
         });
       }
 
@@ -32,7 +32,7 @@ export const searchMixins = {
         filters.substrate.length > 0
       ) {
         samples = samples.filter((sample) => {
-          return filters.substrate.includes(sample.substrate);
+          return filters.substrate.includes(sample.substrate_cd);
         });
       }
 

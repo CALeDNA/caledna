@@ -73,7 +73,7 @@
           perPage: 25,
           position: 'bottom',
           perPageDropdown: [25, 50],
-          dropdownAllowAll: false
+          dropdownAllowAll: false,
         }"
         :columns="columns"
         :rows="rows"
@@ -118,7 +118,7 @@ import {
   mapMixins,
   searchMixins,
   taxonLayerMixins,
-  baseLayerMixins
+  baseLayerMixins,
 } from "./shared/mixins";
 import { completedSamplesStore } from "./shared/stores";
 
@@ -129,11 +129,11 @@ export default {
     MapTableToggle,
     FiltersLayout,
     Spinner,
-    MapLayersModal
+    MapLayersModal,
   },
   mixins: [mapMixins, searchMixins, taxonLayerMixins, baseLayerMixins],
   filters: {
-    pluralize
+    pluralize,
   },
   data() {
     return {
@@ -157,7 +157,7 @@ export default {
       taxonLayer: null,
       showTaxonLayer: true,
       taxonSamplesData: [],
-      initialTaxonSamplesData: []
+      initialTaxonSamplesData: [],
     };
   },
   created() {
@@ -204,18 +204,18 @@ export default {
     // config table
     //================
     formatTableData(samples) {
-      this.rows = samples.map(sample => {
+      this.rows = samples.map((sample) => {
         const {
           id,
           barcode,
           latitude,
           longitude,
           location,
-          status,
+          status_cd,
           primer_names,
-          substrate,
+          substrate_cd,
           taxa,
-          taxa_count
+          taxa_count,
         } = sample;
 
         return {
@@ -223,11 +223,11 @@ export default {
           barcode,
           coordinates: `${latitude}, ${longitude}`,
           location: location,
-          status: status.replace("_", " "),
+          status: status_cd.replace("_", " "),
           primers: primer_names ? primer_names.join(", ") : "",
-          substrate,
+          substrate: substrate_cd,
           taxa,
-          taxa_count: taxa_count ? taxa_count : 0
+          taxa_count: taxa_count ? taxa_count : 0,
         };
       });
     },
@@ -237,7 +237,7 @@ export default {
       let body = `${taxa.length} matching taxa<br>`;
       body += taxa
         .slice(0, limit)
-        .map(t => {
+        .map((t) => {
           let parts = t.split("|");
           return `<a href="/taxa/${parts[1].trim()}">${parts[0]}</a>`;
         })
@@ -263,7 +263,7 @@ export default {
       this.showSpinner = true;
       axios
         .get(url)
-        .then(response => {
+        .then((response) => {
           this.taxon = response.data.taxon.data.attributes;
 
           const mapData = baseMap.formatMapData(response.data);
@@ -278,7 +278,7 @@ export default {
 
           this.showSpinner = false;
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
         });
     },
@@ -295,7 +295,7 @@ export default {
       if (this.showTaxonLayer) {
         this.addTaxonLayer();
       }
-    }
+    },
   },
   computed: {
     taxonDisplayName() {
@@ -307,7 +307,7 @@ export default {
           .join(", ")})`;
       }
       return name;
-    }
-  }
+    },
+  },
 };
 </script>
