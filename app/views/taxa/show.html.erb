@@ -14,6 +14,9 @@
   <% if @taxon.show_interactions? %>
     <li role="presentation"><a href="#interactions" aria-controls="interactions" role="tab" data-toggle="tab">Interactions</a></li>
   <% end %>
+  <% if @related_organisms.length > 0 %>
+    <li role="presentation"><a href="#related_organisms" aria-controls="related_organisms" role="tab" data-toggle="tab">Related Organisms</a></li>
+  <% end %>
   <li role="presentation"><a href="#names" aria-controls="names" role="tab" data-toggle="tab">Names</a></li>
   <li role="presentation"><a href="#info" aria-controls="info" role="tab" data-toggle="tab">More Info</a></li>
 </ul>
@@ -27,6 +30,9 @@
       <%= render partial: "interactions", locals: { taxon: @taxon, samples: @samples } %>
     </div>
   <% end %>
+  <div role="tabpanel" class="tab-pane" id="related_organisms">
+    <%= render partial: "related_organisms", locals: { related_organisms: @related_organisms, taxon: @taxon } %>
+  </div>
   <div role="tabpanel" class="tab-pane" id="names">
     <%= render partial: "names", locals: { taxon: @taxon } %>
   </div>
@@ -40,6 +46,11 @@
   window.caledna = {
     gbif_id: <%= @taxon.gbif_id.present? ? @taxon.gbif_id : 'null' %>
   }
+
+  if(document.location.search.includes('related_organisms_page')) {
+    $('a[href="#related_organisms"]').tab('show')
+  }
+
 })(window)
 </script>
 
