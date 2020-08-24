@@ -29,7 +29,7 @@ class TaxaSearchesController < ApplicationController
 
   def result_sql
     <<-SQL
-    SELECT taxon_id, canonical_name, rank, asvs_count_la_river,
+    SELECT taxon_id, canonical_name, rank, asvs_count_la_river as asvs_count,
     eol_ids, eol_images,
     inat_ids, inat_images,
     wikidata_images, common_names, division_name
