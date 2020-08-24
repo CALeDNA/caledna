@@ -102,7 +102,7 @@ class TaxaController < ApplicationController
   def children
     @children ||= begin
       NcbiNode.where(parent_taxon_id: taxon.ncbi_id)
-              .order('canonical_name')
+              .order('asvs_count DESC NULLS LAST, canonical_name ASC')
               .page(params[:children_page])
               .per(10)
     end
