@@ -24,16 +24,24 @@ module FilterSamples
     CheckWebsite.caledna_site? ? Asv : Asv.la_river
   end
 
-  def sample_columns
-    [
-      'id', 'latitude', 'longitude', 'barcode', 'status_cd', 'substrate_cd',
-      'location', 'collection_date', 'samples.primers as primer_names',
-      'primer_ids', 'taxa_count'
+  def base_sample_columns
+    %w[
+      id latitude longitude barcode status_cd substrate_cd
+      location collection_date
     ]
+  end
+
+  # ====================
+  # sample_primers_based_samples: /samples & /field_projects
+  # ====================
+
+  def sample_columns
+    base_sample_columns +
+      ['samples.primers as primer_names', 'primer_ids', 'taxa_count']
   end
   module_function :sample_columns
 
-  def sample_primers_sql
+  def sample_primers_join_sql
     <<~SQL.chomp
       LEFT JOIN sample_primers ON sample_primers.sample_id = samples.id
     SQL
@@ -70,7 +78,57 @@ module FilterSamples
   def base_samples
     website_sample
       .select(sample_columns)
-      .joins(sample_primers_sql)
+      .joins(sample_primers_join_sql)
+      .order(:created_at)
+      .group(:id)
+  end
+
+  # ====================
+  # asv_based_samples: Taxa & Research Projects
+  # ====================
+
+  def primer_select
+    <<~SQL.chomp
+      ARRAY_AGG(DISTINCT(primers.name)) AS primer_names,
+      ARRAY_AGG(DISTINCT(primers.id)) AS primer_ids
+    SQL
+  end
+
+  def asv_join_sql
+    <<~SQL.chomp
+      JOIN asvs ON asvs.sample_id = samples.id
+      join primers on asvs.primer_id = primers.id
+      JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+      AND (ncbi_nodes.iucn_status IS NULL OR
+        ncbi_nodes.iucn_status NOT IN
+        ('#{IucnStatus::THREATENED.values.join("','")}')
+      )
+    SQL
+  end
+
+  def asv_published_research_project_sql
+    <<~SQL.chomp
+      JOIN research_projects
+        ON asvs.research_project_id = research_projects.id
+        AND research_projects.published = TRUE
+    SQL
+  end
+
+  def asv_samples_for_primers(samples)
+    primer_ids = params[:primer].split('|')
+
+    samples
+      .where('asvs.primer_id IN (?)', primer_ids.map(&:to_i))
+  end
+
+  def asv_base_samples
+    website_sample
+      .results_completed
+      .select(base_sample_columns)
+      .select(primer_select)
+      .select('COUNT(DISTINCT asvs.taxon_id) as taxa_count')
+      .joins(asv_join_sql)
+      .joins(asv_published_research_project_sql)
       .order(:created_at)
       .group(:id)
   end
@@ -101,6 +159,13 @@ module FilterSamples
   # completed_samples: Taxa#show map
   # ====================
 
+  def taxa_select
+    <<~SQL.chomp
+      (ARRAY_AGG("ncbi_nodes"."canonical_name" || '|' ||
+      ncbi_nodes.taxon_id))[0:10] AS taxa
+    SQL
+  end
+
   def completed_samples
     @completed_samples ||= begin
       samples = base_samples.results_completed
@@ -112,44 +177,12 @@ module FilterSamples
     end
   end
 
-  def taxa_select
-    <<~SQL.chomp
-      (ARRAY_AGG("ncbi_nodes"."canonical_name" || '|' ||
-      ncbi_nodes.taxon_id))[0:10] AS taxa
-    SQL
-  end
-
-  def taxa_join_sql
-    <<~SQL.chomp
-      JOIN asvs ON asvs.sample_id = samples.id
-      JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
-      AND (ncbi_nodes.iucn_status IS NULL OR
-        ncbi_nodes.iucn_status NOT IN
-        ('#{IucnStatus::THREATENED.values.join("','")}')
-      )
-    SQL
-  end
-
-  def taxa_published_research_project_sql
-    <<~SQL.chomp
-      JOIN research_projects
-        ON asvs.research_project_id = research_projects.id
-        AND research_projects.published = TRUE
-    SQL
-  end
-
   def taxa_samples
     @taxa_samples ||= begin
-      samples = website_sample.results_completed
-                              .select(sample_columns)
-                              .select(taxa_select)
-                              .joins(taxa_join_sql)
-                              .joins(taxa_published_research_project_sql)
-                              .where(completed_query_string)
-                              .order(:created_at)
-                              .group(:id)
+      samples = asv_base_samples.select(taxa_select)
+                                .where(completed_query_string)
 
-      samples = samples_for_primers(samples) if params[:primer]
+      samples = asv_samples_for_primers(samples) if params[:primer]
       samples
     end
   end
@@ -168,8 +201,12 @@ module FilterSamples
     @research_project_samples ||= begin
       return [] if research_project.blank?
 
-      completed_samples
-        .where('sample_primers.research_project_id = ?', research_project.id)
+      samples = asv_base_samples
+                .where('asvs.research_project_id = ?', research_project.id)
+                .where(completed_query_string)
+
+      samples = asv_samples_for_primers(samples) if params[:primer]
+      samples
     end
   end
 
