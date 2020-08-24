@@ -183,8 +183,10 @@ export default {
         } = sample;
 
         const formatDateString = (dateString) => {
-          let date = new Date(dateString);
-          return date.toLocaleDateString();
+          if (dateString) {
+            let date = new Date(dateString);
+            return date.toLocaleDateString();
+          }
         };
 
         return {
