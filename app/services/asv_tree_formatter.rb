@@ -140,10 +140,14 @@ module AsvTreeFormatter
   end
 
   def fetch_asv_tree_for_research_project(project_id)
-    taxa = fetch_asv_tree.joins('join research_project_sources as rps ON ' \
-                                'rps.sourceable_id = asvs.sample_id')
-                         .where('rps.research_project_id = ?', project_id)
-                         .where("rps.sourceable_type = 'Sample'")
+    sql = <<~SQL
+      ncbi_nodes.taxon_id IN (
+        SELECT DISTINCT taxon_id FROM asvs
+        WHERE asvs.research_project_id = ?
+      )
+    SQL
+    taxa = fetch_asv_tree.where(sql, project_id)
+
     format_taxa(taxa)
   end
 
@@ -161,11 +165,7 @@ module AsvTreeFormatter
 
   def fetch_asv_tree
     @fetch_asv_tree ||= begin
-      taxa = base_asv_tree_taxa
-      if CheckWebsite.pour_site?
-        taxa = taxa.where('research_project_id', ResearchProject::LA_RIVER.id)
-      end
-      taxa
+      base_asv_tree_taxa
     end
   end
 

@@ -22,7 +22,7 @@ let nodeHeightFactor = 45;
 const initOptions = {
   myCircleRadius: 14,
   myNodeTextXOffset: 17,
-  myCircleFontSize: "20px"
+  myCircleFontSize: "20px",
 };
 baseTree.init(initOptions);
 
@@ -31,7 +31,7 @@ baseTree.init(initOptions);
 // =====================
 
 let svgOptions = {
-  selector: TREE1
+  selector: TREE1,
 };
 const svg = baseTree.createSvg(svgOptions);
 let tree = d3.tree();
@@ -50,21 +50,21 @@ baseTree.centerNode(root, svg);
 // =====================
 
 var stratifySettings = spec.data[0].transform.filter(
-  item => item.type == "stratify"
+  (item) => item.type == "stratify"
 )[0];
-var textSettings = spec.marks.filter(mark => mark.type == "text")[0];
+var textSettings = spec.marks.filter((mark) => mark.type == "text")[0];
 
 spec.height = data.length * 16;
 spec.width = 3000;
 spec.data[0].values = data;
 stratifySettings.key = "id";
-stratifySettings.parentKey = "parent";
+stratifySettings.parentKey = "parent_id";
 textSettings.encode.enter.text.field = "name";
 textSettings.encode.enter.fontSize.value = 14;
 
 var view = new vega.View(vega.parse(spec), {
   renderer: "svg",
-  container: TREE2
+  container: TREE2,
 });
 
 view.runAsync().then(() => {

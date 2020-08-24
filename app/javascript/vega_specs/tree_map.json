@@ -25,7 +25,7 @@
         {
           "type": "stratify",
           "key": "id",
-          "parentKey": "parent"
+          "parentKey": "parent_id"
         },
         {
           "type": "tree",
