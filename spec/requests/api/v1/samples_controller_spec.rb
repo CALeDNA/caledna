@@ -12,7 +12,8 @@ describe 'Samples' do
       sample = create(:sample, :results_completed, id: sample_id,
                                                    substrate: substrate)
       rproj = create(:research_project, published: true)
-      create(:asv, research_project: rproj, sample: sample)
+      create(:sample_primer, research_project: rproj, sample: sample,
+                             primer: create(:primer))
     end
 
     it 'returns OK' do
@@ -54,11 +55,13 @@ describe 'Samples' do
     it 'returns approved samples or published result_completed samples' do
       sample1 = create(:sample, :results_completed)
       rproj1 = create(:research_project, published: false)
-      create(:asv, sample: sample1, research_project: rproj1)
+      create(:sample_primer, research_project: rproj1, sample: sample1,
+                             primer: create(:primer))
 
       sample2 = create(:sample, :results_completed)
       rproj2 = create(:research_project, published: true)
-      create(:asv, sample: sample2, research_project: rproj2)
+      create(:sample_primer, research_project: rproj2, sample: sample2,
+                             primer: create(:primer))
 
       sample3 = create(:sample, :approved)
 
@@ -97,7 +100,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to eq([1, 2])
       end
 
@@ -122,7 +125,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(1)
 
-        substrate = data.map { |i| i['attributes']['substrate'] }
+        substrate = data.map { |i| i['substrate_cd'] }
         expect(substrate).to eq(['soil'])
       end
 
@@ -132,7 +135,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        substrate = data.map { |i| i['attributes']['substrate'] }
+        substrate = data.map { |i| i['substrate_cd'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
     end
@@ -166,10 +169,12 @@ describe 'Samples' do
 
       before(:each) do
         create(:sample, :approved)
-        s1 = create(:sample, :results_completed)
-        s2 = create(:sample, :results_completed)
         p1 = create(:primer, name: primer1_name, id: primer1_id)
         p2 = create(:primer, name: primer2_name, id: primer2_id)
+        s1 = create(:sample, :results_completed, primers: [primer1_name],
+                                                 primer_ids: [primer1_id])
+        s2 = create(:sample, :results_completed, primers: [primer2_name],
+                                                 primer_ids: [primer2_id])
 
         rproj1 = create(:research_project, published: true)
         rproj2 = create(:research_project, published: true)
@@ -189,10 +194,10 @@ describe 'Samples' do
 
         expect(data.length).to eq(1)
 
-        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        primer_names = data.map { |i| i['primer_names'] }
         expect(primer_names).to match_array([[primer1_name]])
 
-        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = data.map { |i| i['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id]])
       end
 
@@ -202,10 +207,10 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        primer_names = data.map { |i| i['primer_names'] }
         expect(primer_names).to match_array([[primer1_name], [primer2_name]])
 
-        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = data.map { |i| i['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id], [primer2_id]])
       end
 
@@ -270,7 +275,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(3)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to eq([1, 2, 5])
       end
 
@@ -281,7 +286,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to eq([1, 2])
       end
 
@@ -292,7 +297,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to eq([1, 6])
       end
 
@@ -305,7 +310,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(1)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to eq([1])
       end
     end
@@ -336,15 +341,13 @@ describe 'Samples' do
         it 'returns the sample data for the given sample' do
           sample = create(:sample, :results_completed)
           rproj = create(:research_project, published: true)
-          create(:research_project_source, sourceable: sample,
-                                           research_project: rproj)
-          create(:research_project_source, sourceable: sample,
-                                           research_project: rproj)
+          create(:sample_primer, sample: sample, primer: create(:primer),
+                                 research_project: rproj)
 
           get api_v1_sample_path(id: sample.id)
           data = JSON.parse(response.body)['sample']['data']
 
-          expect(data['attributes']['id'].to_i).to eq(sample.id)
+          expect(data['id'].to_i).to eq(sample.id)
         end
       end
 
@@ -352,10 +355,8 @@ describe 'Samples' do
         it 'raise an error' do
           sample = create(:sample, :results_completed)
           rproj = create(:research_project, published: false)
-          create(:research_project_source, sourceable: sample,
-                                           research_project: rproj)
-          create(:research_project_source, sourceable: sample,
-                                           research_project: rproj)
+          create(:sample_primer, sample: sample, primer: create(:primer),
+                                 research_project: rproj)
 
           expect { get api_v1_sample_path(id: sample.id) }
             .to raise_error(ActiveRecord::RecordNotFound)

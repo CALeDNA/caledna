@@ -74,13 +74,13 @@ describe 'ResearchProjects' do
         ids = data.map { |s| s['id'].to_i }
         expect(ids).to match_array([sample1_id, sample2_id])
 
-        primer_ids = data.map { |s| s['attributes']['primer_ids'] }
+        primer_ids = data.map { |s| s['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id], [primer1_id]])
 
-        primer_names = data.map { |s| s['attributes']['primer_names'] }
+        primer_names = data.map { |s| s['primer_names'] }
         expect(primer_names).to match_array([[primer1_name], [primer1_name]])
 
-        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        taxa_count = data.map { |s| s['taxa_count'] }
         expect(taxa_count).to match_array([1, 1])
       end
 
@@ -101,16 +101,16 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to match_array([sample1_id])
 
-        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        primer_names = data.map { |i| i['primer_names'] }
         expect(primer_names).to match_array([%w[primer1 primer2]])
 
-        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = data.map { |i| i['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id, primer2_id]])
 
-        taxa_count = data.map { |i| i['attributes']['taxa_count'] }
+        taxa_count = data.map { |i| i['taxa_count'] }
         expect(taxa_count).to match_array([1])
       end
 
@@ -170,18 +170,18 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(2)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to match_array([sample1_id, sample2_id])
 
-        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        primer_names = data.map { |i| i['primer_names'] }
         expect(primer_names)
           .to match_array([%w[primer1 primer2], %w[primer2 primer3]])
 
-        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = data.map { |i| i['primer_ids'] }
         expect(primer_ids)
           .to match_array([[primer1_id, primer2_id], [primer2_id, primer3_id]])
 
-        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        taxa_count = data.map { |s| s['taxa_count'] }
         expect(taxa_count).to match_array([2, 2])
       end
     end
@@ -222,7 +222,7 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(2)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to match_array([sample1_id, sample2_id])
       end
     end
@@ -243,7 +243,7 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        substrate = data.map { |i| i['attributes']['substrate'] }
+        substrate = data.map { |i| i['substrate_cd'] }
         expect(substrate).to match_array(['soil'])
       end
 
@@ -254,7 +254,7 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(2)
 
-        substrate = data.map { |i| i['attributes']['substrate'] }
+        substrate = data.map { |i| i['substrate_cd'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
     end
@@ -277,7 +277,7 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to match_array([sample2_id])
       end
     end
@@ -298,16 +298,16 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to match_array([sample1_id])
 
-        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        primer_names = data.map { |i| i['primer_names'] }
         expect(primer_names).to match_array([['primer1']])
 
-        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = data.map { |i| i['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id]])
 
-        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        taxa_count = data.map { |s| s['taxa_count'] }
         expect(taxa_count).to match_array([1])
       end
 
@@ -332,19 +332,19 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(3)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to match_array([sample1_id, sample2_id, sample3_id])
 
-        primer_names = data.map { |i| i['attributes']['primer_names'] }
+        primer_names = data.map { |i| i['primer_names'] }
         expect(primer_names)
           .to match_array([%w[primer1 primer2], ['primer2'], ['primer1']])
 
-        primer_ids = data.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = data.map { |i| i['primer_ids'] }
         expect(primer_ids)
           .to match_array([[primer1_id, primer2_id], [primer2_id],
                            [primer1_id]])
 
-        taxa_count = data.map { |s| s['attributes']['taxa_count'] }
+        taxa_count = data.map { |s| s['taxa_count'] }
         expect(taxa_count).to match_array([2, 1, 1])
       end
 
@@ -383,7 +383,7 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        ids = data.map { |i| i['attributes']['id'] }
+        ids = data.map { |i| i['id'] }
         expect(ids).to match_array([sample1_id])
       end
     end

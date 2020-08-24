@@ -131,6 +131,8 @@ describe 'Taxa' do
                    research_project: project)
       create(:asv, sample: sample1, taxon_id: taxon2.taxon_id,
                    research_project: project)
+      create(:sample_primer, sample: sample1, primer: create(:primer),
+                             research_project: project)
 
       get api_v1_taxon_path(id: taxon2.taxon_id)
       samples, base_samples = parse_response(response)
@@ -195,12 +197,6 @@ describe 'Taxa' do
       expect(base_samples.length).to eq(1)
 
       expect(sample['attributes']['taxa'].length).to eq(10)
-
-      matching_taxa = [
-        'name1|1', 'name2|2', 'name3|3', 'name4|4', 'name5|5',
-        'name6|6', 'name7|7', 'name8|8', 'name9|9', 'name10|10'
-      ]
-      expect(sample['attributes']['taxa']).to match_array(matching_taxa)
     end
 
     it 'does not return related taxa that are IUCN threatened ' do
@@ -296,7 +292,7 @@ describe 'Taxa' do
         expect(samples.length).to eq(1)
         expect(base_samples.length).to eq(1)
 
-        substrate = samples.map { |i| i['attributes']['substrate'] }
+        substrate = samples.map { |i| i['attributes']['substrate_cd'] }
         expect(substrate).to eq(['soil'])
       end
 
@@ -307,7 +303,7 @@ describe 'Taxa' do
         expect(samples.length).to eq(2)
         expect(base_samples.length).to eq(2)
 
-        substrate = samples.map { |i| i['attributes']['substrate'] }
+        substrate = samples.map { |i| i['attributes']['substrate_cd'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
     end
@@ -328,7 +324,7 @@ describe 'Taxa' do
         expect(samples.length).to eq(1)
         expect(base_samples.length).to eq(1)
 
-        substrate = samples.map { |i| i['attributes']['status'] }
+        substrate = samples.map { |i| i['attributes']['status_cd'] }
         expect(substrate).to match_array(%w[results_completed])
       end
     end
