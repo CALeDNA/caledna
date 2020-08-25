@@ -38,8 +38,14 @@ module Admin
         delete_research_project_sources
         delete_sample_primers
         update_sample_status
+        refresh_samples_map
       end
 
+      def refresh_samples_map
+        sql = 'REFRESH MATERIALIZED VIEW samples_map'
+
+        execute(sql, 'q')
+      end
 
       def update_sample_status
         sql = <<~SQL

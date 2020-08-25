@@ -3,6 +3,7 @@
 class FetchLaRiverTaxaAsvsCountsJob < ApplicationJob
   include CustomCounter
   queue_as :default
+  after_perform :refresh_samples_map
 
   def perform
     puts 'update asvs_count_la_river...'
@@ -15,5 +16,13 @@ class FetchLaRiverTaxaAsvsCountsJob < ApplicationJob
       UpdateLaRiverTaxaAsvsCountJob.perform_later(result['taxon_id'],
                                                   result['count'])
     end
+  end
+
+  private
+
+  def refresh_samples_map
+    sql = 'REFRESH MATERIALIZED VIEW samples_map;'
+
+    ActiveRecord::Base.connection.exec_query(sql)
   end
 end
