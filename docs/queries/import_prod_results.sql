@@ -11,11 +11,11 @@ TRUNCATE samples restart identity CASCADE;
 TRUNCATE field_projects restart identity CASCADE;
 
 
-pg_restore  --verbose --no-acl --no-owner -n public -t field_projects -t samples -t research_projects   -d caledna_development  rollback.dmp
+pg_restore  --verbose --no-acl --no-owner -n public -t field_projects -t samples -t research_projects   -d caledna_development  prod.dump
 
-pg_restore  --verbose --no-acl --no-owner -n public  -t events  -t kobo_photos -t research_project_sources -t research_project_authors -t result_taxa -t sample_primers -t  pages -t asvs -d caledna_development  rollback.dmp
+pg_restore  --verbose --no-acl --no-owner -n public  -t events  -t kobo_photos -t research_project_sources -t research_project_authors -t result_taxa -t sample_primers -t  pages -t asvs -d caledna_development  prod.dump
 
-pg_restore  --verbose --no-acl --no-owner -n public  -t event_registrations -d caledna_development  rollback.dmp
+pg_restore  --verbose --no-acl --no-owner -n public  -t event_registrations -d caledna_development  prod.dump
 
 
 
