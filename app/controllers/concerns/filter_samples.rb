@@ -40,7 +40,7 @@ module FilterSamples
   end
 
   def samples_primers_columns
-    'array_agg(distinct asvs.primer_id) as primer_ids, ' \
+    'array_agg(distinct primers.id) as primer_ids, ' \
     'array_agg(distinct primers.name) as primer_names'
   end
 
@@ -53,7 +53,7 @@ module FilterSamples
   def completed_samples_for_primers(samples)
     primer_ids = params[:primer].split('|')
 
-    samples.where('asvs.primer_id IN (?)', primer_ids)
+    samples.where('primers.id IN (?)', primer_ids)
   end
 
   def published_samples_sql
@@ -95,14 +95,11 @@ module FilterSamples
   # completed_samples: Taxa#show map, ResearchProject#show map
   # ====================
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def completed_samples
     @completed_samples ||= begin
       samples = base_samples_for_map
                 .select(base_samples_columns)
                 .select(samples_primers_columns)
-                .joins('JOIN asvs ON samples_map.id = asvs.sample_id')
-                .joins('JOIN primers ON asvs.primer_id = primers.id')
                 .where(status: :results_completed)
                 .where(completed_query_string)
                 .group(base_samples_columns)
@@ -111,7 +108,6 @@ module FilterSamples
       samples
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def basic_completed_samples
     columns = %w[id latitude longitude substrate primer_ids]

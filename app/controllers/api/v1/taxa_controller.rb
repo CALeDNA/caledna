@@ -62,6 +62,8 @@ module Api
       def taxa_samples
         @taxa_samples ||= begin
           sql = <<~SQL
+            JOIN asvs ON samples_map.id = asvs.sample_id
+            JOIN primers ON asvs.primer_id = primers.id
             JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
             AND (ncbi_nodes.iucn_status IS NULL OR
               ncbi_nodes.iucn_status NOT IN
@@ -72,6 +74,7 @@ module Api
           completed_samples
             .select(taxa_sql)
             .joins(sql)
+            .where('asvs.taxon_id = ?', params[:id])
             .where('ids @> ?', "{#{params[:id]}}")
         end
         # rubocop:enable Metrics/MethodLength

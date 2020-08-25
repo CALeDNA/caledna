@@ -38,9 +38,14 @@ module Api
 
         def research_project_samples
           @research_project_samples ||= begin
+            sql = <<~SQL
+              JOIN sample_primers ON samples_map.id = sample_primers.sample_id
+              JOIN primers ON sample_primers.primer_id = primers.id
+            SQL
             completed_samples
+              .joins(sql)
               .where('samples_map.research_project_ids @> ?', "{#{project.id}}")
-              .where('asvs.research_project_id = ?', project.id)
+              .where('sample_primers.research_project_id = ?', project.id)
           end
         end
 
