@@ -19,7 +19,7 @@
     "venn.js": "^0.2.20",
     "vue": "^2.5.16",
     "vue-good-table": "^2.18.0",
-    "vue-loader": "^14.2.1",
+    "vue-loader": "^15.9.3",
     "vue-template-compiler": "^2.5.16",
     "vue-typeahead": "^2.3.2",
     "vue2-autocomplete-js": "^0.2.2"
