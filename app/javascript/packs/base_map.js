@@ -273,8 +273,7 @@ function formatMapData(data) {
 
   if (baseSamples) {
     baseSamplesData = baseSamples
-      .filter(function (rawSample) {
-        var sample = rawSample.attributes;
+      .filter(function (sample) {
         return sample.latitude && sample.longitude;
       })
       .map(function (sample) {

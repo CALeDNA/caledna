@@ -236,9 +236,9 @@ export default {
           latitude,
           longitude,
           location,
-          status_cd,
+          status,
           primer_names,
-          substrate_cd,
+          substrate,
           collection_date,
           taxa_count,
         } = sample;
@@ -255,9 +255,9 @@ export default {
           barcode,
           coordinates: `${latitude}, ${longitude}`,
           location,
-          status: status_cd.replace("_", " "),
+          status: status.replace("_", " "),
           primers: primer_names ? primer_names.join(", ") : "",
-          substrate: substrate_cd,
+          substrate: substrate,
           taxa_count: taxa_count ? taxa_count : 0,
           collection_date: formatDateString(collection_date),
         };
