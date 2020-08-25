@@ -198,7 +198,7 @@ export default {
           barcode,
           coordinates: `${latitude}, ${longitude}`,
           location,
-          status: status.replace("_", " "),
+          status: status && status.replace("_", " "),
           primers: primer_names ? primer_names.join(", ") : "",
           substrate: substrate,
           taxa_count: taxa_count ? taxa_count : 0,
