@@ -13,13 +13,15 @@ module KoboApi
     end
 
     def import_kobo_samples(project_id, kobo_id, hash_payload)
-      counter = 0
+      new_records_count =
+        (hash_payload.map { |r| r['_id'] } - kobo_sample_ids).size
+      return 0 if new_records_count.zero?
+
       hash_payload.map do |sample_data|
         next if kobo_sample_ids.include?(sample_data['_id'])
-        counter += 1
         ImportKoboSampleJob.perform_later(project_id, kobo_id, sample_data)
       end
-      counter
+      new_records_count
     end
 
     def save_project_data(hash_payload)
@@ -83,7 +85,7 @@ module KoboApi
     end
 
     def kobo_sample_ids
-      Sample.pluck(:kobo_id)
+      Sample.pluck(:kobo_id).compact
     end
 
     def non_kobo_barcodes
