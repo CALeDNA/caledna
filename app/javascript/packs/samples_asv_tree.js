@@ -7,7 +7,6 @@ import baseTree from "./base_tree.js";
 // setup
 // =================
 
-const endpoint = `/api/v1${window.location.pathname}/taxa_list`;
 let root;
 let longestLabelLength;
 let maxLabelLength;

@@ -18,6 +18,7 @@ class IucnStatus
     EW: 'extinct in the wild',
     CR: 'critically endangered',
     EN: 'endangered',
-    custom: 'endangered species'
+    custom: 'endangered species',
+    associated_species: 'associated species'
   }.freeze
 end

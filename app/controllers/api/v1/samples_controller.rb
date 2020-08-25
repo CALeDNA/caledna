@@ -6,7 +6,6 @@ module Api
       before_action :add_cors_headers
       include FilterSamples
       include AsvTreeFormatter
-      include TreeFormatter
 
       def index
         render json: {
@@ -22,7 +21,13 @@ module Api
 
       def taxa_list
         render json: {
-          taxa_list: asv_tree_taxa
+          taxa_list: organisms
+        }, status: :ok
+      end
+
+      def taxa_tree
+        render json: {
+          taxa_tree: asv_tree_taxa
         }, status: :ok
       end
 
@@ -57,9 +62,49 @@ module Api
         @asv_tree_taxa ||= fetch_asv_tree_for_sample(sample.id)
       end
 
+      # rubocop:disable Metrics/MethodLength
+      def organisms_sql
+        sql = <<~SQL
+          SELECT
+          ncbi_divisions.name AS division_name,
+          hierarchy_names ->>'phylum' as phylum,
+          hierarchy_names ->>'class' as class,
+          hierarchy_names ->>'order' as order,
+          hierarchy_names ->>'family' as family,
+          hierarchy_names ->>'genus' as genus,
+          hierarchy_names ->>'species' as species,
+          ncbi_nodes.taxon_id, ncbi_nodes.iucn_status,
+          rank,
+          common_names
+          FROM ncbi_nodes
+          JOIN asvs ON asvs.taxon_id = ncbi_nodes.taxon_id
+          JOIN ncbi_divisions
+            ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+          WHERE asvs.sample_id = $1
+        SQL
+
+        if CheckWebsite.pour_site?
+          sql += "AND research_project_id = #{ResearchProject::LA_RIVER.id}"
+        end
+
+        sql + <<~SQL
+          GROUP BY ncbi_nodes.taxon_id, ncbi_nodes.iucn_status,
+          ncbi_divisions.name
+          ORDER BY division_name,
+          hierarchy_names ->>'phylum',
+          hierarchy_names ->>'class',
+          hierarchy_names ->>'order',
+          hierarchy_names ->>'family',
+          hierarchy_names ->>'genus',
+          hierarchy_names ->>'species';
+        SQL
+      end
+      # rubocop:enable Metrics/MethodLength
+
       def organisms
         @organisms ||= begin
-          fetch_nested_taxa_tree_for_sample(sample_id)
+          binding = [[nil, params[:sample_id]]]
+          res = conn.exec_query(organisms_sql, 'q', binding)
         end
       end
 
