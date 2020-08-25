@@ -36,6 +36,14 @@ module Api
           @samples ||= research_project_samples
         end
 
+        def research_project_samples
+          @research_project_samples ||= begin
+            completed_samples
+              .where('samples_map.research_project_ids @> ?', "{#{project.id}}")
+              .where('asvs.research_project_id = ?', project.id)
+          end
+        end
+
         def project_service
           ResearchProjectService::LaRiver.new(project, params)
         end

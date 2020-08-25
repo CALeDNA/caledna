@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 describe 'Samples' do
+  include ControllerHelpers
+
   before do
     stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
   end
@@ -12,8 +14,12 @@ describe 'Samples' do
       sample = create(:sample, :results_completed, id: sample_id,
                                                    substrate: substrate)
       rproj = create(:research_project, published: true)
+      primer = create(:primer)
       create(:sample_primer, research_project: rproj, sample: sample,
-                             primer: create(:primer))
+                             primer: primer)
+      create(:asv, research_project: rproj, sample: sample,
+                   primer: primer)
+      refresh_samples_map
     end
 
     it 'returns OK' do
@@ -25,6 +31,7 @@ describe 'Samples' do
     it 'returns all valid samples' do
       create(:sample, :approved)
       created_completed_sample
+
       get api_v1_samples_path
 
       json = JSON.parse(response.body)
@@ -34,6 +41,8 @@ describe 'Samples' do
 
     it 'ignores invalid samples' do
       create_list(:sample, 3)
+      refresh_samples_map
+
       get api_v1_samples_path
 
       json = JSON.parse(response.body)
@@ -44,7 +53,11 @@ describe 'Samples' do
     it 'does not return samples from unpublished research projects' do
       rproj = create(:research_project, published: false)
       sample = create(:sample, :results_completed)
-      create(:asv, sample: sample, research_project: rproj)
+      primer = create(:primer)
+      create(:asv, sample: sample, research_project: rproj, primer: primer)
+      create(:sample_primer, sample: sample, research_project: rproj,
+                             primer: primer)
+      refresh_samples_map
 
       get api_v1_samples_path
       data = JSON.parse(response.body)
@@ -53,17 +66,22 @@ describe 'Samples' do
     end
 
     it 'returns approved samples or published result_completed samples' do
+      primer = create(:primer)
+
       sample1 = create(:sample, :results_completed)
       rproj1 = create(:research_project, published: false)
       create(:sample_primer, research_project: rproj1, sample: sample1,
-                             primer: create(:primer))
+                             primer: primer)
+      create(:asv, research_project: rproj1, sample: sample1, primer: primer)
 
       sample2 = create(:sample, :results_completed)
       rproj2 = create(:research_project, published: true)
       create(:sample_primer, research_project: rproj2, sample: sample2,
-                             primer: create(:primer))
+                             primer: primer)
+      create(:asv, research_project: rproj2, sample: sample2, primer: primer)
 
       sample3 = create(:sample, :approved)
+      refresh_samples_map
 
       get api_v1_samples_path
       data = JSON.parse(response.body)
@@ -92,6 +110,7 @@ describe 'Samples' do
           VALUES('match', 'Sample', 2, '2018-10-20', '2018-10-20');
           SQL
         )
+        refresh_samples_map
       end
 
       it 'returns samples that contain the keyword' do
@@ -117,6 +136,7 @@ describe 'Samples' do
         create(:sample, :approved, substrate_cd: :soil)
         create(:sample, :approved, substrate_cd: :bad)
         created_completed_sample(substrate: :sediment)
+        refresh_samples_map
       end
 
       it 'returns samples when there is one substrate' do
@@ -125,7 +145,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(1)
 
-        substrate = data.map { |i| i['substrate_cd'] }
+        substrate = data.map { |i| i['substrate'] }
         expect(substrate).to eq(['soil'])
       end
 
@@ -135,7 +155,7 @@ describe 'Samples' do
 
         expect(data.length).to eq(2)
 
-        substrate = data.map { |i| i['substrate_cd'] }
+        substrate = data.map { |i| i['substrate'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
     end
@@ -144,6 +164,7 @@ describe 'Samples' do
       before(:each) do
         create(:sample, status_cd: :approved)
         created_completed_sample
+        refresh_samples_map
       end
 
       it 'returns samples when there is one status' do
@@ -186,6 +207,7 @@ describe 'Samples' do
 
         create(:asv, sample: s2, primer: p2, research_project: rproj1)
         create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
+        refresh_samples_map
       end
 
       it 'returns samples when there is one primer' do
@@ -266,6 +288,7 @@ describe 'Samples' do
           VALUES('match', 'Sample', 6, '2018-10-20', '2018-10-20');
           SQL
         )
+        refresh_samples_map
       end
 
       it 'returns samples that match substrate & status' do
@@ -284,10 +307,10 @@ describe 'Samples' do
                                 primer: primer1_id)
         data = JSON.parse(response.body)['samples']['data']
 
-        expect(data.length).to eq(2)
+        expect(data.length).to eq(3)
 
         ids = data.map { |i| i['id'] }
-        expect(ids).to eq([1, 2])
+        expect(ids).to eq([1, 2, 5])
       end
 
       it 'returns samples that match substrate & keyword' do
@@ -319,6 +342,7 @@ describe 'Samples' do
   describe 'show' do
     it 'returns OK when sample is approved' do
       sample = create(:sample, :approved)
+      refresh_samples_map
 
       get api_v1_sample_path(id: sample.id)
 
@@ -328,6 +352,7 @@ describe 'Samples' do
     context 'when sample is approved' do
       it 'returns the sample data for the given sample' do
         sample = create(:sample, :approved)
+        refresh_samples_map
 
         get api_v1_sample_path(id: sample.id)
         data = JSON.parse(response.body)
@@ -341,8 +366,12 @@ describe 'Samples' do
         it 'returns the sample data for the given sample' do
           sample = create(:sample, :results_completed)
           rproj = create(:research_project, published: true)
-          create(:sample_primer, sample: sample, primer: create(:primer),
+          primer = create(:primer)
+          create(:sample_primer, sample: sample, primer: primer,
                                  research_project: rproj)
+          create(:asv, sample: sample, primer: primer,
+                       research_project: rproj)
+          refresh_samples_map
 
           get api_v1_sample_path(id: sample.id)
           data = JSON.parse(response.body)['sample']['data']
@@ -352,28 +381,38 @@ describe 'Samples' do
       end
 
       context 'and research project is not published' do
-        it 'raise an error' do
+        it 'returns nil' do
           sample = create(:sample, :results_completed)
           rproj = create(:research_project, published: false)
-          create(:sample_primer, sample: sample, primer: create(:primer),
+          primer = create(:primer)
+          create(:sample_primer, sample: sample, primer: primer,
                                  research_project: rproj)
+          create(:sample_primer, sample: sample, primer: primer,
+                                 research_project: rproj)
+          refresh_samples_map
 
-          expect { get api_v1_sample_path(id: sample.id) }
-            .to raise_error(ActiveRecord::RecordNotFound)
+          get api_v1_sample_path(id: sample.id)
+          data = JSON.parse(response.body)['sample']['data']
+
+          expect(data).to eq(nil)
         end
       end
     end
 
-    it 'raises an error if sample is not approved' do
+    it 'returns nil if sample is not approved' do
       sample = create(:sample, status_cd: :submitted, latitude: 1, longitude: 1)
+      refresh_samples_map
 
-      expect { get api_v1_sample_path(id: sample.id) }
-        .to raise_error(ActiveRecord::RecordNotFound)
+      get api_v1_sample_path(id: sample.id)
+      data = JSON.parse(response.body)['sample']['data']
+
+      expect(data).to eq(nil)
     end
 
     it 'returns a sample if sample does not have coordinates' do
       sample = create(:sample, status_cd: :approved, latitude: nil,
                                longitude: nil)
+      refresh_samples_map
 
       get api_v1_sample_path(id: sample.id)
       data = JSON.parse(response.body)
@@ -381,9 +420,11 @@ describe 'Samples' do
       expect(data['sample']['data']['id'].to_i).to eq(sample.id)
     end
 
-    it 'raises an error for invalid id' do
-      expect { get api_v1_sample_path(id: 1) }
-        .to raise_error(ActiveRecord::RecordNotFound)
+    it 'returns nil for invalid id' do
+      get api_v1_sample_path(id: 1)
+      data = JSON.parse(response.body)
+
+      expect(data['sample']['data']).to eq(nil)
     end
   end
 end

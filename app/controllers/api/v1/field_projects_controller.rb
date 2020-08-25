@@ -16,8 +16,7 @@ module Api
 
       def field_project_samples
         @field_project_samples ||= begin
-          approved_samples
-            .where('samples.field_project_id = ?', params[:id])
+          approved_completed_samples.where('field_project_id = ?', params[:id])
         end
       end
     end

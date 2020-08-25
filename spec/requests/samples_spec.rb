@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 describe 'Samples' do
+  include ControllerHelpers
+
   before do
     stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
   end
@@ -19,6 +21,8 @@ describe 'Samples' do
     it 'returns OK when sample is approved' do
       sample = create(:sample, status_cd: :approved, latitude: 1, longitude: 1,
                                kobo_data: {})
+      refresh_samples_map
+
       get sample_path(id: sample.id)
 
       expect(response.status).to eq(200)
@@ -26,6 +30,7 @@ describe 'Samples' do
 
     it 'raises an error if sample is not approved' do
       sample = create(:sample, status_cd: :submitted, latitude: 1, longitude: 1)
+      refresh_samples_map
 
       expect { get sample_path(id: sample.id) }
         .to raise_error(ActiveRecord::RecordNotFound)

@@ -69,6 +69,14 @@ module Api
           end
         end
 
+        def research_project_samples
+          @research_project_samples ||= begin
+            completed_samples
+              .where('samples_map.research_project_ids @> ?', "{#{project.id}}")
+              .where('asvs.research_project_id = ?', project.id)
+          end
+        end
+
         def pp_gbif_occurrences
           Rails.cache.fetch('pp_gbif_occurrences', expires_in: 1.year) do
             pp.gbif_occurrences

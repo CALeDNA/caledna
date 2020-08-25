@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 describe 'ResearchProjects' do
+  include ControllerHelpers
+
   before do
     stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
   end
@@ -19,13 +21,14 @@ describe 'ResearchProjects' do
     let(:taxon2_id) { 2000 }
 
     def create_project_samples(project, sample_id: rand(1...100_000_000),
-                               substrate: :soil, status: :results_completed,
+                               substrate: :soil,
                                primer: create(:primer))
       sample = create(:sample, id: sample_id, substrate: substrate,
-                               status: status)
+                               status: :results_completed)
       create(:asv, sample: sample, research_project: project, primer: primer)
       create(:sample_primer, primer: primer, sample: sample,
                              research_project: project)
+      refresh_samples_map
     end
 
     it 'returns OK' do
@@ -95,6 +98,11 @@ describe 'ResearchProjects' do
                      taxon_id: taxon1.taxon_id)
         create(:asv, sample: sample, research_project: project, primer: primer2,
                      taxon_id: taxon1.taxon_id)
+        create(:sample_primer, sample: sample, research_project: project,
+                               primer: primer1)
+        create(:sample_primer, sample: sample, research_project: project,
+                               primer: primer2)
+        refresh_samples_map
 
         get api_v1_research_project_path(id: project.slug)
         data = JSON.parse(response.body)['samples']['data']
@@ -164,6 +172,7 @@ describe 'ResearchProjects' do
                      taxon_id: taxon1.id)
         create(:sample_primer, primer: primer3, sample: sample1,
                                research_project: proj2)
+        refresh_samples_map
 
         get api_v1_research_project_path(id: proj1.slug)
         data = JSON.parse(response.body)['samples']['data']
@@ -190,6 +199,7 @@ describe 'ResearchProjects' do
       create(:sample, status: :approved)
       create(:sample, status: :submitted)
       project = create(:research_project, slug: project_slug, published: true)
+      refresh_samples_map
 
       get api_v1_research_project_path(id: project.slug)
       data = JSON.parse(response.body)['samples']['data']
@@ -214,6 +224,7 @@ describe 'ResearchProjects' do
           VALUES('match', 'Sample', #{sample1_id}, '2018-10-20', '2018-10-20');
           SQL
         )
+        refresh_samples_map
       end
 
       it 'does not affect the associated samples' do
@@ -243,7 +254,7 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(1)
 
-        substrate = data.map { |i| i['substrate_cd'] }
+        substrate = data.map { |i| i['substrate'] }
         expect(substrate).to match_array(['soil'])
       end
 
@@ -254,7 +265,7 @@ describe 'ResearchProjects' do
 
         expect(data.length).to eq(2)
 
-        substrate = data.map { |i| i['substrate_cd'] }
+        substrate = data.map { |i| i['substrate'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
     end
@@ -265,10 +276,9 @@ describe 'ResearchProjects' do
       end
 
       before(:each) do
-        create_project_samples(project, sample_id: sample1_id,
-                                        status: :approved)
-        create_project_samples(project, sample_id: sample2_id,
-                                        status: :results_completed)
+        create(:sample, status: :approved)
+        create_project_samples(project, sample_id: sample2_id)
+        refresh_samples_map
       end
 
       it 'ignores status params and only returns completed samples ' do
@@ -325,6 +335,7 @@ describe 'ResearchProjects' do
 
         create_project_samples(project, primer: primer1, sample_id: sample2_id)
         create_project_samples(project, primer: primer2, sample_id: sample3_id)
+        refresh_samples_map
 
         get api_v1_research_project_path(id: project.slug,
                                          primer: "#{primer1_id}|#{primer2_id}")
@@ -376,6 +387,7 @@ describe 'ResearchProjects' do
         create_project_samples(project, sample_id: sample3_id, substrate: :soil,
                                         primer: primer2)
         create(:sample, :approved, id: sample4_id)
+        refresh_samples_map
 
         get api_v1_research_project_path(id: project.slug, substrate: 'soil',
                                          primer: primer1_id)

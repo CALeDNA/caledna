@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 module ControllerHelpers
+  def refresh_samples_map
+    sql = 'REFRESH MATERIALIZED VIEW samples_map;'
+
+    ActiveRecord::Base.connection.exec_query(sql)
+  end
+
   def login_researcher
     @request.env['devise.mapping'] = Devise.mappings[:researcher]
     sign_in create(:researcher)

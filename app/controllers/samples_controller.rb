@@ -66,9 +66,8 @@ class SamplesController < ApplicationController
 
   def sample
     @sample ||= begin
-      approved_samples
-        .select('samples.*')
-        .find(params[:id])
+      temp = approved_completed_samples.find_by(id: params[:id])
+      Sample.find(temp&.id)
     end
   end
 

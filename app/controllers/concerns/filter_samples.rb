@@ -24,242 +24,126 @@ module FilterSamples
     CheckWebsite.caledna_site? ? Asv : Asv.la_river
   end
 
-  def base_sample_columns
+  # ====================
+  # samples_map
+  # ====================
+
+  def base_samples_columns
     %w[
-      id latitude longitude barcode status_cd substrate_cd
-      location collection_date
+      id latitude longitude barcode status substrate location collection_date
+      taxa_count
     ]
   end
 
-  # ====================
-  # sample_primers_based_samples: /samples & /field_projects
-  # ====================
-
-  def sample_columns
-    base_sample_columns +
-      ['samples.primers as primer_names', 'primer_ids', 'taxa_count']
-  end
-  module_function :sample_columns
-
-  def sample_primers_join_sql
-    <<~SQL.chomp
-      LEFT JOIN sample_primers ON sample_primers.sample_id = samples.id
-    SQL
+  def samples_columns
+    base_samples_columns + %w[primer_ids primer_names]
   end
 
-  def published_research_project_sql
-    <<~SQL.chomp
-      JOIN research_projects
-        ON sample_primers.research_project_id = research_projects.id
-        AND research_projects.published = TRUE
-    SQL
-  end
-
-  def optional_published_research_project_sql
-    "LEFT #{published_research_project_sql}"
-  end
-
-  def conditional_status_sql
-    <<~SQL.chomp
-      CASE
-        WHEN research_projects.published IS NULL THEN status_cd = 'approved'
-        ELSE status_cd = 'results_completed'
-        END
-    SQL
+  def samples_primers_columns
+    'array_agg(distinct asvs.primer_id) as primer_ids, ' \
+    'array_agg(distinct primers.name) as primer_names'
   end
 
   def samples_for_primers(samples)
+    primer_ids = params[:primer].tr('|', ',')
+
+    samples.where('primer_ids && ?', "{#{primer_ids}}")
+  end
+
+  def completed_samples_for_primers(samples)
     primer_ids = params[:primer].split('|')
 
-    samples
-      .where('sample_primers.primer_id IN (?)', primer_ids.map(&:to_i))
+    samples.where('asvs.primer_id IN (?)', primer_ids)
   end
 
-  def base_samples
-    website_sample
-      .select(sample_columns)
-      .joins(sample_primers_join_sql)
-      .order(:created_at)
-      .group(:id)
-  end
-
-  # ====================
-  # asv_based_samples: Taxa & Research Projects
-  # ====================
-
-  def primer_select
-    <<~SQL.chomp
-      ARRAY_AGG(DISTINCT(primers.name)) AS primer_names,
-      ARRAY_AGG(DISTINCT(primers.id)) AS primer_ids
+  def published_samples_sql
+    <<~SQL
+      samples_map.id NOT IN (
+        SELECT sample_id
+        FROM sample_primers
+        JOIN research_projects
+          ON research_projects.id = sample_primers.research_project_id
+          AND research_projects.published = false
+       )
     SQL
   end
 
-  def asv_join_sql
-    <<~SQL.chomp
-      JOIN asvs ON asvs.sample_id = samples.id
-      join primers on asvs.primer_id = primers.id
-      JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
-      AND (ncbi_nodes.iucn_status IS NULL OR
-        ncbi_nodes.iucn_status NOT IN
-        ('#{IucnStatus::THREATENED.values.join("','")}')
-      )
-    SQL
-  end
-
-  def asv_published_research_project_sql
-    <<~SQL.chomp
-      JOIN research_projects
-        ON asvs.research_project_id = research_projects.id
-        AND research_projects.published = TRUE
-    SQL
-  end
-
-  def asv_samples_for_primers(samples)
-    primer_ids = params[:primer].split('|')
-
-    samples
-      .where('asvs.primer_id IN (?)', primer_ids.map(&:to_i))
-  end
-
-  def asv_base_samples
-    website_sample
-      .results_completed
-      .select(base_sample_columns)
-      .select(primer_select)
-      .select('COUNT(DISTINCT asvs.taxon_id) as taxa_count')
-      .joins(asv_join_sql)
-      .joins(asv_published_research_project_sql)
-      .order(:created_at)
-      .group(:id)
+  def base_samples_for_map
+    @base_samples_for_map ||= SamplesMap.where(published_samples_sql)
   end
 
   # ====================
   # approved_samples: Samples#index map, FieldProject#show map
   # ====================
 
-  def approved_samples
-    @approved_samples ||= begin
-      samples = base_samples.joins(optional_published_research_project_sql)
-                            .where(approved_query_string)
-                            .where(conditional_status_sql)
+  def approved_completed_samples
+    samples = base_samples_for_map.where(approved_completed_query_string)
+                                  .select(samples_columns)
 
-      samples = samples_for_primers(samples) if params[:primer]
-      samples
-    end
+    samples = samples_for_primers(samples) if params[:primer]
+    samples
   end
 
-  def approved_query_string
+  def approved_completed_query_string
     query = {}
-    query[:status_cd] = params[:status] if params[:status]
-    query[:substrate_cd] = params[:substrate].split('|') if params[:substrate]
+    query[:status] = params[:status] if params[:status]
+    query[:substrate] = params[:substrate].split('|') if params[:substrate]
     query
   end
 
   # ====================
-  # completed_samples: Taxa#show map
+  # completed_samples: Taxa#show map, ResearchProject#show map
   # ====================
 
-  def taxa_select
-    <<~SQL.chomp
-      (ARRAY_AGG("ncbi_nodes"."canonical_name" || '|' ||
-      ncbi_nodes.taxon_id))[0:10] AS taxa
-    SQL
-  end
-
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def completed_samples
     @completed_samples ||= begin
-      samples = base_samples.results_completed
-                            .joins(published_research_project_sql)
-                            .where(completed_query_string)
+      samples = base_samples_for_map
+                .select(base_samples_columns)
+                .select(samples_primers_columns)
+                .joins('JOIN asvs ON samples_map.id = asvs.sample_id')
+                .joins('JOIN primers ON asvs.primer_id = primers.id')
+                .where(status: :results_completed)
+                .where(completed_query_string)
+                .group(base_samples_columns)
 
-      samples = samples_for_primers(samples) if params[:primer]
+      samples = completed_samples_for_primers(samples) if params[:primer]
       samples
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
-  def taxa_samples
-    @taxa_samples ||= begin
-      samples = asv_base_samples.select(taxa_select)
-                                .where(completed_query_string)
+  def basic_completed_samples
+    columns = %w[id latitude longitude substrate primer_ids]
+    samples = base_samples_for_map.select(columns)
+                                  .where(status: :results_completed)
+                                  .where(completed_query_string)
 
-      samples = asv_samples_for_primers(samples) if params[:primer]
-      samples
-    end
+    samples = samples_for_primers(samples) if params[:primer]
+    samples
   end
 
   def completed_query_string
     query = {}
-    query[:substrate_cd] = params[:substrate].split('|') if params[:substrate]
+    query[:substrate] = params[:substrate].split('|') if params[:substrate]
     query
-  end
-
-  # ====================
-  # research_project_samples: ResearchProject#show map
-  # ====================
-
-  def research_project_samples
-    @research_project_samples ||= begin
-      return [] if research_project.blank?
-
-      samples = asv_base_samples
-                .where('asvs.research_project_id = ?', research_project.id)
-                .where(completed_query_string)
-
-      samples = asv_samples_for_primers(samples) if params[:primer]
-      samples
-    end
-  end
-
-  def research_project
-    @research_project ||= begin
-      slug = params[:id] || params[:slug]
-      ResearchProject.find_by(slug: slug)
-    end
   end
 
   # ====================
   # hero counts
   # ====================
 
-  def base_samples_count_join_sql
-    <<~SQL.chomp
-      LEFT JOIN research_project_sources
-        ON research_project_sources.sourceable_id = samples.id
-        AND research_project_sources.sourceable_type = 'Sample'
-    SQL
-  end
-
-  def optional_published_research_project_count_sql
-    "LEFT #{published_research_project_count_sql}"
-  end
-
-  def published_research_project_count_sql
-    <<~SQL.chomp
-      JOIN research_projects
-        ON research_projects.id = research_project_sources.research_project_id
-        AND research_projects.published = TRUE
-    SQL
-  end
-
-  def base_samples_count
-    website_sample
-      .select('samples.id')
-      .joins(base_samples_count_join_sql)
-  end
-
   public def approved_samples_count
     @approved_samples_count ||= begin
-      base_samples_count.joins(optional_published_research_project_count_sql)
-                        .where(conditional_status_sql)
-                        .count
+      base_samples_for_map.count
     end
   end
 
   public def completed_samples_count
     @completed_samples_count ||= begin
-      base_samples_count.results_completed
-                        .joins(published_research_project_count_sql)
-                        .count
+      base_samples_for_map
+        .where(status: :results_completed)
+        .count
     end
   end
 end

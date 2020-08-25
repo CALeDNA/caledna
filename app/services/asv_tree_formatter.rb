@@ -81,7 +81,6 @@ module AsvTreeFormatter
                 else
                   taxon_object[parent_id]
                 end
-    # debugger
     {
       name: display_name,
       parent_id: parent_id,

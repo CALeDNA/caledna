@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 describe 'Taxa' do
+  include ControllerHelpers
+
   before do
     stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
   end
@@ -67,6 +69,7 @@ describe 'Taxa' do
         create(:sample_primer, primer: primer, sample: sample,
                                research_project: research_project)
       end
+      refresh_samples_map
       sample
     end
 
@@ -89,6 +92,7 @@ describe 'Taxa' do
       sample = create_occurence(taxon, status: :results_completed)
       create(:sample, status: :submitted)
       create(:sample, status: :approved)
+      refresh_samples_map
 
       get api_v1_taxon_path(id: taxon.taxon_id)
       samples, base_samples = parse_response(response)
@@ -133,6 +137,7 @@ describe 'Taxa' do
                    research_project: project)
       create(:sample_primer, sample: sample1, primer: create(:primer),
                              research_project: project)
+      refresh_samples_map
 
       get api_v1_taxon_path(id: taxon2.taxon_id)
       samples, base_samples = parse_response(response)
@@ -168,7 +173,7 @@ describe 'Taxa' do
       expect(samples.length).to eq(2)
       expect(base_samples.length).to eq(3)
 
-      sample_ids = samples.map { |i| i['attributes']['id'] }
+      sample_ids = samples.map { |i| i['id'] }
       expect(sample_ids).to eq([sample1.id, sample2.id])
     end
 
@@ -187,6 +192,7 @@ describe 'Taxa' do
         create(:asv, sample: sample, research_project: research_project,
                      taxon_id: taxon.id)
       end
+      refresh_samples_map
 
       get api_v1_taxon_path(id: taxon_id)
 
@@ -196,7 +202,7 @@ describe 'Taxa' do
       expect(samples.length).to eq(1)
       expect(base_samples.length).to eq(1)
 
-      expect(sample['attributes']['taxa'].length).to eq(10)
+      expect(sample['taxa'].length).to eq(10)
     end
 
     it 'does not return related taxa that are IUCN threatened ' do
@@ -220,6 +226,7 @@ describe 'Taxa' do
       create(:asv, sample: sample, research_project: proj, taxon_id: taxon3.id)
       create(:sample_primer, primer: primer, sample: sample,
                              research_project: proj)
+      refresh_samples_map
 
       get api_v1_taxon_path(id: taxon_id)
 
@@ -229,10 +236,10 @@ describe 'Taxa' do
       expect(samples.length).to eq(1)
       expect(base_samples.length).to eq(1)
 
-      expect(sample['attributes']['taxa'].length).to eq(2)
+      expect(sample['taxa'].length).to eq(2)
 
       matching_taxa = ['name1|1', 'name2|2']
-      expect(sample['attributes']['taxa']).to match_array(matching_taxa)
+      expect(sample['taxa']).to match_array(matching_taxa)
     end
 
     context 'when project is not published' do
@@ -272,7 +279,7 @@ describe 'Taxa' do
         expect(samples.length).to eq(2)
         expect(base_samples.length).to eq(2)
 
-        sample_ids = samples.map { |i| i['attributes']['id'] }
+        sample_ids = samples.map { |i| i['id'] }
         expect(sample_ids).to eq([sample1.id, sample2.id])
       end
     end
@@ -292,7 +299,7 @@ describe 'Taxa' do
         expect(samples.length).to eq(1)
         expect(base_samples.length).to eq(1)
 
-        substrate = samples.map { |i| i['attributes']['substrate_cd'] }
+        substrate = samples.map { |i| i['substrate'] }
         expect(substrate).to eq(['soil'])
       end
 
@@ -303,7 +310,7 @@ describe 'Taxa' do
         expect(samples.length).to eq(2)
         expect(base_samples.length).to eq(2)
 
-        substrate = samples.map { |i| i['attributes']['substrate_cd'] }
+        substrate = samples.map { |i| i['substrate'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
     end
@@ -324,7 +331,7 @@ describe 'Taxa' do
         expect(samples.length).to eq(1)
         expect(base_samples.length).to eq(1)
 
-        substrate = samples.map { |i| i['attributes']['status_cd'] }
+        substrate = samples.map { |i| i['status'] }
         expect(substrate).to match_array(%w[results_completed])
       end
     end
@@ -342,6 +349,7 @@ describe 'Taxa' do
         create_occurence(taxon, primer: primer1)
         create_occurence(taxon, primer: primer2)
         create_occurence(taxon, primer: create(:primer, id: 30))
+        refresh_samples_map
       end
 
       it 'returns samples when there is one primer' do
@@ -353,10 +361,10 @@ describe 'Taxa' do
         expect(samples.length).to eq(1)
         expect(base_samples.length).to eq(1)
 
-        primer_ids = samples.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = samples.map { |i| i['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id]])
 
-        primer_names = samples.map { |i| i['attributes']['primer_names'] }
+        primer_names = samples.map { |i| i['primer_names'] }
         expect(primer_names).to match_array([[primer1_name]])
       end
 
@@ -370,10 +378,10 @@ describe 'Taxa' do
         expect(samples.length).to eq(2)
         expect(base_samples.length).to eq(2)
 
-        primer_ids = samples.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = samples.map { |i| i['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id], [primer2_id]])
 
-        primer_names = samples.map { |i| i['attributes']['primer_names'] }
+        primer_names = samples.map { |i| i['primer_names'] }
         expect(primer_names).to match_array([[primer1_name], [primer2_name]])
       end
 
@@ -401,6 +409,7 @@ describe 'Taxa' do
                                research_project: research_project)
         create(:sample_primer, primer: primer2, sample: sample,
                                research_project: research_project)
+        refresh_samples_map
 
         get api_v1_taxon_path(id: target_id,
                               primer: "#{primer1_id}|#{primer2_id}")
@@ -409,10 +418,10 @@ describe 'Taxa' do
         expect(samples.length).to eq(1)
         expect(base_samples.length).to eq(1)
 
-        primer_ids = samples.map { |i| i['attributes']['primer_ids'] }
+        primer_ids = samples.map { |i| i['primer_ids'] }
         expect(primer_ids).to match_array([[primer1_id, primer2_id]])
 
-        primer_names = samples.map { |i| i['attributes']['primer_names'] }
+        primer_names = samples.map { |i| i['primer_names'] }
         expect(primer_names).to match_array([[primer1_name, primer2_name]])
       end
     end

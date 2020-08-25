@@ -45,7 +45,7 @@ module Api
 
       def sample
         @sample ||= begin
-          approved_samples.find(sample_id)
+          approved_completed_samples.find_by(id: sample_id)
         end
       end
 
@@ -68,7 +68,9 @@ module Api
       # =======================
 
       def samples
-        @samples ||= keyword.present? ? multisearch_samples : approved_samples
+        @samples ||= begin
+          keyword.present? ? multisearch_samples : approved_completed_samples
+        end
       end
 
       def multisearch_ids
@@ -79,7 +81,9 @@ module Api
       end
 
       def multisearch_samples
-        @multisearch_samples ||= approved_samples.where(id: multisearch_ids)
+        @multisearch_samples ||= begin
+          approved_completed_samples.where(id: multisearch_ids)
+        end
       end
 
       def keyword

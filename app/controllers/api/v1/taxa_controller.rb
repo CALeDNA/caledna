@@ -11,8 +11,8 @@ module Api
 
       def show
         render json: {
-          samples: TaxonSampleSerializer.new(samples),
-          base_samples: BasicSampleSerializer.new(completed_samples),
+          samples: { data: taxa_samples },
+          base_samples: { data: basic_completed_samples },
           taxon: BasicTaxonSerializer.new(taxon)
         }, status: :ok
       end
@@ -50,12 +50,31 @@ module Api
         @taxon ||= NcbiNode.find_by(taxon_id: params[:id])
       end
 
-      def samples
-        @samples ||= begin
-          taxa_samples
+      def taxa_sql
+        <<~SQL
+          (ARRAY_AGG(distinct(
+            "ncbi_nodes"."canonical_name" || '|' || ncbi_nodes.taxon_id
+          )))[0:10] AS taxa
+        SQL
+      end
+
+      # rubocop:disable Metrics/MethodLength
+      def taxa_samples
+        @taxa_samples ||= begin
+          sql = <<~SQL
+            JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+            AND (ncbi_nodes.iucn_status IS NULL OR
+              ncbi_nodes.iucn_status NOT IN
+              ('#{IucnStatus::THREATENED.values.join("','")}')
+            )
+          SQL
+
+          completed_samples
+            .select(taxa_sql)
+            .joins(sql)
             .where('ids @> ?', "{#{params[:id]}}")
-            .group(:id)
         end
+        # rubocop:enable Metrics/MethodLength
       end
     end
   end

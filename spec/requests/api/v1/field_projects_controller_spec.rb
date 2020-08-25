@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 describe 'FieldProjecs' do
+  include ControllerHelpers
+
   before do
     stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
   end
@@ -33,6 +35,7 @@ describe 'FieldProjecs' do
         project = create(:field_project, id: target_id)
         sample1 = create(:sample, :approved, field_project: project)
         sample2 = create(:sample, :approved, field_project: project)
+        refresh_samples_map
 
         get api_v1_field_project_path(id: target_id)
         data = JSON.parse(response.body)
@@ -50,12 +53,13 @@ describe 'FieldProjecs' do
         rproj = create(:research_project, published: true)
 
         sample1 = create(:sample, :results_completed, field_project: project)
-        create(:sample_primer, sample: sample1, primer: create(:primer),
-                               research_project: rproj)
+        create(:asv, sample: sample1, primer: create(:primer),
+                     research_project: rproj)
 
         sample2 = create(:sample, :results_completed, field_project: project)
-        create(:sample_primer, sample: sample2, primer: create(:primer),
-                               research_project: rproj)
+        create(:asv, sample: sample2, primer: create(:primer),
+                     research_project: rproj)
+        refresh_samples_map
 
         get api_v1_field_project_path(id: target_id)
         data = JSON.parse(response.body)
@@ -71,6 +75,7 @@ describe 'FieldProjecs' do
       create(:field_project, id: target_id)
       other_project = create(:field_project, id: 20)
       create(:sample, :approved, field_project: other_project)
+      refresh_samples_map
 
       get api_v1_field_project_path(id: target_id)
       data = JSON.parse(response.body)
@@ -86,6 +91,9 @@ describe 'FieldProjecs' do
         sample2 = create(:sample, :results_completed, field_project: fproj)
         create(:sample_primer, sample: sample2, primer: create(:primer),
                                research_project: rproj1)
+        create(:asv, sample: sample2, primer: create(:primer),
+                     taxon_id: create(:ncbi_node).id, research_project: rproj1)
+        refresh_samples_map
 
         get api_v1_field_project_path(id: target_id)
         data = JSON.parse(response.body)
@@ -101,13 +109,18 @@ describe 'FieldProjecs' do
       rproj1 = create(:research_project, published: false)
       create(:sample_primer, sample: sample1, primer: create(:primer),
                              research_project: rproj1)
+      create(:asv, sample: sample1, primer: create(:primer),
+                   research_project: rproj1)
 
       sample2 = create(:sample, :results_completed, field_project: fproj)
       rproj2 = create(:research_project, published: true)
       create(:sample_primer, sample: sample2, primer: create(:primer),
                              research_project: rproj2)
+      create(:asv, sample: sample2, primer: create(:primer),
+                   research_project: rproj2)
 
       sample3 = create(:sample, :approved, field_project: fproj)
+      refresh_samples_map
 
       get api_v1_field_project_path(id: target_id)
       data = JSON.parse(response.body)
@@ -124,6 +137,7 @@ describe 'FieldProjecs' do
       before(:each) do
         create(:sample, :approved, id: 1, field_project: project)
         create(:sample, :approved, id: 2, field_project: project)
+        refresh_samples_map
 
         ActiveRecord::Base.connection.execute(
           <<-SQL
@@ -153,6 +167,7 @@ describe 'FieldProjecs' do
         create(:sample, :approved, substrate_cd: :bad, field_project: project)
         create(:sample, :approved, substrate_cd: :sediment,
                                    field_project: project)
+        refresh_samples_map
       end
 
       it 'returns samples when there is one substrate' do
@@ -161,7 +176,7 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(1)
 
-        substrate = data.map { |i| i['substrate_cd'] }
+        substrate = data.map { |i| i['substrate'] }
         expect(substrate).to match_array(['soil'])
       end
 
@@ -171,7 +186,7 @@ describe 'FieldProjecs' do
 
         expect(data.length).to eq(2)
 
-        substrate = data.map { |i| i['substrate_cd'] }
+        substrate = data.map { |i| i['substrate'] }
         expect(substrate).to match_array(%w[sediment soil])
       end
     end
@@ -185,6 +200,9 @@ describe 'FieldProjecs' do
         rproj = create(:research_project, published: true)
         create(:sample_primer, sample: sample, primer: create(:primer),
                                research_project: rproj)
+        create(:asv, sample: sample, primer: create(:primer),
+                     research_project: rproj)
+        refresh_samples_map
       end
 
       it 'returns samples when there is one status' do
@@ -216,14 +234,10 @@ describe 'FieldProjecs' do
       def create_samples
         p1 = primer1
         p2 = primer2
-        s1 = create(:sample, :approved, field_project: project,
-                                        primers: [primer1_name],
-                                        primer_ids: [primer1_id])
-        s2 = create(:sample, :approved, field_project: project,
-                                        primers: [primer2_name],
-                                        primer_ids: [primer2_id])
-        rproj1 = create(:research_project)
-        rproj2 = create(:research_project)
+        s1 = create(:sample, :results_completed, field_project: project)
+        s2 = create(:sample, :results_completed, field_project: project)
+        rproj1 = create(:research_project, published: true)
+        rproj2 = create(:research_project, published: true)
 
         create(:asv, sample: s1, research_project: rproj1, primer: p1)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
@@ -232,6 +246,7 @@ describe 'FieldProjecs' do
 
         create(:asv, sample: s2, research_project: rproj1, primer: p2)
         create(:sample_primer, sample: s2, primer: p2, research_project: rproj1)
+        refresh_samples_map
       end
       # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
@@ -278,17 +293,16 @@ describe 'FieldProjecs' do
       end
 
       it 'only includes one instance of a sample' do
-        sample = create(:sample, :approved,
-                        id: 1, field_project: project,
-                        primers: [primer1_name, primer2_name],
-                        primer_ids: [primer1_id, primer2_id])
-        rproj = create(:research_project, slug: 'proj1')
+        sample = create(:sample, :results_completed, id: 1,
+                                                     field_project: project)
+        rproj = create(:research_project, slug: 'proj1', published: true)
         create(:asv, sample: sample, primer: primer1, research_project: rproj)
         create(:sample_primer, primer: primer1, sample: sample,
                                research_project: rproj)
         create(:asv, sample: sample, primer: primer2, research_project: rproj)
         create(:sample_primer, primer: primer2, sample: sample,
                                research_project: rproj)
+        refresh_samples_map
 
         get api_v1_field_project_path(id: target_id,
                                       primer: "#{primer1_id}|#{primer2_id}")
@@ -334,6 +348,7 @@ describe 'FieldProjecs' do
         create(:sample_primer, sample: s2, primer: p1, research_project: rproj1)
         create(:asv, sample: s4, primer: p1, research_project: rproj1)
         create(:sample_primer, sample: s4, primer: p1, research_project: rproj1)
+        refresh_samples_map
       end
 
       it 'returns samples that match substrate & status' do
