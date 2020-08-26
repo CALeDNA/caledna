@@ -71,7 +71,7 @@ group :development, :test do
   gem 'listen', '~> 3.1'
   gem 'pry-byebug', '~> 3.5'
   gem 'pry-rails', '~> 0.3'
-  gem 'rspec-rails', '~> 3.7'
+  gem 'rspec-rails', '~> 4.0', '>= 4.0.1'
   gem 'rubocop', '~> 0.52'
   gem 'vcr', '~> 4.0.0'
   gem 'webmock', '~> 3.4.1'
@@ -90,7 +90,8 @@ group :test do
   gem 'database_cleaner', '~> 1.6'
   gem 'launchy', '~> 2.4'
   gem 'rails-controller-testing', '~> 1.0.2'
-  gem 'rspec-sidekiq', '~> 3.0'
+  gem 'rspec-sidekiq', '~> 3.1'
+  gem 'rspec-support', '~> 3.9'
   gem 'shoulda-matchers', '~> 3.1'
   gem 'timecop', '~> 0.9'
 end
