@@ -120,7 +120,15 @@ module Api
 
       def samples
         @samples ||= begin
-          keyword.present? ? multisearch_samples : approved_completed_samples
+          keyword.present? ? multisearch_samples : cached_samples
+        end
+      end
+
+      def cached_samples
+        website = Website::CALeDNA_SITE
+        key = "#{website.cache_key}/api_samples/#{params_values}"
+        Rails.cache.fetch(key, expires_in: 1.month) do
+          approved_completed_samples.load
         end
       end
 
@@ -133,8 +141,17 @@ module Api
 
       def multisearch_samples
         @multisearch_samples ||= begin
-          approved_completed_samples.where(id: multisearch_ids)
+          website = Website::CALeDNA_SITE
+          key = "#{website.cache_key}/api_samples/#{params_values}"
+          Rails.cache.fetch(key, expires_in: 1.month) do
+            approved_completed_samples.where(id: multisearch_ids).load
+          end
         end
+      end
+
+      def params_values
+        params.reject { |k, _v| %w[action controller].include?(k) }
+              .values.join('_')
       end
 
       def keyword
