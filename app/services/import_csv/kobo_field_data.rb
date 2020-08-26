@@ -5,6 +5,7 @@ module ImportCsv
     require 'csv'
     include CsvUtils
     include ProcessEdnaResults
+    include WebsiteStats
 
     # TODO: find a way to deal with image upload
     # Import csv if all barcodes are not in database. Create new sample for
@@ -35,6 +36,7 @@ module ImportCsv
       end
 
       create_samples(data, field_project_id)
+      refresh_samples_map
       OpenStruct.new(valid?: true, errors: nil)
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
