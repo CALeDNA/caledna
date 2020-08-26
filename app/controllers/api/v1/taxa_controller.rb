@@ -12,7 +12,7 @@ module Api
       def show
         render json: {
           samples: { data: taxa_samples },
-          base_samples: { data: basic_completed_samples },
+          base_samples: { data: taxa_basic_samples },
           taxon: BasicTaxonSerializer.new(taxon)
         }, status: :ok
       end
@@ -50,7 +50,7 @@ module Api
         @taxon ||= NcbiNode.find_by(taxon_id: params[:id])
       end
 
-      def taxa_sql
+      def taxa_select_sql
         <<~SQL
           (ARRAY_AGG(distinct(
             "ncbi_nodes"."canonical_name" || '|' || ncbi_nodes.taxon_id
@@ -58,26 +58,47 @@ module Api
         SQL
       end
 
-      # rubocop:disable Metrics/MethodLength
-      def taxa_samples
-        @taxa_samples ||= begin
-          sql = <<~SQL
-            JOIN asvs ON samples_map.id = asvs.sample_id
-            JOIN primers ON asvs.primer_id = primers.id
-            JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+      def taxa_join_sql
+        <<~SQL
+          JOIN asvs ON samples_map.id = asvs.sample_id
+          JOIN primers ON asvs.primer_id = primers.id
+          JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+            AND ncbi_nodes.taxon_id IN (SELECT taxon_id FROM asvs)
             AND (ncbi_nodes.iucn_status IS NULL OR
               ncbi_nodes.iucn_status NOT IN
               ('#{IucnStatus::THREATENED.values.join("','")}')
             )
-          SQL
+        SQL
+      end
 
-          completed_samples
-            .select(taxa_sql)
-            .joins(sql)
-            .where('asvs.taxon_id = ?', params[:id])
-            .where('ids @> ?', "{#{params[:id]}}")
+      # rubocop:disable Metrics/AbcSize
+      def taxa_samples
+        @taxa_samples ||= begin
+          key = "#{taxon.cache_key}/taxa_samples/#{params_values}"
+          Rails.cache.fetch(key, expires_in: 1.month) do
+            completed_samples
+              .select(taxa_select_sql)
+              .joins(taxa_join_sql)
+              .where('ids @> ?', "{#{params[:id]}}")
+              .load
+          end
         end
-        # rubocop:enable Metrics/MethodLength
+      end
+      # rubocop:enable Metrics/AbcSize
+
+      def taxa_basic_samples
+        @taxa_basic_samples ||= begin
+          website = Website::CALeDNA_SITE
+          key = "#{website.cache_key}/taxa_basic_samples/#{params_values}"
+          Rails.cache.fetch(key, expires_in: 1.month) do
+            basic_completed_samples.load
+          end
+        end
+      end
+
+      def params_values
+        params.reject { |k, _v| %w[action controller].include?(k) }
+              .values.join('_')
       end
     end
   end
