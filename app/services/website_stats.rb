@@ -7,6 +7,11 @@ module WebsiteStats
     conn.exec_query(sql)
   end
 
+  def change_websites_update_at
+    Website::CALeDNA_SITE.touch
+    Website::PouR_SITE.touch
+  end
+
   def refresh_caledna_website_stats
     families_count = fetch_families_count(pour: false)
     species_count = fetch_species_count(pour: false)

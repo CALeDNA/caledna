@@ -36,6 +36,7 @@ module ImportCsv
       end
 
       create_samples(data, field_project_id)
+      change_websites_update_at
       refresh_samples_map
       OpenStruct.new(valid?: true, errors: nil)
     end

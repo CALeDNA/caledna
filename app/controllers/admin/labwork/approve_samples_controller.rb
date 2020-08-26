@@ -37,6 +37,7 @@ module Admin
 
       def update_sync_samples
         refresh_samples_map
+        change_websites_update_at
         flash[:success] = 'Sync samples completed'
 
         redirect_to admin_root_path
