@@ -21,7 +21,6 @@
     </div>
     <ol class="organism-list">
       <li
-        :title="formatTooltip(taxon)"
         v-for="taxon in taxaList"
         :key="taxon.taxon_id"
         :ref="slugify(taxon.division_name)"
@@ -30,8 +29,8 @@
           (Name not shown because this species is {{ taxon.iucn_status }})
         </span>
         <span v-else>
-          {{ taxon.rank }}:
-          <a :href="`/taxa/${taxon.taxon_id}`">{{ formatTaxonName(taxon) }}</a>
+          <b>{{ taxon.rank }}:</b>
+          <span v-html="formatTaxonName(taxon)"></span>
           {{ formatCommonName(taxon) }}
         </span>
       </li>
@@ -71,10 +70,10 @@ export default {
     },
     formatCommonName: function (taxon) {
       if (taxon.common_names) {
-        return `(${taxon.common_names.split("|").slice(0, 3)})`;
+        return `(${taxon.common_names.split("|").slice(0, 3).join(", ")})`;
       }
     },
-    formatTooltip: function (taxon) {
+    formatTaxonName: function (taxon) {
       let hierarchy = {
         kingdom: taxon.division_name,
         phylum: taxon.phylum,
@@ -84,28 +83,21 @@ export default {
         genus: taxon.genus,
         species: taxon.species,
       };
-      let keys = Object.keys(hierarchy);
-      let results = [];
+      let ranks = Object.keys(hierarchy);
 
-      Object.values(hierarchy).forEach((value, index) => {
-        if (value) {
-          results.push(`${keys[index]}: ${value}`);
-        }
-      });
-      return results.join(", ");
-    },
-    formatTaxonName: function (taxon) {
-      return [
-        taxon.division_name,
-        taxon.phylum,
-        taxon.class,
-        taxon.order,
-        taxon.family,
-        taxon.genus,
-        taxon.species,
-      ]
-        .filter((i) => i !== null)
-        .join(", ");
+      return Object.values(hierarchy)
+        .map((taxon, index) => {
+          if (taxon) {
+            if (taxon.includes("|")) {
+              const parts = taxon.split("|");
+              return `<a title="${ranks[index]}" href="/taxa/${parts[1]}">${parts[0]}</a>`;
+            } else {
+              return taxon;
+            }
+          }
+        })
+        .filter((taxon) => taxon !== undefined)
+        .join(" &#8250; ");
     },
     is_threatened: function (taxon) {
       return [

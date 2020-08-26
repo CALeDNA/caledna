@@ -67,12 +67,18 @@ module Api
         sql = <<~SQL
           SELECT
           ncbi_divisions.name AS division_name,
-          hierarchy_names ->>'phylum' as phylum,
-          hierarchy_names ->>'class' as class,
-          hierarchy_names ->>'order' as order,
-          hierarchy_names ->>'family' as family,
-          hierarchy_names ->>'genus' as genus,
-          hierarchy_names ->>'species' as species,
+          (hierarchy_names ->>'phylum')::text ||'|'||
+            (hierarchy ->>'phylum')::text as phylum,
+          (hierarchy_names ->>'class')::text ||'|'||
+            (hierarchy ->>'class')::text as class,
+          (hierarchy_names ->>'order')::text ||'|'||
+            (hierarchy ->>'order')::text as order,
+          (hierarchy_names ->>'family')::text ||'|'||
+            (hierarchy ->>'family')::text as family,
+          (hierarchy_names ->>'genus')::text ||'|'||
+            (hierarchy ->>'genus')::text as genus,
+          (hierarchy_names ->>'species')::text ||'|'||
+            (hierarchy ->>'species')::text as species,
           ncbi_nodes.taxon_id, ncbi_nodes.iucn_status,
           rank,
           common_names
@@ -104,7 +110,7 @@ module Api
       def organisms
         @organisms ||= begin
           binding = [[nil, params[:sample_id]]]
-          res = conn.exec_query(organisms_sql, 'q', binding)
+          conn.exec_query(organisms_sql, 'q', binding)
         end
       end
 
