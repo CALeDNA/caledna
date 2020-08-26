@@ -3,6 +3,7 @@
 module Admin
   module Tasks
     class ResearchProjectResultsController < Admin::ApplicationController
+      include WebsiteStats
       # skip_before_action :verify_authenticity_token
 
       def index
@@ -38,13 +39,8 @@ module Admin
         delete_research_project_sources
         delete_sample_primers
         update_sample_status
-        refresh_samples_map
-      end
-
-      def refresh_samples_map
-        sql = 'REFRESH MATERIALIZED VIEW samples_map'
-
-        execute(sql, 'q')
+        refresh_caledna_website_stats
+        ::FetchTaxaAsvsCountsJob.perform_later
       end
 
       def update_sample_status
@@ -52,36 +48,35 @@ module Admin
           UPDATE samples SET status_cd = 'approved' WHERE id IN (
             SELECT id FROM samples WHERE status_cd = 'results_completed'
             EXCEPT
-            SELECT  sample_id FROM sample_primers
+            SELECT sample_id FROM sample_primers
            );
         SQL
 
-        bindings = [[nil, project_id]]
-        execute(sql, 'q', bindings)
+        execute(sql)
       end
 
       def delete_asv
         sql = 'DELETE FROM asvs WHERE research_project_id = $1;'
 
         bindings = [[nil, project_id]]
-        execute(sql, 'q', bindings)
+        execute(sql, bindings)
       end
 
       def delete_research_project_sources
-        sql = 'DELETE FROM research_project_sources WHERE ' \
-          'research_project_id = $1'
+        sql =
+          'DELETE FROM research_project_sources WHERE research_project_id = $1'
         bindings = [[nil, project_id]]
-        execute(sql, 'q', bindings)
+        execute(sql, bindings)
       end
 
       def delete_sample_primers
         sql = 'DELETE FROM sample_primers WHERE research_project_id = $1;'
         bindings = [[nil, project_id]]
-        execute(sql, 'q', bindings)
+        execute(sql, bindings)
       end
 
       def execute(sql, bindings = [])
-        ActiveRecord::Base.connection.exec_query(sql, bindings)
+        ActiveRecord::Base.connection.exec_query(sql, 'q', bindings)
       end
 
       def bulk_delete_params
