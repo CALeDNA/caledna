@@ -116,6 +116,10 @@ function createCircleMarker(record, customOptions = {}) {
 }
 
 function createIconMarker(sample, map) {
+  if(!sample.lat || !sample.lng) {
+    return
+  }
+
   var icon = L.marker([sample.lat, sample.lng]);
   if (sample.body) {
     icon.bindPopup(sample.body);
@@ -125,7 +129,9 @@ function createIconMarker(sample, map) {
 
 function createMarkerCluster(samples, createMarkerFn) {
   let markerClusterGroup = createClusterGroup();
-  samples.forEach(function (sample) {
+  samples
+  .filter(sample => (sample.lat && sample.lng))
+  .forEach(function (sample) {
     var marker = createMarkerFn(sample);
     markerClusterGroup.addLayer(marker);
   });
@@ -145,7 +151,8 @@ function createMarkerLayer(samples, createMarkerFn) {
   return L.layerGroup(markers);
 }
 
-function renderCirclesLayer(samples, map, options = {}) {
+function renderCirclesLayer(rawSamples, map, options = {}) {
+  let samples = rawSamples.filter(sample => (sample.lat && sample))
   return createMarkerLayer(samples, function (sample) {
     return createCircleMarker(sample, {
       ...addMapLayerModal.defaultCircleOptions,
@@ -272,13 +279,9 @@ function formatMapData(data) {
   });
 
   if (baseSamples) {
-    baseSamplesData = baseSamples
-      .filter(function (sample) {
-        return sample.latitude && sample.longitude;
-      })
-      .map(function (sample) {
-        return formatSamplesData(sample);
-      });
+    baseSamplesData = baseSamples.map(function (sample) {
+      return formatSamplesData(sample);
+    });
   }
 
   return { taxonSamplesData, baseSamplesData };
@@ -298,24 +301,14 @@ function fetchSamples(apiEndpoint, map, cb) {
     var baseSamplesData;
     var researchProjectData = data.research_project_data;
 
-    samplesData = samples
-      .filter(function (rawSample) {
-        var sample = rawSample.attributes || rawSample;
-        return sample.latitude && sample.longitude;
-      })
-      .map(function (sample) {
-        return formatSamplesData(sample);
-      });
+    samplesData = samples.map(function (sample) {
+      return formatSamplesData(sample);
+    });
 
     if (baseSamples) {
-      baseSamplesData = baseSamples
-        .filter(function (rawSample) {
-          var sample = rawSample.attributes;
-          return sample.latitude && sample.longitude;
-        })
-        .map(function (sample) {
-          return formatSamplesData(sample);
-        });
+      baseSamplesData = baseSamples.map(function (sample) {
+        return formatSamplesData(sample);
+      });
     }
 
     map.removeLayer(spinner);
