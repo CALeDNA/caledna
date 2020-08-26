@@ -1,0 +1,35 @@
+people import caledna edna results
+- add new asv records -> need to update ncbi_nodes asvs_counts
+- add new asv records -> need to update caledna website taxa counts
+
+-> add update_website_stats to FetchTaxaAsvsCountsJob
+
+
+
+people import pour edna results
+- add new asv records -> need to update ncbi_nodes asvs_counts
+- add new asv records -> need to update ncbi_nodes asvs_counts_la_river
+- add new asv records -> need to update caledna website taxa counts
+- add new asv records -> need to pour update website taxa counts
+
+-> add FetchTaxaAsvsCountsJob to TaxaCountsController#update_la_river_taxa_asvs_count
+-> add update_website_stats to FetchLaRiverTaxaAsvsCountsJob
+-> add update_website_stats to FetchTaxaAsvsCountsJob
+
+
+people delete edna results for a project
+- delete asv records -> need to update caledna website taxa counts
+- delete asv records -> need to update ncbi_nodes asvs_counts
+
+-> add refresh_caledna_website_stats, FetchTaxaAsvsCountsJob to ResearchProjectResultsController#delete_records
+
+
+people import new samples via csv
+- add new completed samples -> need to update samples_map view
+
+-> add refresh_samples_map to KoboFieldData#import_csv
+
+people approve sample
+- add new approved samples -> need to update samples_map view
+
+-> add Sync Samples to admin

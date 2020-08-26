@@ -4,12 +4,13 @@ namespace :website_stats do
   task update_taxa_counts: :environment do
     include WebsiteStats
 
-    families_count = fetch_families_count
-    species_count = fetch_species_count
-    taxa_count = fetch_taxa_count
+    refresh_caledna_website_stats
+    refresh_pour_website_stats
+  end
 
-    Website::DEFAULT_SITE.update(families_count: families_count,
-                                 species_count: species_count,
-                                 taxa_count: taxa_count)
+  task update_samples_map: :environment do
+    include WebsiteStats
+
+    refresh_samples_map
   end
 end

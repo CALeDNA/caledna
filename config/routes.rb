@@ -117,6 +117,8 @@ Rails.application.routes.draw do
         get 'approve_samples' => 'approve_samples#index'
         post 'edit_multiple_approvals', as: :edit_multiple_approvals
         put 'update_multiple_approvals'
+        get 'sync_samples' => 'approve_samples#sync_samples'
+        put 'update_sync_samples' => 'approve_samples#update_sync_samples'
       end
 
       resources :import_csv_status, only: %i[index] # Sidekiq dashboard

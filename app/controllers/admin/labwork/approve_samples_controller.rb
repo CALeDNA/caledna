@@ -3,6 +3,8 @@
 module Admin
   module Labwork
     class ApproveSamplesController < Admin::ApplicationController
+      include WebsiteStats
+
       def index
         authorize 'Labwork::ApproveSamples'.to_sym, :index?
 
@@ -27,6 +29,17 @@ module Admin
         else
           render 'edit_multiple_approvals'
         end
+      end
+
+      def sync_samples
+        authorize 'Labwork::ApproveSamples'.to_sym, :index?
+      end
+
+      def update_sync_samples
+        refresh_samples_map
+        flash[:success] = 'Sync samples completed'
+
+        redirect_to admin_root_path
       end
 
       private
