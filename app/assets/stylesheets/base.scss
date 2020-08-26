@@ -89,15 +89,17 @@ img.note-float-left {
   margin: 10px 10px 10px 0;
 }
 
-.my-btn-default {
+.my-btn-default, {
   background-color: #f6f6f6;
   border-color: $grey-border;
 }
 
 .my-btn-default:focus,
-.my-btn-default:hover {
+.my-btn-default:hover,
+.my-btn-default.active {
   background-color: #e6e6e6;
   border-color: #adadad;
+  color: #333;
 }
 
 .subheading {

@@ -1,12 +1,18 @@
 <template>
   <div>
     <div class="kingdom-submenu">
-      <a class="btn my-btn-default" data-kingdom="All" @click="toggleList">
+      <a
+        :class="{ active: 'All' == activeKingdom }"
+        class="btn my-btn-default"
+        data-kingdom="All"
+        @click="toggleList"
+      >
         All Kingdoms
       </a>
       <a
         v-for="kingdom in kingdoms"
         :key="kingdom"
+        :class="{ active: kingdom == activeKingdom }"
         class="btn my-btn-default"
         :data-kingdom="kingdom"
         @click="toggleList"
@@ -14,7 +20,6 @@
         <img
           :src="`/images/taxa_icons/${slugify(kingdom)}.png`"
           class="kingdom-icon"
-          :data-kingdom="kingdom"
         />
         {{ kingdom }}
       </a>
@@ -26,7 +31,8 @@
         :ref="slugify(taxon.division_name)"
       >
         <span v-if="is_threatened(taxon)">
-          (Name not shown because this species is {{ taxon.iucn_status }})
+          (Name not shown because this {{ taxon.rank }} is
+          {{ taxon.iucn_status }})
         </span>
         <span v-else>
           <b>{{ taxon.rank }}:</b>
@@ -44,6 +50,7 @@ export default {
   data() {
     return {
       taxaList: [],
+      activeKingdom: "All",
       kingdoms: [
         "Animalia",
         "Archaea",
@@ -111,6 +118,7 @@ export default {
     },
     toggleList: function (e) {
       var targetKingdom = this.slugify(e.target.dataset.kingdom);
+      this.activeKingdom = e.target.dataset.kingdom;
 
       this.kingdoms.forEach((rawKingdom) => {
         let kingdom = this.slugify(rawKingdom);
