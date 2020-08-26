@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_25_065619) do
+ActiveRecord::Schema.define(version: 2020_08_26_123001) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -760,6 +760,8 @@ ActiveRecord::Schema.define(version: 2020_08_25_065619) do
     t.integer "taxa_count"
     t.integer "species_count"
     t.integer "families_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "asvs", "primers"

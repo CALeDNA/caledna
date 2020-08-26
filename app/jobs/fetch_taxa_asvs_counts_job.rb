@@ -2,8 +2,10 @@
 
 class FetchTaxaAsvsCountsJob < ApplicationJob
   include CustomCounter
+  include WebsiteStats
+
   queue_as :default
-  after_perform :refresh_samples_map
+  after_perform :update_website_stats
 
   def perform
     puts 'reset asvs_count...' if Rails.env.development?
@@ -19,9 +21,7 @@ class FetchTaxaAsvsCountsJob < ApplicationJob
 
   private
 
-  def refresh_samples_map
-    sql = 'REFRESH MATERIALIZED VIEW samples_map;'
-
-    ActiveRecord::Base.connection.exec_query(sql)
+  def update_website_stats
+    refresh_caledna_website_stats
   end
 end

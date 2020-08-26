@@ -2,8 +2,10 @@
 
 class FetchLaRiverTaxaAsvsCountsJob < ApplicationJob
   include CustomCounter
+  include WebsiteStats
+
   queue_as :default
-  after_perform :refresh_samples_map
+  after_perform :update_website_stats
 
   def perform
     puts 'update asvs_count_la_river...'
@@ -20,9 +22,7 @@ class FetchLaRiverTaxaAsvsCountsJob < ApplicationJob
 
   private
 
-  def refresh_samples_map
-    sql = 'REFRESH MATERIALIZED VIEW samples_map;'
-
-    ActiveRecord::Base.connection.exec_query(sql)
+  def update_website_stats
+    refresh_pour_website_stats
   end
 end
