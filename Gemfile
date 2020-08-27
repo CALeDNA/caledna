@@ -36,6 +36,7 @@ gem 'puma', '~> 3.11'
 gem 'pundit', '~> 1.1.0'
 gem 'rack-canonical-host', '~> 0.2'
 gem 'rgeo', '~> 2.1.1'
+gem 'rgeo-geojson', '~> 2.1.1'
 gem 'rgeo-shapefile', '~> 2.0.1'
 gem 'sass-rails', '~> 5.0' # required by bootstrap-sass
 gem 'sidekiq', '~> 5.0'
