@@ -20,6 +20,14 @@ module FilterSamples
     CheckWebsite.caledna_site? ? Sample : Sample.la_river
   end
 
+  def website_sample_map
+    if CheckWebsite.caledna_site?
+      SamplesMap
+    else
+      SamplesMap.where(field_project_id: FieldProject.la_river)
+    end
+  end
+
   # ====================
   # samples_map
   # ====================
@@ -65,7 +73,7 @@ module FilterSamples
   end
 
   def base_samples_for_map
-    @base_samples_for_map ||= SamplesMap.where(published_samples_sql)
+    @base_samples_for_map ||= website_sample_map.where(published_samples_sql)
   end
 
   # ====================
