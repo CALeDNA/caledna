@@ -20,17 +20,16 @@ Rails.application.routes.draw do
                       controller: 'research_projects/pages'
   end
 
-  resources :pages, only: %i[edit update], controller: 'river/pages'
+  resources :pages, only: %i[edit update show], controller: 'river/pages'
 
-  get '/faq', to: 'river/pages#faq', defaults: { id: 'faq' }
-  get '/our-mission', to: 'river/pages#our_mission',
-                      defaults: { id: 'our-mission' }
-  get '/our-team', to: 'river/pages#our_team', defaults: { id: 'our-team' }
-  get '/why-protect-biodiversity', to: 'river/pages#why_protect_biodiversity',
+  get '/faq', to: 'river/pages#show', defaults: { id: 'faq' }
+  get '/our-mission', to: 'river/pages#show', defaults: { id: 'our-mission' }
+  get '/our-team', to: 'river/pages#show', defaults: { id: 'our-team' }
+  get '/why-protect-biodiversity', to: 'river/pages#show',
                                    defaults: { id: 'why-protect-biodiversity' }
-  get '/get-involved', to: 'river/pages#get_involved',
-                       defaults: { id: 'get-involved' }
-  get '/donate', to: 'river/pages#donate', defaults: { id: 'donate' }
+  get '/get-involved', to: 'river/pages#show',  defaults: { id: 'get-involved' }
+  get '/donate', to: 'river/pages#show', defaults: { id: 'donate' }
+  get '/beta', to: 'river/pages#show', defaults: { id: 'beta' }
 
   get '/contact-us', to: 'river/contacts#new'
   resources :contacts, only: [:create], controller: 'river/contacts'

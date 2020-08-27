@@ -20,27 +20,9 @@ module River
       end
     end
 
-    def our_mission
+    def show
       @page = page
-      render 'river/pages/show'
     end
-
-    def our_team
-      @page = page
-      render 'river/pages/show'
-    end
-
-    def faq
-      @page = page
-      render 'river/pages/show'
-    end
-
-    # rubocop:disable Naming/AccessorMethodName
-    def get_involved
-      @page = page
-      render 'river/pages/show'
-    end
-    # rubocop:enable Naming/AccessorMethodName
 
     # rubocop:disable Metrics/AbcSize
     def home
