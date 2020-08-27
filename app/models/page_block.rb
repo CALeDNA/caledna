@@ -10,5 +10,5 @@ class PageBlock < ApplicationRecord
     right
   ], map: :string
 
-  scope :current_site, -> { where(website: Website::DEFAULT_SITE) }
+  scope :current_site, -> { where(website: Website.default_site) }
 end

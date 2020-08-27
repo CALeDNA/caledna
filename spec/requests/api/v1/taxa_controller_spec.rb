@@ -6,7 +6,7 @@ describe 'Taxa' do
   include ControllerHelpers
 
   before do
-    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+    create(:website, name: Website::DEFAULT_SITE)
   end
 
   describe 'index' do
@@ -147,6 +147,7 @@ describe 'Taxa' do
     end
 
     it 'ignores samples that contain other taxa' do
+      create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
       taxon = create(:ncbi_node, ids: [4], taxon_id: 4)
       create_occurence(taxon)
 
@@ -286,6 +287,7 @@ describe 'Taxa' do
 
     describe 'substrate query param' do
       before(:each) do
+        create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
         taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
         create_occurence(taxon, substrate: :soil)
         create_occurence(taxon, substrate: :bad)
@@ -317,6 +319,7 @@ describe 'Taxa' do
 
     context 'status query param' do
       before(:each) do
+        create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
         taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
         project = create(:research_project, slug: target_id, published: true)
         create_occurence(taxon, status: :results_completed,
@@ -343,6 +346,7 @@ describe 'Taxa' do
       let(:primer2_name) { 'primer2' }
 
       def create_samples
+        create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
         taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
         primer1 = create(:primer, id: primer1_id, name: primer1_name)
         primer2 = create(:primer, id: primer2_id, name: primer2_name)
@@ -395,6 +399,7 @@ describe 'Taxa' do
       end
 
       it 'only includes one instance of a sample' do
+        create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
         taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
         primer1 = create(:primer, id: primer1_id, name: 'primer1')
         primer2 = create(:primer, id: primer2_id, name: 'primer2')

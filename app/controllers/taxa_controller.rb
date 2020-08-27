@@ -9,9 +9,9 @@ class TaxaController < ApplicationController
     @top_plant_taxa = top_plant_taxa
     @top_animal_taxa = top_animal_taxa
 
-    @taxa_count = Website::DEFAULT_SITE.taxa_count
-    @families_count = Website::DEFAULT_SITE.families_count
-    @species_count = Website::DEFAULT_SITE.species_count
+    @taxa_count = Website.default_site.taxa_count
+    @families_count = Website.default_site.families_count
+    @species_count = Website.default_site.species_count
   end
 
   def show

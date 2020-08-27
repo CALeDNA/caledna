@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe 'Taxa' do
   before do
-    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+    create(:website, name: Website::DEFAULT_SITE)
   end
 
   describe 'taxa index page' do

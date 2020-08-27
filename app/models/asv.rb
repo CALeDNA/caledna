@@ -8,6 +8,6 @@ class Asv < ApplicationRecord
   has_many :highlights, as: :highlightable
 
   scope :la_river, (lambda do
-    where(research_project_id: ResearchProject::LA_RIVER.try(:id))
+    where(research_project_id: ResearchProject.la_river.try(:id))
   end)
 end

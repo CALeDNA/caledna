@@ -5,11 +5,11 @@ require 'rails_helper'
 describe Page do
   describe 'validations' do
     describe '#unique_slugs' do
-      before do
-        stub_const('Website::DEFAULT_SITE', create(:website, name: 'demo'))
+      before(:each) do
+        create(:website, name: Website::DEFAULT_SITE)
       end
 
-      let(:site) { Website::DEFAULT_SITE }
+      let(:site) { Website.default_site }
 
       context 'when pages are for different sites' do
         it 'returns true if slug is unique to a site' do

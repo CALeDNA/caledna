@@ -4,15 +4,15 @@ require 'rails_helper'
 
 describe 'Pages' do
   describe '#GET pages index page' do
-    before do
-      stub_const('Website::DEFAULT_SITE', create(:website, name: 'demo'))
+    before(:each) do
+      create(:website, name: Website::DEFAULT_SITE)
     end
 
     let!(:project) { create(:research_project) }
     let!(:project2) { create(:research_project) }
     let!(:page1) { create(:page, title: 'normal', website: website) }
     let!(:page2) { create(:page, title: 'other', website: create(:website)) }
-    let(:website) { Website::DEFAULT_SITE }
+    let(:website) { Website.default_site }
 
     shared_examples 'index page status' do
       it 'returns 200' do

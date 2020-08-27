@@ -23,7 +23,7 @@ class Sample < ApplicationRecord
   validate :unique_approved_barcodes
 
   scope :la_river, (lambda do
-    where(field_project_id: FieldProject::LA_RIVER.try(:id))
+    where(field_project_id: FieldProject.la_river.try(:id))
   end)
   scope :results_completed, -> { where(status_cd: :results_completed) }
   scope :approved, (lambda do

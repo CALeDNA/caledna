@@ -3,6 +3,12 @@
 require 'rails_helper'
 
 describe ImportCsv::KoboFieldData do
+  before do
+    website = create(:website, name: 'foo')
+    allow(Website).to receive(:caledna).and_return(website)
+    allow(Website).to receive(:la_river).and_return(website)
+  end
+
   let(:dummy_class) { Class.new { extend ImportCsv::KoboFieldData } }
   let(:csv) { './spec/fixtures/import_csv/samples.csv' }
   let(:file) { fixture_file_upload(csv, 'text/csv') }

@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class ResearchProject < ApplicationRecord
-  LA_RIVER = ResearchProject.find_by(name: 'Los Angeles River')
-  PILLAR_POINT = ResearchProject.find_by(name: 'Pillar Point')
-
   has_many :research_project_sources
   has_many :research_project_authors
   has_many :research_project_pages
@@ -18,6 +15,8 @@ class ResearchProject < ApplicationRecord
   validates :slug, presence: true
 
   scope :published, -> { where(published: true) }
+  scope :la_river, -> { find_by(name: 'Los Angeles River') }
+  scope :pillar_point, -> { find_by(name: 'Pillar Point') }
 
   def project_pages
     @project_pages ||= begin

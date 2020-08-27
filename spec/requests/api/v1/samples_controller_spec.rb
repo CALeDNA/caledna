@@ -6,7 +6,7 @@ describe 'Samples' do
   include ControllerHelpers
 
   before do
-    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+    create(:website, name: Website::DEFAULT_SITE)
   end
 
   describe 'index' do

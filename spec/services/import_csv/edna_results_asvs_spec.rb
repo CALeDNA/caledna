@@ -3,14 +3,19 @@
 require 'rails_helper'
 
 describe ImportCsv::EdnaResultsAsvs do
+  before do
+    website = create(:website, name: 'foo')
+    allow(Website).to receive(:caledna).and_return(website)
+    allow(Website).to receive(:la_river).and_return(website)
+  end
+
   let(:dummy_class) { Class.new { extend ImportCsv::EdnaResultsAsvs } }
 
   describe('#import_csv') do
     include ActiveJob::TestHelper
 
     before(:each) do
-      project = create(:field_project, name: 'unknown')
-      stub_const('FieldProject::DEFAULT_PROJECT', project)
+      create(:field_project, name: 'unknown')
     end
 
     def subject(file, research_project_id, primer)
@@ -123,8 +128,7 @@ describe ImportCsv::EdnaResultsAsvs do
     let(:primer_id) { 1000 }
 
     before(:each) do
-      project = create(:field_project, name: 'unknown')
-      stub_const('FieldProject::DEFAULT_PROJECT', project)
+      create(:field_project, name: 'unknown')
       create(:sample, :approved, barcode: 'K0001-LA-S1', id: sample_id1)
       create(:sample, :approved, barcode: 'K0001-LA-S2', id: sample_id2)
     end

@@ -90,7 +90,7 @@ module Api
         SQL
 
         if CheckWebsite.pour_site?
-          sql += "AND research_project_id = #{ResearchProject::LA_RIVER.id}"
+          sql += "AND research_project_id = #{ResearchProject.la_river.id}"
         end
 
         sql + <<~SQL
@@ -125,7 +125,7 @@ module Api
       end
 
       def cached_samples
-        website = Website::CALeDNA_SITE
+        website = Website.caledna
         key = "#{website.cache_key}/api_samples/#{params_values}"
         Rails.cache.fetch(key, expires_in: 1.month) do
           approved_completed_samples.load
@@ -141,7 +141,7 @@ module Api
 
       def multisearch_samples
         @multisearch_samples ||= begin
-          website = Website::CALeDNA_SITE
+          website = Website.caledna
           key = "#{website.cache_key}/api_samples/#{params_values}"
           Rails.cache.fetch(key, expires_in: 1.month) do
             approved_completed_samples.where(id: multisearch_ids).load

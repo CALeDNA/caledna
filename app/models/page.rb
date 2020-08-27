@@ -16,7 +16,7 @@ class Page < ApplicationRecord
   ], map: :string
 
   scope :published, -> { where(published: true) }
-  scope :current_site, -> { where(website: Website::DEFAULT_SITE) }
+  scope :current_site, -> { where(website: Website.default_site) }
 
   def show_edit_link?(current_researcher)
     return false if current_researcher.blank?

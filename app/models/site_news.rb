@@ -8,5 +8,5 @@ class SiteNews < ApplicationRecord
   validates :body, presence: true
 
   scope :published, -> { where(published: true) }
-  scope :current_site, -> { where(website: Website::DEFAULT_SITE) }
+  scope :current_site, -> { where(website: Website.default_site) }
 end

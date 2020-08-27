@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe 'Research Project' do
   before(:each) do
-    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+    create(:website, name: Website::DEFAULT_SITE)
   end
 
   context 'when project does not have published pages' do

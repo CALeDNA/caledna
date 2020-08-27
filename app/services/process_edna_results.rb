@@ -275,7 +275,7 @@ module ProcessEdnaResults
         barcode: barcode,
         status_cd: status,
         missing_coordinates: true,
-        field_project: FieldProject::DEFAULT_PROJECT
+        field_project: FieldProject.default_project
       )
 
       raise TaxaError, "Sample #{barcode} not created" unless sample.valid?

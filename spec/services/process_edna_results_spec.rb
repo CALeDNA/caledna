@@ -1266,13 +1266,13 @@ describe ProcessEdnaResults do
 
     context 'there are no samples for a given bar code' do
       it 'creates a new sample' do
-        stub_const('FieldProject::DEFAULT_PROJECT', project)
+        create(:field_project, name: 'unknown')
 
         expect { subject }.to change { Sample.count }.by(1)
       end
 
       it 'returns the created sample' do
-        stub_const('FieldProject::DEFAULT_PROJECT', project)
+        project = create(:field_project, name: 'unknown')
         result = subject
 
         expect(result.barcode).to eq(barcode)

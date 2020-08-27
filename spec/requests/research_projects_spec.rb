@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 describe 'Research Projects' do
-  before do
-    stub_const('Website::DEFAULT_SITE', create(:website, name: 'CALeDNA'))
+  before(:each) do
+    create(:website, name: Website::DEFAULT_SITE)
   end
 
   describe 'projects index page' do

@@ -40,7 +40,7 @@ module ResearchProjectService
         SQL
 
         raw_records =
-          conn.exec_query(sql, 'query', [[nil, ResearchProject::LA_RIVER.id]])
+          conn.exec_query(sql, 'query', [[nil, ResearchProject.la_river.id]])
         raw_records.map { |r| OpenStruct.new(r) }
       end
       # rubocop:enable Metrics/MethodLength

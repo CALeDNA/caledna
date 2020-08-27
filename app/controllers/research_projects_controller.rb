@@ -8,8 +8,8 @@ class ResearchProjectsController < ApplicationController
 
   def index
     @projects = projects
-    @taxa_count = Website::DEFAULT_SITE.taxa_count
-    @families_count = Website::DEFAULT_SITE.families_count
+    @taxa_count = Website.default_site.taxa_count
+    @families_count = Website.default_site.families_count
     @samples_with_results_count = completed_samples_count
   end
 
@@ -40,7 +40,7 @@ class ResearchProjectsController < ApplicationController
     SQL
 
     if CheckWebsite.pour_site?
-      sql += " AND research_projects.id = #{ResearchProject::LA_RIVER.id}"
+      sql += " AND research_projects.id = #{ResearchProject.la_river.id}"
     end
 
     sql + <<-SQL
@@ -74,7 +74,7 @@ class ResearchProjectsController < ApplicationController
     SQL
 
     if CheckWebsite.pour_site?
-      sql += " AND research_projects.id = #{ResearchProject::LA_RIVER.id};"
+      sql += " AND research_projects.id = #{ResearchProject.la_river.id};"
     end
     sql
   end

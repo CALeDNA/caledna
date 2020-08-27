@@ -77,7 +77,7 @@ module CustomCounter
         JOIN research_projects
           ON asvs.research_project_id = research_projects.id
           AND research_projects.published = TRUE
-        where asvs.research_project_id = #{ResearchProject::LA_RIVER.id}
+        where asvs.research_project_id = #{ResearchProject.la_river.id}
         GROUP BY unnest(ncbi_nodes.ids) , sample_id
       ) AS foo
       GROUP BY foo.taxon_id;

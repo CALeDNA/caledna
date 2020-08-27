@@ -8,8 +8,8 @@ module WebsiteStats
   end
 
   def change_websites_update_at
-    Website::CALeDNA_SITE.touch
-    Website::PouR_SITE.touch
+    Website.caledna.touch
+    Website.la_river.touch
   end
 
   def refresh_caledna_website_stats
@@ -65,7 +65,7 @@ module WebsiteStats
   def taxa_count_sql(pour: false)
     sql = base_taxa_count_sql
     if pour
-      sql += " AND asvs.research_project_id = #{ResearchProject::LA_RIVER.id}"
+      sql += " AND asvs.research_project_id = #{ResearchProject.la_river.id}"
     end
     sql += ') AS temp;'
     sql
@@ -88,7 +88,7 @@ module WebsiteStats
   def rank_count_sql(rank, pour: false)
     sql = base_rank_count_sql(rank)
     if pour
-      sql += "AND asvs.research_project_id = #{ResearchProject::LA_RIVER.id}"
+      sql += "AND asvs.research_project_id = #{ResearchProject.la_river.id}"
     end
     sql += <<~SQL
         )
