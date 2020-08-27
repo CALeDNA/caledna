@@ -36,7 +36,8 @@
           <ul class="dropdown-menu">
             <%= nav_link 'Sites', samples_path %>
             <%= nav_link 'Identified Organisms', taxa_path %>
-            <li><a href="/research_projects/los-angeles-river/">Pilot Results</a></li>
+            <%= nav_link 'Pilot Results', research_project_path(id: 'los-angeles-river') %>
+            <%= nav_link 'Beta Features', beta_path %>
           </ul>
         </li>
 
