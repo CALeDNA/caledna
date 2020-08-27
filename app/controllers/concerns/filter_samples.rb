@@ -17,14 +17,16 @@ module FilterSamples
   end
 
   def website_sample
-    CheckWebsite.caledna_site? ? Sample : Sample.la_river
+    @website_sample ||= CheckWebsite.caledna_site? ? Sample : Sample.la_river
   end
 
   def website_sample_map
-    if CheckWebsite.caledna_site?
-      SamplesMap
-    else
-      SamplesMap.where(field_project_id: FieldProject.la_river)
+    @website_sample_map ||= begin
+      if CheckWebsite.caledna_site?
+        SamplesMap
+      else
+        SamplesMap.where(field_project_id: FieldProject.la_river)
+      end
     end
   end
 
