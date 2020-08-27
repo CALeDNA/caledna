@@ -1,8 +1,9 @@
 people import caledna edna results
 - add new asv records -> need to update ncbi_nodes asvs_counts
 - add new asv records -> need to update caledna website taxa counts
+- add new asv records -> need to update samples_map taxa and taxa_ids
 
--> add refresh_caledna_website_stats to FetchTaxaAsvsCountsJob
+-> add refresh_caledna_website_stats, refresh_samples_map to FetchTaxaAsvsCountsJob
 
 ==
 
@@ -12,10 +13,11 @@ people import pour edna results
 - add new asv records -> need to update ncbi_nodes asvs_counts_la_river
 - add new asv records -> need to update caledna website taxa counts
 - add new asv records -> need to pour update website taxa counts
+- add new asv records -> need to update samples_map taxa and taxa_ids
 
 -> add FetchTaxaAsvsCountsJob to TaxaCountsController#update_la_river_taxa_asvs_count
 -> add refresh_pour_website_stats to FetchLaRiverTaxaAsvsCountsJob
--> add refresh_caledna_website_stats to FetchTaxaAsvsCountsJob
+-> add refresh_caledna_website_stats, refresh_samples_map to FetchTaxaAsvsCountsJob
 
 
 ==
@@ -23,8 +25,10 @@ people import pour edna results
 people delete edna results for a project
 - delete asv records -> need to update caledna website taxa counts
 - delete asv records -> need to update ncbi_nodes asvs_counts
+- add new asv records -> need to update samples_map taxa and taxa_ids
 
 -> add refresh_caledna_website_stats, FetchTaxaAsvsCountsJob to ResearchProjectResultsController#delete_records
+-> add refresh_samples_map to FetchTaxaAsvsCountsJob
 
 ==
 

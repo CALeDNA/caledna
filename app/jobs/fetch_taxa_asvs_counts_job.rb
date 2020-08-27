@@ -23,5 +23,6 @@ class FetchTaxaAsvsCountsJob < ApplicationJob
 
   def update_website_stats
     refresh_caledna_website_stats
+    refresh_samples_map
   end
 end
