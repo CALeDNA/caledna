@@ -2,10 +2,7 @@
 
 module ResearchProjects
   class PagesController < ApplicationController
-    include BatchData
-    include PaginatedSamples
     include CheckWebsite
-    include CustomPagination
 
     layout 'river/application' if CheckWebsite.pour_site?
 
@@ -42,18 +39,6 @@ module ResearchProjects
     # =======================
     # show
     # =======================
-
-    def counts
-      @counts ||= list_view? ? asvs_count : []
-    end
-
-    def samples
-      @samples ||= list_view? ? paginated_samples : []
-    end
-
-    def paginated_samples
-      @paginated_samples ||= research_project_paginated_samples(project.id)
-    end
 
     # =======================
     # edit
@@ -97,24 +82,17 @@ module ResearchProjects
     # default
     # =======================
 
-    def default_view
-      return unless params[:view] == 'list'
-      @samples = samples
-      @asvs_count = asvs_count
-    end
+    def default_view; end
 
     # =======================
     # LA river
     # =======================
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
     def la_river_view
       if params[:id] == 'overview'
         @division_counts = la_river_service.division_counts
         @division_counts_unique = la_river_service.division_counts_unique
-      elsif params[:id] == 'sites'
-        @samples = samples
-        @asvs_count = counts
       elsif params[:id] == 'plants-animals'
         @identified_species_by_location =
           la_river_service.identified_species_by_location
@@ -124,7 +102,7 @@ module ResearchProjects
 
       render 'research_projects/la_river'
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     def la_river_service
       @la_river_service ||= begin
@@ -152,10 +130,6 @@ module ResearchProjects
         else
           @taxon_list = PpGlobiIndex.page(params[:page]).per(48)
         end
-      elsif params[:view] == 'list'
-        @occurrences = samples.page(params[:page])
-        @stats = pillar_point_service.stats
-        @asvs_count = asvs_count
       elsif params[:id] == 'common_taxa'
         @taxon = pp_taxon
         @gbif_taxa_with_edna_map = pillar_point_service.common_taxa_map

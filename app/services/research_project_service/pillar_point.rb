@@ -40,7 +40,7 @@ module ResearchProjectService
         AND (metadata ->> 'location' != 'Montara SMR')
         AND (kingdom is not null)
       SQL
-      conn.exec_query(sql).entries
+      conn.exec_query(sql)
     end
 
     def gbif_occurrences_by_taxa

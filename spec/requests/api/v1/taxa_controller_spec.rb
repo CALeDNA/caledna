@@ -345,6 +345,7 @@ describe 'Taxa' do
       let(:primer1_name) { 'primer1' }
       let(:primer2_name) { 'primer2' }
 
+      # rubocop:disable Metrics/AbcSize:
       def create_samples
         create(:ncbi_node, ids: [1, target_id], taxon_id: target_id)
         taxon = create(:ncbi_node, ids: [1, target_id, 3], taxon_id: 3)
@@ -355,6 +356,7 @@ describe 'Taxa' do
         create_occurence(taxon, primer: create(:primer, id: 30))
         refresh_samples_map
       end
+      # rubocop:enable Metrics/AbcSize:
 
       it 'returns samples when there is one primer' do
         create_samples

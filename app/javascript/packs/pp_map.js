@@ -1,6 +1,6 @@
 import baseMap from "./base_map.js";
 
-var apiEndpoint = `/api/v1/research_projects/pillar_point/sites?include_research=true`;
+var apiEndpoint = `/api/v1/research_projects/pillar_point/sites`;
 var map = baseMap.createMap(L.latLng(37.49547, -122.496478), 15);
 
 var sources = { cal: true, gbif: true };

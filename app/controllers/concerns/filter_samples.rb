@@ -20,10 +20,6 @@ module FilterSamples
     CheckWebsite.caledna_site? ? Sample : Sample.la_river
   end
 
-  def website_asv
-    CheckWebsite.caledna_site? ? Asv : Asv.la_river
-  end
-
   # ====================
   # samples_map
   # ====================
