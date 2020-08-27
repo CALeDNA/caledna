@@ -104,9 +104,11 @@ class TaxaController < ApplicationController
 
   def related_organisms
     @related_organisms ||= begin
+      sql =
+        'taxon_id in (SELECT taxon_id from asvs where research_project_id = ?)'
       NcbiNode.where('ids @> ARRAY[?]::int[]', params[:id])
-              .where('asvs_count > 0')
-              .where('taxon_id in (SELECT taxon_id from asvs)')
+              .where('asvs_count_la_river > 0')
+              .where(sql, ResearchProject.la_river)
               .where('taxon_id != ?', params[:id])
               .page(params[:related_organisms_page])
               .order('canonical_name ASC')
