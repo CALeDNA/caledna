@@ -7,12 +7,15 @@ describe 'Samples' do
 
   before do
     create(:website, name: Website::DEFAULT_SITE)
+    create(:research_project, name: 'Los Angeles River')
+    create(:field_project, name: 'Los Angeles River')
   end
 
   let(:field_river) { FieldProject.la_river }
   let(:research_river) { ResearchProject.la_river }
 
   describe 'index' do
+    # rubocop:disable Metrics/MethodLength
     def created_completed_sample(sample_id: 1, substrate: :soil)
       sample = create(:sample,
                       :results_completed,
@@ -28,6 +31,7 @@ describe 'Samples' do
                    primer: primer)
       refresh_samples_map
     end
+    # rubocop:enable Metrics/MethodLength
 
     it 'returns OK' do
       get api_v1_samples_path
@@ -60,6 +64,7 @@ describe 'Samples' do
       rproj = research_river
       rproj.update(published: false)
       sample = create(:sample, :results_completed, field_project: field_river)
+      primer = create(:primer)
       create(:asv, sample: sample, research_project: rproj, primer: primer)
       create(:sample_primer, sample: sample, research_project: rproj,
                              primer: primer)
@@ -82,7 +87,7 @@ describe 'Samples' do
 
       sample2 = create(:sample, :results_completed, field_project: field_river)
       rproj2 = research_river
-      rproj.update(published: true)
+      rproj2.update(published: true)
       create(:sample_primer, research_project: rproj2, sample: sample2,
                              primer: primer)
       create(:asv, research_project: rproj2, sample: sample2, primer: primer)
@@ -211,10 +216,10 @@ describe 'Samples' do
         create(:asv, sample: s1, primer: p1, research_project: rproj)
         create(:sample_primer, sample: s1, primer: p1, research_project: rproj)
 
-        create(:asv, sample: s1, primer: p1, research_project: rproj1)
-        create(:sample_primer, sample: s1, primer: p1, research_project: rproj1)
-        create(:asv, sample: s1, primer: p1, research_project: rproj2)
-        create(:sample_primer, sample: s1, primer: p1, research_project: rproj2)
+        create(:asv, sample: s1, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj)
+        create(:asv, sample: s1, primer: p1, research_project: rproj)
+        create(:sample_primer, sample: s1, primer: p1, research_project: rproj)
 
         create(:asv, sample: s2, primer: p2, research_project: rproj)
         create(:sample_primer, sample: s2, primer: p2, research_project: rproj)

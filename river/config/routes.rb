@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/BlockLength:
 Rails.application.routes.draw do
   devise_for :researchers, controllers: {
     sessions: 'researchers/sessions',
@@ -44,3 +45,4 @@ Rails.application.routes.draw do
     resources :websites
   end
 end
+# rubocop:enable Metrics/BlockLength:

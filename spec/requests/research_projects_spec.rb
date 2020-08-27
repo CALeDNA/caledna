@@ -5,6 +5,7 @@ require 'rails_helper'
 describe 'Research Projects' do
   before(:each) do
     create(:website, name: Website::DEFAULT_SITE)
+    create(:research_project, name: 'Los Angeles River')
   end
 
   describe 'projects index page' do

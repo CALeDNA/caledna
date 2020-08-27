@@ -7,10 +7,12 @@ describe 'Taxa' do
 
   before do
     create(:website, name: Website::DEFAULT_SITE)
+    create(:research_project, name: 'Los Angeles River')
+    create(:field_project, name: 'Los Angeles River')
   end
 
-  let(:field_river) { FieldProject::LA_RIVER }
-  let(:research_river) { ResearchProject::LA_RIVER }
+  let(:field_river) { FieldProject.la_river }
+  let(:research_river) { ResearchProject.la_river }
   let(:research_river_p) do
     research_river.update(published: true)
     research_river

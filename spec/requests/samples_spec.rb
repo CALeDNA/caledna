@@ -7,9 +7,10 @@ describe 'Samples' do
 
   before do
     create(:website, name: Website::DEFAULT_SITE)
+    create(:field_project, name: 'Los Angeles River')
   end
 
-  let(:field_river) { FieldProject::LA_RIVER }
+  let(:field_river) { FieldProject.la_river }
 
   describe 'samples index page' do
     it 'returns OK' do

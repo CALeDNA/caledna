@@ -42,6 +42,7 @@ module River
     end
     # rubocop:enable Naming/AccessorMethodName
 
+    # rubocop:disable Metrics/AbcSize
     def home
       @stats = project_service.home_page_stats
       @block_1 = home_blocks.find { |b| b.slug == 'pour-home-1' }
@@ -51,6 +52,7 @@ module River
       @news = home_news
       render layout: 'river/home'
     end
+    # rubocop:enable Metrics/AbcSize
 
     def why_protect_biodiversity
       @page = page
