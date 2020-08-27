@@ -30,9 +30,23 @@ describe 'Research Projects' do
       expect(response.status).to eq(200)
     end
 
-    xit 'raises an error invalid id' do
-      expect { get research_project_path(id: 1) }
-        .to raise_error(ActiveRecord::RecordNotFound)
+    it 'page contains h1 for valid id' do
+      project = create(:research_project, slug: 'slug')
+      get research_project_path(id: project.slug)
+
+      expect(response.body).to include('<h1>')
+    end
+
+    it 'returns ok for invaid id' do
+      get research_project_path(id: 1)
+
+      expect(response.status).to eq(200)
+    end
+
+    it 'page does not contain h1 for invalid id' do
+      get research_project_path(id: 1)
+
+      expect(response.body).to_not include('<h1>')
     end
   end
 end
