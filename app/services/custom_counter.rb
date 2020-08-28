@@ -33,7 +33,11 @@ module CustomCounter
   private
 
   def reset_counter(asvs_field)
-    sql = "UPDATE ncbi_nodes set #{asvs_field} = 0 where #{asvs_field} > 0;"
+    sql = <<~SQL
+      UPDATE ncbi_nodes set #{asvs_field} = 0
+      WHERE #{asvs_field} > 0
+      AND taxon_id IN (SELECT taxon_id FROM ncbi_nodes_edna);
+    SQL
     conn.exec_update(sql)
   end
 
@@ -52,6 +56,7 @@ module CustomCounter
         SELECT unnest(ncbi_nodes.ids) as taxon_id, sample_id
         FROM asvs
         JOIN ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
+          AND ncbi_nodes.taxon_id IN (SELECT taxon_id FROM asvs)
         JOIN research_projects
           ON asvs.research_project_id = research_projects.id
           AND research_projects.published = TRUE
