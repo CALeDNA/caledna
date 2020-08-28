@@ -203,7 +203,7 @@ module Api
         <<~SQL
           (ARRAY_AGG(
           "ncbi_nodes"."canonical_name" || '|' || ncbi_nodes.taxon_id
-          ORDER BY asvs_count DESC NULLS LAST
+          ORDER BY asvs_count_la_river DESC NULLS LAST
           ))[0:15] AS taxa
         SQL
       end
@@ -212,9 +212,11 @@ module Api
         <<~SQL
           JOIN asvs ON samples_map.id = asvs.sample_id
             AND "samples_map"."status" = 'results_completed'
+            AND asvs.research_project_id = #{ResearchProject.la_river.id}
           JOIN primers ON asvs.primer_id = primers.id
-          JOIN ncbi_nodes_edna as ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
-            AND ncbi_nodes.asvs_count > 0
+          JOIN ncbi_nodes_edna as ncbi_nodes
+            ON ncbi_nodes.taxon_id = asvs.taxon_id
+            AND ncbi_nodes.asvs_count_la_river > 0
         SQL
       end
 
@@ -226,6 +228,8 @@ module Api
               .select(taxa_select_sql)
               .joins(taxa_join_sql)
               .where('ids @> ?', "{#{params[:id]}}")
+              .where('samples_map.field_project_id = ?',
+                      FieldProject.la_river.id)
               .load
           end
         end
