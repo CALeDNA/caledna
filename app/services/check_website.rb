@@ -2,10 +2,10 @@
 
 module CheckWebsite
   def self.caledna_site?
-    Website.default_site.name == 'CALeDNA'
+    true
   end
 
   def self.pour_site?
-    Website.default_site.name == 'Protecting Our River'
+    false
   end
 end
