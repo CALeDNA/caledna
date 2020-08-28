@@ -73,7 +73,7 @@ module Api
       def taxa_samples
         @taxa_samples ||= begin
           key = "#{taxon.cache_key}/taxa_samples/#{params_values}"
-          Rails.cache.fetch(key, expires_in: 3.months) do
+          Rails.cache.fetch(key) do
             completed_samples
               .select(taxa_select_sql)
               .joins(taxa_join_sql)
@@ -88,7 +88,7 @@ module Api
         @taxa_basic_samples ||= begin
           website = Website.caledna
           key = "#{website.cache_key}/taxa_basic_samples/#{params_values}"
-          Rails.cache.fetch(key, expires_in: 3.months) do
+          Rails.cache.fetch(key) do
             basic_completed_samples.load
           end
         end

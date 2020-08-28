@@ -127,7 +127,7 @@ module Api
       def cached_samples
         website = Website.caledna
         key = "#{website.cache_key}/api_samples/#{params_values}"
-        Rails.cache.fetch(key, expires_in: 3.months) do
+        Rails.cache.fetch(key) do
           approved_completed_samples.load
         end
       end
@@ -143,7 +143,7 @@ module Api
         @multisearch_samples ||= begin
           website = Website.caledna
           key = "#{website.cache_key}/api_samples/#{params_values}"
-          Rails.cache.fetch(key, expires_in: 3.months) do
+          Rails.cache.fetch(key) do
             approved_completed_samples.where(id: multisearch_ids).load
           end
         end
