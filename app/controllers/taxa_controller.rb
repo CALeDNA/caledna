@@ -131,6 +131,10 @@ class TaxaController < ApplicationController
     end
   end
 
+  #================
+  # common
+  #================
+
   def conn
     @conn ||= ActiveRecord::Base.connection
   end
