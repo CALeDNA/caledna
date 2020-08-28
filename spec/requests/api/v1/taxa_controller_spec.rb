@@ -178,7 +178,7 @@ describe 'Taxa' do
       expect(sample_ids).to eq([sample1.id, sample2.id])
     end
 
-    it 'retuns a max of ten related taxa' do
+    it 'retuns a max of 15 related taxa' do
       taxon_id = 2
       sample = create(:sample, :results_completed)
       research_project = create(:research_project, published: true)
@@ -203,7 +203,7 @@ describe 'Taxa' do
       expect(samples.length).to eq(1)
       expect(base_samples.length).to eq(1)
 
-      expect(sample['taxa'].length).to eq(10)
+      expect(sample['taxa'].length).to eq(15)
     end
 
     it 'does not return related taxa that are IUCN threatened ' do

@@ -3,7 +3,8 @@
 module ControllerHelpers
   def refresh_samples_map
     sql = 'REFRESH MATERIALIZED VIEW samples_map;'
-
+    ActiveRecord::Base.connection.exec_query(sql)
+    sql = 'REFRESH MATERIALIZED VIEW ncbi_nodes_edna;'
     ActiveRecord::Base.connection.exec_query(sql)
   end
 

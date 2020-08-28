@@ -50,68 +50,45 @@ module Api
         @taxon ||= NcbiNode.find_by(taxon_id: params[:id])
       end
 
+      def taxa_select_sql
+        <<~SQL
+          (ARRAY_AGG(
+          "ncbi_nodes"."canonical_name" || '|' || ncbi_nodes.taxon_id
+          ORDER BY asvs_count DESC NULLS LAST
+          ))[0:15] AS taxa
+        SQL
+      end
+
       def taxa_join_sql
         <<~SQL
-          JOIN sample_primers ON samples_map.id = sample_primers.sample_id
-          JOIN primers ON sample_primers.primer_id = primers.id
-        SQL
-      end
-
-      def table1_sql
-        completed_samples
-          .joins(taxa_join_sql)
-          .where('taxon_ids @> ?', "{#{params[:id]}}")
-          .to_sql
-      end
-
-      def table2_sql
-        <<~SQL
-          SELECT (array_agg(
-            canonical_name || '|' || ncbi_nodes.taxon_id
-            ORDER BY asvs_count DESC NULLS LAST
-          ))[0:15] as taxa, samples_map.id
-          FROM samples_map
-          JOIN asvs ON asvs.sample_id = samples_map.id
-            AND status ='results_completed'
-          JOIN ncbi_nodes ON asvs.taxon_id = ncbi_nodes.taxon_id
+          JOIN asvs ON samples_map.id = asvs.sample_id
+            AND "samples_map"."status" = 'results_completed'
+          JOIN primers ON asvs.primer_id = primers.id
+          JOIN ncbi_nodes_edna as ncbi_nodes ON ncbi_nodes.taxon_id = asvs.taxon_id
             AND ncbi_nodes.asvs_count > 0
-            AND ncbi_nodes.ids @> ARRAY[$1]::integer[]
-          GROUP BY samples_map.id
         SQL
       end
 
-      def combined_sql
-        <<~SQL
-          SELECT * FROM(#{table1_sql}) table1
-          JOIN (#{table2_sql}) table2
-          on table1.id = table2.id
-        SQL
-      end
-
+      # rubocop:disable Metrics/AbcSize
       def taxa_samples
         @taxa_samples ||= begin
           key = "#{taxon.cache_key}/taxa_samples/#{params_values}"
-          Rails.cache.fetch(key, expires_in: 1.month) do
-            records = conn.exec_query(combined_sql, 'q', [[nil, params[:id]]])
-            records.each do |record|
-              process_records(record)
-            end
+          Rails.cache.fetch(key, expires_in: 3.months) do
+            completed_samples
+              .select(taxa_select_sql)
+              .joins(taxa_join_sql)
+              .where('ids @> ?', "{#{params[:id]}}")
+              .load
           end
         end
       end
-
-      def process_records(record)
-        record['primer_ids'] = YAML.safe_load(record['primer_ids']).keys
-        record['primer_names'] = YAML.safe_load(record['primer_names']).keys
-        record['taxa'] = YAML.safe_load(record['taxa']).keys.slice(0, 10)
-        record
-      end
+      # rubocop:enable Metrics/AbcSize
 
       def taxa_basic_samples
         @taxa_basic_samples ||= begin
           website = Website.caledna
           key = "#{website.cache_key}/taxa_basic_samples/#{params_values}"
-          Rails.cache.fetch(key, expires_in: 1.month) do
+          Rails.cache.fetch(key, expires_in: 3.months) do
             basic_completed_samples.load
           end
         end
