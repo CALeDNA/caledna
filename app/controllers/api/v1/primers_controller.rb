@@ -6,8 +6,15 @@ module Api
       before_action :add_cors_headers
 
       def index
-        primers = Primer.all.order(:name)
         render json: PrimerSerializer.new(primers).serializable_hash
+      end
+
+      def primers
+        @primers ||= begin
+          Rails.cache.fetch(Primer::ALL_PRIMERS_CACHE_KEY) do
+            Primer.order(:name).select(:name, :id, :updated_at).load
+          end
+        end
       end
     end
   end
