@@ -69,7 +69,6 @@ module Api
         SQL
       end
 
-      # rubocop:disable Metrics/AbcSize
       def taxa_samples
         @taxa_samples ||= begin
           key = "#{taxon.cache_key}/taxa_samples/#{params_values}"
@@ -82,7 +81,6 @@ module Api
           end
         end
       end
-      # rubocop:enable Metrics/AbcSize
 
       def taxa_basic_samples
         @taxa_basic_samples ||= begin
