@@ -6,6 +6,7 @@ class PageBlockDashboard < Administrate::BaseDashboard
     id: Field::Number,
     content: TextEditorField,
     slug: Field::String,
+    admin_note: Field::Text,
     image: ActiveStorageAttachmentField,
     image_position_cd: EnumField,
     created_at: Field::DateTime,
@@ -19,6 +20,7 @@ class PageBlockDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = %i[
   slug
   page
+  admin_note
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -27,6 +29,7 @@ class PageBlockDashboard < Administrate::BaseDashboard
   id
   slug
   content
+  admin_note
   page
   website
   image
@@ -41,6 +44,7 @@ class PageBlockDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
   slug
   content
+  admin_note
   page
   website
   image
