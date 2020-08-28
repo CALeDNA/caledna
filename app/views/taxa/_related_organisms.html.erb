@@ -6,7 +6,7 @@
   <% related_organisms.each do |taxon| %>
     <li>
       <%= taxon.rank %>:
-      <%= link_to taxon.canonical_name, taxon_path(taxon) %>
+      <%= link_to taxon.canonical_name, taxon_path(taxon) %> <%= taxon.common_names_display %>
       <span class="meta"><%= pluralize(taxon.asvs_count_display, 'site') %></span>
     </li>
   <% end %>
