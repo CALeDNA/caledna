@@ -232,11 +232,10 @@ export default {
       });
     },
 
-    processTaxaTD(taxa) {
-      let limit = 20;
-      let body = `${taxa.length} matching taxa<br>`;
+    processTaxaTD(rawtaxa) {
+      let taxa = rawtaxa.slice(0, 10);
+      let body = `first ${taxa.length} matching taxa<br>`;
       body += taxa
-        .slice(0, limit)
         .map((t) => {
           let parts = t.split("|");
           return `<a href="/taxa/${parts[1].trim()}">${parts[0]}</a>`;
