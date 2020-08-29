@@ -55,6 +55,21 @@ describe ImportCsv::EdnaResultsAsvs do
       end
     end
 
+    context 'when research project and primer have been imported' do
+      it 'returns error message' do
+        primer = create(:primer, id: 10)
+        project = create(:research_project, id: 1)
+        create(:sample_primer, research_project: project, primer: primer,
+                               sample: create(:sample))
+
+        results = subject(file, project, primer.id)
+        message = 'research project has already been imported.'
+
+        expect(results.valid?).to eq(false)
+        expect(results.errors).to end_with(message)
+      end
+    end
+
     context 'when barcodes in CSV match samples in the database' do
       before(:each) do
         create(:sample, barcode: csv_barcode1, status: 'approved', id: 999)

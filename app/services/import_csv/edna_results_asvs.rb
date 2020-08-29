@@ -10,21 +10,18 @@ module ImportCsv
     # ResearchProjectSource. First or create ASV.
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def import_csv(file, research_project_id, primer_id)
-      data = my_csv_read(file)
+      results = already_imported?(research_project_id, primer_id)
+      return results if results.is_a?(OpenStruct)
 
+      data = my_csv_read(file)
       barcodes = convert_header_row_to_barcodes(data)
       samples = find_samples_from_barcodes(barcodes)
 
-      if samples[:invalid_data].present?
-        message = "#{samples[:invalid_data].join(', ')} not in the database"
-        return OpenStruct.new(valid?: false, errors: message)
-      end
+      results = samples_not_in_db?(samples)
+      return results if results.is_a?(OpenStruct)
 
-      duplicate_barcodes = find_duplicate_barcodes(data)
-      if duplicate_barcodes.present?
-        message = "#{duplicate_barcodes.join(', ')} listed multiple times"
-        return OpenStruct.new(valid?: false, errors: message)
-      end
+      results = duplicate_barcodes?(data)
+      return results if results.is_a?(OpenStruct)
 
       result_metadata = {
         research_project_id: research_project_id,
@@ -86,6 +83,31 @@ module ImportCsv
     end
 
     private
+
+    def already_imported?(project_id, primer_id)
+      records = SamplePrimer.where(research_project_id: project_id)
+                            .where(primer_id: primer_id)
+      return false if records.blank?
+
+      message = 'The eDNA results for this primer and research project has ' \
+        'already been imported.'
+      OpenStruct.new(valid?: false, errors: message)
+    end
+
+    def samples_not_in_db?(samples)
+      return false if samples[:invalid_data].blank?
+
+      message = "#{samples[:invalid_data].join(', ')} not in the database"
+      OpenStruct.new(valid?: false, errors: message)
+    end
+
+    def duplicate_barcodes?(data)
+      duplicate_barcodes = find_duplicate_barcodes(data)
+      return false if duplicate_barcodes.blank?
+
+      message = "#{duplicate_barcodes.join(', ')} listed multiple times"
+      OpenStruct.new(valid?: false, errors: message)
+    end
 
     def find_duplicate_barcodes(data)
       counts = data.headers.compact.group_by(&:itself).transform_values(&:count)
