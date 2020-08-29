@@ -125,7 +125,6 @@ module Api
       end
 
       def cached_samples
-        website = Website.caledna
         key = "#{website.cache_key}/api_samples/#{params_values}"
         Rails.cache.fetch(key) do
           approved_completed_samples.load
@@ -141,12 +140,15 @@ module Api
 
       def multisearch_samples
         @multisearch_samples ||= begin
-          website = Website.caledna
           key = "#{website.cache_key}/api_samples/#{params_values}"
           Rails.cache.fetch(key) do
             approved_completed_samples.where(id: multisearch_ids).load
           end
         end
+      end
+
+      def website
+        @website = Website.default_site
       end
 
       def params_values

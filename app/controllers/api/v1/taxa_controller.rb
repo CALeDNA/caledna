@@ -84,12 +84,15 @@ module Api
 
       def taxa_basic_samples
         @taxa_basic_samples ||= begin
-          website = Website.caledna
           key = "#{website.cache_key}/taxa_basic_samples/#{params_values}"
           Rails.cache.fetch(key) do
             basic_completed_samples.load
           end
         end
+      end
+
+      def website
+        @website = Website.default_site
       end
 
       def params_values
