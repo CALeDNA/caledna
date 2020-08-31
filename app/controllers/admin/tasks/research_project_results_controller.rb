@@ -41,6 +41,7 @@ module Admin
         update_sample_status
         refresh_caledna_website_stats
         ::FetchTaxaAsvsCountsJob.perform_later
+        refresh_ncbi_nodes_edna
       end
 
       def update_sample_status

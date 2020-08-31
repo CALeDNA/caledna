@@ -24,5 +24,6 @@ class FetchTaxaAsvsCountsJob < ApplicationJob
   def update_website_stats
     refresh_caledna_website_stats
     refresh_samples_map
+    refresh_ncbi_nodes_edna
   end
 end

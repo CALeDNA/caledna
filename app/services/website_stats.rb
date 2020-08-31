@@ -7,6 +7,12 @@ module WebsiteStats
     conn.exec_query(sql)
   end
 
+  def refresh_ncbi_nodes_edna
+    sql = 'REFRESH MATERIALIZED VIEW ncbi_nodes_edna'
+
+    conn.exec_query(sql)
+  end
+
   def change_websites_update_at
     Website.caledna.touch
     Website.la_river.touch
