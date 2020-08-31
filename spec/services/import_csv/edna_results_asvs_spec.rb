@@ -285,11 +285,11 @@ describe ImportCsv::EdnaResultsAsvs do
           ).exactly(1).times
       end
 
-      it 'does not add ImportCsvFirstOrCreateAsvJob to queue' do
+      it 'does not add ImportCsvCreateAsvJob to queue' do
         expect do
           subject
         end
-          .to have_enqueued_job(ImportCsvFirstOrCreateAsvJob).exactly(0).times
+          .to have_enqueued_job(ImportCsvCreateAsvJob).exactly(0).times
       end
     end
 
@@ -306,30 +306,32 @@ describe ImportCsv::EdnaResultsAsvs do
           .exactly(0).times
       end
 
-      it 'adds ImportCsvFirstOrCreateAsvJob to queue' do
+      it 'adds ImportCsvCreateAsvJob to queue' do
         expect do
           subject
         end
-          .to have_enqueued_job(ImportCsvFirstOrCreateAsvJob).exactly(2).times
+          .to have_enqueued_job(ImportCsvCreateAsvJob).exactly(2).times
       end
 
-      it 'adds pass correct agruments to ImportCsvFirstOrCreateAsvJob' do
+      it 'pass correct agruments to ImportCsvCreateAsvJob' do
         expect do
           subject
         end
           .to have_enqueued_job.with(
             research_project_id: project_id, primer_id: primer_id,
-            taxon_id: taxon_id2, sample_id: sample_id1, count: 2
+            taxon_id: taxon_id2, sample_id: sample_id1, count: 2,
+            taxonomy_string: 'Phylum;Class;Order;Family;Genus;'
           ).exactly(1).times
       end
 
-      it 'adds pass correct agruments to ImportCsvFirstOrCreateAsvJob' do
+      it 'pass correct agruments to ImportCsvCreateAsvJob' do
         expect do
           subject
         end
           .to have_enqueued_job.with(
             research_project_id: project_id, primer_id: primer_id,
-            taxon_id: taxon_id2, sample_id: sample_id2, count: 4
+            taxon_id: taxon_id2, sample_id: sample_id2, count: 4,
+            taxonomy_string: 'Phylum;Class;Order;Family;Genus;'
           ).exactly(1).times
       end
     end

@@ -5,8 +5,8 @@ module ImportCsv
     include CustomCounter
     include ProcessEdnaResults
 
-    def first_or_create_asv(attributes)
-      record = Asv.where(attributes).first_or_create
+    def create_asv(attributes)
+      record = Asv.create(attributes)
 
       return record if record.valid?
       raise ImportError,

@@ -33,9 +33,9 @@ describe ImportCsv::CreateRecords do
     end
   end
 
-  describe '#first_or_create_asv' do
+  describe '#create_asv' do
     def subject(attributes)
-      dummy_class.first_or_create_asv(attributes)
+      dummy_class.create_asv(attributes)
     end
 
     let(:sample) { create(:sample) }
@@ -43,13 +43,15 @@ describe ImportCsv::CreateRecords do
     let(:primer) { create(:primer) }
     let(:research_project) { create(:research_project) }
     let(:count) { 10 }
+    let(:taxonomy_string) { 'P;C;O;F;G;S' }
     let(:attributes) do
       {
         sample_id: sample.id,
         taxon_id: taxon.taxon_id,
         primer: primer,
         research_project_id: research_project.id,
-        count: count
+        count: count,
+        taxonomy_string: taxonomy_string
       }
     end
 
@@ -68,16 +70,17 @@ describe ImportCsv::CreateRecords do
         expect(asv.primer).to eq(primer)
         expect(asv.count).to eq(count)
         expect(asv.research_project).to eq(research_project)
+        expect(asv.taxonomy_string).to eq(taxonomy_string)
       end
     end
 
     context 'asv already exists' do
-      it 'does not create asv' do
+      it 'creates another asv' do
         create(:asv, sample: sample, taxon_id: taxon.id, primer: primer,
                      count: count, research_project: research_project)
 
         expect { subject(attributes) }
-          .to change(Asv, :count).by(0)
+          .to change(Asv, :count).by(1)
       end
     end
   end

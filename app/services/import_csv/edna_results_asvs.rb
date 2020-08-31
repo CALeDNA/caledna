@@ -136,9 +136,10 @@ module ImportCsv
 
         sample_id = samples_data[barcode]
 
-        #  calls first_or_create_asv
-        ImportCsvFirstOrCreateAsvJob.perform_later(
-          result_metadata.merge(sample_id: sample_id, count: read_count)
+        # calls create_asv
+        ImportCsvCreateAsvJob.perform_later(
+          result_metadata.merge(sample_id: sample_id, count: read_count,
+                                taxonomy_string: row[0])
         )
       end
     end
