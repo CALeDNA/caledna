@@ -156,6 +156,11 @@ describe ImportCsv::EdnaResultsAsvs do
   describe('#queue_asv_job') do
     include ActiveJob::TestHelper
 
+    before do
+      project = create(:research_project, name: 'foo')
+      allow(ResearchProject).to receive(:la_river).and_return(project)
+    end
+
     let(:csv) { './spec/fixtures/import_csv/dna_results_tabs.csv' }
     let(:file) { fixture_file_upload(csv, 'text/csv') }
     let(:research_project) { create(:research_project, id: project_id) }

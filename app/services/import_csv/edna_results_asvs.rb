@@ -65,6 +65,7 @@ module ImportCsv
       end
 
       update_sample_data(samples_data, result_metadata)
+      update_samples_stats_and_view(result_metadata[:research_project_id])
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
@@ -137,6 +138,11 @@ module ImportCsv
         ImportCsvUpdateSampleStatusJob.perform_later(sample_id)
         ImportCsvFirstOrCreateSamplePrimerJob.perform_later(attributes)
       end
+    end
+
+    def update_samples_stats_and_view(research_project_id)
+      update_pour = research_project_id == ResearchProject.la_river.id
+      UpdateSamplesStatsAndViewsJob.perform_later(update_pour: update_pour)
     end
 
     def create_asvs_for_row(row, barcodes, samples_data, result_metadata)
