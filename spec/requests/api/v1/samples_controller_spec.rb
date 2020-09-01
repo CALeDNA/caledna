@@ -120,7 +120,7 @@ describe 'Samples' do
         expect(data.length).to eq(2)
 
         ids = data.map { |i| i['id'] }
-        expect(ids).to eq([1, 2])
+        expect(ids).to match_array([1, 2])
       end
 
       it 'returns empty array if no samples contain the keyword' do
@@ -299,7 +299,7 @@ describe 'Samples' do
         expect(data.length).to eq(3)
 
         ids = data.map { |i| i['id'] }
-        expect(ids).to eq([1, 2, 5])
+        expect(ids).to match_array([1, 2, 5])
       end
 
       it 'returns samples that match substrate & primer' do
@@ -310,7 +310,7 @@ describe 'Samples' do
         expect(data.length).to eq(3)
 
         ids = data.map { |i| i['id'] }
-        expect(ids).to eq([1, 2, 5])
+        expect(ids).to match_array([1, 2, 5])
       end
 
       it 'returns samples that match substrate & keyword' do
@@ -321,7 +321,7 @@ describe 'Samples' do
         expect(data.length).to eq(2)
 
         ids = data.map { |i| i['id'] }
-        expect(ids).to eq([1, 6])
+        expect(ids).to match_array([1, 6])
       end
 
       it 'returns samples that match all the query params' do
