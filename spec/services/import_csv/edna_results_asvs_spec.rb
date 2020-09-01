@@ -63,10 +63,38 @@ describe ImportCsv::EdnaResultsAsvs do
                                sample: create(:sample))
 
         results = subject(file, project, primer.id)
-        message = 'research project has already been imported.'
+        message = 'research project have already been imported.'
 
         expect(results.valid?).to eq(false)
         expect(results.errors).to end_with(message)
+      end
+    end
+
+    context 'when csv does not start with sum taxonomy' do
+      it 'returns error if sum taxonomy exists' do
+        create(:sample, barcode: csv_barcode1, status: 'approved', id: 999)
+        create(:sample, barcode: csv_barcode2, status: 'approved', id: 888)
+        csv = './spec/fixtures/import_csv/dna_results_id_first_column.csv'
+        file = fixture_file_upload(csv, 'text/csv')
+
+        results = subject(file, research_project, primer)
+        message = '"sum.taxonomy" must be first column'
+
+        expect(results.valid?).to eq(false)
+        expect(results.errors).to eq(message)
+      end
+
+      it 'returns error if sum taxonomy does not exists' do
+        create(:sample, barcode: csv_barcode1, status: 'approved', id: 999)
+        create(:sample, barcode: csv_barcode2, status: 'approved', id: 888)
+        csv = './spec/fixtures/import_csv/dna_results_no_sum_taxonomy.csv'
+        file = fixture_file_upload(csv, 'text/csv')
+
+        results = subject(file, research_project, primer)
+        message = '"sum.taxonomy" must be first column'
+
+        expect(results.valid?).to eq(false)
+        expect(results.errors).to eq(message)
       end
     end
 
@@ -83,7 +111,7 @@ describe ImportCsv::EdnaResultsAsvs do
           .to have_enqueued_job(ImportCsvQueueAsvJob)
       end
 
-      it 'adds pass correct agruments to ImportCsvQueueAsvJob' do
+      it 'pass correct agruments to ImportCsvQueueAsvJob' do
         delimiter = "\t"
         data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
@@ -233,7 +261,7 @@ describe ImportCsv::EdnaResultsAsvs do
         .to have_enqueued_job.with(arguements).exactly(1).times
     end
 
-    it 'does add ImportCsvFirstOrCreateResearchProjSourceJob to queue' do
+    it 'adds ImportCsvFirstOrCreateResearchProjSourceJob to queue' do
       expect do
         subject
       end
@@ -241,7 +269,7 @@ describe ImportCsv::EdnaResultsAsvs do
         .exactly(2).times
     end
 
-    it 'adds pass correct agruments to ' \
+    it 'pass correct agruments to ' \
     'ImportCsvFirstOrCreateResearchProjSourceJob' do
       expect do
         subject
@@ -250,7 +278,7 @@ describe ImportCsv::EdnaResultsAsvs do
                              .exactly(1).times
     end
 
-    it 'adds pass correct agruments to ' \
+    it 'pass correct agruments to ' \
     'ImportCsvFirstOrCreateResearchProjSourceJob' do
       expect do
         subject

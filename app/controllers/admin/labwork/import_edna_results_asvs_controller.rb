@@ -16,7 +16,10 @@ module Admin
       def create
         authorize 'Labwork::ImportCsv'.to_sym, :create?
 
-        results = import_csv(file, research_project_id, primer_id)
+        if research_project_id.blank? || primer_id.blank? || file.blank?
+          return handle_missing_data_error
+        end
+
         if results.valid?
           handle_success
         else
@@ -25,6 +28,15 @@ module Admin
       end
 
       private
+
+      def results
+        import_csv(file, research_project_id, primer_id)
+      end
+
+      def handle_missing_data_error
+        flash[:error] = 'You must select a project, primer and file.'
+        redirect_to admin_labwork_import_edna_results_asvs_path
+      end
 
       def handle_success
         project = ResearchProject.find(research_project_id)

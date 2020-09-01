@@ -17,6 +17,9 @@ module ImportCsv
       barcodes = convert_header_row_to_barcodes(data)
       samples = find_samples_from_barcodes(barcodes)
 
+      results = missing_sum_taxonomy?(data)
+      return results if results.is_a?(OpenStruct)
+
       results = samples_not_in_db?(samples)
       return results if results.is_a?(OpenStruct)
 
@@ -42,9 +45,11 @@ module ImportCsv
     def queue_asv_job(data_json, barcodes, samples_data, result_metadata)
       data = JSON.parse(data_json)
       data.each do |row|
+        # skip header row
         next if row.first == 'sum.taxonomy'
 
         taxonomy_string = row.first
+        # skip blank rows where with no taxonomy_string
         next if taxonomy_string.blank?
         next if invalid_taxon?(taxonomy_string)
 
@@ -84,12 +89,19 @@ module ImportCsv
 
     private
 
+    def missing_sum_taxonomy?(data)
+      return false if data.headers.first == 'sum.taxonomy'
+
+      message = '"sum.taxonomy" must be first column'
+      OpenStruct.new(valid?: false, errors: message)
+    end
+
     def already_imported?(project_id, primer_id)
       records = SamplePrimer.where(research_project_id: project_id)
                             .where(primer_id: primer_id)
       return false if records.blank?
 
-      message = 'The eDNA results for this primer and research project has ' \
+      message = 'The eDNA results for this primer and research project have ' \
         'already been imported.'
       OpenStruct.new(valid?: false, errors: message)
     end
