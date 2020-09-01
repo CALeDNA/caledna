@@ -36,8 +36,7 @@ module Admin
       end
 
       def update_sync_samples
-        refresh_samples_map
-        change_websites_update_at
+        UpdateApprovedSamplesWebsiteStatsJob.perform_later
         flash[:success] = 'Sync samples completed'
 
         redirect_to admin_root_path
