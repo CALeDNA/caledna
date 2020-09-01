@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_31_041817) do
+ActiveRecord::Schema.define(version: 2020_09_01_023320) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -411,10 +411,10 @@ ActiveRecord::Schema.define(version: 2020_08_31_041817) do
     t.string "dryad_link"
     t.text "decontamination_method"
     t.jsonb "metadata", default: {}
-    t.string "primers", default: [], array: true
     t.decimal "map_latitude"
     t.decimal "map_longitude"
     t.integer "map_zoom"
+    t.string "primers", array: true
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|
