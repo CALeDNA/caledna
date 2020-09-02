@@ -175,6 +175,8 @@ Rails.application.routes.draw do
   end
 
   resources :places, only: %i[index show edit] do
+    resources :pages, only: %i[show edit update],
+                      controller: 'place_pages'
   end
 
   namespace :beta do

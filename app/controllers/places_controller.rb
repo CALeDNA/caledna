@@ -8,6 +8,7 @@ class PlacesController < ApplicationController
   end
 
   def show
+    redirect_show if place&.show_pages?
     @place = place
   end
 
@@ -27,5 +28,11 @@ class PlacesController < ApplicationController
 
   def place
     @place ||= Place.find(params[:id])
+  end
+
+  def redirect_show
+    redirect_to place_page_url(
+      place_id: params[:id], id: place.default_page.slug
+    )
   end
 end

@@ -14,4 +14,13 @@ class Place < ApplicationRecord
 
   validates :name, :latitude, :longitude, :place_type,
             :place_source_type, presence: true
+
+  def show_pages?
+    place_pages.published.present?
+  end
+
+  def default_page
+    pages = place_pages.published.order('display_order ASC NULLS LAST') || []
+    @default_page ||= pages.first
+  end
 end

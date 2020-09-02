@@ -1,0 +1,16 @@
+<h1><%= @page.title %></h1>
+
+<ul class="submenu">
+  <% @place.place_pages.each do |page| %>
+    <li><%= link_to page.menu_text, place_page_path(place_id: @place.id, id: page.slug) %></li>
+  <% end %>
+</ul>
+
+<%= sanitize @page.body %>
+
+<%= @page.show_map? %>
+<% if @page.show_map? %>
+
+  <div id="places-details-map"></div>
+  <%= javascript_pack_tag 'places_details' %>
+<% end %>
