@@ -46,7 +46,7 @@ export const taxonLayerMixins = {
     },
 
     addTaxonLayer() {
-      const samples = this.taxonSamplesData.filter(function (sample) {
+      const samples = this.taxonSamplesData.filter(function(sample) {
         return sample.latitude && sample.longitude;
       });
 
@@ -84,28 +84,28 @@ export const baseLayerMixins = {
   },
 };
 
-export const iNatLayerMixins = {
+export const secondaryLayerMixins = {
   methods: {
-    toggleInatLayer() {
-      this.showInatLayer = !this.showInatLayer;
+    toggleSecondaryLayer() {
+      this.showSecondaryLayer = !this.showSecondaryLayer;
 
-      if (this.showInatLayer) {
-        this.addInatLayer();
+      if (this.showSecondaryLayer) {
+        this.addSecondaryLayer();
         this.redrawTaxonLayer();
       } else {
-        this.removeInatLayer();
+        this.removeSecondaryLayer();
       }
     },
 
-    removeInatLayer() {
-      if (this.inatLayer) {
-        this.inatLayer.clearLayers();
+    removeSecondaryLayer() {
+      if (this.secondaryLayer) {
+        this.secondaryLayer.clearLayers();
       }
     },
 
-    addInatLayer() {
-      this.inatLayer = baseMap.renderCirclesLayer(
-        this.inatSamplesMapData,
+    addSecondaryLayer() {
+      this.secondaryLayer = baseMap.renderCirclesLayer(
+        this.secondarySamplesData,
         this.map
       );
     },

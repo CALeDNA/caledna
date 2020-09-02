@@ -116,8 +116,8 @@ function createCircleMarker(record, customOptions = {}) {
 }
 
 function createIconMarker(sample, map) {
-  if(!sample.lat || !sample.lng) {
-    return
+  if (!sample.lat || !sample.lng) {
+    return;
   }
 
   var icon = L.marker([sample.lat, sample.lng]);
@@ -130,11 +130,11 @@ function createIconMarker(sample, map) {
 function createMarkerCluster(samples, createMarkerFn) {
   let markerClusterGroup = createClusterGroup();
   samples
-  .filter(sample => (sample.lat && sample.lng))
-  .forEach(function (sample) {
-    var marker = createMarkerFn(sample);
-    markerClusterGroup.addLayer(marker);
-  });
+    .filter((sample) => sample.lat && sample.lng)
+    .forEach(function(sample) {
+      var marker = createMarkerFn(sample);
+      markerClusterGroup.addLayer(marker);
+    });
   return markerClusterGroup;
 }
 
@@ -145,15 +145,15 @@ function renderClusterLayer(data, map) {
 }
 
 function createMarkerLayer(samples, createMarkerFn) {
-  var markers = samples.map(function (sample) {
+  var markers = samples.map(function(sample) {
     return createMarkerFn(sample);
   });
   return L.layerGroup(markers);
 }
 
 function renderCirclesLayer(rawSamples, map, options = {}) {
-  let samples = rawSamples.filter(sample => (sample.lat && sample))
-  return createMarkerLayer(samples, function (sample) {
+  let samples = rawSamples.filter((sample) => sample.lat && sample);
+  return createMarkerLayer(samples, function(sample) {
     return createCircleMarker(sample, {
       ...addMapLayerModal.defaultCircleOptions,
       ...options,
@@ -191,7 +191,7 @@ function formatSamplesData(rawSample) {
   };
 }
 
-function formatGBIFData(sample) {
+function formatGBIFData(sample, options) {
   var colors = {
     Animalia: "rgb(30, 144, 255)",
     Archaea: "rgb(30, 30, 30)",
@@ -207,15 +207,12 @@ function formatGBIFData(sample) {
   var lng = sample.longitude;
   var color;
   var body;
+  var sample_id = sample.id || sample.gbif_id;
+  var sample_name = sample.species || sample.name;
 
-  if (sample.id) {
-    var id = sample.id;
-    var sampleLink =
-      "<a href='https://www.gbif.org/occurrence/" +
-      sample.id +
-      "'>" +
-      sample.id +
-      "</a>";
+  if (sample_id) {
+    var sampleLink = `<a href='https://www.gbif.org/occurrence/${sample_id}'>${sample_id}</a>`;
+
     body =
       "<b>GBIF Link:</b> " +
       sampleLink +
@@ -228,12 +225,11 @@ function formatGBIFData(sample) {
       "<b>Kingdom</b>: " +
       sample.kingdom +
       "<br>" +
-      "<b>Species</b>: " +
-      sample.species;
+      `<b>${sample.taxon_rank}</b>: ${sample_name}`;
   }
 
   if (sample.kingdom) {
-    color = colors[sample.kingdom];
+    color = options.fillColor || colors[sample.kingdom];
   }
 
   return {
@@ -274,12 +270,12 @@ function formatMapData(data) {
   var taxonSamplesData;
   var baseSamplesData;
 
-  taxonSamplesData = samples.map(function (sample) {
+  taxonSamplesData = samples.map(function(sample) {
     return formatSamplesData(sample);
   });
 
   if (baseSamples) {
-    baseSamplesData = baseSamples.map(function (sample) {
+    baseSamplesData = baseSamples.map(function(sample) {
       return formatSamplesData(sample);
     });
   }
@@ -294,19 +290,19 @@ function formatMapData(data) {
 function fetchSamples(apiEndpoint, map, cb) {
   var spinner = addSpinner(map);
 
-  $.get(apiEndpoint, function (data) {
+  $.get(apiEndpoint, function(data) {
     var samples = data.samples ? data.samples.data : [data.sample.data];
     var baseSamples = data.base_samples && data.base_samples.data;
     var samplesData;
     var baseSamplesData;
     var researchProjectData = data.research_project_data;
 
-    samplesData = samples.map(function (sample) {
+    samplesData = samples.map(function(sample) {
       return formatSamplesData(sample);
     });
 
     if (baseSamples) {
-      baseSamplesData = baseSamples.map(function (sample) {
+      baseSamplesData = baseSamples.map(function(sample) {
         return formatSamplesData(sample);
       });
     }
@@ -362,11 +358,11 @@ var legend = L.control({ position: "bottomright" });
 
 // NOTE: toggle the legend for each overlay
 function createOverlayEventListeners(map) {
-  map.on("overlayadd", function (eventLayer) {
+  map.on("overlayadd", function(eventLayer) {
     map.removeControl(legend);
 
     if (environmentLayers[eventLayer.name]) {
-      legend.onAdd = function () {
+      legend.onAdd = function() {
         return createLegend(
           "/data/map_rasters/" + environmentLayers[eventLayer.name].legend
         );
@@ -375,7 +371,7 @@ function createOverlayEventListeners(map) {
     }
   });
 
-  map.on("overlayremove", function (eventLayer) {
+  map.on("overlayremove", function(eventLayer) {
     map.removeControl(legend);
   });
 }
@@ -391,12 +387,12 @@ function onEachFeatureHandler(feature, layer) {
 
 // NOTE: add each overlay to the map
 function createOverlays(map) {
-  $.get("/data/map_layers/uc_reserves.geojson", function (data) {
+  $.get("/data/map_layers/uc_reserves.geojson", function(data) {
     var uc_reserves = L.geoJSON(JSON.parse(data), {
       onEachFeature: onEachFeatureHandler,
     });
 
-    $.get("/data/map_layers/HyspIRI_CA.geojson", function (data) {
+    $.get("/data/map_layers/HyspIRI_CA.geojson", function(data) {
       var geojsonMarkerOptions = {
         radius: 1,
         fillColor: "#000",
@@ -407,7 +403,7 @@ function createOverlays(map) {
       };
 
       var HyspIRI_CA = L.geoJSON(JSON.parse(data), {
-        pointToLayer: function (feature, latlng) {
+        pointToLayer: function(feature, latlng) {
           return L.circleMarker(latlng, geojsonMarkerOptions);
         },
       });
@@ -417,7 +413,7 @@ function createOverlays(map) {
         "UC Reserves": uc_reserves,
       };
 
-      Object.keys(environmentLayers).map(function (layer) {
+      Object.keys(environmentLayers).map(function(layer) {
         overlayMaps[layer] = environmentLayers[layer].layer;
       });
 
@@ -431,7 +427,7 @@ function addMapLayerModal(map) {
   // NOTE: can't use font awesome because it makes d3 tree have buggy anomation
   L.easyButton(
     "map-button-info",
-    function (btn, map) {
+    function(btn, map) {
       $("#map-layer-modal").modal("show");
     },
     "Map info"
@@ -444,8 +440,8 @@ function addMapLayerModal(map) {
 
 function addEventListener(map, samplesData) {
   if (markerFormatEls) {
-    markerFormatEls.forEach(function (el) {
-      el.addEventListener("click", function (event) {
+    markerFormatEls.forEach(function(el) {
+      el.addEventListener("click", function(event) {
         var format = event.target.value;
 
         if (format == "cluster" && currentMarkerFormat == "individual") {
@@ -466,7 +462,7 @@ function addEventListener(map, samplesData) {
   }
 
   if (sampleStatusEl) {
-    sampleStatusEl.addEventListener("change", function (event) {
+    sampleStatusEl.addEventListener("change", function(event) {
       var status = event.target.value;
       filteredSamplesData = retrieveSamplesByStatus(status, samplesData);
 
@@ -508,7 +504,7 @@ function retrieveSamplesByStatus(status, samples) {
 }
 
 function filterSamplesByStatus(samples, status) {
-  return samples.filter(function (sample) {
+  return samples.filter(function(sample) {
     return sample.status == status;
   });
 }

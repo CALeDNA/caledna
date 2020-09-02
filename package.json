@@ -22,7 +22,8 @@
     "vue-loader": "^15.9.3",
     "vue-template-compiler": "^2.5.16",
     "vue-typeahead": "^2.3.2",
-    "vue2-autocomplete-js": "^0.2.2"
+    "vue2-autocomplete-js": "^0.2.2",
+    "wkx": "^0.5.0"
   },
   "devDependencies": {
     "@vue/test-utils": "^1.0.0-beta.13",

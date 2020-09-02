@@ -3,6 +3,12 @@
     <spinner v-if="showSpinner" />
     <div class="taxa-markers">
       <div>
+        <input
+          type="checkbox"
+          value="taxa-sites"
+          v-model="showTaxonLayer"
+          @click="toggleTaxonLayer"
+        />
         <svg height="30" width="30" @click="toggleTaxonLayer">
           <circle
             cx="15"
@@ -14,6 +20,26 @@
           />
         </svg>
         {{ taxonSamplesCount }} {{ "site" | pluralize(taxonSamplesCount) }}
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          value="presence"
+          v-model="showSecondaryLayer"
+          @click="toggleSecondaryLayer"
+        />
+        <svg height="30" width="30" @click="toggleSecondaryLayer">
+          <circle
+            cx="15"
+            cy="15"
+            r="7"
+            stroke="#222"
+            stroke-width="2"
+            fill="orange"
+          />
+        </svg>
+        {{ secondarySamplesCount }}
+        GBIF {{ "occurrence" | pluralize(secondarySamplesCount) }}
       </div>
       <div class="filters-list" v-show="currentFiltersDisplay">
         filters: {{ currentFiltersDisplay }}
@@ -32,6 +58,14 @@
         @reset-filters="resetFilters"
         @submit-filters="submitFilters"
       />
+
+      <a
+        class="btn btn-default"
+        :class="{ active: activeTab === 'taxa' }"
+        @click="$emit('active-tab-event', 'taxa')"
+      >
+        <i class="far fa-list-alt"></i> Taxa List
+      </a>
     </div>
 
     <div id="mapid" v-show="activeTab === 'map'"></div>
@@ -65,183 +99,234 @@
         </template>
       </vue-good-table>
     </div>
+
+    <div v-show="activeTab === 'taxa'"></div>
+
     <map-layers-modal />
   </div>
 </template>
 
 <script>
-import { VueGoodTable } from "vue-good-table";
-import "vue-good-table/dist/vue-good-table.css";
-import axios from "axios";
-import pluralize from "pluralize";
+  import { VueGoodTable } from "vue-good-table";
+  import "vue-good-table/dist/vue-good-table.css";
+  import axios from "axios";
+  import pluralize from "pluralize";
+  var wkx = require("wkx");
 
-import Spinner from "./shared/components/spinner";
-import MapTableToggle from "./shared/components/map-table-toggle";
-import FiltersLayout from "./shared/components/filters/completed-samples";
-import MapLayersModal from "./shared/components/map-layers-modal";
+  import Spinner from "./shared/components/spinner";
+  import MapTableToggle from "./shared/components/map-table-toggle";
+  import FiltersLayout from "./shared/components/filters/completed-samples";
+  import MapLayersModal from "./shared/components/map-layers-modal";
 
-import { formatQuerystring } from "../utils/data_viz_filters";
-import baseMap from "../packs/base_map.js";
-import { samplesTableColumns, samplesDefaultFilters } from "./shared/constants";
-import { mapMixins, searchMixins, taxonLayerMixins } from "./shared/mixins";
-import { completedSamplesStore } from "./shared/stores";
+  import { formatQuerystring } from "../utils/data_viz_filters";
+  import baseMap from "../packs/base_map.js";
+  import {
+    samplesTableColumns,
+    samplesDefaultFilters,
+  } from "./shared/constants";
+  import {
+    mapMixins,
+    searchMixins,
+    taxonLayerMixins,
+    secondaryLayerMixins,
+  } from "./shared/mixins";
+  import { completedSamplesStore } from "./shared/stores";
 
-var resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
-// var endpoint = `/api/v1${resource_and_id}`;
-export default {
-  name: "SamplesMapTable",
-  components: {
-    VueGoodTable,
-    MapTableToggle,
-    FiltersLayout,
-    Spinner,
-    MapLayersModal,
-  },
-  mixins: [mapMixins, searchMixins, taxonLayerMixins],
-  filters: {
-    pluralize,
-  },
-  data() {
-    return {
-      activeTab: "map",
-      columns: samplesTableColumns,
-      rows: [],
-      map: null,
-      endpoint: `/api/v1${resource_and_id}`,
-      store: completedSamplesStore,
-      currentFiltersDisplay: null,
-      showSpinner: false,
+  var resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
+  var endpoint = `/api/v1${resource_and_id}`;
+  var gbifEndpoint = `/api/v1${resource_and_id}/gbif_occurrences`;
+  var kingdomCounts = `/api/v1${resource_and_id}/gbif_occurrences`;
 
-      taxonSamplesCount: null,
-      taxonLayer: null,
-      showTaxonLayer: true,
-      taxonSamplesData: [],
-      initialTaxonSamplesData: [],
-    };
-  },
-  created() {
-    this.fetchSamples(this.endpoint);
-  },
+  export default {
+    name: "SamplesMapTable",
+    components: {
+      VueGoodTable,
+      MapTableToggle,
+      FiltersLayout,
+      Spinner,
+      MapLayersModal,
+    },
+    mixins: [mapMixins, searchMixins, taxonLayerMixins, secondaryLayerMixins],
+    filters: {
+      pluralize,
+    },
+    data() {
+      return {
+        activeTab: "map",
+        columns: samplesTableColumns,
+        rows: [],
+        map: null,
+        store: completedSamplesStore,
+        currentFiltersDisplay: null,
+        showSpinner: false,
 
-  mounted() {
-    // let lat = window.caledna.mapLatitude || baseMap.initialLat;
-    // let lng = window.caledna.mapLongitude || baseMap.initialLng;
-    // let zoom = window.caledna.mapZoom || baseMap.initialZoom;
-    // this.map = baseMap.createMap(L.latLng(lat, lng), zoom);
-    this.map = baseMap.createMap();
+        secondarySamplesCount: null,
+        secondaryLayer: null,
+        showSecondaryLayer: false,
+        secondarySamplesData: [],
+        initialSecondarySamplesData: [],
 
-    this.addMapOverlays(this.map);
-  },
-  methods: {
-    setActiveTab(event) {
-      this.activeTab = event;
+        taxonSamplesCount: null,
+        taxonLayer: null,
+        showTaxonLayer: true,
+        taxonSamplesData: [],
+        initialTaxonSamplesData: [],
+      };
+    },
+    created() {
+      this.fetchSamples(endpoint);
     },
 
-    addTaxonLayer() {
-      const samples = this.taxonSamplesData.filter(function (sample) {
-        return sample.latitude && sample.longitude;
-      });
+    mounted() {
+      // let lat = window.caledna.mapLatitude || baseMap.initialLat;
+      // let lng = window.caledna.mapLongitude || baseMap.initialLng;
+      // let zoom = window.caledna.mapZoom || baseMap.initialZoom;
+      // this.map = baseMap.createMap(L.latLng(lat, lng), zoom);
+      this.map = baseMap.createMap();
 
-      this.taxonLayer = baseMap.renderClusterLayer(samples, this.map);
+      this.addMapOverlays(this.map);
     },
+    methods: {
+      setActiveTab(event) {
+        this.activeTab = event;
+      },
 
-    //================
-    // handle filters
-    //================
-    resetFilters() {
-      this.showTaxonLayer = true;
-      this.store.state.currentFilters.keyword = null;
-      this.taxonSamplesCount = null;
-      this.store.state.currentFilters = { ...samplesDefaultFilters };
-      this.fetchSamples(this.endpoint);
-      this.currentFiltersDisplay = null;
-    },
-    submitFilters() {
-      this.filterSamplesFrontend();
-      this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
-        this.store.state.currentFilters
-      );
-    },
-    filterSamplesFrontend() {
-      let filters = this.store.state.currentFilters;
-      let samples = this.initialTaxonSamplesData;
-      this.taxonSamplesData = this.filterSamples(filters, samples);
-
-      this.prepareSamplesDisplay();
-    },
-
-    //================
-    // config table
-    //================
-    formatTableData(samples) {
-      this.rows = samples.map((sample) => {
-        const {
-          id,
-          barcode,
-          latitude,
-          longitude,
-          location,
-          status,
-          primer_names,
-          substrate,
-          collection_date,
-          taxa_count,
-        } = sample;
-
-        const formatDateString = (dateString) => {
-          let date = new Date(dateString);
-          return date.toLocaleDateString();
-        };
-
-        return {
-          id,
-          barcode,
-          coordinates: `${latitude}, ${longitude}`,
-          location,
-          status: status && status.replace("_", " "),
-          primers: primer_names ? primer_names.join(", ") : "",
-          substrate,
-          taxa_count: taxa_count ? taxa_count : 0,
-          collection_date: formatDateString(collection_date),
-        };
-      });
-    },
-
-    //================
-    // fetch samples
-    //================
-    fetchSamples(url) {
-      console.log("fetchSamples", url);
-      this.showSpinner = true;
-      axios
-        .get(url)
-        .then((response) => {
-          let place = response.data.place;
-          this.map.setView([place.latitude, place.longitude], 15);
-
-          const mapData = baseMap.formatMapData(response.data);
-          if (this.initialTaxonSamplesData.length == 0) {
-            this.initialTaxonSamplesData = mapData.taxonSamplesData;
-          }
-          this.taxonSamplesData = mapData.taxonSamplesData;
-
-          this.prepareSamplesDisplay();
-
-          this.showSpinner = false;
-        })
-        .catch((e) => {
-          console.error(e);
+      addTaxonLayer() {
+        const samples = this.taxonSamplesData.filter(function(sample) {
+          return sample.latitude && sample.longitude;
         });
-    },
-    prepareSamplesDisplay() {
-      this.formatTableData(this.taxonSamplesData);
-      this.taxonSamplesCount = this.taxonSamplesData.length;
 
-      this.removeTaxonLayer();
-      if (this.showTaxonLayer) {
-        this.addTaxonLayer();
-      }
+        this.taxonLayer = baseMap.renderClusterLayer(samples, this.map);
+      },
+
+      //================
+      // handle filters
+      //================
+      resetFilters() {
+        this.showTaxonLayer = true;
+        this.store.state.currentFilters.keyword = null;
+        this.taxonSamplesCount = null;
+        this.store.state.currentFilters = { ...samplesDefaultFilters };
+        this.fetchSamples(endpoint);
+        this.currentFiltersDisplay = null;
+      },
+      submitFilters() {
+        this.filterSamplesFrontend();
+        this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
+          this.store.state.currentFilters
+        );
+      },
+      filterSamplesFrontend() {
+        let filters = this.store.state.currentFilters;
+        let samples = this.initialTaxonSamplesData;
+        this.taxonSamplesData = this.filterSamples(filters, samples);
+
+        this.prepareSamplesDisplay();
+      },
+
+      //================
+      // config table
+      //================
+      formatTableData(samples) {
+        this.rows = samples.map((sample) => {
+          const {
+            id,
+            barcode,
+            latitude,
+            longitude,
+            location,
+            status,
+            primer_names,
+            substrate,
+            collection_date,
+            taxa_count,
+          } = sample;
+
+          const formatDateString = (dateString) => {
+            let date = new Date(dateString);
+            return date.toLocaleDateString();
+          };
+
+          return {
+            id,
+            barcode,
+            coordinates: `${latitude}, ${longitude}`,
+            location,
+            status: status && status.replace("_", " "),
+            primers: primer_names ? primer_names.join(", ") : "",
+            substrate,
+            taxa_count: taxa_count ? taxa_count : 0,
+            collection_date: formatDateString(collection_date),
+          };
+        });
+      },
+
+      //================
+      // fetch samples
+      //================
+      fetchSamples(url) {
+        this.showSpinner = true;
+        axios
+          .get(url)
+          .then((response) => {
+            let place = response.data.place;
+            this.map.setView([place.latitude, place.longitude], 15);
+
+            if (!/^POINT/.test("POINT")) {
+              L.geoJSON(wkx.Geometry.parse(place.geom).toGeoJSON()).addTo(
+                this.map
+              );
+            }
+
+            L.geoJSON(wkx.Geometry.parse(place.buffer).toGeoJSON()).addTo(
+              this.map
+            );
+
+            const mapData = baseMap.formatMapData(response.data);
+            if (this.initialTaxonSamplesData.length == 0) {
+              this.initialTaxonSamplesData = mapData.taxonSamplesData;
+            }
+            this.taxonSamplesData = mapData.taxonSamplesData;
+
+            this.prepareSamplesDisplay();
+          })
+          .then(() => {
+            return axios.get(gbifEndpoint);
+          })
+          .then((response) => {
+            var gbifOccurrences = response.data.gbif_occurrences.data.map(
+              (sample) =>
+                baseMap.formatGBIFData(sample, { fillColor: "orange" })
+            );
+
+            if (this.initialSecondarySamplesData.length == 0) {
+              this.initialSecondarySamplesData = gbifOccurrences;
+            }
+            this.secondarySamplesData = gbifOccurrences;
+
+            this.prepareSamplesDisplay();
+
+            this.showSpinner = false;
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      },
+      prepareSamplesDisplay() {
+        this.formatTableData(this.taxonSamplesData);
+        this.taxonSamplesCount = this.taxonSamplesData.length;
+        this.secondarySamplesCount = this.secondarySamplesData.length;
+
+        this.removeSecondaryLayer();
+        if (this.showSecondaryLayer) {
+          this.addSecondaryLayer();
+        }
+
+        this.removeTaxonLayer();
+        if (this.showTaxonLayer) {
+          this.addTaxonLayer();
+        }
+      },
     },
-  },
-};
+  };
 </script>
