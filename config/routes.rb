@@ -28,7 +28,7 @@ Rails.application.routes.draw do
       resources :field_projects, only: %i[show]
       resources :inat_observations, only: %i[index]
       resources :places, only: %i[show] do
-        get '/biodiv', to: 'places#biodiv'
+        get '/gbif_occurrences', to: 'places#gbif_occurrences'
       end
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]

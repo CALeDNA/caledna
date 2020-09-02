@@ -16,13 +16,23 @@ class PlacesController < ApplicationController
 
   def places
     @places ||= begin
+      if CheckWebsite.caledna_site?
+        all_places.where('place_type_cd IN (?)', ['UCNRS'])
+      else
+        all_places.where('place_type_cd IN (?)', ['pour_location'])
+      end
+    end
+  end
+
+  def all_places
+    @all_places ||= begin
       Place
         .select('id', 'name', 'latitude', 'longitude', 'geom')
         .select('count(samples_map.id) as count')
         .joins('LEFT JOIN samples_map ON ST_DWithin ' \
         '(places.geom::geography, samples_map.geom::geography, 1000)')
         .group('id', 'name', 'latitude', 'longitude', 'geom')
-        .where('place_type_cd IN (?)', ['UCNRS']).order(:name)
+        .order(:name)
     end
   end
 

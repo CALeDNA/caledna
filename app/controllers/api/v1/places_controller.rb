@@ -12,12 +12,11 @@ module Api
         }
       end
 
-      def biodiv
+      def gbif_occurrences
         render json: {
-          edna_taxa: edna_taxa,
-          edna_occurrences: edna_occurrences,
-          gbif_taxa: gbif_taxa,
-          gbif_occurrences: gbif_occurrences
+          gbif_occurrences: { data: gbif_data }
+        }
+      end
         }
       end
 
@@ -35,24 +34,48 @@ module Api
       def place
         @place ||= begin
           Place
-            .select('id', 'name', 'latitude', 'longitude', 'geom', 'count(*)')
-            .select("ST_Buffer(places.geom, #{radius}) as buffer")
+            .select('id', 'latitude', 'longitude', 'geom', 'count(*)')
+            .select("ST_Buffer(places.geom::geography, #{radius}) as buffer")
             .joins('LEFT JOIN samples_map ON ST_DWithin ' \
-            '(places.geom::geography, samples_map.geom::geography, 1000)')
-            .group('id', 'name', 'latitude', 'longitude', 'geom')
+            "(places.geom::geography, samples_map.geom::geography, #{radius})")
+            .group('id', 'latitude', 'longitude', 'geom')
             .find(place_id)
         end
       end
 
       def samples
-        SamplesMap
-          .joins('JOIN places ON ST_DWithin ' \
-          "(places.geom::geography, samples_map.geom::geography, #{radius})")
-          .where('places.id = ?', place_id)
+        @samples ||= begin
+          SamplesMap
+            .joins('JOIN places ON ST_DWithin (places.geom::geography, ' \
+            "samples_map.geom::geography, #{radius})")
+            .where('places.id = ?', place_id)
+        end
       end
 
-      def edna_basic_sql
-        <<~SQL
+      def gbif_columns
+        [
+          'gbif_occurrences.gbif_id', 'gbif_occurrences.taxon_rank', 'latitude',
+          'longitude', 'kingdom', 'gbif_occurrences.scientific_name as name'
+        ]
+      end
+      def gbif_data
+        @gbif_data ||= begin
+          if CheckWebsite.caledna_site?
+            []
+          else
+            PourGbifOccurrence
+              .joins('JOIN pour.gbif_taxa on gbif_taxa.taxon_id = ' \
+              'gbif_occurrences.taxon_id')
+              .joins('JOIN places ON ST_DWithin (places.geom::geography, ' \
+              "gbif_occurrences.geom::geography, #{radius})")
+              .select(gbif_columns)
+              .where('places.id = ?', place_id)
+          end
+        end
+      end
+      # rubocop:enable Metrics/MethodLength
+      def edna_basic_kingdom_sql
+        sql = <<~SQL
           FROM samples
           JOIN places
             ON ST_DWithin (places.geom::geography, samples.geom::geography, $1)
@@ -61,11 +84,20 @@ module Api
           JOIN ncbi_divisions
             ON ncbi_divisions.id = ncbi_nodes_edna.cal_division_id
           WHERE places.id = $2
-          AND research_project_id = #{ResearchProject.la_river.id}
+        SQL
+
+        if CheckWebsite.pour_site?
+          sql += " AND research_project_id = #{ResearchProject.la_river.id} "
+        end
+
+        sql += <<~SQL
           GROUP BY ncbi_divisions.name
           ORDER BY ncbi_divisions.name
         SQL
+
+        sql
       end
+      # rubocop:enable Metrics/MethodLength
 
       def edna_taxa_sql
         <<~SQL
