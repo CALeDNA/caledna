@@ -1,0 +1,7 @@
+<h1>University of California Natural Reserves</h1>
+
+<ul>
+  <% @places.each do |place| %>
+    <li><%= link_to place.name, place_path(place) %> (<%= pluralize(place.count, 'site') %>)</li>
+  <% end %>
+</ul>

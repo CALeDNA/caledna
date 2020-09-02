@@ -174,6 +174,9 @@ Rails.application.routes.draw do
                       controller: 'research_projects/pages'
   end
 
+  resources :places, only: %i[index show edit] do
+  end
+
   namespace :beta do
     get 'geojson_demo', to: 'geojson_demo'
     get 'map_v2', to: 'map_v2'
