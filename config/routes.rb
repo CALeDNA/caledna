@@ -27,6 +27,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :field_projects, only: %i[show]
       resources :inat_observations, only: %i[index]
+      resources :places, only: %i[show] do
+        get '/biodiv', to: 'places#biodiv'
+      end
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]
       resources :samples, only: %i[index show] do
