@@ -66,6 +66,11 @@
       >
         <i class="far fa-list-alt"></i> Taxa List
       </a>
+      <select v-model="selectedRadius" @change="updateRadius">
+        <option v-for="i in [0.5, 1, 2, 3]" :key="i"
+          >{{ i }} kilometer</option
+        ></select
+      >
     </div>
 
     <div id="mapid" v-show="activeTab === 'map'"></div>
@@ -136,6 +141,7 @@
   var endpoint = `/api/v1${resource_and_id}`;
   var gbifEndpoint = `/api/v1${resource_and_id}/gbif_occurrences`;
   var kingdomCounts = `/api/v1${resource_and_id}/gbif_occurrences`;
+  var ednaGbifEndpoint = `/api/v1${resource_and_id}/edna_gbif`;
 
   export default {
     name: "SamplesMapTable",
@@ -159,6 +165,10 @@
         store: completedSamplesStore,
         currentFiltersDisplay: null,
         showSpinner: false,
+
+        selectedRadius: "1 kilometer",
+        radius: 1000,
+        bufferLayer: null,
 
         secondarySamplesCount: null,
         secondaryLayer: null,
@@ -187,6 +197,12 @@
       this.addMapOverlays(this.map);
     },
     methods: {
+      updateRadius(e) {
+        this.radius = Number(this.selectedRadius.split(" ")[0]) * 1000;
+        var url = `${endpoint}?radius=${this.radius}`;
+        this.fetchSamples(url);
+      },
+
       setActiveTab(event) {
         this.activeTab = event;
       },
@@ -270,17 +286,23 @@
           .get(url)
           .then((response) => {
             let place = response.data.place;
-            this.map.setView([place.latitude, place.longitude], 15);
+            let zoom = this.radius > 1000 ? 15 - this.radius / 2000 : 15;
+            this.map.setView([place.latitude, place.longitude], zoom);
 
+            // add boundaries for any geometry other points
             if (!/^POINT/.test("POINT")) {
               L.geoJSON(wkx.Geometry.parse(place.geom).toGeoJSON()).addTo(
                 this.map
               );
             }
 
-            L.geoJSON(wkx.Geometry.parse(place.buffer).toGeoJSON()).addTo(
-              this.map
-            );
+            if (this.bufferLayer) {
+              this.bufferLayer.clearLayers();
+            }
+
+            this.bufferLayer = L.geoJSON(
+              wkx.Geometry.parse(place.buffer).toGeoJSON()
+            ).addTo(this.map);
 
             const mapData = baseMap.formatMapData(response.data);
             if (this.initialTaxonSamplesData.length == 0) {
@@ -291,7 +313,7 @@
             this.prepareSamplesDisplay();
           })
           .then(() => {
-            return axios.get(gbifEndpoint);
+            return axios.get(`${gbifEndpoint}?radius=${this.radius}`);
           })
           .then((response) => {
             var gbifOccurrences = response.data.gbif_occurrences.data.map(
