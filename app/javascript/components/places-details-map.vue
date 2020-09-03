@@ -75,6 +75,34 @@
 
     <div id="mapid" v-show="activeTab === 'map'"></div>
 
+    <h2>eDNA Taxa</h2>
+    <kingdom-bar-chart
+      v-if="ednaTaxa.length > 0"
+      :chart-data="ednaTaxa"
+      selector="edna-taxa-chart"
+    ></kingdom-bar-chart>
+
+    <h2>eDNA Occurrences</h2>
+    <kingdom-bar-chart
+      v-if="ednaOccurrences.length > 0"
+      :chart-data="ednaOccurrences"
+      selector="edna-occurrences-chart"
+    ></kingdom-bar-chart>
+
+    <h2>GBIF Taxa</h2>
+    <kingdom-bar-chart
+      v-if="gbifTaxa.length > 0"
+      :chart-data="gbifTaxa"
+      selector="gbif-taxa-chart"
+    ></kingdom-bar-chart>
+
+    <h2>GBIF Occurrences</h2>
+    <kingdom-bar-chart
+      v-if="gbifOccurrences.length > 0"
+      :chart-data="gbifOccurrences"
+      selector="gbif-occurrences-chart"
+    ></kingdom-bar-chart>
+
     <div v-show="activeTab === 'table'">
       <vue-good-table
         :pagination-options="{
@@ -122,6 +150,7 @@
   import MapTableToggle from "./shared/components/map-table-toggle";
   import FiltersLayout from "./shared/components/filters/completed-samples";
   import MapLayersModal from "./shared/components/map-layers-modal";
+  import KingdomBarChart from "./shared/components/kingdom-bar-chart";
 
   import { formatQuerystring } from "../utils/data_viz_filters";
   import baseMap from "../packs/base_map.js";
@@ -140,8 +169,7 @@
   var resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
   var endpoint = `/api/v1${resource_and_id}`;
   var gbifEndpoint = `/api/v1${resource_and_id}/gbif_occurrences`;
-  var kingdomCounts = `/api/v1${resource_and_id}/gbif_occurrences`;
-  var ednaGbifEndpoint = `/api/v1${resource_and_id}/edna_gbif`;
+  var kingdomCountsEndpoint = `/api/v1${resource_and_id}/kingdom_counts`;
 
   export default {
     name: "SamplesMapTable",
@@ -151,6 +179,7 @@
       FiltersLayout,
       Spinner,
       MapLayersModal,
+      KingdomBarChart,
     },
     mixins: [mapMixins, searchMixins, taxonLayerMixins, secondaryLayerMixins],
     filters: {
@@ -181,10 +210,16 @@
         showTaxonLayer: true,
         taxonSamplesData: [],
         initialTaxonSamplesData: [],
+
+        ednaTaxa: [],
+        ednaOccurrences: [],
+        gbifTaxa: [],
+        gbifOccurrences: [],
       };
     },
     created() {
       this.fetchSamples(endpoint);
+      this.fetchKingdomChart(kingdomCountsEndpoint);
     },
 
     mounted() {
@@ -201,6 +236,8 @@
         this.radius = Number(this.selectedRadius.split(" ")[0]) * 1000;
         var url = `${endpoint}?radius=${this.radius}`;
         this.fetchSamples(url);
+        var url = `${kingdomCountsEndpoint}?radius=${this.radius}`;
+        this.fetchKingdomChart(url);
       },
 
       setActiveTab(event) {
@@ -348,6 +385,19 @@
         if (this.showTaxonLayer) {
           this.addTaxonLayer();
         }
+      },
+      fetchKingdomChart(url) {
+        axios
+          .get(url)
+          .then((response) => {
+            this.ednaTaxa = response.data.edna_taxa;
+            this.ednaOccurrences = response.data.edna_occurrences;
+            this.gbifTaxa = response.data.gbif_taxa;
+            this.gbifOccurrences = response.data.gbif_occurrences;
+          })
+          .catch((e) => {
+            console.error(e);
+          });
       },
     },
   };

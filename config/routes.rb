@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       resources :inat_observations, only: %i[index]
       resources :places, only: %i[show] do
         get '/gbif_occurrences', to: 'places#gbif_occurrences'
+        get '/kingdom_counts', to: 'places#kingdom_counts'
       end
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]

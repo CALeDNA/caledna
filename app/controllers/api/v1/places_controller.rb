@@ -17,6 +17,13 @@ module Api
           gbif_occurrences: { data: gbif_data }
         }
       end
+
+      def kingdom_counts
+        render json: {
+          edna_taxa: edna_taxa_kingdom,
+          edna_occurrences: edna_occurrences_kingdom,
+          gbif_taxa: gbif_taxa_kingdom,
+          gbif_occurrences: gbif_occurrences_kingdom
         }
       end
 
@@ -58,6 +65,7 @@ module Api
           'longitude', 'kingdom', 'gbif_occurrences.scientific_name as name'
         ]
       end
+
       def gbif_data
         @gbif_data ||= begin
           if CheckWebsite.caledna_site?
@@ -73,7 +81,7 @@ module Api
           end
         end
       end
-      # rubocop:enable Metrics/MethodLength
+
       def edna_basic_kingdom_sql
         sql = <<~SQL
           FROM samples
@@ -97,33 +105,32 @@ module Api
 
         sql
       end
-      # rubocop:enable Metrics/MethodLength
 
-      def edna_taxa_sql
+      def edna_taxa_kingdom_sql
         <<~SQL
-          SELECT ncbi_divisions.name, COUNT(DISTINCT(asvs.taxon_id))
-          #{edna_basic_sql}
+          SELECT ncbi_divisions.name as kingdom, COUNT(DISTINCT(asvs.taxon_id))
+          #{edna_basic_kingdom_sql}
         SQL
       end
 
-      def edna_occurrences_sql
+      def edna_occurrences_kingdom_sql
         <<~SQL
-          SELECT ncbi_divisions.name, COUNT(asvs.taxon_id)
-          #{edna_basic_sql}
+          SELECT ncbi_divisions.name as kingdom, COUNT(asvs.taxon_id)
+          #{edna_basic_kingdom_sql}
         SQL
       end
 
-      def edna_taxa
+      def edna_taxa_kingdom
         bindings = [[nil, radius], [nil, place_id]]
-        conn.exec_query(edna_taxa_sql, 'q', bindings)
+        conn.exec_query(edna_taxa_kingdom_sql, 'q', bindings)
       end
 
-      def edna_occurrences
+      def edna_occurrences_kingdom
         bindings = [[nil, radius], [nil, place_id]]
-        conn.exec_query(edna_occurrences_sql, 'q', bindings)
+        conn.exec_query(edna_occurrences_kingdom_sql, 'q', bindings)
       end
 
-      def gbif_basic_sql
+      def gbif_basic_kingdom_sql
         <<~SQL
           FROM places
           JOIN pour.gbif_occurrences
@@ -137,29 +144,37 @@ module Api
         SQL
       end
 
-      def gbif_taxa_sql
+      def gbif_taxa_kingdom_sql
         <<~SQL
           SELECT pour.gbif_taxa.kingdom,
             COUNT(DISTINCT(gbif_occurrences.taxon_id))
-          #{gbif_basic_sql}
+          #{gbif_basic_kingdom_sql}
         SQL
       end
 
-      def gbif_occurrences_sql
+      def gbif_occurrences_kingdom_sql
         <<~SQL
           SELECT pour.gbif_taxa.kingdom, COUNT(gbif_occurrences.taxon_id)
-          #{gbif_basic_sql}
+          #{gbif_basic_kingdom_sql}
         SQL
       end
 
-      def gbif_taxa
-        bindings = [[nil, radius], [nil, place_id]]
-        conn.exec_query(gbif_taxa_sql, 'q', bindings)
+      def gbif_taxa_kingdom
+        if CheckWebsite.caledna_site?
+          []
+        else
+          bindings = [[nil, radius], [nil, place_id]]
+          conn.exec_query(gbif_taxa_kingdom_sql, 'q', bindings)
+        end
       end
 
-      def gbif_occurrences
-        bindings = [[nil, radius], [nil, place_id]]
-        conn.exec_query(gbif_occurrences_sql, 'q', bindings)
+      def gbif_occurrences_kingdom
+        if CheckWebsite.caledna_site?
+          []
+        else
+          bindings = [[nil, radius], [nil, place_id]]
+          conn.exec_query(gbif_occurrences_kingdom_sql, 'q', bindings)
+        end
       end
 
       def conn
