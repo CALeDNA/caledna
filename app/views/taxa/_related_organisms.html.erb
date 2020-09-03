@@ -1,6 +1,6 @@
-<h2>Related Organisms</h2>
+<h2>Children Organisms</h2>
 
-<p>All the organisms in our eDNA results that are related to <%= taxon.canonical_name %>.</p>
+<p>All the organisms in our eDNA results that are children of <%= taxon.canonical_name %>.</p>
 <% start = params[:related_organisms_page] ? params[:related_organisms_page].to_i - 1 : 0 %>
 <ol start = "<%= 1 + (start * 50) %>">
   <% related_organisms.each do |taxon| %>
