@@ -9,6 +9,10 @@ Rails.application.routes.draw do
     unlocks: 'researchers/unlocks'
   }
 
+  resources :places, only: %i[index show edit] do
+    resources :pages, only: %i[show edit update],
+                      controller: 'place_pages'
+  end
   resources :samples, only: %i[index show], controller: 'samples'
   resources :taxa, only: %i[index show create], controller: 'taxa'
   resource :taxa_search, only: %i[show]
