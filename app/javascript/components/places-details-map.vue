@@ -141,269 +141,269 @@
 </template>
 
 <script>
-  import { VueGoodTable } from "vue-good-table";
-  import "vue-good-table/dist/vue-good-table.css";
-  import axios from "axios";
-  import pluralize from "pluralize";
-  let wkx = require("wkx");
+import { VueGoodTable } from "vue-good-table";
+import "vue-good-table/dist/vue-good-table.css";
+import axios from "axios";
+import pluralize from "pluralize";
+let wkx = require("wkx");
 
-  import Spinner from "./shared/components/spinner";
-  import MapTableToggle from "./shared/components/map-table-toggle";
-  import FiltersLayout from "./shared/components/filters/completed-samples";
-  import MapLayersModal from "./shared/components/map-layers-modal";
-  import KingdomBarChart from "./shared/components/kingdom-bar-chart";
+import Spinner from "./shared/components/spinner";
+import MapTableToggle from "./shared/components/map-table-toggle";
+import FiltersLayout from "./shared/components/filters/completed-samples";
+import MapLayersModal from "./shared/components/map-layers-modal";
+import KingdomBarChart from "./shared/components/kingdom-bar-chart";
 
-  import { formatQuerystring } from "../utils/data_viz_filters";
-  import baseMap from "../packs/base_map.js";
-  import {
-    samplesTableColumns,
-    samplesDefaultFilters,
-  } from "./shared/constants";
-  import {
-    mapMixins,
-    searchMixins,
-    taxonLayerMixins,
-    secondaryLayerMixins,
-  } from "./shared/mixins";
-  import { completedSamplesStore } from "./shared/stores";
-  import { pourSite } from "./shared/constants/checkWebsite";
+import { formatQuerystring } from "../utils/data_viz_filters";
+import baseMap from "../packs/base_map.js";
+import { samplesTableColumns, samplesDefaultFilters } from "./shared/constants";
+import {
+  mapMixins,
+  searchMixins,
+  taxonLayerMixins,
+  secondaryLayerMixins,
+} from "./shared/mixins";
+import { completedSamplesStore } from "./shared/stores";
+import { pourSite } from "./shared/constants/checkWebsite";
 
-  const resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
-  const endpoint = `/api/v1${resource_and_id}`;
-  const gbifEndpoint = `/api/v1${resource_and_id}/gbif_occurrences`;
-  const kingdomCountsEndpoint = `/api/v1${resource_and_id}/kingdom_counts`;
+const resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
+const endpoint = `/api/v1${resource_and_id}`;
+const gbifEndpoint = `/api/v1${resource_and_id}/gbif_occurrences`;
+const kingdomCountsEndpoint = `/api/v1${resource_and_id}/kingdom_counts`;
 
-  export default {
-    name: "SamplesMapTable",
-    components: {
-      VueGoodTable,
-      MapTableToggle,
-      FiltersLayout,
-      Spinner,
-      MapLayersModal,
-      KingdomBarChart,
+export default {
+  name: "SamplesMapTable",
+  components: {
+    VueGoodTable,
+    MapTableToggle,
+    FiltersLayout,
+    Spinner,
+    MapLayersModal,
+    KingdomBarChart,
+  },
+  mixins: [mapMixins, searchMixins, taxonLayerMixins, secondaryLayerMixins],
+  filters: {
+    pluralize,
+  },
+  data() {
+    return {
+      activeTab: "map",
+      columns: samplesTableColumns,
+      rows: [],
+      map: null,
+      store: completedSamplesStore,
+      currentFiltersDisplay: null,
+      showSpinner: false,
+      showGbif: pourSite,
+
+      selectedRadius: "1 kilometer",
+      radius: 1000,
+      bufferLayer: null,
+
+      secondarySamplesCount: null,
+      secondaryLayer: null,
+      showSecondaryLayer: false,
+      secondarySamplesData: [],
+      initialSecondarySamplesData: [],
+
+      taxonSamplesCount: null,
+      taxonLayer: null,
+      showTaxonLayer: true,
+      taxonSamplesData: [],
+      initialTaxonSamplesData: [],
+
+      ednaTaxa: [],
+      ednaOccurrences: [],
+      gbifTaxa: [],
+      gbifOccurrences: [],
+    };
+  },
+  created() {
+    this.fetchSamples(endpoint);
+    this.fetchKingdomChart(kingdomCountsEndpoint);
+  },
+
+  mounted() {
+    // let lat = window.caledna.mapLatitude || baseMap.initialLat;
+    // let lng = window.caledna.mapLongitude || baseMap.initialLng;
+    // let zoom = window.caledna.mapZoom || baseMap.initialZoom;
+    // this.map = baseMap.createMap(L.latLng(lat, lng), zoom);
+    this.map = baseMap.createMap();
+
+    this.addMapOverlays(this.map);
+  },
+  methods: {
+    updateRadius(e) {
+      this.radius = Number(this.selectedRadius.split(" ")[0]) * 1000;
+      var url = `${endpoint}?radius=${this.radius}`;
+      this.fetchSamples(url);
+      var url = `${kingdomCountsEndpoint}?radius=${this.radius}`;
+      this.fetchKingdomChart(url);
     },
-    mixins: [mapMixins, searchMixins, taxonLayerMixins, secondaryLayerMixins],
-    filters: {
-      pluralize,
+
+    setActiveTab(event) {
+      this.activeTab = event;
     },
-    data() {
-      return {
-        activeTab: "map",
-        columns: samplesTableColumns,
-        rows: [],
-        map: null,
-        store: completedSamplesStore,
-        currentFiltersDisplay: null,
-        showSpinner: false,
-        showGbif: pourSite,
 
-        selectedRadius: "1 kilometer",
-        radius: 1000,
-        bufferLayer: null,
+    addTaxonLayer() {
+      const samples = this.taxonSamplesData.filter(function (sample) {
+        return sample.latitude && sample.longitude;
+      });
 
-        secondarySamplesCount: null,
-        secondaryLayer: null,
-        showSecondaryLayer: false,
-        secondarySamplesData: [],
-        initialSecondarySamplesData: [],
-
-        taxonSamplesCount: null,
-        taxonLayer: null,
-        showTaxonLayer: true,
-        taxonSamplesData: [],
-        initialTaxonSamplesData: [],
-
-        ednaTaxa: [],
-        ednaOccurrences: [],
-        gbifTaxa: [],
-        gbifOccurrences: [],
-      };
+      this.taxonLayer = baseMap.renderClusterLayer(samples, this.map);
     },
-    created() {
+
+    //================
+    // handle filters
+    //================
+    resetFilters() {
+      this.showTaxonLayer = true;
+      this.store.state.currentFilters.keyword = null;
+      this.taxonSamplesCount = null;
+      this.store.state.currentFilters = { ...samplesDefaultFilters };
       this.fetchSamples(endpoint);
-      this.fetchKingdomChart(kingdomCountsEndpoint);
+      this.currentFiltersDisplay = null;
+    },
+    submitFilters() {
+      this.filterSamplesFrontend();
+      this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
+        this.store.state.currentFilters
+      );
+    },
+    filterSamplesFrontend() {
+      let filters = this.store.state.currentFilters;
+      let samples = this.initialTaxonSamplesData;
+      this.taxonSamplesData = this.filterSamples(filters, samples);
+
+      this.prepareSamplesDisplay();
     },
 
-    mounted() {
-      // let lat = window.caledna.mapLatitude || baseMap.initialLat;
-      // let lng = window.caledna.mapLongitude || baseMap.initialLng;
-      // let zoom = window.caledna.mapZoom || baseMap.initialZoom;
-      // this.map = baseMap.createMap(L.latLng(lat, lng), zoom);
-      this.map = baseMap.createMap();
+    //================
+    // config table
+    //================
+    formatTableData(samples) {
+      this.rows = samples.map((sample) => {
+        const {
+          id,
+          barcode,
+          latitude,
+          longitude,
+          location,
+          status,
+          primer_names,
+          substrate,
+          collection_date,
+          taxa_count,
+        } = sample;
 
-      this.addMapOverlays(this.map);
+        const formatDateString = (dateString) => {
+          let date = new Date(dateString);
+          return date.toLocaleDateString();
+        };
+
+        return {
+          id,
+          barcode,
+          coordinates: `${latitude}, ${longitude}`,
+          location,
+          status: status && status.replace("_", " "),
+          primers: primer_names ? primer_names.join(", ") : "",
+          substrate,
+          taxa_count: taxa_count ? taxa_count : 0,
+          collection_date: formatDateString(collection_date),
+        };
+      });
     },
-    methods: {
-      updateRadius(e) {
-        this.radius = Number(this.selectedRadius.split(" ")[0]) * 1000;
-        var url = `${endpoint}?radius=${this.radius}`;
-        this.fetchSamples(url);
-        var url = `${kingdomCountsEndpoint}?radius=${this.radius}`;
-        this.fetchKingdomChart(url);
-      },
 
-      setActiveTab(event) {
-        this.activeTab = event;
-      },
+    //================
+    // fetch samples
+    //================
+    fetchSamples(url) {
+      this.showSpinner = true;
+      axios
+        .get(url)
+        .then((response) => {
+          let place = response.data.place;
+          let zoom = this.radius > 1000 ? 15 - this.radius / 2000 : 15;
+          // this.map.setView([place.latitude, place.longitude], zoom);
 
-      addTaxonLayer() {
-        const samples = this.taxonSamplesData.filter(function(sample) {
-          return sample.latitude && sample.longitude;
-        });
+          let geom = L.geoJSON(wkx.Geometry.parse(place.geom).toGeoJSON());
 
-        this.taxonLayer = baseMap.renderClusterLayer(samples, this.map);
-      },
+          this.map.fitBounds(geom.getBounds()); // Move to the shape!
 
-      //================
-      // handle filters
-      //================
-      resetFilters() {
-        this.showTaxonLayer = true;
-        this.store.state.currentFilters.keyword = null;
-        this.taxonSamplesCount = null;
-        this.store.state.currentFilters = { ...samplesDefaultFilters };
-        this.fetchSamples(endpoint);
-        this.currentFiltersDisplay = null;
-      },
-      submitFilters() {
-        this.filterSamplesFrontend();
-        this.currentFiltersDisplay = this.formatCurrentFiltersDisplay(
-          this.store.state.currentFilters
-        );
-      },
-      filterSamplesFrontend() {
-        let filters = this.store.state.currentFilters;
-        let samples = this.initialTaxonSamplesData;
-        this.taxonSamplesData = this.filterSamples(filters, samples);
-
-        this.prepareSamplesDisplay();
-      },
-
-      //================
-      // config table
-      //================
-      formatTableData(samples) {
-        this.rows = samples.map((sample) => {
-          const {
-            id,
-            barcode,
-            latitude,
-            longitude,
-            location,
-            status,
-            primer_names,
-            substrate,
-            collection_date,
-            taxa_count,
-          } = sample;
-
-          const formatDateString = (dateString) => {
-            let date = new Date(dateString);
-            return date.toLocaleDateString();
-          };
-
-          return {
-            id,
-            barcode,
-            coordinates: `${latitude}, ${longitude}`,
-            location,
-            status: status && status.replace("_", " "),
-            primers: primer_names ? primer_names.join(", ") : "",
-            substrate,
-            taxa_count: taxa_count ? taxa_count : 0,
-            collection_date: formatDateString(collection_date),
-          };
-        });
-      },
-
-      //================
-      // fetch samples
-      //================
-      fetchSamples(url) {
-        this.showSpinner = true;
-        axios
-          .get(url)
-          .then((response) => {
-            let place = response.data.place;
-            let zoom = this.radius > 1000 ? 15 - this.radius / 2000 : 15;
-            this.map.setView([place.latitude, place.longitude], zoom);
-
-            if (this.showGbif) {
-              if (this.bufferLayer) {
-                this.bufferLayer.clearLayers();
-              }
-
-              this.bufferLayer = L.geoJSON(
-                wkx.Geometry.parse(place.buffer).toGeoJSON()
-              ).addTo(this.map);
+          if (this.showGbif) {
+            if (this.bufferLayer) {
+              this.bufferLayer.clearLayers();
             }
 
-            // add boundaries for any geometry other points
-            if (!/^POINT/.test(place.geom)) {
-              L.geoJSON(wkx.Geometry.parse(place.geom).toGeoJSON()).addTo(
-                this.map
-              );
-            }
+            this.bufferLayer = L.geoJSON(
+              wkx.Geometry.parse(place.buffer).toGeoJSON()
+            ).addTo(this.map);
+          }
 
-            const mapData = baseMap.formatMapData(response.data);
-            if (this.initialTaxonSamplesData.length == 0) {
-              this.initialTaxonSamplesData = mapData.taxonSamplesData;
-            }
-            this.taxonSamplesData = mapData.taxonSamplesData;
-
-            this.prepareSamplesDisplay();
-          })
-          .then(() => {
-            return axios.get(`${gbifEndpoint}?radius=${this.radius}`);
-          })
-          .then((response) => {
-            var gbifOccurrences = response.data.gbif_occurrences.data.map(
-              (sample) =>
-                baseMap.formatGBIFData(sample, { fillColor: "orange" })
+          // add boundaries for any geometry other points
+          if (!/^POINT/.test(place.geom)) {
+            L.geoJSON(wkx.Geometry.parse(place.geom).toGeoJSON()).addTo(
+              this.map
             );
+          }
 
-            if (this.initialSecondarySamplesData.length == 0) {
-              this.initialSecondarySamplesData = gbifOccurrences;
-            }
-            this.secondarySamplesData = gbifOccurrences;
+          const mapData = baseMap.formatMapData(response.data);
+          if (this.initialTaxonSamplesData.length == 0) {
+            this.initialTaxonSamplesData = mapData.taxonSamplesData;
+          }
+          this.taxonSamplesData = mapData.taxonSamplesData;
 
-            this.prepareSamplesDisplay();
+          this.prepareSamplesDisplay();
+        })
+        .then(() => {
+          return axios.get(`${gbifEndpoint}?radius=${this.radius}`);
+        })
+        .then((response) => {
+          var gbifOccurrences = response.data.gbif_occurrences.data.map(
+            (sample) => baseMap.formatGBIFData(sample, { fillColor: "orange" })
+          );
 
-            this.showSpinner = false;
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-      },
-      prepareSamplesDisplay() {
-        this.formatTableData(this.taxonSamplesData);
-        this.taxonSamplesCount = this.taxonSamplesData.length;
-        this.secondarySamplesCount = this.secondarySamplesData.length;
+          if (this.initialSecondarySamplesData.length == 0) {
+            this.initialSecondarySamplesData = gbifOccurrences;
+          }
+          this.secondarySamplesData = gbifOccurrences;
 
-        this.removeSecondaryLayer();
-        if (this.showSecondaryLayer) {
-          this.addSecondaryLayer();
-        }
+          this.prepareSamplesDisplay();
 
-        this.removeTaxonLayer();
-        if (this.showTaxonLayer) {
-          this.addTaxonLayer();
-        }
-      },
-      fetchKingdomChart(url) {
-        axios
-          .get(url)
-          .then((response) => {
-            this.ednaTaxa = response.data.edna_taxa;
-            this.ednaOccurrences = response.data.edna_occurrences;
-            this.gbifTaxa = response.data.gbif_taxa;
-            this.gbifOccurrences = response.data.gbif_occurrences;
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-      },
+          this.showSpinner = false;
+        })
+        .catch((e) => {
+          console.error(e);
+        });
     },
-  };
+    prepareSamplesDisplay() {
+      this.formatTableData(this.taxonSamplesData);
+      this.taxonSamplesCount = this.taxonSamplesData.length;
+      this.secondarySamplesCount = this.secondarySamplesData.length;
+
+      this.removeSecondaryLayer();
+      if (this.showSecondaryLayer) {
+        this.addSecondaryLayer();
+      }
+
+      this.removeTaxonLayer();
+      if (this.showTaxonLayer) {
+        this.addTaxonLayer();
+      }
+    },
+    fetchKingdomChart(url) {
+      axios
+        .get(url)
+        .then((response) => {
+          this.ednaTaxa = response.data.edna_taxa;
+          this.ednaOccurrences = response.data.edna_occurrences;
+          this.gbifTaxa = response.data.gbif_taxa;
+          this.gbifOccurrences = response.data.gbif_occurrences;
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+  },
+};
 </script>
