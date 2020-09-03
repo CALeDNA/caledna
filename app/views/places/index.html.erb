@@ -5,3 +5,11 @@
     <li><%= link_to place.name, place_path(place) %> (<%= pluralize(place.count, 'site') %>)</li>
   <% end %>
 </ul>
+
+<h1>EcoRegions</h1>
+
+<ul>
+  <% @places2.each do |place| %>
+    <li><%= link_to place.name, place_path(place) %> (<%= pluralize(place.count, 'site') %>)</li>
+  <% end %>
+</ul>

@@ -5,6 +5,7 @@ class PlacesController < ApplicationController
 
   def index
     @places = places
+    @places2 = places2
   end
 
   def show
@@ -24,13 +25,23 @@ class PlacesController < ApplicationController
     end
   end
 
+  def places2
+    @places2 ||= begin
+      if CheckWebsite.caledna_site?
+        all_places.where('place_type_cd IN (?)', ['ecoregions_l4'])
+      else
+        []
+      end
+    end
+  end
+
   def all_places
     @all_places ||= begin
       Place
         .select('id', 'name', 'latitude', 'longitude', 'geom')
         .select('count(samples_map.id) as count')
         .joins('JOIN samples_map ON ST_DWithin ' \
-        '(places.geom::geography, samples_map.geom::geography, 1000)')
+        '(places.geom_projected, samples_map.geom_projected, 10)')
         .group('id', 'name', 'latitude', 'longitude', 'geom')
         .order(:name)
     end

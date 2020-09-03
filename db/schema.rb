@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_02_000811) do
+ActiveRecord::Schema.define(version: 2020_09_03_150102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -362,8 +362,10 @@ ActiveRecord::Schema.define(version: 2020_09_02_000811) do
     t.string "na_l2name"
     t.string "na_l1code"
     t.string "na_l1name"
+    t.geometry "geom_projected", limit: {:srid=>3857, :type=>"geometry"}
     t.index "lower((name)::text) text_pattern_ops", name: "index_places_on_name"
     t.index ["geom"], name: "index_places_on_geom", using: :gist
+    t.index ["geom_projected"], name: "index_places_on_geom_projected", using: :gist
     t.index ["place_source_id"], name: "index_places_on_place_source_id"
   end
 
@@ -566,9 +568,11 @@ ActiveRecord::Schema.define(version: 2020_09_02_000811) do
     t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
     t.integer "taxa_count"
     t.integer "primer_ids", default: [], array: true
+    t.geometry "geom_projected", limit: {:srid=>3857, :type=>"geometry"}
     t.index "((metadata ->> 'month'::text))", name: "idx_samples_metadata_month"
     t.index ["field_project_id"], name: "index_samples_on_field_project_id"
     t.index ["geom"], name: "index_samples_on_geom", using: :gist
+    t.index ["geom_projected"], name: "index_samples_on_geom_projected", using: :gist
     t.index ["latitude", "longitude"], name: "index_samples_on_latitude_and_longitude"
     t.index ["metadata"], name: "samples_metadata_idx", using: :gin
     t.index ["primers"], name: "index_samples_on_primer", using: :gin
