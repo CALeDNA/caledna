@@ -59,49 +59,50 @@
         @submit-filters="submitFilters"
       />
 
-      <a
-        class="btn btn-default"
-        :class="{ active: activeTab === 'taxa' }"
-        @click="$emit('active-tab-event', 'taxa')"
-      >
-        <i class="far fa-list-alt"></i> Taxa List
-      </a>
-      <select v-model="selectedRadius" @change="updateRadius">
-        <option v-for="i in [0.5, 1, 2, 3]" :key="i"
-          >{{ i }} kilometer</option
-        ></select
-      >
+      <select v-if="showGbif" v-model="selectedRadius" @change="updateRadius">
+        <option v-for="i in [0.5, 1, 2, 3]" :key="i">{{ i }} kilometer</option>
+      </select>
     </div>
 
-    <div id="mapid" v-show="activeTab === 'map'"></div>
+    <div v-show="activeTab === 'map'">
+      <div id="mapid"></div>
 
-    <h2>eDNA Taxa</h2>
-    <kingdom-bar-chart
-      v-if="ednaTaxa.length > 0"
-      :chart-data="ednaTaxa"
-      selector="edna-taxa-chart"
-    ></kingdom-bar-chart>
+      <div class="row" v-if="ednaTaxa.length > 0">
+        <div class="col-sm-6">
+          <h2>eDNA Taxa</h2>
+          <kingdom-bar-chart
+            :chart-data="ednaTaxa"
+            selector="edna-taxa-chart"
+          ></kingdom-bar-chart>
+        </div>
 
-    <h2>eDNA Occurrences</h2>
-    <kingdom-bar-chart
-      v-if="ednaOccurrences.length > 0"
-      :chart-data="ednaOccurrences"
-      selector="edna-occurrences-chart"
-    ></kingdom-bar-chart>
+        <div class="col-sm-6">
+          <h2>eDNA Occurrences</h2>
+          <kingdom-bar-chart
+            :chart-data="ednaOccurrences"
+            selector="edna-occurrences-chart"
+          ></kingdom-bar-chart>
+        </div>
+      </div>
 
-    <h2>GBIF Taxa</h2>
-    <kingdom-bar-chart
-      v-if="gbifTaxa.length > 0"
-      :chart-data="gbifTaxa"
-      selector="gbif-taxa-chart"
-    ></kingdom-bar-chart>
+      <div class="row" v-if="gbifTaxa.length > 0">
+        <div class="col-sm-6">
+          <h2>GBIF Taxa</h2>
+          <kingdom-bar-chart
+            :chart-data="gbifTaxa"
+            selector="gbif-taxa-chart"
+          ></kingdom-bar-chart>
+        </div>
 
-    <h2>GBIF Occurrences</h2>
-    <kingdom-bar-chart
-      v-if="gbifOccurrences.length > 0"
-      :chart-data="gbifOccurrences"
-      selector="gbif-occurrences-chart"
-    ></kingdom-bar-chart>
+        <div class="col-sm-6">
+          <h2>GBIF Occurrences</h2>
+          <kingdom-bar-chart
+            :chart-data="gbifOccurrences"
+            selector="gbif-occurrences-chart"
+          ></kingdom-bar-chart>
+        </div>
+      </div>
+    </div>
 
     <div v-show="activeTab === 'table'">
       <vue-good-table
