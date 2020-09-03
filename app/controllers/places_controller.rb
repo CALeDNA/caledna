@@ -29,7 +29,7 @@ class PlacesController < ApplicationController
       Place
         .select('id', 'name', 'latitude', 'longitude', 'geom')
         .select('count(samples_map.id) as count')
-        .joins('LEFT JOIN samples_map ON ST_DWithin ' \
+        .joins('JOIN samples_map ON ST_DWithin ' \
         '(places.geom::geography, samples_map.geom::geography, 1000)')
         .group('id', 'name', 'latitude', 'longitude', 'geom')
         .order(:name)

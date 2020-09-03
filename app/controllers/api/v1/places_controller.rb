@@ -43,7 +43,7 @@ module Api
           Place
             .select('id', 'latitude', 'longitude', 'geom', 'count(*)')
             .select("ST_Buffer(places.geom::geography, #{radius}) as buffer")
-            .joins('LEFT JOIN samples_map ON ST_DWithin ' \
+            .joins('JOIN samples_map ON ST_DWithin ' \
             "(places.geom::geography, samples_map.geom::geography, #{radius})")
             .group('id', 'latitude', 'longitude', 'geom')
             .find(place_id)
