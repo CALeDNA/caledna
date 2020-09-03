@@ -21,7 +21,7 @@
         </svg>
         {{ taxonSamplesCount }} {{ "site" | pluralize(taxonSamplesCount) }}
       </div>
-      <div>
+      <div v-if="showGbif">
         <input
           type="checkbox"
           value="presence"
@@ -145,7 +145,7 @@
   import "vue-good-table/dist/vue-good-table.css";
   import axios from "axios";
   import pluralize from "pluralize";
-  var wkx = require("wkx");
+  let wkx = require("wkx");
 
   import Spinner from "./shared/components/spinner";
   import MapTableToggle from "./shared/components/map-table-toggle";
@@ -166,11 +166,12 @@
     secondaryLayerMixins,
   } from "./shared/mixins";
   import { completedSamplesStore } from "./shared/stores";
+  import { pourSite } from "./shared/constants/checkWebsite";
 
-  var resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
-  var endpoint = `/api/v1${resource_and_id}`;
-  var gbifEndpoint = `/api/v1${resource_and_id}/gbif_occurrences`;
-  var kingdomCountsEndpoint = `/api/v1${resource_and_id}/kingdom_counts`;
+  const resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
+  const endpoint = `/api/v1${resource_and_id}`;
+  const gbifEndpoint = `/api/v1${resource_and_id}/gbif_occurrences`;
+  const kingdomCountsEndpoint = `/api/v1${resource_and_id}/kingdom_counts`;
 
   export default {
     name: "SamplesMapTable",
@@ -195,6 +196,7 @@
         store: completedSamplesStore,
         currentFiltersDisplay: null,
         showSpinner: false,
+        showGbif: pourSite,
 
         selectedRadius: "1 kilometer",
         radius: 1000,
@@ -327,20 +329,22 @@
             let zoom = this.radius > 1000 ? 15 - this.radius / 2000 : 15;
             this.map.setView([place.latitude, place.longitude], zoom);
 
+            if (this.showGbif) {
+              if (this.bufferLayer) {
+                this.bufferLayer.clearLayers();
+              }
+
+              this.bufferLayer = L.geoJSON(
+                wkx.Geometry.parse(place.buffer).toGeoJSON()
+              ).addTo(this.map);
+            }
+
             // add boundaries for any geometry other points
-            if (!/^POINT/.test("POINT")) {
+            if (!/^POINT/.test(place.geom)) {
               L.geoJSON(wkx.Geometry.parse(place.geom).toGeoJSON()).addTo(
                 this.map
               );
             }
-
-            if (this.bufferLayer) {
-              this.bufferLayer.clearLayers();
-            }
-
-            this.bufferLayer = L.geoJSON(
-              wkx.Geometry.parse(place.buffer).toGeoJSON()
-            ).addTo(this.map);
 
             const mapData = baseMap.formatMapData(response.data);
             if (this.initialTaxonSamplesData.length == 0) {
