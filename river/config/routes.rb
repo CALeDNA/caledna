@@ -44,6 +44,8 @@ Rails.application.routes.draw do
     root to: 'pages#index'
     resources :pages
     resources :page_blocks
+    resources :places
+    resources :place_pages
     resources :site_news
     resources :websites
   end
