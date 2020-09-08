@@ -81,11 +81,9 @@ end
 group :production, :staging do
   gem 'connection_pool', '~> 2.2.1'
   gem 'dalli', '~> 2.7.10'
-  gem 'puma_worker_killer', '~> 0.1.1'
   gem 'scout_apm', '~> 2.4.13'
   gem 'sendgrid-ruby', '~> 5.2.0'
   gem 'sentry-raven', '~> 2.7.4'
-  gem 'tunemygc', '~> 1.0.71'
 end
 
 group :test do
