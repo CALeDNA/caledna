@@ -14,10 +14,6 @@ if ENV.fetch('RAILS_ENV') == 'staging' || ENV.fetch('RAILS_ENV') == 'production'
   rackup DefaultRackup
 
   before_fork do
-    require 'puma_worker_killer'
-
-    PumaWorkerKiller.enable_rolling_restart # Default is every 6 hours
-
     ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
   end
 
