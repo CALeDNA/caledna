@@ -129,4 +129,9 @@ module ApplicationHelper
     end
   end
   # rubocop:enable Metrics/MethodLength
+
+  def attachment_is_image?(record)
+    types = %w[png jpg jpeg]
+    types.include?(record.attachment.blob.filename.extension)
+  end
 end

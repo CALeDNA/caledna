@@ -9,17 +9,24 @@
   </div>
 </div>
 
-<div class="events-list row">
+<div class="events-list flex-grid">
   <% if @events.present? %>
     <% @events.each do |event| %>
-      <div class="col-md-4 col-sm-6">
-        <div class="panel panel-default">
-          <div class="panel-body">
-          <h1><%= link_to event.name, event_path(event) %></h1>
-          <div><%= long_datetime(event.start_date) %></div>
-          <div><%= event.location %></div>
+      <div class="flex-grid-item">
+        <% if event.flyer.attachment.present? %>
+          <div>
+          <%=
+            if attachment_is_image?(event.flyer)
+              image_tag event.flyer.variant(resize: "500x500"), class: 'img-responsive'
+            else
+              image_tag event.flyer, class: 'img-responsive'
+            end
+          %>
           </div>
-        </div>
+        <% end %>
+        <h1><%= link_to event.name, event_path(event) %></h1>
+        <div><%= long_datetime(event.start_date) %></div>
+        <div><%= event.location %></div>
       </div>
     <% end %>
   <% elsif params[:type] == 'past' %>
