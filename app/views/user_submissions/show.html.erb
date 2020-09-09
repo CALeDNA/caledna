@@ -1,0 +1,27 @@
+<h1><%= @submission.title %></h1>
+<div>
+  <%= @submission.user_display_name %>
+  <% %i[facebook instagram twitter website].each do |link| %>
+    <%= link_to link.capitalize, @submission.send(link) if @submission.send(link) %>
+  <% end %>
+</div>
+
+<% if @submission.image.attachment.present? %>
+  <div><%= image_tag @submission.image, class: 'img-responsive m-t-md m-b-md' %></div>
+<% end %>
+
+<% if @submission.media_url.present? %>
+  <div><%= link_to @submission.media_url, @submission.media_url %></div>
+<% end %>
+
+
+<% if @submission.user_bio.present? %>
+  <h2>User Bio</h2>
+  <%= sanitize @submission.user_bio %>
+<% end %>
+
+<% if @submission.content.present? %>
+  <h2>Description</h2>
+  <%= sanitize @submission.content %>
+<% end %>
+

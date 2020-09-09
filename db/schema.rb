@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_03_150102) do
+ActiveRecord::Schema.define(version: 2020_09_09_190537) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -721,6 +721,23 @@ ActiveRecord::Schema.define(version: 2020_09_03_150102) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_submissions", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "user_display_name", null: false
+    t.string "title", null: false
+    t.text "user_bio"
+    t.text "content", null: false
+    t.string "media_url"
+    t.string "twitter"
+    t.string "facebook"
+    t.string "instagram"
+    t.string "website"
+    t.boolean "approved", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_submissions_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -793,4 +810,5 @@ ActiveRecord::Schema.define(version: 2020_09_03_150102) do
   add_foreign_key "survey_options", "survey_questions"
   add_foreign_key "survey_questions", "surveys"
   add_foreign_key "survey_responses", "surveys"
+  add_foreign_key "user_submissions", "users"
 end

@@ -1,0 +1,15 @@
+<h1>Content from out Community Scientists</h1>
+
+<div class="flex-grid">
+<% @submissions.each do |submission| %>
+  <div class="flex-grid-item">
+    <% if submission.image.attachment.present? %>
+      <div><%= display_resize_image(submission.image) %></div>
+    <% end %>
+    <h2><%= link_to submission.title, user_submission_path(submission) %></h2>
+
+
+    <div><%= submission.user_display_name %></div>
+  </div>
+<% end %>
+</div>
