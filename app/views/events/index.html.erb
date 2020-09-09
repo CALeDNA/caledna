@@ -14,15 +14,7 @@
     <% @events.each do |event| %>
       <div class="flex-grid-item">
         <% if event.flyer.attachment.present? %>
-          <div>
-          <%=
-            if attachment_is_image?(event.flyer)
-              image_tag event.flyer.variant(resize: "500x500"), class: 'img-responsive'
-            else
-              image_tag event.flyer, class: 'img-responsive'
-            end
-          %>
-          </div>
+          <div><%= display_resize_image(event.flyer) %></div>
         <% end %>
         <h1><%= link_to event.name, event_path(event) %></h1>
         <div><%= long_datetime(event.start_date) %></div>

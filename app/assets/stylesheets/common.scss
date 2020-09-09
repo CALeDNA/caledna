@@ -1,0 +1,46 @@
+.flex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    margin-top: 0px;
+  }
+
+  img {
+    margin-bottom: 1rem;
+  }
+
+  .flex-grid-item {
+    flex-grow: 1;
+    margin: 1%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+  }
+
+  @media (min-width: 480px) {
+    .flex-grid-item {
+      flex-basis: 100%;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .flex-grid-item {
+      flex-basis: 48%;
+    }
+  }
+
+  @media (min-width: 992px) {
+  }
+
+  @media (min-width: 1200px) {
+    .flex-grid-item {
+      flex-basis: 31%;
+    }
+  }
+}

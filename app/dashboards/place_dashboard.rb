@@ -28,6 +28,7 @@ class PlaceDashboard < Administrate::BaseDashboard
     na_l2name: Field::String,
     na_l1code: Field::String,
     na_l1name: Field::String,
+    image: ActiveStorageAttachmentField,
   }.freeze
 
   COLLECTION_ATTRIBUTES = %i[
@@ -42,6 +43,7 @@ class PlaceDashboard < Administrate::BaseDashboard
   longitude
   place_type_cd
   place_source_type_cd
+  image
   geom
   state_fips
   county_fips
@@ -68,6 +70,7 @@ class PlaceDashboard < Administrate::BaseDashboard
   longitude
   place_type_cd
   place_source_type_cd
+  image
   geom
   state_fips
   county_fips

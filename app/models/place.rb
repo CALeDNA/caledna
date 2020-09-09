@@ -3,6 +3,7 @@
 class Place < ApplicationRecord
   belongs_to :place_source, optional: true
   has_many :place_pages
+  has_one_attached :image
 
   as_enum :place_type, %i[state watershed county place neighborhood UCNRS
                           zip_code river ecoregions_l3 ecoregions_l4 ecotopes

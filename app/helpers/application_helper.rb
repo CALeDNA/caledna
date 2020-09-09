@@ -130,8 +130,16 @@ module ApplicationHelper
   end
   # rubocop:enable Metrics/MethodLength
 
-  def attachment_is_image?(record)
+  def attachment_is_image?(attachment_record)
     types = %w[png jpg jpeg]
-    types.include?(record.attachment.blob.filename.extension)
+    types.include?(attachment_record.attachment.blob.filename.extension)
+  end
+
+  def display_resize_image(attachment_record, size = '500x500')
+    if attachment_is_image?(attachment_record)
+      image_tag attachment_record.variant(resize: size), class: 'img-responsive'
+    else
+      image_tag attachment_record, class: 'img-responsive'
+    end
   end
 end

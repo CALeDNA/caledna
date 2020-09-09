@@ -1,15 +1,29 @@
 <h1>University of California Natural Reserves</h1>
 
-<ul>
+<div class="flex-grid">
   <% @places.each do |place| %>
-    <li><%= link_to place.name, place_path(place) %> (<%= pluralize(place.count, 'site') %>)</li>
+    <div class="flex-grid-item">
+      <% if place.image.attachment.present? %>
+        <div><%= display_resize_image(place.image) %></div>
+      <% end %>
+
+      <h3 class="m-b-zero"><%= link_to place.name, place_path(place) %></h3>
+      <div>(<%= pluralize(place.count, 'site') %>)</div>
+    </div>
   <% end %>
-</ul>
+</div>
 
 <h1>EcoRegions</h1>
 
-<ul>
+<div class="flex-grid">
   <% @places2.each do |place| %>
-    <li><%= link_to place.name, place_path(place) %> (<%= pluralize(place.count, 'site') %>)</li>
+    <div class="flex-grid-item">
+      <% if place.image.attachment.present? %>
+        <div><%= display_resize_image(place.image) %></div>
+      <% end %>
+
+      <h3 class="m-b-zero"><%= link_to place.name, place_path(place) %></h3>
+      <div>(<%= pluralize(place.count, 'site') %>)</div>
+    </div>
   <% end %>
-</ul>
+</div>
