@@ -37,7 +37,8 @@
             <%= nav_link 'Sites', samples_path %>
             <%= nav_link 'Identified Organisms', taxa_path %>
             <%= nav_link 'Pilot Results', research_project_path(id: 'los-angeles-river') %>
-            <%= nav_link 'Beta Features', beta_path %>
+            <%= nav_link 'How are Samples Analyzed?', samples_analyzed_path %>
+            <%= nav_link 'Disclaimer', disclaimer_path %>
           </ul>
         </li>
 
@@ -56,7 +57,8 @@
             News
           </a>
           <ul class="dropdown-menu">
-            <li><%= nav_link 'News', site_news_index_path %></li>
+            <%= nav_link 'News', site_news_index_path %>
+            <%= nav_link 'Beta Features', beta_path %>
           </ul>
         </li>
       </ul>
