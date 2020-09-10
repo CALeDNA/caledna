@@ -9,6 +9,7 @@ class UserSubmissionDashboard < Administrate::BaseDashboard
     user_bio: TextEditorField,
     content: TextEditorField,
     media_url: Field::String,
+    embed_code: Field::String,
     twitter: Field::String,
     facebook: Field::String,
     instagram: Field::String,
@@ -36,6 +37,7 @@ class UserSubmissionDashboard < Administrate::BaseDashboard
   content
   image
   media_url
+  embed_code
   twitter
   facebook
   instagram
@@ -54,6 +56,7 @@ class UserSubmissionDashboard < Administrate::BaseDashboard
   content
   image
   media_url
+  embed_code
   twitter
   facebook
   instagram

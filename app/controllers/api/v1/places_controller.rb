@@ -66,6 +66,7 @@ module Api
         ]
       end
 
+      # rubocop:disable Metrics/MethodLength
       def gbif_data
         @gbif_data ||= begin
           if CheckWebsite.caledna_site?
@@ -81,7 +82,9 @@ module Api
           end
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
+      # rubocop:disable Metrics/MethodLength
       def edna_basic_kingdom_sql
         sql = <<~SQL
           FROM samples
@@ -105,6 +108,7 @@ module Api
 
         sql
       end
+      # rubocop:enable Metrics/MethodLength
 
       def edna_taxa_kingdom_sql
         <<~SQL

@@ -1,27 +1,40 @@
+<% content_for :page_id do %>user-submission<% end %>
+
 <h1><%= @submission.title %></h1>
-<div>
+<div class="metadata">
   <%= @submission.user_display_name %>
-  <% %i[facebook instagram twitter website].each do |link| %>
-    <%= link_to link.capitalize, @submission.send(link) if @submission.send(link) %>
-  <% end %>
+
+  <span class="user-social-media">
+    <% %i[facebook instagram twitter].each do |link| %>
+      <% if @submission.send(link)%>
+        <%= link_to  @submission.send(link) do %>
+          <i class="fab <%= "fa-#{link}"  %> fa-lg"></i>
+        <% end %>
+      <% end %>
+    <% end %>
+    <%= link_to 'Website', @submission.website if @submission.website %>
+  <span>
 </div>
+
 
 <% if @submission.image.attachment.present? %>
   <div><%= image_tag @submission.image, class: 'img-responsive m-t-md m-b-md' %></div>
 <% end %>
 
-<% if @submission.media_url.present? %>
-  <div><%= link_to @submission.media_url, @submission.media_url %></div>
+<%= form.input :image, as: :file %>
+
+<% if @submission.embed_code.present? %>
+  <div><%= sanitize @submission.embed_code %></div>
 <% end %>
 
 
 <% if @submission.user_bio.present? %>
-  <h2>User Bio</h2>
+  <h3>User Bio</h3>
   <%= sanitize @submission.user_bio %>
 <% end %>
 
 <% if @submission.content.present? %>
-  <h2>Description</h2>
+  <h3>Description</h3>
   <%= sanitize @submission.content %>
 <% end %>
 

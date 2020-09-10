@@ -1,0 +1,42 @@
+<div class="col-md-10 col-md-offset-1">
+  <h1>Submit your content</h1>
+
+  <% unless current_user %>
+    <p>
+      <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
+      You must sign in to submit content.
+    </p>
+  <% else %>
+    <%= simple_form_for @submission  do |form| %>
+       <h3>Information about your submission</h3>
+      <%= form.input :title,
+        placeholder: 'The title of your submission.' %>
+      <%= form.input :content, :input_html => {rows: 5}, label: 'Description',
+        placeholder: 'A short description of your submission.' %>
+
+      <p>If you are submitted multimedia content, we offer two options:<p>
+      <ol>
+        <li>Upload an image of your submission. We accept jpg, jpeg, and png under 2 MB.</li>
+        <li>Submit a link to your multimedia content (YouTube, Instagram, etc).  </li>
+      </ol>
+
+
+      <%= form.input :image, as: :file, label: 'Upload image (max size 2 MB)' %>
+
+      <%= form.input :media_url,
+        placeholder: 'Media URL (e,g., https://www.instagram.com/p/xxx).' %>
+
+      <h3>Information about you</h3>
+      <%= form.input :user_display_name, label: 'Display name',
+        placeholder: 'The name that you want displayed on our site.'  %>
+      <%= form.input :user_bio, :input_html => {rows: 5},
+        placeholder: 'A short bio about yourself.' %>
+      <%= form.input :facebook %>
+      <%= form.input :instagram %>
+      <%= form.input :twitter %>
+      <%= form.input :website %>
+
+      <%= form.submit 'Submit', class: 'btn btn-primary' %>
+    <% end %>
+  <% end %>
+</div>
