@@ -16,12 +16,9 @@
   <span>
 </div>
 
-
 <% if @submission.image.attachment.present? %>
-  <div><%= image_tag @submission.image, class: 'img-responsive m-t-md m-b-md' %></div>
+  <div class="m-t-md m-b-md"><%= display_resize_image(@submission.image, '1200x1200') %></div>
 <% end %>
-
-<%= form.input :image, as: :file %>
 
 <% if @submission.embed_code.present? %>
   <div><%= sanitize @submission.embed_code %></div>

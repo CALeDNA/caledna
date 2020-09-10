@@ -52,5 +52,5 @@
 <%= sanitize @event.description %>
 
 <% if @event.flyer.attachment.present? %>
-  <div><%= image_tag @event.flyer, class: 'img-responsive' %></div>
+  <div class="m-t-md m-b-md"><%= display_resize_image(@event.flyer, '1200x1200') %></div>
 <% end %>

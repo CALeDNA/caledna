@@ -1,7 +1,6 @@
 <h1><%= @place.name%></h1>
-
 <% if @place.image.attachment.present? %>
-  <%= image_tag @place.image, class: 'img-responsive m-t-md m-b-md' %>
+  <div class="m-t-md m-b-md"><%= display_resize_image(@place.image, '1200x1200') %></div>
 <% end %>
 
 <div id="places-details-charts"></div>

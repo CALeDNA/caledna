@@ -8,9 +8,7 @@
 
 <%= sanitize @page.body %>
 
-<%= @page.show_map? %>
 <% if @page.show_map? %>
-
   <div id="places-details-map"></div>
   <%= javascript_pack_tag 'places_details' %>
   <%= stylesheet_pack_tag 'places_details' %>
