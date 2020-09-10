@@ -3,4 +3,5 @@
 </div>
 <div class="field-unit__field">
   <%= f.file_field field.attribute %>
+  <%= image_tag field.to_s if field.filename.present? %>
 </div>
