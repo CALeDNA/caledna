@@ -6,13 +6,13 @@
 
   <span class="user-social-media">
     <% %i[facebook instagram twitter].each do |link| %>
-      <% if @submission.send(link)%>
+      <% if @submission.send(link).present? %>
         <%= link_to  @submission.send(link) do %>
           <i class="fab <%= "fa-#{link}"  %> fa-lg"></i>
         <% end %>
       <% end %>
     <% end %>
-    <%= link_to 'Website', @submission.website if @submission.website %>
+    <%= link_to 'Website', @submission.website if @submission.website.present? %>
   <span>
 </div>
 
