@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EventRegistrationsController < ApplicationController
+  layout 'river/application' if CheckWebsite.pour_site?
+
   def create
     attrs = { event_id: event_id, user_id: current_user.id,
               status_cd: :registered }

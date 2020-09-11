@@ -33,6 +33,11 @@ Rails.application.routes.draw do
 
   resources :pages, only: %i[edit update show], controller: 'river/pages'
   resource :profile, only: [:show]
+  resources :events, only: %i[index show] do
+    resources :event_registrations, only: %i[create]
+    put 'event_registrations_update_status' =>
+      'event_registrations#update_status'
+  end
 
   get '/faq', to: 'river/pages#show', defaults: { id: 'faq' }
   get '/our-mission', to: 'river/pages#show', defaults: { id: 'our-mission' }

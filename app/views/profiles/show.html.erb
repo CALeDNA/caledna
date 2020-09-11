@@ -1,3 +1,31 @@
 <% content_for :page_id do %>profile<% end %>
 
 <h1><%= @user.username %></h1>
+
+<h2>My Upcoming Events</h2>
+<% if @user.events.count > 0 %>
+  <ol>
+    <% @user.events.registered.upcoming.each do |event| %>
+      <li>
+        <%= link_to event.name, event_path(event) %>,
+        (<%= long_datetime(event.start_date) %>) <%= event.location %>
+      </li>
+    <% end %>
+  </ol>
+<% else %>
+  <%= link_to 'Sign up for your first bioblitz.', events_path %>
+<% end %>
+
+
+<% if @user.events.past.count > 0 %>
+<h2>My Past Events</h2>
+<ol>
+  <% @user.events.registered.past.each do |event| %>
+    <li>
+      <%= link_to event.name, event_path(event) %>,
+      <span class="meta">(<%= long_datetime(event.start_date) %>)</span> <%= event.location %>
+    </li>
+  <% end %>
+</ol>
+<% end %>
+

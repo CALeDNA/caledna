@@ -7,7 +7,7 @@ $brand-primary: darken($theme-base-color, 35%) !default;
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
-// @import "events";
+@import "events";
 // @import "devise";
 @import "samples";
 @import "searches";
