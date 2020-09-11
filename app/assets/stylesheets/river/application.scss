@@ -17,6 +17,7 @@ $brand-primary: darken($theme-base-color, 35%) !default;
 @import "utils";
 @import "river_home";
 @import "profile";
+@import "submissions";
 @import "auth";
 // @import "surveys";
 @import "map";
