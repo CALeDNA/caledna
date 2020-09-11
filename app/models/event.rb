@@ -14,6 +14,9 @@ class Event < ApplicationRecord
   scope :past, (lambda do
     where("end_date < '#{Time.zone.now}'").order(end_date: :desc)
   end)
+  scope :registered, (lambda do
+    where("status_cd = 'registered'")
+  end)
 
   def flyer?
     flyer.attachment.present?
