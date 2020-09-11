@@ -23,7 +23,7 @@ class UserSubmissionsController < ApplicationController
     if @submission.save
       flash[:success] = 'Thank you for sharing your story! We will email you ' \
         'once we review your submission.'
-      redirect_to new_creative_medium_path
+      redirect_to new_river_story_path
     else
       flash[:failure] = 'There are errors with your submission.'
       render :new
