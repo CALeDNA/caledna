@@ -35,7 +35,7 @@ describe UserSubmission do
                               content_type: 'image/png')
       submission.valid?
 
-      message = ['Image must be under 2 MB.']
+      message = ['Image must be under 10 MB.']
       expect(submission.errors.messages[:image]).to eq(message)
     end
 

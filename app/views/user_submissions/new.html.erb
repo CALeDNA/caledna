@@ -16,12 +16,12 @@
 
       <p>If you are submitted multimedia content, we offer two options:<p>
       <ol>
-        <li>Upload an image of your submission. We accept jpg, jpeg, and png under 2 MB.</li>
+        <li>Upload an image. We accept jpg, jpeg, and png under 10 MB.</li>
         <li>Submit a link to your multimedia content (YouTube, Instagram, etc).  </li>
       </ol>
 
 
-      <%= form.input :image, as: :file, label: 'Upload image (max size 2 MB)' %>
+      <%= form.input :image, as: :file, label: 'Upload image (max size 10 MB)' %>
 
       <%= form.input :media_url,
         placeholder: 'Media URL (e,g., https://www.instagram.com/p/xxx).' %>

@@ -27,8 +27,8 @@ class UserSubmission < ApplicationRecord
 
     if !%w[image/png image/jpg image/jpeg].include?(image.blob.content_type)
       errors[:image] << 'Image must be png, jpg, or jpeg.'
-    elsif image.blob.byte_size > 2_000_000
-      errors[:image] << 'Image must be under 2 MB.'
+    elsif image.blob.byte_size > 10_000_000
+      errors[:image] << 'Image must be under 10 MB.'
     end
   end
   # rubocop:enable Metrics/AbcSize
