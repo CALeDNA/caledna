@@ -2,6 +2,13 @@
 
 # rubocop:disable Metrics/BlockLength:
 Rails.application.routes.draw do
+  devise_for :users, controllers: {
+    registrations: 'users/registrations',
+    sessions: 'users/sessions',
+    passwords: 'users/passwords',
+    confirmations: 'users/confirmations'
+  }
+
   devise_for :researchers, controllers: {
     sessions: 'researchers/sessions',
     invitations: 'researchers/invitations',
@@ -25,6 +32,7 @@ Rails.application.routes.draw do
   end
 
   resources :pages, only: %i[edit update show], controller: 'river/pages'
+  resource :profile, only: [:show]
 
   get '/faq', to: 'river/pages#show', defaults: { id: 'faq' }
   get '/our-mission', to: 'river/pages#show', defaults: { id: 'our-mission' }

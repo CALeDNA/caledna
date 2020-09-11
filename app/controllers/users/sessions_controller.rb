@@ -2,6 +2,8 @@
 
 module Users
   class SessionsController < Devise::SessionsController
+    layout 'river/application' if CheckWebsite.pour_site?
+
     def create
       super
       flash.delete(:notice)
@@ -12,21 +14,12 @@ module Users
       flash.delete(:notice)
     end
 
-    def after_sign_in_path_for(resource)
-      name = resource.username
-      if Rails.env.staging?
-        root_path
-      else
-        "#{ENV.fetch('CAL_BASE_URL')}/auth-page?name=#{name}"
-      end
+    def after_sign_in_path_for(_)
+      root_path
     end
 
     def after_sign_out_path_for(_)
-      if Rails.env.staging?
-        root_path
-      else
-        "#{ENV.fetch('CAL_BASE_URL')}/auth-page?name="
-      end
+      root_path
     end
   end
 end

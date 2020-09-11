@@ -62,6 +62,25 @@
           </ul>
         </li>
       </ul>
+
+      <ul class="nav navbar-nav pull-right">
+        <% if current_user %>
+
+          <li role="presentation" class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+              <%= current_user.username %>
+            </a>
+            <ul class="dropdown-menu">
+              <%= nav_link "Profile", profile_path %>
+              <%= nav_link "Settings", edit_user_registration_path %>
+            </ul>
+          </li>
+
+          <li><%= link_to 'Sign Out', destroy_user_session_path %></li>
+        <% else %>
+          <li><%= link_to 'Sign In', new_user_session_path %></li>
+        <% end %>
+      </ul>
     </div>
   </div>
 </nav>
