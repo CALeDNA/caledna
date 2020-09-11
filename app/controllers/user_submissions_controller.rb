@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class UserSubmissionsController < ApplicationController
+  layout 'river/application' if CheckWebsite.pour_site?
+
   def index
+    @page_block = PageBlock.find_by(slug: 'river-stories')
     @submissions = UserSubmission.approved.order(created_at: :desc)
                                  .page(params[:page])
   end
@@ -18,9 +21,9 @@ class UserSubmissionsController < ApplicationController
     @submission = UserSubmission.new(create_params)
 
     if @submission.save
-      flash[:success] = 'Thank you for your submission! We will email you ' \
+      flash[:success] = 'Thank you for sharing your story! We will email you ' \
         'once we review your submission.'
-      redirect_to new_user_submission_path
+      redirect_to new_creative_medium_path
     else
       flash[:failure] = 'There are errors with your submission.'
       render :new

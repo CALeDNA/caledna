@@ -5,7 +5,7 @@
     <p>Please submit your LA River story using this form. We will review each
     submission and email you before we publish your work on the site.</p>
 
-    <%= simple_form_for @submission, url: user_submissions_path(guest: params[:guest])  do |form| %>
+    <%= simple_form_for @submission, url: river_stories_path(guest: params[:guest])  do |form| %>
       <%= form.input :title,
         placeholder: 'The title of your submission.' %>
       <%= form.input :content, :input_html => {rows: 6}, label: 'Description',
@@ -30,8 +30,8 @@
       <% end %>
       <%= form.input :user_display_name, label: 'Display name',
         placeholder: 'The name that you want displayed on our site.'  %>
-      <%= form.input :user_bio, :input_html => {rows: 6},
-        placeholder: 'A short bio about yourself.' %>
+      <%= form.input :user_bio, :input_html => {rows: 6}, label: 'Biography',
+        placeholder: 'A short biography about yourself.' %>
       <%= form.input :facebook %>
       <%= form.input :instagram %>
       <%= form.input :twitter %>

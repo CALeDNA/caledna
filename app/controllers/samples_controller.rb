@@ -4,8 +4,6 @@ class SamplesController < ApplicationController
   include CheckWebsite
   include FilterSamples
 
-  layout 'river/application' if CheckWebsite.pour_site?
-
   def index
     @samples_count = approved_samples_count
     @samples_with_results_count = completed_samples_count

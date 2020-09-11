@@ -38,6 +38,8 @@ Rails.application.routes.draw do
     put 'event_registrations_update_status' =>
       'event_registrations#update_status'
   end
+  resources :river_stories, only: %i[index show new create],
+                            controller: :user_submissions
 
   get '/faq', to: 'river/pages#show', defaults: { id: 'faq' }
   get '/our-mission', to: 'river/pages#show', defaults: { id: 'our-mission' }
@@ -48,7 +50,7 @@ Rails.application.routes.draw do
   get '/donate', to: 'river/pages#show', defaults: { id: 'donate' }
   get '/beta', to: 'river/pages#show', defaults: { id: 'beta' }
   get '/disclaimer', to: 'river/pages#show', defaults: { id: 'disclaimer' }
-  get '/samples_analyzed', to: 'river/pages#show', defaults: { id: 'samples_analyzed' }
+  get '/samples-analyzed', to: 'river/pages#show', defaults: { id: 'samples-analyzed' }
 
   get '/contact-us', to: 'river/contacts#new'
   resources :contacts, only: [:create], controller: 'river/contacts'
@@ -61,6 +63,7 @@ Rails.application.routes.draw do
     resources :page_blocks
     resources :places
     resources :place_pages
+    resources :user_submissions
     resources :site_news
     resources :websites
   end

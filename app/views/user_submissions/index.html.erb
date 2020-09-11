@@ -1,13 +1,18 @@
-<h1>Content from out Community Scientists</h1>
+<h1>River Stories</h1>
+
+<%= sanitize @page_block.content if @page_block %>
+
+<div class="text-center m-t-md m-b-md">
+  <%= link_to 'Share your story', new_river_story_path, class: 'btn btn-primary' %>
+</div>
 
 <div class="flex-grid">
 <% @submissions.each do |submission| %>
   <div class="flex-grid-item">
     <% if submission.image.attachment.present? %>
-      <div><%= display_resize_image(submission.image) %></div>
+      <div><%= link_to display_resize_image(submission.image), river_story_path(submission) %></div>
     <% end %>
-    <h2><%= link_to submission.title, user_submission_path(submission) %></h2>
-
+    <h2><%= link_to submission.title, river_story_path(submission) %></h2>
 
     <div><%= submission.user_display_name %></div>
   </div>

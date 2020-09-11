@@ -24,14 +24,12 @@
   <div><%= sanitize @submission.embed_code %></div>
 <% end %>
 
-
-<% if @submission.user_bio.present? %>
-  <h3>User Bio</h3>
-  <%= sanitize @submission.user_bio %>
+<% if @submission.content.present? %>
+  <%= sanitize @submission.content %>
 <% end %>
 
-<% if @submission.content.present? %>
-  <h3>Description</h3>
-  <%= sanitize @submission.content %>
+<% if @submission.user_bio.present? %>
+  <h3>Biography</h3>
+  <%= sanitize @submission.user_bio %>
 <% end %>
 
