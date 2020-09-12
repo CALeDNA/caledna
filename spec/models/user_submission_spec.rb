@@ -73,9 +73,29 @@ describe UserSubmission do
     it 'invalid when media url does not start' do
       %w[example.com www.example.com].each do |url|
         submission = build(:user_submission, attr.merge(media_url: url))
+        submission.valid?
 
-        expect(submission.valid?).to eq(false)
+        message = ['The media url must start with http:// or https://']
+        expect(submission.errors.messages[:media_url]).to eq(message)
       end
+    end
+
+    it 'invalid if no user and no email' do
+      attr = { content: 'content', title: 'title', user_display_name: 'name',
+               media_url: url }
+      submission = build(:user_submission, attr)
+      submission.valid?
+
+      message = ["can't be blank"]
+      expect(submission.errors.messages[:email]).to eq(message)
+    end
+
+    it 'valid if no user but has email' do
+      attr = { content: 'content', title: 'title', user_display_name: 'name',
+               media_url: url, email: 'email' }
+      submission = build(:user_submission, attr)
+
+      expect(submission.valid?).to eq(true)
     end
   end
 end

@@ -41,7 +41,8 @@ class UserSubmissionsController < ApplicationController
       :facebook,
       :instagram,
       :website,
-      :image
+      :image,
+      :email
     ).merge(user: current_user)
   end
   # rubocop:enable Metrics/MethodLength

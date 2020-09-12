@@ -18,11 +18,13 @@ class UserSubmissionDashboard < Administrate::BaseDashboard
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     image: ActiveStorageAttachmentField,
+    email: Field::String,
   }.freeze
 
   COLLECTION_ATTRIBUTES = %i[
   id
   user
+  email
   title
   approved
   created_at
@@ -31,6 +33,8 @@ class UserSubmissionDashboard < Administrate::BaseDashboard
   SHOW_PAGE_ATTRIBUTES = %i[
   id
   approved
+  user
+  email
   user_display_name
   title
   user_bio
@@ -50,6 +54,7 @@ class UserSubmissionDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
   approved
   user
+  email
   user_display_name
   title
   user_bio

@@ -1,25 +1,21 @@
-<div class="col-md-10 col-md-offset-1">
+<div class="col-md-8 col-md-offset-2">
   <h1>Submit your content</h1>
 
-  <% unless current_user %>
-    <p>
-      <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
-      You must sign in to submit content.
-    </p>
-  <% else %>
-    <%= simple_form_for @submission  do |form| %>
-       <h3>Information about your submission</h3>
+  <% if current_user || params[:guest] == 'true' %>
+    <p>Please submit your story using this form. We will review each submission
+    and email you before we publish your work on the site.</p>
+
+    <%= simple_form_for @submission, url: user_submissions_path(guest: params[:guest])  do |form| %>
       <%= form.input :title,
         placeholder: 'The title of your submission.' %>
-      <%= form.input :content, :input_html => {rows: 5}, label: 'Description',
+      <%= form.input :content, :input_html => {rows: 6}, label: 'Description',
         placeholder: 'A short description of your submission.' %>
 
-      <p>If you are submitted multimedia content, we offer two options:<p>
+      <div>If you are submitting multimedia content, we offer two options:</div>
       <ol>
         <li>Upload an image. We accept jpg, jpeg, and png under 10 MB.</li>
         <li>Submit a link to your multimedia content (YouTube, Instagram, etc).  </li>
       </ol>
-
 
       <%= form.input :image, as: :file, label: 'Upload image (max size 10 MB)' %>
 
@@ -27,9 +23,14 @@
         placeholder: 'Media URL (e,g., https://www.instagram.com/p/xxx).' %>
 
       <h3>Information about you</h3>
+      <% unless current_user %>
+        <p>We will email you after you review your submission. Your email will not be
+        displayed on the site.</p>
+        <%= form.input :email, label: '* Email' %>
+      <% end %>
       <%= form.input :user_display_name, label: 'Display name',
         placeholder: 'The name that you want displayed on our site.'  %>
-      <%= form.input :user_bio, :input_html => {rows: 5},
+      <%= form.input :user_bio, :input_html => {rows: 6},
         placeholder: 'A short bio about yourself.' %>
       <%= form.input :facebook %>
       <%= form.input :instagram %>
@@ -38,5 +39,10 @@
 
       <%= form.submit 'Submit', class: 'btn btn-primary' %>
     <% end %>
+  <% else %>
+    <div>
+      <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
+      <%= link_to 'Continue as Guest', new_user_submission_path(guest: true), class: 'btn btn-primary' %>
+    </div>
   <% end %>
 </div>

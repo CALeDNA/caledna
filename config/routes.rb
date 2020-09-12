@@ -90,6 +90,7 @@ Rails.application.routes.draw do
     resources :surveys
     resources :survey_responses
     resources :users
+    # resources :user_submissions
     resources :websites
 
     get 'events/:id/download_csv', to: 'events#download_csv',
@@ -182,6 +183,7 @@ Rails.application.routes.draw do
     resources :pages, only: %i[show edit update],
                       controller: 'place_pages'
   end
+  # resources :user_submissions, only: %i[index show new create]
 
   namespace :beta do
     get 'geojson_demo', to: 'geojson_demo'

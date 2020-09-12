@@ -2,15 +2,23 @@
 
 class UserSubmission < ApplicationRecord
   has_one_attached :image
-  belongs_to :user
+  belongs_to :user, optional: true
 
   validates :user_display_name, :title, :content, presence: true
   validate :image_validation
   validate :media_url_validation
+  validate :guest_email_validation
 
   scope :approved, -> { where(approved: true) }
 
   private
+
+  def guest_email_validation
+    return if user_id.present?
+    return if email.present?
+
+    errors[:email] << "can't be blank"
+  end
 
   def media_url_validation
     return if media_url.blank?
