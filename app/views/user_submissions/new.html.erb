@@ -1,9 +1,9 @@
 <div class="col-md-8 col-md-offset-2">
-  <h1>Submit your content</h1>
+  <h1>Share your LA River story</h1>
 
   <% if current_user || params[:guest] == 'true' %>
-    <p>Please submit your story using this form. We will review each submission
-    and email you before we publish your work on the site.</p>
+    <p>Please submit your LA River story using this form. We will review each
+    submission and email you before we publish your work on the site.</p>
 
     <%= simple_form_for @submission, url: user_submissions_path(guest: params[:guest])  do |form| %>
       <%= form.input :title,
@@ -24,7 +24,7 @@
 
       <h3>Information about you</h3>
       <% unless current_user %>
-        <p>We will email you after you review your submission. Your email will not be
+        <p>We will email you after we review your submission. Your email will not be
         displayed on the site.</p>
         <%= form.input :email, label: '* Email' %>
       <% end %>
@@ -42,7 +42,7 @@
   <% else %>
     <div>
       <%= link_to 'Sign In', new_user_session_path, class: 'btn btn-primary' %>
-      <%= link_to 'Continue as Guest', new_user_submission_path(guest: true), class: 'btn btn-primary' %>
+      <%= link_to 'Continue as Guest', new_river_story_path(guest: true), class: 'btn btn-primary' %>
     </div>
   <% end %>
 </div>
