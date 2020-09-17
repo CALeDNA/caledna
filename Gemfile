@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-ruby '2.4.0'
+ruby '2.6.0'
 gem 'rails', '~> 5.2'
 
 gem 'activerecord-postgis-adapter', '~> 5.2.2'
@@ -15,13 +15,14 @@ gem 'autoprefixer-rails', '~> 7.2'
 gem 'aws-sdk-s3', '~> 1.14.0', require: false
 gem 'bootsnap', '~> 1.3.0'
 gem 'bootstrap-sass', '~> 3.3.7'
-gem 'bundler', '~> 1.16.1'
+gem 'bundler', '~> 1.17.2'
 gem 'devise', '~> 4.3'
 gem 'devise_invitable', '~> 1.7.4'
 gem 'fast_jsonapi', '~> 1.6.0', git: 'https://github.com/fast-jsonapi/fast_jsonapi'
 gem 'fastimage', '~> 2.1.1'
 gem 'flutie', '~> 2.0'
 gem 'httparty', '~> 0.15.6'
+# gem 'jemalloc', '~> 1.0.1'
 gem 'jquery-rails', '~> 4.3.3' # required by bootstrap-sass
 gem 'kaminari', '~> 1.1.1'
 gem 'lograge', '~> 0.10.0'
@@ -67,7 +68,7 @@ group :development, :test, :staging do
 end
 
 group :development, :test do
-  gem 'bundler-audit', '~> 0.6', require: false
+  gem 'bundler-audit', '~> 0.7', require: false
   gem 'dotenv-rails', '~> 2.4.0'
   gem 'listen', '~> 3.1'
   gem 'pry-byebug', '~> 3.5'
@@ -88,7 +89,7 @@ group :production, :staging do
 end
 
 group :test do
-  gem 'capybara-webkit', '~> 1.14'
+  gem 'capybara', '~> 3.33.0'
   gem 'database_cleaner', '~> 1.6'
   gem 'launchy', '~> 2.4'
   gem 'rails-controller-testing', '~> 1.0.2'
