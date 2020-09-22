@@ -77,11 +77,11 @@ describe KoboApi::Process do
     let(:data) do
       [
         {
-          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '80 40 10 0',
           '_id' => kobo_id
         },
         {
-          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '80 40 10 0',
           '_id' => 200
         }
       ]
@@ -135,7 +135,7 @@ describe KoboApi::Process do
           'What_is_your_kit_number_e_g_K0021' => 'K2',
           'Which_location_lette_codes_LA_LB_or_LC' => 'LB',
           'You_re_at_your_first_r_barcodes_S1_or_S2' => 'S2',
-          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '80 40 10 0',
           'What_type_of_substrate_did_you' => 'soil',
           'Notes_on_recent_mana_the_sample_location' => 'notes',
           '_Optional_Regarding_rns_to_share_with_us' => 'notes2',
@@ -161,7 +161,7 @@ describe KoboApi::Process do
         expect(sample.location).to eq('location location2')
         expect(sample.status_cd).to eq('submitted')
         expect(sample.barcode).to eq('K2-LB-S2')
-        expect(sample.latitude).to eq(90)
+        expect(sample.latitude).to eq(80)
         expect(sample.longitude).to eq(40)
         expect(sample.altitude).to eq(10)
         expect(sample.gps_precision).to eq(0)
@@ -197,7 +197,7 @@ describe KoboApi::Process do
           'What_is_your_kit_number_e_g_K0021' => 'K2',
           'Which_location_lette_codes_LA_LB_or_LC' => 'LB',
           'You_re_at_your_first_r_barcodes_S1_or_S2' => 'S2',
-          'Get_the_GPS_Location_e_this_more_accurate' => '90 40 10 0',
+          'Get_the_GPS_Location_e_this_more_accurate' => '80 40 10 0',
           'What_type_of_substrate_did_you' => 'soil',
           '_Optional_Regarding_rns_to_share_with_us' => 'notes',
           'Where_are_you_A_UC_serve_or_in_Yosemite' => location_raw,
@@ -228,7 +228,7 @@ describe KoboApi::Process do
             .to eq("#{location}; #{ucnr}")
           expect(sample.status_cd).to eq('submitted')
           expect(sample.barcode).to eq('K2-LB-S2')
-          expect(sample.latitude).to eq(90)
+          expect(sample.latitude).to eq(80)
           expect(sample.longitude).to eq(40)
           expect(sample.altitude).to eq(10)
           expect(sample.gps_precision).to eq(0)
@@ -331,7 +331,7 @@ describe KoboApi::Process do
             .to change { sample.reload.location }
             .to("#{location}; #{ucnr}")
             .and change { sample.reload.latitude }
-            .to(90)
+            .to(80)
             .and change { sample.reload.longitude }
             .to(40)
             .and change { sample.reload.altitude }
@@ -353,7 +353,7 @@ describe KoboApi::Process do
             .and change { sample.reload.kobo_data }
             .to(data)
             .and change { sample.geom }
-            .to(point_factory(40, 90))
+            .to(point_factory(40, 80))
 
           expect(sample.collection_date).to eq('2010-01-01')
           expect(sample.submission_date).to eq('2010-01-02')

@@ -68,40 +68,94 @@ describe Sample do
     end
   end
 
-  describe 'before_save: update_geom' do
-    def point_factory(lon, lat)
-      RGeo::Cartesian.preferred_factory(srid: 3785).point(lon, lat)
+  context 'creating a sample' do
+    let(:attr) do
+      { barcode: :barcode }
     end
 
-    let(:lat) { 1 }
-    let(:lon) { 2 }
-    let(:new_value) { 100 }
+    context 'geom does not exist' do
+      it 'populates geom with lat and long if lat and long exist' do
+        wkt = 'POINT (-20.0 10.0)'
+        sample = create(:sample, attr.merge(latitude: 10, longitude: -20))
 
-    it 'sets geom when creating sample' do
-      sample = create(:sample, latitude: lat, longitude: lon)
+        expect(sample.geom).is_a?(RGeo::Geos::CAPIPointImpl)
+        expect(sample.geom.to_s).to eq(wkt)
+      end
 
-      expect(sample.geom).to eq(point_factory(lon, lat))
+      it 'populates geom_projected based on geom if lat and long exist' do
+        wkt = 'POINT (-2226389.8158654715 1118889.9748579583)'
+        sample = create(:sample, attr.merge(latitude: 10, longitude: -20))
+        sample.reload
+
+        expect(sample.geom_projected).is_a?(RGeo::Geos::CAPIPointImpl)
+        expect(sample.geom_projected.to_s).to eq(wkt)
+      end
+
+      it 'does not populate geom if lat and long do not exist' do
+        sample = create(:sample, attr)
+
+        expect(sample.geom).to eq(nil)
+      end
+
+      it 'does not populate geom_projected if lat and long do not exist' do
+        sample = create(:sample, attr)
+
+        expect(sample.geom_projected).to eq(nil)
+      end
+    end
+  end
+
+  context 'updating a sample' do
+    let(:attr) do
+      { barcode: :barcode }
     end
 
-    it 'updates geom if latitude changes' do
-      sample = create(:sample, latitude: lat, longitude: lon)
+    it 'updates geom and geom_projected when lat changes' do
+      wkt = 'POINT (-20.0 50.0)'
+      wkt_projected = 'POINT (-2226389.8158654715 6446275.841017158)'
+      sample = create(:sample, attr.merge(latitude: 10, longitude: -20))
+      sample.update(latitude: 50, longitude: -20)
+      sample.reload
 
-      expect { sample.update(latitude: new_value) }
-        .to change { sample.geom }.to(point_factory(lon, new_value))
+      expect(sample.geom.to_s).to eq(wkt)
+      expect(sample.geom_projected.to_s).to eq(wkt_projected)
     end
 
-    it 'updates geom if longitude changes' do
-      sample = create(:sample, latitude: lat, longitude: lon)
+    it 'updates geom and geom_projected when lon changes' do
+      wkt = 'POINT (-50.0 10.0)'
+      wkt_projected = 'POINT (-5565974.539663678 1118889.9748579583)'
+      sample = create(:sample, attr.merge(latitude: 10, longitude: -20))
+      sample.update(latitude: 10, longitude: -50)
+      sample.reload
 
-      expect { sample.update(longitude: new_value) }
-        .to change { sample.geom }.to(point_factory(new_value, lat))
+      expect(sample.geom.to_s).to eq(wkt)
+      expect(sample.geom_projected.to_s).to eq(wkt_projected)
     end
 
-    it 'does not update geom if longitude or latitude are not changed' do
-      sample = create(:sample, latitude: lat, longitude: lon)
+    it 'updates geom and geom_projected when lat and lon changes' do
+      wkt = 'POINT (-50.0 50.0)'
+      wkt_projected = 'POINT (-5565974.539663678 6446275.841017158)'
+      sample = create(:sample, attr.merge(latitude: 10, longitude: -20))
+      sample.update(latitude: 50, longitude: -50)
+      sample.reload
 
-      expect { sample.update(id: 50) }
-        .to_not(change { sample.geom })
+      expect(sample.geom.to_s).to eq(wkt)
+      expect(sample.geom_projected.to_s).to eq(wkt_projected)
+    end
+
+    it 'does not update geom when lat and lon remain the same' do
+      sample = create(:sample, attr.merge(latitude: 10, longitude: -20))
+      sample.reload
+
+      expect { sample.update(barcode: 'foo') }.to_not(change { sample.geom })
+    end
+
+    it 'does not update geom_projected when lat and lon remain the same' do
+      sample = create(:sample, attr.merge(latitude: 10, longitude: -20))
+      sample.reload
+
+      expect { sample.update(barcode: 'foo') }
+        .to_not(change { sample.geom_projected })
     end
   end
 

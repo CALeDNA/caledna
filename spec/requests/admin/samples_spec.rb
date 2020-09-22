@@ -134,7 +134,7 @@ describe 'Samples' do
 
     let(:lat) { 1 }
     let(:lon) { 2 }
-    let(:new_value) { 100 }
+    let(:new_value) { 89 }
 
     it 'updates geom if longitude changes' do
       sample = create(:sample, latitude: lat, longitude: lon)
