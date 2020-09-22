@@ -115,4 +115,28 @@ namespace :import_places do
                      state_fips: Geospatial::CA_FIPS,
                      county_fips: Geospatial::LA_COUNTY_FIPS)
   end
+
+  task import_pour_locations: :environment do
+    sites = {
+      'Arroyo Seco': 'POINT (-118.1664366 34.2036721)',
+      'Bull Creek': 'POINT (-118.4977923 34.1830483)',
+      'Maywood': 'POINT (-118.1725347 33.9867065)',
+      'Compton Creek': 'POINT (-118.2066143 33.8426536)',
+      'Long Beach Estuary': 'POINT (-118.2021472 33.7626737)',
+      'Glendale Narrows': 'POINT (-118.24225 34.10242)',
+      'Elysian Valley': 'POINT (-118.228551 34.08248)',
+      'Bowtie Parcel': 'POINT (-118.2479595 34.1093732)',
+      'Post-Sepulveda Basin': 'POINT (-118.465969 34.161559)',
+      'LA Zoo': 'POINT (-118.28127 34.155683)',
+      'Verdugo Wash': 'POINT (-118.237523 34.202886)',
+      'Tujunga Wash': 'POINT (-118.389907 34.252641)'
+    }
+
+    sites.each do |name, geom|
+      matches = /(-[0-9.]+) ([0-9.]+)/.match(geom)
+      Place.create(name: name, geom: geom, latitude: matches[2],
+                   longitude: matches[1], place_type_cd: 'pour_location',
+                   place_source_type_cd: 'LA_river')
+    end
+  end
 end
