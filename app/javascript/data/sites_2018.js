@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 export var LARWMPJson = {
+=======
+export var LARWMP2018Json = {
+>>>>>>> e3e0e642... add geoJSON files fo LA River
   type: "FeatureCollection",
   name: "sites_2018_4",
   crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
