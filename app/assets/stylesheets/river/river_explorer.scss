@@ -23,9 +23,13 @@
   }
 
   .data-list {
-    padding: 0 2em 2em 2em;
+    padding: 2em;
     height: 450px;
     overflow: scroll;
+  }
+
+  .data-layers {
+    margin-top: 1em;
   }
 
   .data-layer {
@@ -34,11 +38,11 @@
     padding: 7px;
   }
 
-  .data-screen {
+  .data-tab {
     border: 1px solid black;
   }
 
-  .species-screen {
+  .species-tab {
     border: 1px solid black;
 
     padding: 2em;
