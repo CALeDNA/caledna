@@ -31,6 +31,8 @@ Rails.application.routes.draw do
         get '/gbif_occurrences', to: 'places#gbif_occurrences'
         get '/kingdom_counts', to: 'places#kingdom_counts'
       end
+      get '/places_basic', to: 'places#places_basic'
+
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]
       resources :samples, only: %i[index show] do

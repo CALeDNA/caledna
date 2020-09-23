@@ -27,6 +27,12 @@ module Api
         }
       end
 
+      def places_basic
+        render json: {
+          places: places_for_map
+        }
+      end
+
       private
 
       def place_id
@@ -37,6 +43,14 @@ module Api
         radius = params[:radius] || 1000
         conn.quote(radius.to_i)
       end
+
+      def conn
+        ActiveRecord::Base.connection
+      end
+
+      # ==============
+      # show
+      # ==============
 
       def place
         @place ||= begin
@@ -58,6 +72,10 @@ module Api
             .where('places.id = ?', place_id)
         end
       end
+
+      # ==============
+      # gbif_occurrences
+      # ==============
 
       def gbif_columns
         [
@@ -83,6 +101,10 @@ module Api
         end
       end
       # rubocop:enable Metrics/MethodLength
+
+      # ==============
+      # kingdom_counts
+      # ==============
 
       # rubocop:disable Metrics/MethodLength
       def edna_basic_kingdom_sql
@@ -181,8 +203,26 @@ module Api
         end
       end
 
-      def conn
-        ActiveRecord::Base.connection
+      # ==============
+      # places_basic
+      # ==============
+
+      def places_for_map
+        @places_for_map ||= begin
+          places = Place.select('id', 'name', 'latitude', 'longitude')
+                        .limit(50)
+          places.where(places_for_map_attributes)
+        end
+      end
+
+      def places_for_map_attributes
+        attributes = {}
+        if params[:place_source_type]
+          attributes[:place_source_type_cd] = params[:place_source_type]
+        end
+        attributes[:place_type_cd] = params[:place_type] if params[:place_type]
+
+        attributes
       end
     end
   end
