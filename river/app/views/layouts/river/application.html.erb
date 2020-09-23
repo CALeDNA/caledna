@@ -33,16 +33,26 @@
     <div id="main-wrapper">
       <%= render partial: "layouts/river/nav" %>
 
-      <div class="container main-container">
-        <% flash.each do |name, msg| -%>
-          <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
-        <% end -%>
-        <div class="row">
-          <div class="col-md-10 col-md-offset-1">
-            <%= yield %>
+      <% if yield :wide_screen == true %>
+        <div class="container main-container">
+          <% flash.each do |name, msg| -%>
+            <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
+          <% end -%>
+
+          <%= yield %>
+        </div>
+      <% else %>
+        <div class="container main-container">
+          <% flash.each do |name, msg| -%>
+            <%= content_tag :div, sanitize(msg), class: flash_class(name) %>
+          <% end -%>
+          <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+              <%= yield %>
+            </div>
           </div>
         </div>
-      </div>
+      <% end %>
 
       <%= render partial: "layouts/river/footer" %>
     <div>

@@ -40,6 +40,8 @@ Rails.application.routes.draw do
   end
   resources :river_stories, only: %i[index show new create],
                             controller: :user_submissions
+  resource :river_explorer, only: %i[show], controller: 'river/river_explorers'
+
 
   get '/faq', to: 'river/pages#show', defaults: { id: 'faq' }
   get '/our-mission', to: 'river/pages#show', defaults: { id: 'our-mission' }
