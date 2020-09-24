@@ -135,6 +135,13 @@
     nutrients,
     algalBiomass,
     dissolvedMetals,
+    Temperature,
+    Oxygen,
+    pH,
+    Salinity,
+    SpecificConductivity,
+    PouR,
+    LARWMP,
   } from "./shared/constants/dataLayers";
   import AnalyteList from "./shared/components/analyte-list";
   import {
