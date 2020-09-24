@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resources :occurrences, only: %i[index]
       resources :field_projects, only: %i[show]
       resources :inat_observations, only: %i[index]
       resources :places, only: %i[show] do
