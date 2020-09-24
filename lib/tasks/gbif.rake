@@ -168,4 +168,16 @@ namespace :gbif do
       PourGbifOccurrence.create(attributes)
     end
   end
+
+  task add_names_to_taxa: :environment do
+    PourGbifTaxon.find_each do |taxon|
+      puts taxon.taxon_id
+
+      all_names = [taxon.kingdom, taxon.phylum, taxon.class_name, taxon.order,
+                   taxon.family, taxon.genus, taxon.species].compact
+
+      taxon.names = all_names
+      taxon.save
+    end
+  end
 end
