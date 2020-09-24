@@ -142,6 +142,7 @@
     SpecificConductivity,
     PouR,
     LARWMP,
+    legends,
   } from "./shared/constants/dataLayers";
   import AnalyteList from "./shared/components/analyte-list";
 
@@ -166,9 +167,7 @@
     },
     data: function() {
       return {
-        activeTab: "mapTab",
-        taxaKeyword: null,
-        map: null,
+        legends: { ...legends },
         biodiversity,
         locations,
         benthicMacroinvertebrates,
@@ -180,17 +179,50 @@
         algalBiomass,
         dissolvedMetals,
         activeTab: "mapTab",
+        activeMapLayer: null,
         map: null,
         selectedData: {},
         dataMapLayers: {},
         tempSelectedData: {},
         pourLocationsLayer: null,
+        dataLayerHistory: [],
       };
     },
     methods: {
       // =============
       // mapTab
       // =============
+      getActiveMapLayer: function() {
+        let history = {};
+        this.activeMapLayer = null;
+        for (let i = this.dataLayerHistory.length - 1; i >= 0; --i) {
+          let item = this.dataLayerHistory[i];
+          let layer = Object.keys(item)[0];
+          let value = Object.values(item)[0];
+          if (value && this.selectedData[layer]) {
+            this.activeMapLayer = layer;
+            break;
+          }
+        }
+      },
+      updateLegend: function() {
+        if (this.legend) {
+          this.map.removeControl(this.legend);
+        }
+        let ctx = this;
+
+        this.legend = L.control({ position: "bottomright" });
+        this.legend.onAdd = function(map) {
+          var div = L.DomUtil.create("div", "info legend");
+          if (ctx.activeMapLayer) {
+            div.innerHTML = `<img class="legend-img" src="${
+              ctx.legends[ctx.activeMapLayer]
+            }">`;
+          }
+          return div;
+        };
+        this.legend.addTo(this.map);
+      },
 
       // =============
       // taxaTab
@@ -244,10 +276,14 @@
         if (this.dataMapLayers[layerName]) {
           this.map.removeLayer(this.dataMapLayers[layerName]);
           this.dataMapLayers[layerName] = null;
+          this.dataLayerHistory.push({ [layerName]: false });
         } else if (objectLayer) {
           this.dataMapLayers[layerName] = objectLayer;
           this.map.addLayer(this.dataMapLayers[layerName]);
+          this.dataLayerHistory.push({ [layerName]: true });
         }
+        this.getActiveMapLayer();
+        this.updateLegend();
       },
       setActiveTab: function(tab) {
         this.activeTab = tab;
@@ -265,6 +301,9 @@
         delete this.selectedData[layer];
         this.selectedData = { ...this.selectedData };
         this.toggleMapLayer(layer);
+        this.dataLayerHistory.push({ [layer]: false });
+        this.getActiveMapLayer();
+        this.updateLegend();
       },
       toggleLayerOpacity: function(layer, event) {
         var mapObj = this.dataMapLayers[layer];
@@ -274,6 +313,9 @@
           });
         }
         this.selectedData[layer] = event.target.checked;
+        this.dataLayerHistory.push({ [layer]: event.target.checked });
+        this.getActiveMapLayer();
+        this.updateLegend();
       },
 
       // =============
