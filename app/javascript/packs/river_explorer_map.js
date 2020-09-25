@@ -130,7 +130,7 @@ export function createRiverLayer() {
       <p>LA River Watershed</p>
       <table class="map-popup">
         <tr>
-          <th scope="row">River or Stream Name</th>
+          <th scope="row">Name</th>
           <td>${feature.properties["GNIS_NAME"]}</td>
         </tr>
       </table>
@@ -153,10 +153,10 @@ export function createWatershedLayer() {
     dashArray: "",
     lineCap: "butt",
     lineJoin: "miter",
-    weight: 1.0,
+    weight: 2.0,
     fill: true,
     fillOpacity: 0.2,
-    fillColor: "rgba(255,231,199,0.9)",
+    fillColor: "rgba(190,190,190,0.9)",
     interactive: false,
   };
 

@@ -39,7 +39,7 @@ export const Nickel = "Nickel (ug/L)";
 export const Selenium = "Selenium (ug/L)";
 export const Zinc = "Zinc (ug/L)";
 export const PouR = "Protecting Our River";
-export const LARWMP = "Los Angeles River Water Monitoring Program (2018)";
+export const LARWMP = "Los Angeles River Watershed Monitoring Program (2018)";
 
 export const biodiversity = {
   eDNA: "eDNA",

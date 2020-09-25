@@ -22,7 +22,7 @@
     props: ["list"],
     methods: {
       showInfo: function(layer) {
-        alert(`Info about ${layer}`);
+        alert(`TODO: Add info about ${layer}`);
       },
       addLayer: function(layer, event) {
         this.$emit("addSelectedLayer", layer, event.target.checked);

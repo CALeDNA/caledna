@@ -1,6 +1,13 @@
 <template>
   <div>
     <h1>LA River Explorer</h1>
+    <p class="font-md m-b-md">
+      The public's interest in the ecology and environment of the LA River is
+      one of the main inspirations for this project. One of our goals is raise
+      appreciation of the biodiversity of the LA River by creating a website
+      where people can learn more about the ecology of the LA River by browsing
+      through existing biodiversity and environmental data.
+    </p>
     <div class="my-container">
       <div id="controls">
         <h2 class="m-t-zero">Monitoring Locations</h2>
@@ -91,6 +98,12 @@
             tributaries, search for a species to find out if there are any
             reported occurrences along the LA River.
           </p>
+          <p>
+            The biodiversity data consists of Protecting our River eDNA data and
+            <a href="https://www.inaturalist.org/">iNaturalist</a>
+            research grade photographic observations via
+            <a href="https://www.gbif.org/">GBIF</a>.
+          </p>
           <autocomplete
             :url="getTaxaRoute"
             param="query"
@@ -128,58 +141,68 @@
             its tributaries, select one or more of these enviromental
             conditions.
           </p>
+          <p>
+            The data comes from the
+            <a href="https://www.watershedhealth.org/larwmp"
+              >Los Angeles River Watershed Monitoring Program</a
+            >
+            in 2018 via
+            <a href="https://www.watershedhealth.org/"
+              >Council for Watershed Health</a
+            >.
+          </p>
           <div class="data-list">
             <div>
-              Benthic Macroinvertebrates
+              <h3>Benthic Macroinvertebrates</h3>
               <AnalyteList
                 :list="benthicMacroinvertebrates"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
-              Attached Algae
+              <h3>Attached Algae</h3>
               <AnalyteList
                 :list="attachedAlgae"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
-              Riparian Habitat Score
+              <h3>Riparian Habitat Score</h3>
               <AnalyteList
                 :list="riparianHabitatScore"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
-              InSitu Measurements
+              <h3>InSitu Measurements</h3>
               <AnalyteList
                 :list="inSituMeasurements"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
-              General Chemistry
+              <h3>General Chemistry</h3>
               <AnalyteList
                 :list="generalChemistry"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
-              Nutrients
+              <h3>Nutrients</h3>
               <AnalyteList
                 :list="nutrients"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
-              Algal Biomass
+              <h3>Algal Biomass</h3>
               <AnalyteList
                 :list="algalBiomass"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
-              Dissolved Metals
+              <h3>Dissolved Metals</h3>
               <AnalyteList
                 :list="dissolvedMetals"
                 @addSelectedLayer="appendTempSelectedLayers"
@@ -494,7 +517,7 @@
         this.activeTab = tab;
       },
       showInfo: function(layer) {
-        alert(`Info about ${layer}`);
+        alert(`TODO: Add info about ${layer}`);
       },
       // =============
       // fetch data
