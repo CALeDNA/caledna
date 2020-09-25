@@ -3,10 +3,10 @@
     <h1>LA River Explorer</h1>
     <div class="my-container">
       <div id="controls">
-        <h2>Monitoring Locations</h2>
+        <h2 class="m-t-zero">Monitoring Locations</h2>
         <AnalyteList
           :list="locations"
-          @addSelectedLayer="appendSelectedLayers"
+          @addSelectedLayer="appendTempSelectedLayers"
         />
 
         <h2>Enviromental Conditions</h2>
@@ -18,19 +18,19 @@
         </button>
         <section class="data-layers">
           <div
-            v-for="layer in Object.keys(selectedLayers)"
+            v-for="layer in Object.keys(selectedData)"
             v-bind:key="layer"
             class="data-layer"
           >
             <div>
               <input
                 type="checkbox"
-                :id="layer"
-                :name="layer"
+                :id="`${layer}_m`"
+                :name="`${layer}_m`"
                 :checked="isLayerSelected(layer)"
-                @click="toggleLayerOpacity(layer)"
+                @click="toggleLayerOpacity(layer, $event)"
               />
-              <label :for="layer">{{ layer }}</label>
+              <label :for="`${layer}_m`">{{ layer }}</label>
             </div>
             <div>
               <span @click="showInfo(layer)">
@@ -56,60 +56,60 @@
               Benthic Macroinvertebrates
               <AnalyteList
                 :list="benthicMacroinvertebrates"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
               Attached Algae
               <AnalyteList
                 :list="attachedAlgae"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
               Riparian Habitat Score
               <AnalyteList
                 :list="riparianHabitatScore"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
               InSitu Measurements
               <AnalyteList
                 :list="inSituMeasurements"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
               General Chemistry
               <AnalyteList
                 :list="generalChemistry"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
               Nutrients
               <AnalyteList
                 :list="nutrients"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
               Algal Biomass
               <AnalyteList
                 :list="algalBiomass"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
             <div>
               Dissolved Metals
               <AnalyteList
                 :list="dissolvedMetals"
-                @addSelectedLayer="appendSelectedLayers"
+                @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
           </div>
-          <button class="btn btn-primary" @click="setActiveTab('mapTab')">
+          <button class="btn btn-primary" @click="submitData('mapTab')">
             Add to Map
           </button>
           <button class="btn btn-default" @click="setActiveTab('mapTab')">
@@ -144,14 +144,18 @@
     LARWMP,
   } from "./shared/constants/dataLayers";
   import AnalyteList from "./shared/components/analyte-list";
-  import {
-    createLARWMP2018,
-    createImageLayer,
-  } from "../packs/river_explorer_map";
+
   import {
     initMap,
+    createLARWMP2018,
     createRiverLayer,
+    createImageLayer,
     createWatershedLayer,
+    sites_2018_temperature,
+    sites_2018_oxygen,
+    sites_2018_ph,
+    sites_2018_salinity,
+    sites_2018_conductivity,
   } from "../packs/river_explorer_map";
   import base_map from "../packs/base_map";
 
@@ -165,10 +169,6 @@
         activeTab: "mapTab",
         taxaKeyword: null,
         map: null,
-        selectedLayers: {},
-        mapLayers: {},
-        species: {},
-        pourLocationsLayer: null,
         biodiversity,
         locations,
         benthicMacroinvertebrates,
@@ -179,46 +179,75 @@
         nutrients,
         algalBiomass,
         dissolvedMetals,
+        activeTab: "mapTab",
+        map: null,
+        selectedData: {},
+        dataMapLayers: {},
+        tempSelectedData: {},
+        pourLocationsLayer: null,
       };
     },
     methods: {
-      toggleMapLayer: function(layerName, objectLayer) {
-        if (this.mapLayers[layerName]) {
-          this.map.removeLayer(this.mapLayers[layerName]);
-          this.mapLayers[layerName] = null;
-        } else {
-          this.mapLayers[layerName] = objectLayer;
-          this.map.addLayer(this.mapLayers[layerName]);
+      // =============
+      // mapTab
+      // =============
+
+      // =============
+      // taxaTab
+      // =============
+
+      // =============
+      // dataTab
+      // =============
+      submitData: function(activeTab) {
+        for (const layer in this.tempSelectedData) {
+          if (this.tempSelectedData[layer]) {
+            this.selectedData[layer] = true;
+            this.addLayersToMap(layer);
+          }
         }
+        this.tempSelectedData = {};
+
+        this.setActiveTab(activeTab);
       },
-
-      appendSelectedLayers: function(layer) {
-        if (layer == "LARWMP (2018)" || layer == "PouR") {
-        } else {
-          this.selectedLayers[layer] = true;
-        }
-
-        if (layer == "LARWMP (2018)") {
+      addLayersToMap: function(layer) {
+        if (layer == LARWMP) {
           this.toggleMapLayer(layer, createLARWMP2018());
-        } else if (layer == "PouR") {
+        } else if (layer == PouR) {
           this.toggleMapLayer(layer, this.pourLocationsLayer);
-        } else if (layer == "Temperature (C°)") {
-          let imageLayer = createImageLayer(
-            "/data/river_explorer/temperature.png"
-          );
-          this.toggleMapLayer(layer, imageLayer);
-        } else if (layer == "Dissolved Oxygen (mg/L)") {
-          let imageLayer = createImageLayer("/data/river_explorer/oxygen.png");
-          this.toggleMapLayer(layer, imageLayer);
+        } else if (layer == Temperature) {
+          this.toggleMapLayer(layer, sites_2018_temperature);
+        } else if (layer == Oxygen) {
+          this.toggleMapLayer(layer, sites_2018_oxygen);
+        } else if (layer == pH) {
+          this.toggleMapLayer(layer, sites_2018_ph);
+        } else if (layer == Salinity) {
+          this.toggleMapLayer(layer, sites_2018_salinity);
+        } else if (layer == SpecificConductivity) {
+          this.toggleMapLayer(layer, sites_2018_conductivity);
         }
       },
-      isLayerSelected: function(layer) {
-        return this.selectedLayers[layer];
+      // =============
+      // analyte-list
+      // =============
+      appendTempSelectedLayers: function(layer, checked) {
+        if (layer == LARWMP || layer == PouR) {
+          this.addLayersToMap(layer);
+        } else {
+          this.tempSelectedData[layer] = checked;
+        }
       },
-      removeLayer: function(layer) {
-        delete this.selectedLayers[layer];
-        this.selectedLayers = { ...this.selectedLayers };
-        this.toggleMapLayer(layer);
+      // =============
+      // common
+      // =============
+      toggleMapLayer: function(layerName, objectLayer) {
+        if (this.dataMapLayers[layerName]) {
+          this.map.removeLayer(this.dataMapLayers[layerName]);
+          this.dataMapLayers[layerName] = null;
+        } else if (objectLayer) {
+          this.dataMapLayers[layerName] = objectLayer;
+          this.map.addLayer(this.dataMapLayers[layerName]);
+        }
       },
       setActiveTab: function(tab) {
         this.activeTab = tab;
@@ -226,13 +255,30 @@
       showInfo: function(layer) {
         alert(`Info about ${layer}`);
       },
-      toggleLayerOpacity: function(layer) {
-        var mapObj = this.mapLayers[layer];
-        var image = document.querySelector(`img[src*="${mapObj._url}"]`);
-        if (image) {
-          image.style.opacity = image.style.opacity == "0" ? 100 : 0;
-        }
+      // =============
+      // current list of layers
+      // =============
+      isLayerSelected: function(layer) {
+        return this.selectedData[layer];
       },
+      removeLayer: function(layer) {
+        delete this.selectedData[layer];
+        this.selectedData = { ...this.selectedData };
+        this.toggleMapLayer(layer);
+      },
+      toggleLayerOpacity: function(layer, event) {
+        var mapObj = this.dataMapLayers[layer];
+        if (mapObj) {
+          Object.values(mapObj._layers).forEach((objLayer) => {
+            toggleFeatureOpacity(layer, objLayer);
+          });
+        }
+        this.selectedData[layer] = event.target.checked;
+      },
+
+      // =============
+      // fetch data
+      // =============
       fetchPourLocations: function() {
         axios
           .get("/api/v1/places_basic?place_type=pour_location")
@@ -252,8 +298,19 @@
         this.map = initMap();
         this.map.addLayer(createWatershedLayer());
         this.map.addLayer(createRiverLayer());
+
         this.fetchPourLocations();
       });
     },
   };
+
+  function toggleFeatureOpacity(layer, objLayer) {
+    if (!objLayer.feature.properties[layer]) {
+      return;
+    }
+
+    let value =
+      objLayer.options.opacity == 0 ? objLayer.defaultOptions.opacity : 0;
+    objLayer.setStyle({ opacity: value, fillOpacity: value });
+  }
 </script>

@@ -6,7 +6,7 @@
         :id="key"
         :name="key"
         :value="key"
-        @click="addLayer(key)"
+        @click="addLayer(key, $event)"
       />
       <label :for="key">{{ key }} </label>
       <span @click="showInfo(key)">
@@ -24,8 +24,8 @@
       showInfo: function(layer) {
         alert(`Info about ${layer}`);
       },
-      addLayer: function(layer) {
-        this.$emit("addSelectedLayer", layer);
+      addLayer: function(layer, event) {
+        this.$emit("addSelectedLayer", layer, event.target.checked);
       },
     },
   };
