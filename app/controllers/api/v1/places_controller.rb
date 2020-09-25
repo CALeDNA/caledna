@@ -40,8 +40,9 @@ module Api
       end
 
       def radius
-        radius = params[:radius] || 1000
-        conn.quote(radius.to_i)
+        radius = params[:radius].blank? ? 1000 : params[:radius].to_i
+        radius = 3000 if radius > 3000
+        conn.quote(radius)
       end
 
       def conn
