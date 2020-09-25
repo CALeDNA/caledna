@@ -1,31 +1,23 @@
 #river-explorer {
-  .closed {
-    display: none;
-  }
-  .my-container {
-    display: flex;
-  }
   #controls {
-    // border: 1px solid green;
-    flex-basis: 300px;
-
-    // height: 700px;
-    /* float: left; */
-    // overflow: scroll;
+    width: 300px;
+    float: left;
+    padding-right: 1em;
   }
   #explorer-content {
-    flex-grow: 2;
+    margin-left: 300px;
   }
 
   #map {
     border: 1px solid black;
     height: 700px;
+    background-color: white;
   }
 
   .data-list {
-    padding: 2em;
+    padding: 1em 0;
     height: 450px;
-    overflow: scroll;
+    overflow-y: scroll;
   }
 
   .data-layers {
@@ -34,21 +26,28 @@
 
   .data-layer {
     width: 100%;
-    border: 1px #ddd solid;
+    border: 1px #aaa solid;
     padding: 7px;
   }
 
   .data-tab {
-    border: 1px solid black;
+    border: 1px solid #aaa;
+    padding: 1.5em;
   }
 
-  .species-tab {
-    border: 1px solid black;
-
-    padding: 2em;
+  .taxon-tab {
+    border: 1px solid #aaa;
+    padding: 1.5em;
   }
 
   .legend-img {
     width: 200px;
+  }
+
+  .main-container {
+    ul {
+      list-style: none;
+      padding: 0;
+    }
   }
 }

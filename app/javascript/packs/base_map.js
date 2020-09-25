@@ -594,4 +594,5 @@ export default {
   tileLayerOptions,
   formatMapData,
   tileLayersFactory,
+  tileLayers,
 };

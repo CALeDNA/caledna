@@ -2,6 +2,7 @@
 import { riversJson } from "../data/rivers.js";
 import { watershedJson } from "../data/watershed.js";
 import { LARWMP2018Json } from "../data/sites_2018.js";
+import base_map from "./base_map";
 
 import L from "leaflet";
 import "leaflet-svg-shape-markers";
@@ -12,13 +13,16 @@ export function initMap() {
     maxZoom: 28,
     minZoom: 1,
     initialZoom: 7,
+    layers: [base_map.tileLayers.Minimal],
   }).fitBounds([
     [33.679246670913905, -118.6974911092205],
     [34.45898102165338, -117.94488821092733],
   ]);
-  map.attributionControl.setPrefix(
-    '<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>'
-  );
+
+  let tiles = base_map.tileLayers;
+  tiles["None"] = L.tileLayer("");
+
+  L.control.layers(base_map.tileLayers).addTo(map);
 
   return map;
 }
@@ -46,6 +50,22 @@ export function createImageLayer(rasterFile) {
 //   };
 // }
 
+export function createPourLayer(places) {
+  var pointStyle = {
+    shape: "triangle",
+    radius: 6,
+    color: "#222",
+    fillColor: "#5aa172",
+    fillOpacity: 0.7,
+    weight: 2,
+  };
+
+  let markers = places.map((place) => {
+    return L.shapeMarker([place.latitude, place.longitude], pointStyle);
+  });
+  return L.layerGroup(markers);
+}
+
 export function createRiverLayer() {
   var style = {
     opacity: 1,
@@ -66,14 +86,14 @@ export function createRiverLayer() {
 export function createWatershedLayer() {
   var style = {
     opacity: 1,
-    color: "rgba(35,35,35,1.0)",
+    color: "rgba(35,35,35,0.7)",
     dashArray: "",
     lineCap: "butt",
     lineJoin: "miter",
     weight: 1.0,
     fill: true,
-    fillOpacity: 0.5,
-    fillColor: "rgba(255,231,199,1.0)",
+    fillOpacity: 0.2,
+    fillColor: "rgba(255,231,199,0.9)",
     interactive: false,
   };
 
@@ -84,16 +104,16 @@ export function createWatershedLayer() {
 
 export function createLARWMP2018() {
   var pointStyle = {
-    radius: 5,
-    fillColor: "#ff7800",
-    color: "#000",
-    weight: 1,
-    opacity: 1,
-    fillOpacity: 0.8,
+    shape: "triangle",
+    radius: 6,
+    color: "#222",
+    fillColor: "orange",
+    fillOpacity: 0.7,
+    weight: 2,
   };
   return new L.geoJson(LARWMP2018Json, {
     pointToLayer: function(_feature, latlng) {
-      return L.circleMarker(latlng, pointStyle);
+      return L.shapeMarker(latlng, pointStyle);
     },
   });
 }
@@ -109,7 +129,7 @@ let markerSettings = {
   fill: true,
   fillOpacity: 0.7,
   interactive: true,
-  color: "rgba(35,35,35,1.0)",
+  color: "#222",
 };
 
 function style_sites_2018_temperature(feature) {

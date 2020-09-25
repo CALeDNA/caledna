@@ -14,7 +14,7 @@
           class="btn btn-primary"
           @click="setActiveTab('biodiversityTab')"
         >
-          Add Taxon
+          Add Species
         </button>
         <section class="data-layers">
           <div
@@ -84,7 +84,13 @@
           <div id="map"></div>
         </section>
 
-        <section v-if="activeTab == 'biodiversityTab'" class="species-tab">
+        <section v-if="activeTab == 'biodiversityTab'" class="taxon-tab">
+          <h2 class="m-t-zero">LA River Biodiversity</h2>
+          <p>
+            To learn more about the biodiversity of the LA River and its
+            tributaries, search for a species to find out if there are any
+            reported occurrences along the LA River.
+          </p>
           <autocomplete
             :url="getTaxaRoute"
             param="query"
@@ -96,24 +102,32 @@
             :onSelect="handleTaxaSelect"
           >
           </autocomplete>
-          <div v-show="tempSelectedTaxon.canonical_name">
+          <div class="m-t-md" v-show="tempSelectedTaxon.canonical_name">
             <h2>{{ tempSelectedTaxon.canonical_name }}</h2>
             Rank: {{ tempSelectedTaxon.rank }}
           </div>
 
-          <button
-            class="btn btn-primary"
-            @click="submitTaxa(tempSelectedTaxon)"
-          >
-            Add to Map
-          </button>
-          <button class="btn btn-default" @click="setActiveTab('mapTab')">
-            Cancel
-          </button>
+          <div class="m-t-md">
+            <button
+              class="btn btn-primary"
+              @click="submitTaxa(tempSelectedTaxon)"
+            >
+              View on Map
+            </button>
+            <button class="btn btn-default" @click="setActiveTab('mapTab')">
+              Cancel
+            </button>
+          </div>
         </section>
 
         <!-- environmentalTab -->
         <section v-if="activeTab == 'environmentalTab'" class="data-tab">
+          <h2 class="m-t-zero">LA River Environmental Conditions</h2>
+          <p>
+            To learn more about the environmental conditions of the LA River and
+            its tributaries, select one or more of these enviromental
+            conditions.
+          </p>
           <div class="data-list">
             <div>
               Benthic Macroinvertebrates
@@ -172,12 +186,14 @@
               />
             </div>
           </div>
-          <button class="btn btn-primary" @click="submitData('mapTab')">
-            Add to Map
-          </button>
-          <button class="btn btn-default" @click="setActiveTab('mapTab')">
-            Cancel
-          </button>
+          <div class="m-t-md">
+            <button class="btn btn-primary" @click="submitData('mapTab')">
+              View on Map
+            </button>
+            <button class="btn btn-default" @click="setActiveTab('mapTab')">
+              Cancel
+            </button>
+          </div>
         </section>
       </div>
     </div>
@@ -213,6 +229,7 @@
 
   import {
     initMap,
+    createPourLayer,
     createLARWMP2018,
     createRiverLayer,
     createImageLayer,
@@ -236,19 +253,6 @@
       return {
         // constants
         legends: { ...legends },
-        getTaxaRoute: api.routes.taxa,
-
-        activeTab: "mapTab",
-        taxaKeyword: null,
-        map: null,
-        selectedData: {},
-        dataMapLayers: {},
-        selectedTaxa: {},
-        previewTaxon: {},
-        ednaData: {},
-        gbifData: {},
-        // {aves: {layer: x, count: x}}
-        pourLocationsLayer: null,
         biodiversity,
         locations,
         benthicMacroinvertebrates,
@@ -342,7 +346,7 @@
         return json.data.map((record) => record.attributes);
       },
       handleTaxaSelect: function(taxon) {
-        this.previewTaxon = taxon;
+        this.tempSelectedTaxon = taxon;
         // this.fetchEol(taxon.canonical_name);
       },
       submitTaxa: function() {
@@ -486,10 +490,7 @@
         axios
           .get("/api/v1/places_basic?place_type=pour_location")
           .then((response) => {
-            this.pourLocationsLayer = base_map.createMarkerLayer(
-              response.data.places,
-              base_map.createCircleMarker
-            );
+            this.pourLocationsLayer = createPourLayer(response.data.places);
           })
           .catch((e) => {
             console.error(e);
@@ -516,7 +517,10 @@
 
             let color = randomHsl();
             let markers = response.data.edna.map((item) => {
-              return base_map.createCircleMarker(item, { fillColor: color });
+              return base_map.createCircleMarker(item, {
+                fillColor: color,
+                weight: 1,
+              });
             });
             let ednaLayer = L.layerGroup(markers);
 
