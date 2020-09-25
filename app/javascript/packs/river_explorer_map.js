@@ -50,7 +50,7 @@ export function createImageLayer(rasterFile) {
 //   };
 // }
 
-export function createPourLayer(places) {
+export function pourLocationsLayer(places) {
   var pointStyle = {
     shape: "triangle",
     radius: 6,
@@ -61,7 +61,54 @@ export function createPourLayer(places) {
   };
 
   let markers = places.map((place) => {
-    return L.shapeMarker([place.latitude, place.longitude], pointStyle);
+    let popup = `
+      <p>Protecting Our River site</p>
+
+      <table class="map-popup">
+        <tr>
+          <th scope="row">Name</th>
+          <td><a href="/places/${place.id}">${place.name}</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Latitude</th>
+          <td>${place.latitude}</td>
+        </tr>
+        <tr>
+          <th scope="row">Longitude</th>
+          <td>${place.longitude}</td>
+        </tr>
+      </table>
+    `;
+    let marker = L.shapeMarker([place.latitude, place.longitude], pointStyle);
+    marker.bindPopup(popup);
+    return marker;
+  });
+  return L.layerGroup(markers);
+}
+
+export function pourEdnaLayer(samples, color, taxonName) {
+  let markers = samples.map((sample) => {
+    let popup = `
+      <p>eDNA Site for ${taxonName}</p>
+
+      <table class="map-popup">
+        <tr>
+          <th scope="row">Name</th>
+          <td><a href="/samples/${sample.id}">${sample.barcode}</a></td>
+        </tr>
+        <tr>
+          <th scope="row">Latitude</th>
+          <td>${sample.latitude}</td>
+        </tr>
+        <tr>
+          <th scope="row">Longitude</th>
+          <td>${sample.longitude}</td>
+        </tr>
+      </table>
+    `;
+    sample["body"] = popup;
+
+    return base_map.createCircleMarker(sample, { fillColor: color, weight: 1 });
   });
   return L.layerGroup(markers);
 }
@@ -73,13 +120,29 @@ export function createRiverLayer() {
     dashArray: "",
     lineCap: "square",
     lineJoin: "bevel",
-    weight: 1.0,
+    weight: 2.0,
     fillOpacity: 0,
-    interactive: false,
+    interactive: true,
   };
+
+  function createPopup(feature, layer) {
+    let popup = `
+      <p>LA River Watershed</p>
+      <table class="map-popup">
+        <tr>
+          <th scope="row">River or Stream Name</th>
+          <td>${feature.properties["GNIS_NAME"]}</td>
+        </tr>
+      </table>
+    `;
+
+    layer.bindPopup(popup, { maxHeight: 400 });
+  }
 
   return new L.geoJson(riversJson, {
     style: style,
+    onEachFeature: createPopup,
+    interactive: true,
   });
 }
 
@@ -111,7 +174,36 @@ export function createLARWMP2018() {
     fillOpacity: 0.7,
     weight: 2,
   };
+
+  function createPopup(feature, layer) {
+    let popup = `
+      <p>Los Angeles River Water Monitoring Program site</p>
+
+      <table class="map-popup">
+        <tr>
+          <th scope="row">Name</th>
+          <td>${feature.properties["FieldSampleID"]}</td>
+        </tr>
+        <tr>
+          <th scope="row">Station Type</th>
+          <td>${feature.properties["StationType"]}</td>
+        </tr>
+        <tr>
+          <th scope="row">Latitude</th>
+          <td>${feature.properties["NominalLatitude"]}</td>
+        </tr>
+        <tr>
+          <th scope="row">Longitude</th>
+          <td>${feature.properties["NominalLongitude"]}</td>
+        </tr>
+      </table>
+    `;
+
+    layer.bindPopup(popup, { maxHeight: 400 });
+  }
+
   return new L.geoJson(LARWMP2018Json, {
+    onEachFeature: createPopup,
     pointToLayer: function(_feature, latlng) {
       return L.shapeMarker(latlng, pointStyle);
     },
@@ -131,6 +223,31 @@ let markerSettings = {
   interactive: true,
   color: "#222",
 };
+
+function sites_2018_popup(feature, analyte) {
+  let value = feature.properties[analyte];
+  return `
+    <p>${analyte}</p>
+    <table class="map-popup">
+      <tr>
+        <th scope="row">Name</th>
+        <td>${feature.properties["FieldSampleID"]}</td>
+      </tr>
+      <tr>
+        <th scope="row">Latitude</th>
+        <td>${feature.properties["NominalLatitude"]}</td>
+      </tr>
+      <tr>
+        <th scope="row">Longitude</th>
+        <td>${feature.properties["NominalLongitude"]}</td>
+      </tr>
+      <tr>
+        <th scope="row">${analyte}</th>
+        <td>${value}</td>
+      </tr>
+    </table>
+  `;
+}
 
 function style_sites_2018_temperature(feature) {
   if (feature.properties["Temperature (C°)"] === null) {
@@ -181,7 +298,14 @@ function style_sites_2018_temperature(feature) {
   }
 }
 
+function sites_2018_temperature_popup(feature, layer) {
+  let analyte = "Temperature (C°)";
+  let popup = sites_2018_popup(feature, analyte);
+  layer.bindPopup(popup);
+}
+
 export const sites_2018_temperature = new L.geoJson(LARWMP2018Json, {
+  onEachFeature: sites_2018_temperature_popup,
   pointToLayer: function(feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_temperature(feature));
   },
@@ -236,7 +360,14 @@ function style_sites_2018_oxygen(feature) {
   }
 }
 
+function sites_2018_oxygen_popup(feature, layer) {
+  let analyte = "Dissolved Oxygen (mg/L)";
+  let popup = sites_2018_popup(feature, analyte);
+  layer.bindPopup(popup);
+}
+
 export const sites_2018_oxygen = new L.geoJson(LARWMP2018Json, {
+  onEachFeature: sites_2018_oxygen_popup,
   pointToLayer: function(feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_oxygen(feature));
   },
@@ -291,7 +422,14 @@ function style_sites_2018_ph(feature) {
   }
 }
 
+function sites_2018_ph_popup(feature, layer) {
+  let analyte = "pH";
+  let popup = sites_2018_popup(feature, analyte);
+  layer.bindPopup(popup);
+}
+
 export const sites_2018_ph = new L.geoJson(LARWMP2018Json, {
+  onEachFeature: sites_2018_ph_popup,
   pointToLayer: function(feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_ph(feature));
   },
@@ -346,7 +484,14 @@ function style_sites_2018_salinity(feature) {
   }
 }
 
+function sites_2018_salinity_popup(feature, layer) {
+  let analyte = "Salinity (ppt)";
+  let popup = sites_2018_popup(feature, analyte);
+  layer.bindPopup(popup);
+}
+
 export const sites_2018_salinity = new L.geoJson(LARWMP2018Json, {
+  onEachFeature: sites_2018_salinity_popup,
   pointToLayer: function(feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_salinity(feature));
   },
@@ -401,7 +546,14 @@ function style_sites_2018_conductivity(feature) {
   }
 }
 
+function sites_2018_conductivity_popup(feature, layer) {
+  let analyte = "Specific Conductivity (us/cm)";
+  let popup = sites_2018_popup(feature, analyte);
+  layer.bindPopup(popup);
+}
+
 export const sites_2018_conductivity = new L.geoJson(LARWMP2018Json, {
+  onEachFeature: sites_2018_conductivity_popup,
   pointToLayer: function(feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_conductivity(feature));
   },

@@ -50,4 +50,12 @@
       padding: 0;
     }
   }
+
+  .leaflet-popup-content p {
+    margin: 0.5rem 0;
+  }
+
+  table.map-popup th {
+    padding-right: 0.75rem;
+  }
 }

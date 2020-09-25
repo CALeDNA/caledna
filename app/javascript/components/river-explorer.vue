@@ -229,7 +229,8 @@
 
   import {
     initMap,
-    createPourLayer,
+    pourLocationsLayer,
+    pourEdnaLayer,
     createLARWMP2018,
     createRiverLayer,
     createImageLayer,
@@ -364,6 +365,11 @@
         var mapObj = this.ednaData[layer]["layer"];
         if (mapObj) {
           Object.values(mapObj._layers).forEach((objLayer) => {
+            if (event.target.checked === false) {
+              objLayer.bringToBack();
+            } else {
+              objLayer.bringToFront();
+            }
             let value = objLayer.options.opacity === 0 ? 0.7 : 0;
             objLayer.setStyle({ opacity: value, fillOpacity: value });
           });
@@ -447,7 +453,14 @@
       toggleDataLayerVisibility: function(layer, event) {
         var mapObj = this.dataMapLayers[layer];
         if (mapObj) {
+          // https://stackoverflow.com/a/41780929
           Object.values(mapObj._layers).forEach((objLayer) => {
+            // https://stackoverflow.com/a/12862922
+            if (event.target.checked === false) {
+              objLayer.bringToBack();
+            } else {
+              objLayer.bringToFront();
+            }
             toggleFeatureOpacity(layer, objLayer);
           });
         }
@@ -490,7 +503,7 @@
         axios
           .get("/api/v1/places_basic?place_type=pour_location")
           .then((response) => {
-            this.pourLocationsLayer = createPourLayer(response.data.places);
+            this.pourLocationsLayer = pourLocationsLayer(response.data.places);
           })
           .catch((e) => {
             console.error(e);
@@ -516,14 +529,7 @@
             ctx.ednaData[taxonName] = { count: response.data.edna.length };
 
             let color = randomHsl();
-            let markers = response.data.edna.map((item) => {
-              return base_map.createCircleMarker(item, {
-                fillColor: color,
-                weight: 1,
-              });
-            });
-            let ednaLayer = L.layerGroup(markers);
-
+            let ednaLayer = pourEdnaLayer(response.data.edna, color, taxonName);
             ctx.ednaData[taxonName]["layer"] = ednaLayer;
             ctx.ednaData[taxonName]["color"] = color;
             ctx.map.addLayer(ednaLayer);
@@ -578,6 +584,6 @@
   }
 
   function randomHsl() {
-    return `hsla(${Math.random() * 360}, 100%, 50%, 1)`;
+    return `hsla(${Math.floor(Math.random() * 360)}, 90%, 50%, 1)`;
   }
 </script>
