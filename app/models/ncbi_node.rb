@@ -151,26 +151,29 @@ class NcbiNode < ApplicationRecord
   end
 
   # rubocop:disable Metrics/AbcSize
+  # formats the a wikipedia link for a given page title
   def wikipedia_link
+    # wikidata_entity comes from ExternalResources. format is Qxxxxxx
     return if wikidata_entity.blank?
     results = wikipedia_page
 
     return if results['entities'].blank?
     return if results['entities'][wikidata_entity]['sitelinks'].blank?
 
-    id = results['entities'][wikidata_entity]['sitelinks']['enwiki']['title']
+    title = results['entities'][wikidata_entity]['sitelinks']['enwiki']['title']
     @wikipedia_link ||= OpenStruct.new(
-      id: id,
-      url: "https://en.wikipedia.org/wiki/#{id}",
+      title: title,
+      url: "https://en.wikipedia.org/wiki/#{title}",
       text: 'Wikipedia'
     )
   end
   # rubocop:enable Metrics/AbcSize
 
+  # connects to wikipedia api to get excerpt for a given title
   def wikipedia_excerpt
     return if wikipedia_link.blank?
 
-    results = WikipediaApi.new.summary(wikipedia_link.id)
+    results = WikipediaApi.new.summary(wikipedia_link.title)
     pages = results['query']['pages']
     page_id = pages.keys.first
     return if page_id == -1
@@ -188,6 +191,7 @@ class NcbiNode < ApplicationRecord
     @wikidata_api ||= WikidataApi.new
   end
 
+  # connect to api to get info for a wikipedia page for a given wikidata_entity
   def wikipedia_page
     @wikipedia_page ||= wikidata_api.wikipedia_page(wikidata_entity)
   end
