@@ -376,6 +376,13 @@ namespace :wikidata do
     conn.exec_query(sql)
   end
 
+  desc 'connect to wikipedia api to add wiki excerpt'
+  task add_wiki_excerpt: :environment do
+    include WikipediaImport
+
+    save_wiki_excerpts
+  end
+
   def conn
     ActiveRecord::Base.connection
   end
