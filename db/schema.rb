@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_17_122935) do
+ActiveRecord::Schema.define(version: 2020_10_20_002550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -115,7 +115,9 @@ ActiveRecord::Schema.define(version: 2020_10_17_122935) do
     t.string "wiki_title"
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
+    t.index ["search_term"], name: "index_external_resources_on_search_term"
     t.index ["source"], name: "index_external_resources_on_source"
+    t.index ["wikidata_entity"], name: "index_external_resources_on_wikidata_entity"
   end
 
   create_table "field_projects", id: :serial, force: :cascade do |t|
