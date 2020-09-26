@@ -5,7 +5,6 @@ class WikipediaApi
   include HTTParty
   base_uri 'http://en.wikipedia.org/w/api.php'
 
-  # rubocop:disable Metrics/MethodLength
   def summary(title)
     options = {
       query: {
@@ -13,13 +12,12 @@ class WikipediaApi
         prop: 'extracts',
         titles: title,
         format: 'json',
-        exintro: 1, # content from before the first section
-        explaintext: 1, # plain text instead of html
-        exchars: 800 # How many characters to return
+        exintro: 2, # content from before the first section
+        # explaintext: 1, # plain text instead of html
+        # exchars: 800 # How many characters to return
         # exsentences: 5 # how many sentences to return
       }
     }
     self.class.get('/', options)
   end
-  # rubocop:enable Metrics/MethodLength
 end
