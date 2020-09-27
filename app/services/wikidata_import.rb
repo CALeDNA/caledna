@@ -16,6 +16,14 @@ module WikidataImport
     end
   end
 
+  # def import_records
+  #   num = [120000, 108000, 126000, 132000, 138000, 144000, 72000, 96000]
+
+  #   query = build_query(100, 96001)
+
+  #   ProcessWikidataQueryJob.perform_later(query.to_json)
+  # end
+
   private
 
   def build_queries
