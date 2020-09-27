@@ -11,7 +11,7 @@ class InatApi
       only_id: false,
       per_page: 3,
       rank: rank
-    }
+    }.compact
     self.class.get("/taxa?q=#{keyword}", query: query)
   end
 
