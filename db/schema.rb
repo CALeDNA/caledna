@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_24_012115) do
+ActiveRecord::Schema.define(version: 2020_09_27_014921) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -125,6 +125,8 @@ ActiveRecord::Schema.define(version: 2020_09_24_012115) do
     t.string "inat_image"
     t.string "inat_image_attribution"
     t.integer "tol_id"
+    t.text "wiki_excerpt"
+    t.string "wiki_title"
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["source"], name: "index_external_resources_on_source"
@@ -210,7 +212,7 @@ ActiveRecord::Schema.define(version: 2020_09_24_012115) do
     t.bigint "ncbi_version_id"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.index "lower(name)", name: "index_ncbi_names_on_lower_name"
+    t.index "lower(name) text_pattern_ops", name: "name_prefix"
     t.index ["name_class"], name: "index_ncbi_names_on_name_class"
     t.index ["ncbi_version_id"], name: "index_ncbi_names_on_ncbi_version_id"
     t.index ["taxon_id"], name: "index_ncbi_names_on_taxon_id"
@@ -239,8 +241,9 @@ ActiveRecord::Schema.define(version: 2020_09_24_012115) do
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "iucn_status"
-    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "full_text_search_idx", using: :gin
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (common_names)::text)))", name: "full_text_search_idx", using: :gin
     t.index "lower((canonical_name)::text) text_pattern_ops", name: "name_autocomplete_idx"
+    t.index "lower((common_names)::text)", name: "foo"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"

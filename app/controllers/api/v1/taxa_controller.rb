@@ -23,7 +23,131 @@ module Api
         render json: { next_taxon_id: res[0]['max'] + 1 }
       end
 
+      def taxa_search
+        render json: {
+          data: search_results,
+          query: params[:query]
+        }
+      end
+
       private
+
+      def conn
+        @conn ||= ActiveRecord::Base.connection
+      end
+
+      # =======================
+      # taxa_search
+      # =======================
+
+      # Allows for full-text search of latin canonical_name and
+      # english common_names.
+      def full_texa_sql
+        <<-SQL
+        SELECT taxon_id, canonical_name, rank, common_names,
+        division_name
+        FROM (
+          SELECT taxon_id, canonical_name, rank, common_names,
+          ncbi_divisions.name as division_name,
+          to_tsvector('simple', canonical_name) ||
+          to_tsvector('english', common_names) AS doc
+          FROM ncbi_nodes
+          JOIN ncbi_divisions
+            ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+          ORDER BY asvs_count DESC NULLS LAST
+        ) AS search
+        WHERE search.doc @@ plainto_tsquery('simple', $1)
+        OR search.doc @@ plainto_tsquery('english', $1)
+        LIMIT 10
+        SQL
+      end
+
+      def full_texa_results
+        @full_texa_results ||= begin
+          binding = [[nil, query]]
+          conn.exec_query(full_texa_sql, 'q', binding)
+        end
+      end
+
+      # Allows for prefix partial search of latin canonical name.
+      def prefix_sql
+        <<~SQL
+          SELECT taxon_id, canonical_name, rank, common_names,
+          ncbi_divisions.name as division_name
+          FROM ncbi_nodes
+          JOIN ncbi_divisions
+            ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+          WHERE lower(canonical_name) LIKE $1
+          ORDER BY asvs_count DESC NULLS LAST
+          LIMIT 10
+        SQL
+      end
+
+      def prefix_results
+        @prefix_results ||= begin
+          binding = [[nil, "#{query}%"]]
+          conn.exec_query(prefix_sql, 'q', binding)
+        end
+      end
+
+      # NOTE: I want to show a max of ten search results, 6 full text & 4 prefix
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+      # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+      def full_text_prefix_search
+        full_texa_entries = full_texa_results.entries
+        prefix_entries = prefix_results.entries
+
+        if full_texa_entries.blank? && prefix_results.blank?
+          []
+        elsif full_texa_entries.blank?
+          prefix_entries[0...10]
+        elsif prefix_results.blank?
+          full_texa_entries[0...10]
+        elsif full_texa_results.count < 6
+          count = 10 - full_texa_results.count
+          (full_texa_entries + prefix_entries[0...count])
+            .uniq { |res| res['taxon_id'] }
+        elsif prefix_results.count < 4
+          count = 10 - prefix_results.count
+          (full_texa_entries[0...count] + prefix_entries)
+            .uniq { |res| res['taxon_id'] }
+        else
+          (full_texa_entries[0...6] + prefix_entries[0...4])
+            .uniq { |res| res['taxon_id'] }
+        end
+      end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+      # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+
+      def exact_sql
+        <<~SQL
+          SELECT ncbi_nodes.taxon_id, canonical_name, rank, common_names,
+          ncbi_divisions.name as division_name
+          FROM ncbi_nodes
+          JOIN ncbi_divisions
+            ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+          JOIN ncbi_names ON ncbi_names.taxon_id = ncbi_nodes.ncbi_id
+          WHERE lower(ncbi_names.name) = $1
+          ORDER BY asvs_count DESC NULLS LAST
+          LIMIT 1
+        SQL
+      end
+
+      def exact_search
+        binding = [[nil, query]]
+        conn.exec_query(exact_sql, 'q', binding)
+      end
+
+      def search_results
+        @search_results ||= begin
+          return [] if query.blank?
+          if params[:type] == 'exact'
+            exact_search
+          else
+            full_text_prefix_search
+          end
+        end
+      end
 
       # =======================
       # index

@@ -43,7 +43,7 @@ class TaxaSearchesController < ApplicationController
       ARRAY_AGG(DISTINCT inat_image) AS inat_images,
       ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images,
       to_tsvector('simple', canonical_name) ||
-      to_tsvector('english', coalesce(alt_names, '')) AS doc
+      to_tsvector('english', common_names) AS doc
       FROM ncbi_nodes
       LEFT JOIN external_resources
         ON external_resources.ncbi_id = ncbi_nodes.ncbi_id

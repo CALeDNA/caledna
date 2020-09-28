@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       end
       get '/taxa/next_taxon_id', to: 'taxa#next_taxon_id'
       resources :taxa, only: %i[index show]
+      get '/taxa_search', to: 'taxa#taxa_search'
 
       namespace :research_projects do
         namespace :pillar_point do
