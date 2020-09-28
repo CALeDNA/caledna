@@ -180,4 +180,93 @@ namespace :gbif do
       taxon.save
     end
   end
+
+  task add_missing_taxon: :environment do
+    kingdom_sql = <<~SQL
+      select  kingdom, kingdom_id,
+      'kingdom' as taxon_rank, kingdom as scientific_name,
+      kingdom_id as taxon_id,
+      array[kingdom] as names
+      from pour.gbif_taxa
+      group by kingdom, kingdom_id;
+    SQL
+
+    phylum_sql = <<~SQL
+      select  kingdom, kingdom_id,
+      phylum, phylum_id,
+      'phylum' as taxon_rank, phylum as scientific_name,
+      phylum_id as taxon_id,
+      array[kingdom, phylum] as names
+      from pour.gbif_taxa
+      where phylum is not null
+      group by kingdom, kingdom_id, phylum, phylum_id;
+    SQL
+
+    class_sql = <<~SQL
+      select kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id ,
+      'class' as taxon_rank, class_name as scientific_name,
+      class_id as taxon_id,
+      array[kingdom, phylum, class_name] as names
+      from pour.gbif_taxa
+      where class_name is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id;
+    SQL
+
+    order_sql = <<~SQL
+      select kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id,
+      "order", order_id ,
+      'order' as taxon_rank, "order" as scientific_name,
+      order_id as taxon_id,
+      array[kingdom, phylum, class_name, "order"] as names
+      from pour.gbif_taxa
+      where "order" is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id,
+      "order", order_id;
+    SQL
+
+    family_sql=<<~SQL
+      select kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id,
+      "order", order_id ,
+      family, family_id,
+      'family' as taxon_rank, family as scientific_name,
+      family_id as taxon_id,
+      array[kingdom, phylum, class_name, "order", family] as names
+      from pour.gbif_taxa
+      where family is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id,
+      "order", order_id, family, family_id;
+    SQL
+
+    genus_sql=<<~SQL
+      select  kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id,
+      "order", order_id ,
+      family, family_id,
+      genus, genus_id,
+      'genus' as taxon_rank, genus as scientific_name,
+      genus_id as taxon_id,
+      array[kingdom, phylum, class_name, "order", family, genus] as names
+      from pour.gbif_taxa
+      where genus is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id,
+      "order", order_id, family, family_id, genus, genus_id;
+    SQL
+
+    [kingdom_sql, phylum_sql, class_sql, order_sql, family_sql,
+     genus_sql].each do |sql|
+      results = ActiveRecord::Base.connection.exec_query(sql)
+      results.each do |res|
+        taxon = PourGbifTaxon.find_by(taxon_id: res['taxon_id'])
+        next if taxon.present?
+        PourGbifTaxon.create(res)
+      end
+    end
+  end
 end
