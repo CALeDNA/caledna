@@ -19,6 +19,7 @@
     "spin.js": "^4.0.0",
     "venn.js": "^0.2.20",
     "vue": "^2.5.16",
+    "vue-autosuggest": "^2.2.0",
     "vue-good-table": "^2.18.0",
     "vue-loader": "^15.9.3",
     "vue-template-compiler": "^2.5.16",
