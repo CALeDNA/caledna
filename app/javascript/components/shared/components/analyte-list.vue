@@ -15,7 +15,7 @@
         </span>
         <Modal v-if="key == currentModal" @close="currentModal = null">
           <h3 slot="header">{{ key }}</h3>
-          <div slot="body">TODO: Add info about {{ key }}</div>
+          <div slot="body">{{ showBody(key) }}</div>
         </Modal>
       </li>
     </ul>
@@ -24,6 +24,7 @@
 
 <script>
   import Modal from "./modal";
+  import { locations } from "../constants/dataLayers";
 
   export default {
     name: "AnalyteList",
@@ -35,6 +36,13 @@
       return { currentModal: null };
     },
     methods: {
+      showBody: function(layer) {
+        if (locations[layer]) {
+          return locations[layer];
+        } else {
+          return `TODO: Add info about ${layer}`;
+        }
+      },
       showModal: function(layer) {
         this.currentModal = layer;
       },

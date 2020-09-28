@@ -47,73 +47,92 @@ export const biodiversity = {
   eBird: "eBird",
 };
 
+// export const allLayers = {
+//   ...locations,
+//   ...benthicMacroinvertebrates,
+//   ...attachedAlgae,
+//   ...riparianHabitatScore,
+//   ...inSituMeasurements,
+//   ...generalChemistry,
+//   ...nutrients,
+//   ...algalBiomass,
+//   ...dissolvedMetals,
+// };
+
 export const locations = {
-  [PouR]: "PouR",
-  [LARWMP]: "LARWMP",
+  [PouR]: `Protecting our River is collecting eDNA from sediment and water
+  samples at 12 locations along the LA River and its tributaries in three
+  separate rounds.`,
+  [LARWMP]: `"The Los Angeles River Watershed Monitoring Program conducts annual
+  assessments to better understand the health of a dynamic and predominantly
+  urban watershed. The guiding questions and corresponding monitoring framework
+  of the LARWMP provide both the public and resource managers with an
+  improved understanding of conditions and trends in the watershed."
+  - Los Angeles River Watershed Monitoring Program 2018 Annual Report`,
 };
 
 export const benthicMacroinvertebrates = {
-  [CSCI]: "CSCI",
-  [MMI]: "MMI",
-  [OE]: "O/E",
+  [CSCI]: null,
+  [MMI]: null,
+  [OE]: null,
 };
 
 export const attachedAlgae = {
-  [D18]: "D18",
-  [S2]: "S2",
+  [D18]: null,
+  [S2]: null,
 };
 
 export const riparianHabitatScore = {
-  [CRAM]: "Overall CRAM Score",
-  [BioticStructure]: "Biotic Structure",
-  [Buffer]: "Buffer and Landscape Context",
-  [Hydrology]: "Hydrology",
-  [PhysicalStructure]: "Physical Structure",
+  [CRAM]: null,
+  [BioticStructure]: null,
+  [Buffer]: null,
+  [Hydrology]: null,
+  [PhysicalStructure]: null,
 };
 
 export const inSituMeasurements = {
-  [Temperature]: "Temperature",
-  [Oxygen]: "Dissolved Oxygen",
-  [pH]: "pH",
-  [Salinity]: "Salinity",
-  [SpecificConductivity]: "Specific Conductivity",
+  [Temperature]: null,
+  [Oxygen]: null,
+  [pH]: null,
+  [Salinity]: null,
+  [SpecificConductivity]: null,
 };
 
 export const generalChemistry = {
-  [Alkalinity]: "Alkalinity as CaCO3",
-  [Hardness]: "Hardness as CaCO3",
-  [Chloride]: "Chloride",
-  [Sulfate]: "Sulfate",
-  [TSS]: "TSS",
+  [Alkalinity]: null,
+  [Hardness]: null,
+  [Chloride]: null,
+  [Sulfate]: null,
+  [TSS]: null,
 };
 
 export const nutrients = {
-  [Ammonia]: "Ammonia as N",
-  [Nitrate]: "Nitrate as N",
-  [Nitrite]: "Nitrite as N",
-  [NitrogenTotal]: "Nitrogen Total",
-  [OrthoPhosphate]: "OrthoPhosphate as P",
-  [Phosphorus]: "Phosphorus as P",
-  [DissolvedOrganicCarbon]: "Dissolved Organic Carbon",
-  [TotalOrganicCarbon]: "Total Organic Carbon",
+  [Ammonia]: null,
+  [Nitrate]: null,
+  [Nitrite]: null,
+  [NitrogenTotal]: null,
+  [OrthoPhosphate]: null,
+  [Phosphorus]: null,
+  [DissolvedOrganicCarbon]: null,
+  [TotalOrganicCarbon]: null,
 };
 
 export const algalBiomass = {
-  [AFDM]: "AFDM",
-  [Chla]: "Chl-a",
+  [AFDM]: null,
+  [Chla]: null,
 };
 
 export const dissolvedMetals = {
-  [Arsenic]: "Arsenic",
-  [Cadmium]: "Cadmium",
-  [Chromium]: "Chromium",
-  [Copper]: "Copper",
-  [Iron]: "Iron",
-  [Lead]: "Lead",
-  [Mercury]: "Mercury",
-  [Nickel]: "Nickel",
-  [Selenium]: "Selenium",
-  [Zinc]: "Zinc",
+  [Arsenic]: null,
+  [Cadmium]: null,
+  [Chromium]: null,
+  [Copper]: null,
+  [Iron]: null,
+  [Lead]: null,
+  [Mercury]: null,
+  [Nickel]: null,
+  [Selenium]: null,
+  [Zinc]: null,
 };
 
 export const legends = {
