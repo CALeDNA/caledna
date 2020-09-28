@@ -104,19 +104,46 @@
             research grade photographic observations via
             <a href="https://www.gbif.org/">GBIF</a>.
           </p>
-          <autocomplete
-            :url="getTaxaRoute"
-            param="query"
-            anchor="canonical_name"
-            label="rank"
-            name="autocomplete"
-            :classes="{ input: 'form-control', wrapper: 'input-wrapper' }"
-            :process="fetchTaxaSuggestions"
-            :onSelect="handleTaxaSelect"
+
+          <div class="form-inline">
+            <vue-autosuggest
+              v-model="searchKeyword"
+              :suggestions="suggestions"
+              @input="fetchSuggestions"
+              @selected="onSelected"
+              :get-suggestion-value="getSuggestionValue"
+              :input-props="inputProps"
+            >
+              <template slot="after-input">
+                <button class="btn btn-default" @click="submitSearch">
+                  <i class="fas fa-search"></i>
+                </button>
+              </template>
+
+              <div
+                slot-scope="{ suggestion }"
+                style="display: flex; align-items: center;"
+              >
+                <img
+                  :style="{
+                    maxWidth: '25px',
+                    maxHeight: '25px',
+                    marginRight: '5px',
+                  }"
+                  :src="kingdomIcon(suggestion.item)"
+                />
+                <div>
+                  {{ taxonName(suggestion.item) }}
+                </div>
+              </div>
+            </vue-autosuggest>
+          </div>
+
+          <div
+            class="m-t-md"
+            v-if="tempSelectedTaxon && tempSelectedTaxon.canonical_name"
           >
-          </autocomplete>
-          <div class="m-t-md" v-show="tempSelectedTaxon.canonical_name">
-            <h2>{{ tempSelectedTaxon.canonical_name }}</h2>
+            <h2>{{ taxonName(tempSelectedTaxon) }}</h2>
             Rank: {{ tempSelectedTaxon.rank }}
           </div>
 
@@ -225,8 +252,9 @@
 
 <script>
   import axios from "axios";
-  import Autocomplete from "vue2-autocomplete-js";
-  require("vue2-autocomplete-js/dist/style/vue2-autocomplete.css");
+  // import Autocomplete from "vue2-autocomplete-js";
+  // require("vue2-autocomplete-js/dist/style/vue2-autocomplete.css");
+  import { VueAutosuggest } from "vue-autosuggest";
 
   import {
     biodiversity,
@@ -271,7 +299,7 @@
     name: "RiverExplorer",
     components: {
       AnalyteList,
-      Autocomplete,
+      VueAutosuggest,
     },
     data: function() {
       return {
@@ -299,28 +327,42 @@
         activeMapLayer: null,
         pourLocationsLayer: null,
         // taxa
-        getTaxaRoute: api.routes.taxa,
+        getTaxaRoute: api.routes.taxa_search,
         selectedTaxa: {},
         taxaMapLayers: {},
         tempSelectedTaxon: {},
         newestTaxa: null,
         ednaData: {},
         gbifData: {},
+        // search
+        searchKeyword: null,
+        selectedSuggestion: null,
+        suggestions: [{ data: [] }],
+        inputProps: {
+          id: "autosuggest",
+          class: "form-control",
+          placeholder:
+            "Search for a species by Latin or common names (e.g., Canis lupus, wolf)",
+        },
       };
+    },
+    computed: {
+      filteredOptions() {
+        return [
+          {
+            data: this.suggestions[0].data.filter((option) => {
+              return (
+                option.name.toLowerCase().indexOf(this.query.toLowerCase()) > -1
+              );
+            }),
+          },
+        ];
+      },
     },
     methods: {
       // =============
-      // autosuggest
-      // =============
-      fetchTaxaSuggestions: function(json) {
-        return json.data.map((record) => record.attributes);
-      },
-      handleTaxaSelect: function(taxon) {
-        this.tempSelectedTaxon = taxon;
-        // this.fetchEol(taxon.canonical_name);
-      },
-      // =============
       // mapTab
+
       // =============
       getActiveMapLayer: function() {
         let history = {};
@@ -364,15 +406,25 @@
       },
 
       // =============
-      // taxaTab
+      // search
       // =============
-      fetchTaxaSuggestions: function(json) {
-        return json.data.map((record) => record.attributes);
+      submitSearch: function() {
+        this.fetchSimpleSearch(this.searchKeyword);
+        this.suggestions = [{ data: [] }];
       },
-      handleTaxaSelect: function(taxon) {
-        this.tempSelectedTaxon = taxon;
+      onSelected: function(item) {
+        this.tempSelectedTaxon = item && item.item;
         // this.fetchEol(taxon.canonical_name);
       },
+      getSuggestionValue: function(suggestion) {
+        // the <input/> value when you select a suggestion.
+        return suggestion.item.canonical_name;
+      },
+
+      // =============
+      // taxaTab
+      // =============
+
       submitTaxa: function() {
         if (this.tempSelectedTaxon.canonical_name) {
           this.selectedTaxa[this.tempSelectedTaxon.canonical_name] = true;
@@ -412,9 +464,9 @@
         if (this.ednaData[layer]) {
           if (this.ednaData[layer].count > 0) {
             let marker = `<svg height="30" width="30">
-                          <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
-                            fill="${this.ednaDataColor(layer)}"/>
-                          </svg>`;
+                            <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
+                              fill="${this.ednaDataColor(layer)}"/>
+                            </svg>`;
             return ` (${marker}${this.ednaData[layer].count} eDNA sites)`;
           } else {
             return ` (${this.ednaData[layer].count} eDNA sites)`;
@@ -513,6 +565,22 @@
       // =============
       // common
       // =============
+      taxonName: function(taxon) {
+        const { common_names, canonical_name } = taxon;
+
+        if (common_names) {
+          return `${canonical_name} (${common_names.split("|").join(", ")})`;
+        } else {
+          return canonical_name;
+        }
+      },
+      kingdomIcon: function(taxon) {
+        if (taxon.division_name) {
+          return `/images/taxa_icons/${taxon.division_name
+            .replace(" ", "_")
+            .toLowerCase()}.png`;
+        }
+      },
       setActiveTab: function(tab) {
         this.activeTab = tab;
       },
@@ -522,6 +590,33 @@
       // =============
       // fetch data
       // =============
+      fetchSuggestions: function() {
+        let ctx = this;
+
+        if (ctx.searchKeyword.length <= 2) {
+          return;
+        }
+        axios
+          .get(`${ctx.getTaxaRoute}?query=${ctx.searchKeyword}`)
+          .then((results) => {
+            // HACK: Ignore slow queries that don't match the current
+            // searchKeyword. Ideally there would be a debounce function or
+            // a faster sql query.
+            if (results.data.query === ctx.searchKeyword) {
+              ctx.suggestions[0].data = results.data.data;
+            }
+          })
+          .catch((e) => console.warn(e));
+      },
+
+      fetchSimpleSearch: function(taxon) {
+        axios
+          .get(`/api/v1/taxa_search?query=${taxon}&type=simple`)
+          .then((results) => {
+            this.tempSelectedTaxon = results.data.data[0];
+          });
+      },
+
       fetchPourLocations: function() {
         axios
           .get("/api/v1/places_basic?place_type=pour_location")

@@ -4,6 +4,7 @@ const baseUrl = "/api/v1";
 
 const routes = {
   taxa: `${baseUrl}/taxa`,
+  taxa_search: `${baseUrl}/taxa_search`,
   taxaNextTaxonId: `${baseUrl}/taxa/next_taxon_id`,
   normalizeTaxa: "/admin/labwork/normalize_ncbi_taxa",
   placesBasic: `${baseUrl}/places_basic`,
