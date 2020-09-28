@@ -16,12 +16,12 @@
           @addSelectedLayer="appendTempSelectedLayers"
         />
 
-        <h2>Biodiversity</h2>
+        <h2>Taxon Search</h2>
         <button
           class="btn btn-primary"
           @click="setActiveTab('biodiversityTab')"
         >
-          Add Species
+          Add Taxon
         </button>
         <section class="data-layers">
           <div
@@ -51,7 +51,7 @@
           </div>
         </section>
 
-        <h2>Enviromental Conditions</h2>
+        <h2>Enviromental Factors</h2>
         <button
           class="btn btn-primary"
           @click="setActiveTab('environmentalTab')"
@@ -163,11 +163,11 @@
 
         <!-- environmentalTab -->
         <section v-if="activeTab == 'environmentalTab'" class="data-tab">
-          <h2 class="m-t-zero">LA River Environmental Conditions</h2>
+          <h2 class="m-t-zero">LA River Environmental Factors</h2>
           <p>
-            To learn more about the environmental conditions of the LA River and
+            To learn more about the environmental of the LA River and
             its tributaries, select one or more of these enviromental
-            conditions.
+            factors.
           </p>
           <p>
             The data comes from the
@@ -180,6 +180,7 @@
             >.
           </p>
           <div class="data-list">
+            <h2>Biotic Factors</h2>
             <div>
               <h3>Benthic Macroinvertebrates</h3>
               <AnalyteList
@@ -202,6 +203,15 @@
               />
             </div>
             <div>
+              <h3>Algal Biomass</h3>
+              <AnalyteList
+                :list="algalBiomass"
+                @addSelectedLayer="appendTempSelectedLayers"
+              />
+            </div>
+
+            <h2>Abiotic Factors</h2>
+            <div>
               <h3>InSitu Measurements</h3>
               <AnalyteList
                 :list="inSituMeasurements"
@@ -219,13 +229,6 @@
               <h3>Nutrients</h3>
               <AnalyteList
                 :list="nutrients"
-                @addSelectedLayer="appendTempSelectedLayers"
-              />
-            </div>
-            <div>
-              <h3>Algal Biomass</h3>
-              <AnalyteList
-                :list="algalBiomass"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
             </div>
