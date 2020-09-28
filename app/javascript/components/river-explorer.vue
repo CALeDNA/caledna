@@ -96,7 +96,7 @@
           <h2 class="m-t-zero">LA River Biodiversity</h2>
           <p>
             To learn more about the biodiversity of the LA River and its
-            tributaries, search for a species to find out if there are any
+            tributaries, search for a taxon to find out if there are any
             reported occurrences along the LA River.
           </p>
           <p>
@@ -453,7 +453,7 @@
           id: "autosuggest",
           class: "form-control",
           placeholder:
-            "Search for a species by Latin or common names (e.g., Canis lupus, wolf)",
+            "Search for a taxon by Latin or English names (e.g., Canis lupus, wolf)",
         },
       };
     },
@@ -841,6 +841,8 @@
     mounted: function() {
       this.$nextTick(function() {
         this.map = initMap();
+        let watershedLayer = createWatershedLayer()
+        let riverLayer = createRiverLayer()
         this.map.addLayer(createWatershedLayer());
         this.map.addLayer(createRiverLayer());
 
