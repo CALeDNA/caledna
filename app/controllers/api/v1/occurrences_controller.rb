@@ -17,25 +17,18 @@ module Api
 
       def gbif_occurrences_sql
         <<~SQL
-          SELECT
-          ST_X(ST_SnapToGrid(pour.gbif_occurrences.geom, $3)) AS longitude,
-          ST_Y(ST_SnapToGrid(pour.gbif_occurrences.geom, $3)) AS latitude,
-          COUNT(DISTINCT(gbif_id))
-          FROM pour.gbif_occurrences
-          JOIN pour.gbif_taxa ON gbif_occurrences.taxon_id = gbif_taxa.taxon_id
-          JOIN places
-            ON ST_DWithin(places.geom_projected,
-            gbif_occurrences.geom_projected, $1)
-          WHERE places.place_source_type_cd = 'LA_river'
-          AND places.place_type_cd = 'river'
-          AND pour.gbif_taxa.names @> ARRAY[$2]
-          GROUP BY ST_SnapToGrid(pour.gbif_occurrences.geom, $3)
+          SELECT hexbin.id, count(*) AS count
+          FROM pour.hexbin_1km AS hexbin
+          JOIN pour.gbif_occurrences
+            ON (ST_Contains(hexbin.geom, gbif_occurrences.geom_projected))
+          WHERE  scientific_name iLIKE $1
+          GROUP BY hexbin.id;
         SQL
       end
 
       def gbif_occurrences
         @gbif_occurrences ||= begin
-          binding = [[nil, radius], [nil, params['taxon']], [nil, grid_level]]
+          binding = [[nil, "#{params['taxon']}%"]]
           conn.exec_query(gbif_occurrences_sql, 'q', binding)
         end
       end
