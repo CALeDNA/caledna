@@ -40,6 +40,7 @@
               <label :for="layer">
                 {{ layer }}
                 <span :key="newestTaxa" v-html="ednaDataCount(layer)"></span
+                ><span :key="newestTaxa" v-html="gbifDataCount(layer)"></span
               ></label>
             </div>
             <div>
@@ -282,6 +283,7 @@
     initMap,
     pourLocationsLayer,
     pourEdnaLayer,
+    pourGbifLayer,
     createLARWMP2018,
     createRiverLayer,
     createImageLayer,
@@ -449,6 +451,18 @@
             objLayer.setStyle({ opacity: value, fillOpacity: value });
           });
         }
+        var mapObjs = this.gbifData[layer]["layer"];
+        if (mapObjs) {
+          Object.values(mapObjs._layers).forEach((objLayer) => {
+            if (event.target.checked === false) {
+              objLayer.bringToBack();
+            } else {
+              objLayer.bringToFront();
+            }
+            let value = objLayer.options.opacity === 0 ? 0.7 : 0;
+            objLayer.setStyle({ opacity: value, fillOpacity: value });
+          });
+        }
         this.selectedTaxa[layer] = event.target.checked;
       },
       removeTaxonLayer: function(layer) {
@@ -459,6 +473,11 @@
           this.map.removeLayer(this.ednaData[layer]["layer"]);
           this.ednaData[layer] = null;
         }
+
+        if (this.gbifData[layer]) {
+          this.map.removeLayer(this.gbifData[layer]["layer"]);
+          this.gbifData[layer] = null;
+        }
       },
       ednaDataCount: function(layer) {
         if (this.ednaData[layer]) {
@@ -467,15 +486,35 @@
                             <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
                               fill="${this.ednaDataColor(layer)}"/>
                             </svg>`;
-            return ` (${marker}${this.ednaData[layer].count} eDNA sites)`;
+            return `<br>${marker}${this.ednaData[layer].count} eDNA sites`;
           } else {
-            return ` (${this.ednaData[layer].count} eDNA sites)`;
+            let blank = '<svg height="30" width="30"></svg>';
+            return `<br>${blank}0 eDNA sites`;
+          }
+        }
+      },
+      gbifDataCount: function(layer) {
+        if (this.gbifData[layer]) {
+          if (this.gbifData[layer].count > 0) {
+            let marker = `<svg height="30" width="30">
+                            <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
+                              fill="${this.gbifDataColor(layer)}"/>
+                            </svg>`;
+            return `<br>${marker}${this.gbifData[layer].count} iNaturalist observations`;
+          } else {
+            let blank = '<svg height="30" width="30"></svg>';
+            return `<br>${blank}0 iNaturalist observations<br>`;
           }
         }
       },
       ednaDataColor: function(layer) {
         if (this.ednaData[layer] && this.ednaData[layer].color) {
           return this.ednaData[layer].color;
+        }
+      },
+      gbifDataColor: function(layer) {
+        if (this.gbifData[layer] && this.gbifData[layer].color) {
+          return this.gbifData[layer].color;
         }
       },
       // =============
@@ -632,24 +671,31 @@
         axios
           .get(`/api/v1/occurrences?taxon=${taxonName}&radius=${radius}`)
           .then((response) => {
-            // let reducer = (accumulator, item) => {
-            //   return accumulator + item.count;
-            // };
-            // let gbifCount = response.data.gbif.reduce(reducer, 0);
-            // ctx.gbifData[taxonName] = { count: gbifCount };
-            // let gbifLayer = base_map.createMarkerLayer(
-            //   response.data.gbif,
-            //   base_map.createCircleMarker
-            // );
-            // ctx.gbifData[taxonName]["layer"] = gbifLayer;
-            // ctx.map.addLayer(gbifLayer);
+            let reducer = (accumulator, item) => {
+              return accumulator + item.count;
+            };
+            let gbifCount = response.data.gbif.reduce(reducer, 0);
+            ctx.gbifData[taxonName] = { count: gbifCount };
+            let colors = randomHslRange();
+            let gbifLayer = pourGbifLayer(
+              response.data.gbif,
+              colors,
+              taxonName,
+              gbifCount
+            );
+            ctx.gbifData[taxonName]["layer"] = gbifLayer;
+            ctx.gbifData[taxonName]["color"] = colors[2];
+            ctx.map.addLayer(gbifLayer);
 
             ctx.ednaData[taxonName] = { count: response.data.edna.length };
-
-            let color = randomHsl();
-            let ednaLayer = pourEdnaLayer(response.data.edna, color, taxonName);
+            let ednaColor = randomHsl();
+            let ednaLayer = pourEdnaLayer(
+              response.data.edna,
+              ednaColor,
+              taxonName
+            );
             ctx.ednaData[taxonName]["layer"] = ednaLayer;
-            ctx.ednaData[taxonName]["color"] = color;
+            ctx.ednaData[taxonName]["color"] = ednaColor;
             ctx.map.addLayer(ednaLayer);
             ctx.newestTaxa = taxonName;
           })
@@ -704,4 +750,16 @@
   function randomHsl() {
     return `hsla(${Math.floor(Math.random() * 360)}, 90%, 50%, 1)`;
   }
+
+  function randomHslRange() {
+    let rand = Math.floor(Math.random() * 360);
+    return [
+      `hsla(${rand}, 80%, 90%, 1)`,
+      `hsla(${rand}, 80%, 70%, 1)`,
+      `hsla(${rand}, 80%, 50%, 1)`,
+      `hsla(${rand}, 80%, 30%, 1)`,
+      `hsla(${rand}, 80%, 10%, 1)`,
+    ];
+  }
+
 </script>

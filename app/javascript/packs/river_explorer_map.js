@@ -113,6 +113,69 @@ export function pourEdnaLayer(samples, color, taxonName) {
   return L.layerGroup(markers);
 }
 
+function colorGraduatedColor(sample, colors, totalCount) {
+  var interval = Math.floor(totalCount / 5);
+  var stops = [interval, interval * 2, interval * 3, interval * 4, totalCount]
+  console.log(sample.count ,  stops, colors)
+  if (sample.count < stops[0]) {
+    return colors[0]
+  } else if (sample.count < stops[1]) {
+    return colors[1]
+  } else if (sample.count < stops[2]) {
+    return colors[2]
+  } else if (sample.count < stops[3]) {
+    return colors[3]
+  } else if (sample.count < stops[4]) {
+    return colors[4]
+  }
+}
+
+export function pourGbifLayer(samples, colors, taxonName, totalCount) {
+  let markers = samples.map((sample) => {
+    function createPopup(feature, layer) {
+      let popup = `
+      <p>iNaturalist Observations for ${taxonName}</p>
+
+      <table class="map-popup">
+        <tr>
+          <th scope="row">Count</th>
+          <td>${sample.count} observations</td>
+        </tr>
+        <tr>
+          <th scope="row">Latitude</th>
+          <td>${sample.latitude}</td>
+        </tr>
+        <tr>
+          <th scope="row">Longitude</th>
+          <td>${sample.longitude}</td>
+        </tr>
+      </table>
+    `;
+
+      layer.bindPopup(popup, { maxHeight: 400 });
+    }
+
+    let color = colorGraduatedColor(sample, colors, totalCount)
+    console.log(sample, color)
+
+    var myStyle = {
+      color: "#222",
+      fillColor: color,
+      fillOpacity: 0.7,
+      weight: 2,
+    };
+
+    return L.geoJSON(JSON.parse(sample.geom), {
+      onEachFeature: createPopup,
+      style: myStyle,
+    });
+  });
+  return L.layerGroup(markers);
+}
+
+
+
+
 export function createRiverLayer() {
   var style = {
     opacity: 1,
@@ -558,3 +621,14 @@ export const sites_2018_conductivity = new L.geoJson(LARWMP2018Json, {
     return L.shapeMarker(latlng, style_sites_2018_conductivity(feature));
   },
 });
+
+function randomHslRange() {
+  let rand = Math.floor(Math.random() * 360);
+  return [
+    `hsla(${rand}, 10%, 50%, 1)`,
+    `hsla(${rand}, 30%, 50%, 1)`,
+    `hsla(${rand}, 50%, 50%, 1)`,
+    `hsla(${rand}, 70%, 50%, 1)`,
+    `hsla(${rand}, 90%, 50%, 1)`,
+  ];
+}
