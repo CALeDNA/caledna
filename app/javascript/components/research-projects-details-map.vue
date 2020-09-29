@@ -75,16 +75,16 @@ import "vue-good-table/dist/vue-good-table.css";
 import axios from "axios";
 import pluralize from "pluralize";
 
-import Spinner from "./shared/components/spinner";
-import MapTableToggle from "./shared/components/map-table-toggle";
-import FiltersLayout from "./shared/components/filters/completed-samples";
-import MapLayersModal from "./shared/components/map-layers-modal";
+import Spinner from "./shared/spinner";
+import MapTableToggle from "./shared/map-table-toggle";
+import FiltersLayout from "./shared/filters/completed-samples";
+import MapLayersModal from "./shared/map-layers-modal";
 
 import { formatQuerystring } from "../utils/data_viz_filters";
 import baseMap from "../packs/base_map.js";
-import { samplesTableColumns, samplesDefaultFilters } from "./shared/constants";
-import { mapMixins, searchMixins, taxonLayerMixins } from "./shared/mixins";
-import { completedSamplesStore } from "./shared/stores";
+import { samplesTableColumns, samplesDefaultFilters } from "../constants";
+import { mapMixins, searchMixins, taxonLayerMixins } from "../mixins";
+import { completedSamplesStore } from "../stores/stores";
 
 var resource_and_id = window.location.pathname.replace(/pages\/.*?$/, "");
 // var endpoint = `/api/v1${resource_and_id}`;

@@ -1,18 +1,18 @@
-import { samplesDefaultFilters, taxaDefaultFilters } from "./constants";
+import { samplesDefaultFilters, taxaDefaultFilters } from "../constants";
 
 export const allSamplesStore = {
   state: {
-    currentFilters: { ...samplesDefaultFilters }
+    currentFilters: { ...samplesDefaultFilters },
   },
   setPrimerArray,
-  setPrimerString
+  setPrimerString,
 };
 
 export const completedSamplesStore = {
   state: {
-    currentFilters: { ...taxaDefaultFilters }
+    currentFilters: { ...taxaDefaultFilters },
   },
-  setPrimerArray
+  setPrimerArray,
 };
 
 function setPrimerArray(e) {
@@ -29,7 +29,7 @@ function setPrimerArray(e) {
     currentFilters[filterType].push(value);
   } else {
     currentFilters[filterType] = currentFilters[filterType].filter(
-      f => f != value
+      (f) => f != value
     );
   }
 }

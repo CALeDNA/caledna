@@ -1,4 +1,4 @@
-import baseMap from "../../../packs/base_map.js";
+import baseMap from "../packs/base_map.js";
 
 function getRandomColor() {
   var letters = "0123456789ABCDEF";

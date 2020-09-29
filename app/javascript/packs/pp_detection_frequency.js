@@ -1,13 +1,13 @@
 import axios from "axios";
 import bar from "britecharts/dist/umd/bar.min";
-import * as pp_utils from "services/pp_utils";
+import * as pp_utils from "utils/pp_utils";
 import * as d3Selection from "d3-selection";
 import * as d3 from "d3";
 
 import {
   addSubmitHandler,
   addResetHandler,
-  addOptionsHander
+  addOptionsHander,
 } from "../utils/data_viz_filters";
 
 // =============
@@ -29,13 +29,13 @@ const barHeight = 60;
 function initApp(endpoint) {
   axios
     .get(endpoint)
-    .then(res => {
+    .then((res) => {
       let rawDataCal = res.data.cal;
       let rawDataGbif = res.data.gbif;
-      chartData.cal = rawDataCal.map(taxon => {
+      chartData.cal = rawDataCal.map((taxon) => {
         return pp_utils.formatChartData(taxon);
       });
-      chartData.gbif = rawDataGbif.map(taxon => {
+      chartData.gbif = rawDataGbif.map((taxon) => {
         return pp_utils.formatChartData(taxon);
       });
 
@@ -48,12 +48,12 @@ function initApp(endpoint) {
         .attr("text-anchor", "start")
         .attr("transform", "translate(2, -20)");
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 }
 
 function createColorScheme(data) {
   return data
-    .map(taxon => (taxon.source === "ncbi" ? "#5b9f72" : "#ccc"))
+    .map((taxon) => (taxon.source === "ncbi" ? "#5b9f72" : "#ccc"))
     .reverse();
 }
 
@@ -82,7 +82,7 @@ function createChart(dataset, selector) {
         left: 340,
         right: 0,
         top: 45,
-        bottom: 10
+        bottom: 10,
       })
       .percentageAxisToMaxRatio(1.15)
       .xAxisLabel("Occurrences")

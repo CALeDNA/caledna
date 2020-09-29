@@ -9,24 +9,24 @@
 <script>
 import axios from "axios";
 
-import Spinner from "./shared/components/spinner";
-import MapLayersModal from "./shared/components/map-layers-modal";
+import Spinner from "./shared/spinner";
+import MapLayersModal from "./shared/map-layers-modal";
 
 import baseMap from "../packs/base_map.js";
-import { mapMixins } from "./shared/mixins";
+import { mapMixins } from "../mixins";
 
 export default {
   name: "SamplesDetail-Map",
   components: {
     Spinner,
-    MapLayersModal
+    MapLayersModal,
   },
   mixins: [mapMixins],
   data() {
     return {
       map: null,
       endpoint: `/api/v1${window.location.pathname}`,
-      showSpinner: false
+      showSpinner: false,
     };
   },
   created() {
@@ -44,7 +44,7 @@ export default {
       this.showSpinner = true;
       axios
         .get(url)
-        .then(response => {
+        .then((response) => {
           const data = baseMap.formatSamplesData(response.data.sample.data);
 
           if (data.lat && data.lng) {
@@ -54,10 +54,10 @@ export default {
 
           this.showSpinner = false;
         })
-        .catch(e => {
+        .catch((e) => {
           console.error(e);
         });
-    }
-  }
+    },
+  },
 };
 </script>

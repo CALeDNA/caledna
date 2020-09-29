@@ -106,21 +106,21 @@ import "vue-good-table/dist/vue-good-table.css";
 import axios from "axios";
 import pluralize from "pluralize";
 
-import Spinner from "./shared/components/spinner";
-import MapTableToggle from "./shared/components/map-table-toggle";
-import FiltersLayout from "./shared/components/filters/completed-samples";
-import MapLayersModal from "./shared/components/map-layers-modal";
+import Spinner from "./shared/spinner";
+import MapTableToggle from "./shared/map-table-toggle";
+import FiltersLayout from "./shared/filters/completed-samples";
+import MapLayersModal from "./shared/map-layers-modal";
 
 import { formatQuerystring } from "../utils/data_viz_filters";
 import baseMap from "../packs/base_map.js";
-import { taxaTableColumns, taxaDefaultFilters } from "./shared/constants";
+import { taxaTableColumns, taxaDefaultFilters } from "../constants";
 import {
   mapMixins,
   searchMixins,
   taxonLayerMixins,
   baseLayerMixins,
-} from "./shared/mixins";
-import { completedSamplesStore } from "./shared/stores";
+} from "../mixins";
+import { completedSamplesStore } from "../stores/stores";
 
 export default {
   name: "TaxaMapTable",
