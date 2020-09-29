@@ -123,7 +123,7 @@
 
               <div
                 slot-scope="{ suggestion }"
-                style="display: flex; align-items: center;"
+                style="display: flex; align-items: center"
               >
                 <img
                   :style="{
@@ -165,9 +165,8 @@
         <section v-if="activeTab == 'environmentalTab'" class="data-tab">
           <h2 class="m-t-zero">LA River Environmental Factors</h2>
           <p>
-            To learn more about the environment of the LA River and
-            its tributaries, select one or more of these enviromental
-            factors.
+            To learn more about the environment of the LA River and its
+            tributaries, select one or more of these enviromental factors.
           </p>
           <p>
             The data comes from the
@@ -279,9 +278,7 @@
                 @close="currentModal = null"
               >
                 <h3 slot="header">InSitu Measurements</h3>
-                <div slot="body">
-                  TODO: Add info about InSitu Measurements
-                </div>
+                <div slot="body">TODO: Add info about InSitu Measurements</div>
               </Modal>
             </div>
             <div>
@@ -358,522 +355,501 @@
 </template>
 
 <script>
-  import axios from "axios";
-  // import Autocomplete from "vue2-autocomplete-js";
-  // require("vue2-autocomplete-js/dist/style/vue2-autocomplete.css");
-  import { VueAutosuggest } from "vue-autosuggest";
+import axios from "axios";
+import { VueAutosuggest } from "vue-autosuggest";
 
-  import {
-    biodiversity,
-    locations,
-    benthicMacroinvertebrates,
-    attachedAlgae,
-    riparianHabitatScore,
-    inSituMeasurements,
-    generalChemistry,
-    nutrients,
-    algalBiomass,
-    dissolvedMetals,
-    Temperature,
-    Oxygen,
-    pH,
-    Salinity,
-    SpecificConductivity,
-    PouR,
-    LARWMP,
-    legends,
-  } from "./shared/constants/dataLayers";
-  import AnalyteList from "./shared/components/analyte-list";
-  import Modal from "./shared/components/modal";
+import AnalyteList from "./shared/analyte-list";
+import Modal from "./shared/modal";
 
-  import {
-    initMap,
-    pourLocationsLayer,
-    pourEdnaLayer,
-    pourGbifLayer,
-    createLARWMP2018,
-    createRiverLayer,
-    createImageLayer,
-    createWatershedLayer,
-    sites_2018_temperature,
-    sites_2018_oxygen,
-    sites_2018_ph,
-    sites_2018_salinity,
-    sites_2018_conductivity,
-  } from "../packs/river_explorer_map";
-  import base_map from "../packs/base_map";
-  import api from "../utils/api_routes";
+import {
+  biodiversity,
+  locations,
+  benthicMacroinvertebrates,
+  attachedAlgae,
+  riparianHabitatScore,
+  inSituMeasurements,
+  generalChemistry,
+  nutrients,
+  algalBiomass,
+  dissolvedMetals,
+  Temperature,
+  Oxygen,
+  pH,
+  Salinity,
+  SpecificConductivity,
+  PouR,
+  LARWMP,
+  legends,
+} from "../data/dataLayers";
+import {
+  initMap,
+  pourLocationsLayer,
+  pourEdnaLayer,
+  pourGbifLayer,
+  createLARWMP2018,
+  createRiverLayer,
+  createImageLayer,
+  createWatershedLayer,
+  sites_2018_temperature,
+  sites_2018_oxygen,
+  sites_2018_ph,
+  sites_2018_salinity,
+  sites_2018_conductivity,
+} from "../packs/river_explorer_map";
+import base_map from "../packs/base_map";
+import api from "../utils/api_routes";
+import { randomColorRange, randomColor } from "../utils/map_colors";
 
-  export default {
-    name: "RiverExplorer",
-    components: {
-      AnalyteList,
-      VueAutosuggest,
-      Modal,
-    },
-    data: function() {
-      return {
-        // constants
-        legends: { ...legends },
-        biodiversity,
-        locations,
-        benthicMacroinvertebrates,
-        attachedAlgae,
-        riparianHabitatScore,
-        inSituMeasurements,
-        generalChemistry,
-        nutrients,
-        algalBiomass,
-        dissolvedMetals,
-        // misc
-        activeTab: "mapTab",
-        map: null,
-        loading: false,
-        // data
-        selectedData: {},
-        dataMapLayers: {},
-        tempSelectedData: {},
-        dataLayerHistory: [],
-        activeMapLayer: null,
-        pourLocationsLayer: null,
-        // taxa
-        getTaxaRoute: api.routes.taxa_search,
-        selectedTaxa: {},
-        taxaMapLayers: {},
-        tempSelectedTaxon: {},
-        newestTaxa: null,
-        ednaData: {},
-        gbifData: {},
-        currentModal: null,
-        // search
-        searchKeyword: null,
-        selectedSuggestion: null,
-        suggestions: [{ data: [] }],
-        inputProps: {
-          id: "autosuggest",
-          class: "form-control",
-          placeholder:
-            "Search for a taxon by Latin or English names (e.g., Canis lupus, wolf)",
-        },
-      };
-    },
-    computed: {
-      filteredOptions() {
-        return [
-          {
-            data: this.suggestions[0].data.filter((option) => {
-              return (
-                option.name.toLowerCase().indexOf(this.query.toLowerCase()) > -1
-              );
-            }),
-          },
-        ];
-      },
-    },
-    methods: {
-      // =============
-      // mapTab
-
-      // =============
-      getActiveMapLayer: function() {
-        let history = {};
-        this.activeMapLayer = null;
-        for (let i = this.dataLayerHistory.length - 1; i >= 0; --i) {
-          let item = this.dataLayerHistory[i];
-          let layer = Object.keys(item)[0];
-          let value = Object.values(item)[0];
-          if (value && this.selectedData[layer]) {
-            this.activeMapLayer = layer;
-            break;
-          }
-        }
-      },
-      toggleMapLayer: function(layerName, objectLayer) {
-        if (this.dataMapLayers[layerName]) {
-          this.map.removeLayer(this.dataMapLayers[layerName]);
-          this.dataMapLayers[layerName] = null;
-        } else {
-          this.dataMapLayers[layerName] = objectLayer;
-          this.map.addLayer(this.dataMapLayers[layerName]);
-        }
-      },
-      updateLegend: function() {
-        if (this.legend) {
-          this.map.removeControl(this.legend);
-        }
-        let ctx = this;
-
-        this.legend = L.control({ position: "bottomleft" });
-        this.legend.onAdd = function(map) {
-          var div = L.DomUtil.create("div", "info legend");
-          if (ctx.activeMapLayer) {
-            div.innerHTML = `<img class="legend-img" src="${
-              ctx.legends[ctx.activeMapLayer]
-            }">`;
-          }
-          return div;
-        };
-        this.legend.addTo(this.map);
-      },
-
-      // =============
+export default {
+  name: "RiverExplorer",
+  components: {
+    AnalyteList,
+    VueAutosuggest,
+    Modal,
+  },
+  data: function () {
+    return {
+      // constants
+      legends: { ...legends },
+      biodiversity,
+      locations,
+      benthicMacroinvertebrates,
+      attachedAlgae,
+      riparianHabitatScore,
+      inSituMeasurements,
+      generalChemistry,
+      nutrients,
+      algalBiomass,
+      dissolvedMetals,
+      // misc
+      activeTab: "mapTab",
+      map: null,
+      loading: false,
+      // data
+      selectedData: {},
+      dataMapLayers: {},
+      tempSelectedData: {},
+      dataLayerHistory: [],
+      activeMapLayer: null,
+      pourLocationsLayer: null,
+      // taxa
+      getTaxaRoute: api.taxa_search,
+      selectedTaxa: {},
+      taxaMapLayers: {},
+      tempSelectedTaxon: {},
+      newestTaxa: null,
+      ednaData: {},
+      gbifData: {},
+      currentModal: null,
       // search
-      // =============
-      submitSearch: function() {
-        this.fetchSimpleSearch(this.searchKeyword);
-        this.suggestions = [{ data: [] }];
+      searchKeyword: null,
+      selectedSuggestion: null,
+      suggestions: [{ data: [] }],
+      inputProps: {
+        id: "autosuggest",
+        class: "form-control",
+        placeholder:
+          "Search for a taxon by Latin or English names (e.g., Canis lupus, wolf)",
       },
-      onSelected: function(item) {
-        this.tempSelectedTaxon = item && item.item;
-        // this.fetchEol(taxon.canonical_name);
-      },
-      getSuggestionValue: function(suggestion) {
-        // the <input/> value when you select a suggestion.
-        return suggestion.item.canonical_name;
-      },
+    };
+  },
+  computed: {
+    filteredOptions() {
+      return [
+        {
+          data: this.suggestions[0].data.filter((option) => {
+            return (
+              option.name.toLowerCase().indexOf(this.query.toLowerCase()) > -1
+            );
+          }),
+        },
+      ];
+    },
+  },
+  methods: {
+    // =============
+    // mapTab
 
-      // =============
-      // taxaTab
-      // =============
+    // =============
+    getActiveMapLayer: function () {
+      let history = {};
+      this.activeMapLayer = null;
+      for (let i = this.dataLayerHistory.length - 1; i >= 0; --i) {
+        let item = this.dataLayerHistory[i];
+        let layer = Object.keys(item)[0];
+        let value = Object.values(item)[0];
+        if (value && this.selectedData[layer]) {
+          this.activeMapLayer = layer;
+          break;
+        }
+      }
+    },
+    toggleMapLayer: function (layerName, objectLayer) {
+      if (this.dataMapLayers[layerName]) {
+        this.map.removeLayer(this.dataMapLayers[layerName]);
+        this.dataMapLayers[layerName] = null;
+      } else {
+        this.dataMapLayers[layerName] = objectLayer;
+        this.map.addLayer(this.dataMapLayers[layerName]);
+      }
+    },
+    updateLegend: function () {
+      if (this.legend) {
+        this.map.removeControl(this.legend);
+      }
+      let ctx = this;
 
-      submitTaxa: function() {
-        if (this.tempSelectedTaxon.canonical_name) {
-          this.selectedTaxa[this.tempSelectedTaxon.canonical_name] = true;
-          this.fetchOccurences(this.tempSelectedTaxon.canonical_name);
+      this.legend = L.control({ position: "bottomleft" });
+      this.legend.onAdd = function (map) {
+        var div = L.DomUtil.create("div", "info legend");
+        if (ctx.activeMapLayer) {
+          div.innerHTML = `<img class="legend-img" src="${
+            ctx.legends[ctx.activeMapLayer]
+          }">`;
         }
-        this.setActiveTab("mapTab");
-        this.tempSelectedTaxon = {};
-      },
-      isTaxaLayerSelected: function(layer) {
-        return this.selectedTaxa[layer];
-      },
-      toggleTaxaLayerVisibility: function(layer, event) {
-        var mapObj = this.ednaData[layer]["layer"];
-        if (mapObj) {
-          Object.values(mapObj._layers).forEach((objLayer) => {
-            if (event.target.checked === false) {
-              objLayer.bringToBack();
-            } else {
-              objLayer.bringToFront();
-            }
-            let value = objLayer.options.opacity === 0 ? 0.7 : 0;
-            objLayer.setStyle({ opacity: value, fillOpacity: value });
-          });
-        }
-        var mapObjs = this.gbifData[layer]["layer"];
-        if (mapObjs) {
-          Object.values(mapObjs._layers).forEach((objLayer) => {
-            if (event.target.checked === false) {
-              objLayer.bringToBack();
-            } else {
-              objLayer.bringToFront();
-            }
-            let value = objLayer.options.opacity === 0 ? 0.7 : 0;
-            objLayer.setStyle({ opacity: value, fillOpacity: value });
-          });
-        }
-        this.selectedTaxa[layer] = event.target.checked;
-      },
-      removeTaxonLayer: function(layer) {
-        delete this.selectedTaxa[layer];
-        this.selectedTaxa = { ...this.selectedTaxa };
+        return div;
+      };
+      this.legend.addTo(this.map);
+    },
 
-        if (this.ednaData[layer]) {
-          this.map.removeLayer(this.ednaData[layer]["layer"]);
-          this.ednaData[layer] = null;
-        }
+    // =============
+    // search
+    // =============
+    submitSearch: function () {
+      this.fetchSimpleSearch(this.searchKeyword);
+      this.suggestions = [{ data: [] }];
+    },
+    onSelected: function (item) {
+      this.tempSelectedTaxon = item && item.item;
+      // this.fetchEol(taxon.canonical_name);
+    },
+    getSuggestionValue: function (suggestion) {
+      // the <input/> value when you select a suggestion.
+      return suggestion.item.canonical_name;
+    },
 
-        if (this.gbifData[layer]) {
-          this.map.removeLayer(this.gbifData[layer]["layer"]);
-          this.gbifData[layer] = null;
-        }
-      },
-      ednaDataCount: function(layer) {
-        if (this.ednaData[layer]) {
-          if (this.ednaData[layer].count > 0) {
-            let marker = `<svg height="30" width="30">
+    // =============
+    // taxaTab
+    // =============
+
+    submitTaxa: function () {
+      if (this.tempSelectedTaxon.canonical_name) {
+        this.selectedTaxa[this.tempSelectedTaxon.canonical_name] = true;
+        this.fetchOccurences(this.tempSelectedTaxon.canonical_name);
+      }
+      this.setActiveTab("mapTab");
+      this.tempSelectedTaxon = {};
+    },
+    isTaxaLayerSelected: function (layer) {
+      return this.selectedTaxa[layer];
+    },
+    toggleTaxaLayerVisibility: function (layer, event) {
+      var mapObj = this.ednaData[layer]["layer"];
+      if (mapObj) {
+        Object.values(mapObj._layers).forEach((objLayer) => {
+          if (event.target.checked === false) {
+            objLayer.bringToBack();
+          } else {
+            objLayer.bringToFront();
+          }
+          let value = objLayer.options.opacity === 0 ? 0.7 : 0;
+          objLayer.setStyle({ opacity: value, fillOpacity: value });
+        });
+      }
+      var mapObjs = this.gbifData[layer]["layer"];
+      if (mapObjs) {
+        Object.values(mapObjs._layers).forEach((objLayer) => {
+          if (event.target.checked === false) {
+            objLayer.bringToBack();
+          } else {
+            objLayer.bringToFront();
+          }
+          let value = objLayer.options.opacity === 0 ? 0.7 : 0;
+          objLayer.setStyle({ opacity: value, fillOpacity: value });
+        });
+      }
+      this.selectedTaxa[layer] = event.target.checked;
+    },
+    removeTaxonLayer: function (layer) {
+      delete this.selectedTaxa[layer];
+      this.selectedTaxa = { ...this.selectedTaxa };
+
+      if (this.ednaData[layer]) {
+        this.map.removeLayer(this.ednaData[layer]["layer"]);
+        this.ednaData[layer] = null;
+      }
+
+      if (this.gbifData[layer]) {
+        this.map.removeLayer(this.gbifData[layer]["layer"]);
+        this.gbifData[layer] = null;
+      }
+    },
+    ednaDataCount: function (layer) {
+      if (this.ednaData[layer]) {
+        if (this.ednaData[layer].count > 0) {
+          let marker = `<svg height="30" width="30">
                             <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
                               fill="${this.ednaDataColor(layer)}"/>
                             </svg>`;
-            return `<br>${marker}${this.ednaData[layer].count} eDNA sites`;
-          } else {
-            let blank = '<svg height="30" width="30"></svg>';
-            return `<br>${blank}0 eDNA sites`;
-          }
+          return `<br>${marker}${this.ednaData[layer].count} eDNA sites`;
+        } else {
+          let blank = '<svg height="30" width="30"></svg>';
+          return `<br>${blank}0 eDNA sites`;
         }
-      },
-      gbifDataCount: function(layer) {
-        if (this.gbifData[layer]) {
-          if (this.gbifData[layer].count > 0) {
-            let marker = `<svg height="30" width="30">
+      }
+    },
+    gbifDataCount: function (layer) {
+      if (this.gbifData[layer]) {
+        if (this.gbifData[layer].count > 0) {
+          let marker = `<svg height="30" width="30">
                             <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
                               fill="${this.gbifDataColor(layer)}"/>
                             </svg>`;
-            return `<br>${marker}${this.gbifData[layer].count} iNaturalist observations`;
-          } else {
-            let blank = '<svg height="30" width="30"></svg>';
-            return `<br>${blank}0 iNaturalist observations<br>`;
-          }
+          return `<br>${marker}${this.gbifData[layer].count} iNaturalist observations`;
+        } else {
+          let blank = '<svg height="30" width="30"></svg>';
+          return `<br>${blank}0 iNaturalist observations<br>`;
         }
-      },
-      ednaDataColor: function(layer) {
-        if (this.ednaData[layer] && this.ednaData[layer].color) {
-          return this.ednaData[layer].color;
-        }
-      },
-      gbifDataColor: function(layer) {
-        if (this.gbifData[layer] && this.gbifData[layer].color) {
-          return this.gbifData[layer].color;
-        }
-      },
-      // =============
-      // dataTab
-      // =============
-      showModal: function(layer) {
-        this.currentModal = layer;
-      },
-      submitData: function(activeTab) {
-        for (const layer in this.tempSelectedData) {
-          if (this.tempSelectedData[layer]) {
-            this.selectedData[layer] = true;
-            this.addDataLayersToMap(layer);
-          }
-        }
-        this.tempSelectedData = {};
-
-        this.setActiveTab(activeTab);
-      },
-      addDataLayersToMap: function(layer) {
-        if (layer == LARWMP) {
-          this.toggleDataMapLayer(layer, createLARWMP2018());
-        } else if (layer == PouR) {
-          this.toggleDataMapLayer(layer, this.pourLocationsLayer);
-        } else if (layer == Temperature) {
-          this.toggleDataMapLayer(layer, sites_2018_temperature);
-        } else if (layer == Oxygen) {
-          this.toggleDataMapLayer(layer, sites_2018_oxygen);
-        } else if (layer == pH) {
-          this.toggleDataMapLayer(layer, sites_2018_ph);
-        } else if (layer == Salinity) {
-          this.toggleDataMapLayer(layer, sites_2018_salinity);
-        } else if (layer == SpecificConductivity) {
-          this.toggleDataMapLayer(layer, sites_2018_conductivity);
-        }
-      },
-      toggleDataMapLayer: function(layerName, objectLayer) {
-        if (this.dataMapLayers[layerName]) {
-          this.map.removeLayer(this.dataMapLayers[layerName]);
-          this.dataMapLayers[layerName] = null;
-          this.dataLayerHistory.push({ [layerName]: false });
-        } else if (objectLayer) {
-          this.dataMapLayers[layerName] = objectLayer;
-          this.map.addLayer(this.dataMapLayers[layerName]);
-          this.dataLayerHistory.push({ [layerName]: true });
-        }
-        this.getActiveMapLayer();
-        this.updateLegend();
-      },
-      isDataLayerSelected: function(layer) {
-        return this.selectedData[layer];
-      },
-      toggleDataLayerVisibility: function(layer, event) {
-        var mapObj = this.dataMapLayers[layer];
-        if (mapObj) {
-          // https://stackoverflow.com/a/41780929
-          Object.values(mapObj._layers).forEach((objLayer) => {
-            // https://stackoverflow.com/a/12862922
-            if (event.target.checked === false) {
-              objLayer.bringToBack();
-            } else {
-              objLayer.bringToFront();
-            }
-            toggleFeatureOpacity(layer, objLayer);
-          });
-        }
-        this.selectedData[layer] = event.target.checked;
-        this.dataLayerHistory.push({ [layer]: event.target.checked });
-        this.getActiveMapLayer();
-        this.updateLegend();
-      },
-      removeDataLayer: function(layer) {
-        delete this.selectedData[layer];
-        this.selectedData = { ...this.selectedData };
-        this.toggleDataMapLayer(layer);
-        this.dataLayerHistory.push({ [layer]: false });
-        this.getActiveMapLayer();
-        this.updateLegend();
-      },
-      // =============
-      // analyte-list
-      // =============
-      appendTempSelectedLayers: function(layer, checked) {
-        if (layer == LARWMP || layer == PouR) {
+      }
+    },
+    ednaDataColor: function (layer) {
+      if (this.ednaData[layer] && this.ednaData[layer].color) {
+        return this.ednaData[layer].color;
+      }
+    },
+    gbifDataColor: function (layer) {
+      if (this.gbifData[layer] && this.gbifData[layer].color) {
+        return this.gbifData[layer].color;
+      }
+    },
+    // =============
+    // dataTab
+    // =============
+    showModal: function (layer) {
+      this.currentModal = layer;
+    },
+    submitData: function (activeTab) {
+      for (const layer in this.tempSelectedData) {
+        if (this.tempSelectedData[layer]) {
+          this.selectedData[layer] = true;
           this.addDataLayersToMap(layer);
-        } else {
-          this.tempSelectedData[layer] = checked;
         }
-      },
-      // =============
-      // common
-      // =============
-      taxonName: function(taxon) {
-        const { common_names, canonical_name } = taxon;
+      }
+      this.tempSelectedData = {};
 
-        if (common_names) {
-          return `${canonical_name} (${common_names.split("|").join(", ")})`;
-        } else {
-          return canonical_name;
-        }
-      },
-      kingdomIcon: function(taxon) {
-        if (taxon.division_name) {
-          return `/images/taxa_icons/${taxon.division_name
-            .replace(" ", "_")
-            .toLowerCase()}.png`;
-        }
-      },
-      setActiveTab: function(tab) {
-        this.activeTab = tab;
-      },
-      showInfo: function(layer) {
-        alert(`TODO: Add info about ${layer}`);
-      },
-      // =============
-      // fetch data
-      // =============
-      fetchSuggestions: function() {
-        let ctx = this;
-
-        if (ctx.searchKeyword.length <= 2) {
-          return;
-        }
-        axios
-          .get(`${ctx.getTaxaRoute}?query=${ctx.searchKeyword}`)
-          .then((results) => {
-            // HACK: Ignore slow queries that don't match the current
-            // searchKeyword. Ideally there would be a debounce function or
-            // a faster sql query.
-            if (results.data.query === ctx.searchKeyword) {
-              ctx.suggestions[0].data = results.data.data;
-            }
-          })
-          .catch((e) => console.warn(e));
-      },
-
-      fetchSimpleSearch: function(taxon) {
-        axios
-          .get(`/api/v1/taxa_search?query=${taxon}&type=simple`)
-          .then((results) => {
-            this.tempSelectedTaxon = results.data.data[0];
-          });
-      },
-
-      fetchPourLocations: function() {
-        axios
-          .get("/api/v1/places_basic?place_type=pour_location")
-          .then((response) => {
-            this.pourLocationsLayer = pourLocationsLayer(response.data.places);
-          })
-          .catch((e) => {
-            console.error(e);
-          });
-      },
-      fetchOccurences: function(taxonName, radius) {
-        let ctx = this;
-        axios
-          .get(`/api/v1/occurrences?taxon=${taxonName}&radius=${radius}`)
-          .then((response) => {
-            let reducer = (accumulator, item) => {
-              return accumulator + item.count;
-            };
-            let gbifCount = response.data.gbif.reduce(reducer, 0);
-            ctx.gbifData[taxonName] = { count: gbifCount };
-            let colors = randomHslRange();
-            let gbifLayer = pourGbifLayer(
-              response.data.gbif,
-              colors,
-              taxonName,
-              gbifCount
-            );
-            ctx.gbifData[taxonName]["layer"] = gbifLayer;
-            ctx.gbifData[taxonName]["color"] = colors[2];
-            ctx.map.addLayer(gbifLayer);
-
-            ctx.ednaData[taxonName] = { count: response.data.edna.length };
-            let ednaColor = randomHsl();
-            let ednaLayer = pourEdnaLayer(
-              response.data.edna,
-              ednaColor,
-              taxonName
-            );
-            ctx.ednaData[taxonName]["layer"] = ednaLayer;
-            ctx.ednaData[taxonName]["color"] = ednaColor;
-            ctx.map.addLayer(ednaLayer);
-            ctx.newestTaxa = taxonName;
-          })
-          .catch((e) => {
-            console.error(e);
-          })
-          .finally(() => (this.loading = false));
-      },
-      fetchEol: function(taxonName) {
-        axios
-          .get(`https://eol.org/api/search/1.0.json?q=${taxonName}`)
-          .then((results) => {
-            let eolTaxon = results.data.results[0];
-            if (eolTaxon) {
-              return eolTaxon.id;
-            }
-          })
-          .then((eolPageId) => {
-            if (eolPageId) {
-              return axios.get(
-                `https://eol.org/api/pages/1.0/${eolPageId}.json?details=true&images_per_page=1`
-              );
-            }
-          })
-          .then((results) => {})
-          .catch((e) => {
-            console.error(e);
-          });
-      },
+      this.setActiveTab(activeTab);
     },
-    mounted: function() {
-      this.$nextTick(function() {
-        this.map = initMap();
-        let watershedLayer = createWatershedLayer()
-        let riverLayer = createRiverLayer()
-        this.map.addLayer(createWatershedLayer());
-        this.map.addLayer(createRiverLayer());
-
-        this.fetchPourLocations();
-      });
+    addDataLayersToMap: function (layer) {
+      if (layer == LARWMP) {
+        this.toggleDataMapLayer(layer, createLARWMP2018());
+      } else if (layer == PouR) {
+        this.toggleDataMapLayer(layer, this.pourLocationsLayer);
+      } else if (layer == Temperature) {
+        this.toggleDataMapLayer(layer, sites_2018_temperature);
+      } else if (layer == Oxygen) {
+        this.toggleDataMapLayer(layer, sites_2018_oxygen);
+      } else if (layer == pH) {
+        this.toggleDataMapLayer(layer, sites_2018_ph);
+      } else if (layer == Salinity) {
+        this.toggleDataMapLayer(layer, sites_2018_salinity);
+      } else if (layer == SpecificConductivity) {
+        this.toggleDataMapLayer(layer, sites_2018_conductivity);
+      }
     },
-  };
+    toggleDataMapLayer: function (layerName, objectLayer) {
+      if (this.dataMapLayers[layerName]) {
+        this.map.removeLayer(this.dataMapLayers[layerName]);
+        this.dataMapLayers[layerName] = null;
+        this.dataLayerHistory.push({ [layerName]: false });
+      } else if (objectLayer) {
+        this.dataMapLayers[layerName] = objectLayer;
+        this.map.addLayer(this.dataMapLayers[layerName]);
+        this.dataLayerHistory.push({ [layerName]: true });
+      }
+      this.getActiveMapLayer();
+      this.updateLegend();
+    },
+    isDataLayerSelected: function (layer) {
+      return this.selectedData[layer];
+    },
+    toggleDataLayerVisibility: function (layer, event) {
+      var mapObj = this.dataMapLayers[layer];
+      if (mapObj) {
+        // https://stackoverflow.com/a/41780929
+        Object.values(mapObj._layers).forEach((objLayer) => {
+          // https://stackoverflow.com/a/12862922
+          if (event.target.checked === false) {
+            objLayer.bringToBack();
+          } else {
+            objLayer.bringToFront();
+          }
+          toggleFeatureOpacity(layer, objLayer);
+        });
+      }
+      this.selectedData[layer] = event.target.checked;
+      this.dataLayerHistory.push({ [layer]: event.target.checked });
+      this.getActiveMapLayer();
+      this.updateLegend();
+    },
+    removeDataLayer: function (layer) {
+      delete this.selectedData[layer];
+      this.selectedData = { ...this.selectedData };
+      this.toggleDataMapLayer(layer);
+      this.dataLayerHistory.push({ [layer]: false });
+      this.getActiveMapLayer();
+      this.updateLegend();
+    },
+    // =============
+    // analyte-list
+    // =============
+    appendTempSelectedLayers: function (layer, checked) {
+      if (layer == LARWMP || layer == PouR) {
+        this.addDataLayersToMap(layer);
+      } else {
+        this.tempSelectedData[layer] = checked;
+      }
+    },
+    // =============
+    // common
+    // =============
+    taxonName: function (taxon) {
+      const { common_names, canonical_name } = taxon;
 
-  function toggleFeatureOpacity(layer, objLayer) {
-    if (!objLayer.feature.properties[layer]) {
-      return;
-    }
+      if (common_names) {
+        return `${canonical_name} (${common_names.split("|").join(", ")})`;
+      } else {
+        return canonical_name;
+      }
+    },
+    kingdomIcon: function (taxon) {
+      if (taxon.division_name) {
+        return `/images/taxa_icons/${taxon.division_name
+          .replace(" ", "_")
+          .toLowerCase()}.png`;
+      }
+    },
+    setActiveTab: function (tab) {
+      this.activeTab = tab;
+    },
+    showInfo: function (layer) {
+      alert(`TODO: Add info about ${layer}`);
+    },
+    // =============
+    // fetch data
+    // =============
+    fetchSuggestions: function () {
+      let ctx = this;
 
-    let value =
-      objLayer.options.opacity == 0 ? objLayer.defaultOptions.opacity : 0;
-    objLayer.setStyle({ opacity: value, fillOpacity: value });
+      if (ctx.searchKeyword.length <= 2) {
+        return;
+      }
+      axios
+        .get(`${ctx.getTaxaRoute}?query=${ctx.searchKeyword}`)
+        .then((results) => {
+          // HACK: Ignore slow queries that don't match the current
+          // searchKeyword. Ideally there would be a debounce function or
+          // a faster sql query.
+          if (results.data.query === ctx.searchKeyword) {
+            ctx.suggestions[0].data = results.data.data;
+          }
+        })
+        .catch((e) => console.warn(e));
+    },
+
+    fetchSimpleSearch: function (taxon) {
+      axios
+        .get(`${api.taxa_search}?query=${taxon}&type=simple`)
+        .then((results) => {
+          this.tempSelectedTaxon = results.data.data[0];
+        });
+    },
+
+    fetchPourLocations: function () {
+      axios
+        .get(`${api.placesBasic}?place_type=pour_location`)
+        .then((response) => {
+          this.pourLocationsLayer = pourLocationsLayer(response.data.places);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+    fetchOccurences: function (taxonName, radius) {
+      let ctx = this;
+      axios
+        .get(`${api.pourOccurrences}?taxon=${taxonName}`)
+        .then((response) => {
+          let reducer = (accumulator, item) => {
+            return accumulator + item.count;
+          };
+          let gbifCount = response.data.gbif.reduce(reducer, 0);
+          ctx.gbifData[taxonName] = { count: gbifCount };
+          let colors = randomColorRange();
+          console.log("colors", colors);
+          let gbifLayer = pourGbifLayer(response.data.gbif, colors, taxonName);
+          ctx.gbifData[taxonName]["layer"] = gbifLayer;
+          ctx.gbifData[taxonName]["color"] = colors[2];
+          ctx.map.addLayer(gbifLayer);
+
+          ctx.ednaData[taxonName] = { count: response.data.edna.length };
+          let ednaColor = randomColor();
+          let ednaLayer = pourEdnaLayer(
+            response.data.edna,
+            ednaColor,
+            taxonName
+          );
+          ctx.ednaData[taxonName]["layer"] = ednaLayer;
+          ctx.ednaData[taxonName]["color"] = ednaColor;
+          ctx.map.addLayer(ednaLayer);
+          ctx.newestTaxa = taxonName;
+        })
+        .catch((e) => {
+          console.error(e);
+        })
+        .finally(() => (this.loading = false));
+    },
+    fetchEol: function (taxonName) {
+      axios
+        .get(`https://eol.org/api/search/1.0.json?q=${taxonName}`)
+        .then((results) => {
+          let eolTaxon = results.data.results[0];
+          if (eolTaxon) {
+            return eolTaxon.id;
+          }
+        })
+        .then((eolPageId) => {
+          if (eolPageId) {
+            return axios.get(
+              `https://eol.org/api/pages/1.0/${eolPageId}.json?details=true&images_per_page=1`
+            );
+          }
+        })
+        .then((results) => {})
+        .catch((e) => {
+          console.error(e);
+        });
+    },
+  },
+  mounted: function () {
+    this.$nextTick(function () {
+      this.map = initMap();
+      let watershedLayer = createWatershedLayer();
+      let riverLayer = createRiverLayer();
+      this.map.addLayer(createWatershedLayer());
+      this.map.addLayer(createRiverLayer());
+
+      this.fetchPourLocations();
+    });
+  },
+};
+
+function toggleFeatureOpacity(layer, objLayer) {
+  if (!objLayer.feature.properties[layer]) {
+    return;
   }
 
-  function randomHsl() {
-    return `hsla(${Math.floor(Math.random() * 360)}, 90%, 50%, 1)`;
-  }
-
-  function randomHslRange() {
-    let rand = Math.floor(Math.random() * 360);
-    return [
-      `hsla(${rand}, 80%, 90%, 1)`,
-      `hsla(${rand}, 80%, 70%, 1)`,
-      `hsla(${rand}, 80%, 50%, 1)`,
-      `hsla(${rand}, 80%, 30%, 1)`,
-      `hsla(${rand}, 80%, 10%, 1)`,
-    ];
-  }
-
+  let value =
+    objLayer.options.opacity == 0 ? objLayer.defaultOptions.opacity : 0;
+  objLayer.setStyle({ opacity: value, fillOpacity: value });
+}
 </script>

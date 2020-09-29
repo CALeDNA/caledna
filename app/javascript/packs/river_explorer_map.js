@@ -115,22 +115,27 @@ export function pourEdnaLayer(samples, color, taxonName) {
 
 function colorGraduatedColor(sample, colors, totalCount) {
   var interval = Math.floor(totalCount / 5);
-  var stops = [interval, interval * 2, interval * 3, interval * 4, totalCount]
-  console.log(sample.count ,  stops, colors)
+  var stops = [interval, interval * 2, interval * 3, interval * 4, totalCount];
+  // console.log("stops", stops);
   if (sample.count < stops[0]) {
-    return colors[0]
+    // console.log("0, ", sample.count);
+    return colors[0];
   } else if (sample.count < stops[1]) {
-    return colors[1]
+    // console.log("1 ", sample.count);
+    return colors[1];
   } else if (sample.count < stops[2]) {
-    return colors[2]
+    // console.log("2", sample.count);
+    return colors[2];
   } else if (sample.count < stops[3]) {
-    return colors[3]
+    // console.log("3 ", sample.count);
+    return colors[3];
   } else if (sample.count < stops[4]) {
-    return colors[4]
+    // console.log("4 ", sample.count);
+    return colors[4];
   }
 }
 
-export function pourGbifLayer(samples, colors, taxonName, totalCount) {
+export function pourGbifLayer(samples, colors, taxonName) {
   let markers = samples.map((sample) => {
     function createPopup(feature, layer) {
       let popup = `
@@ -155,8 +160,8 @@ export function pourGbifLayer(samples, colors, taxonName, totalCount) {
       layer.bindPopup(popup, { maxHeight: 400 });
     }
 
-    let color = colorGraduatedColor(sample, colors, totalCount)
-    console.log(sample, color)
+    let maxCount = samples.map((s) => s.count).sort((a, b) => b - a)[0];
+    let color = colorGraduatedColor(sample, colors, maxCount);
 
     var myStyle = {
       color: "#222",
@@ -172,9 +177,6 @@ export function pourGbifLayer(samples, colors, taxonName, totalCount) {
   });
   return L.layerGroup(markers);
 }
-
-
-
 
 export function createRiverLayer() {
   var style = {
