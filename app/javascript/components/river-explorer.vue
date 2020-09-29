@@ -552,19 +552,20 @@ export default {
           } else {
             objLayer.bringToFront();
           }
-          let value = objLayer.options.opacity === 0 ? 0.7 : 0;
+          let value = event.target.checked == true ? 0.7 : 0;
           objLayer.setStyle({ opacity: value, fillOpacity: value });
         });
       }
-      var mapObjs = this.gbifData[layer]["layer"];
-      if (mapObjs) {
-        Object.values(mapObjs._layers).forEach((objLayer) => {
+
+      var mapObj2 = this.gbifData[layer]["layer"];
+      if (mapObj2) {
+        Object.values(mapObj2._layers).forEach((objLayer) => {
           if (event.target.checked === false) {
             objLayer.bringToBack();
           } else {
             objLayer.bringToFront();
           }
-          let value = objLayer.options.opacity === 0 ? 0.7 : 0;
+          let value = event.target.checked == true ? 0.7 : 0;
           objLayer.setStyle({ opacity: value, fillOpacity: value });
         });
       }
