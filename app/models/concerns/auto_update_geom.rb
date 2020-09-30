@@ -27,6 +27,6 @@ module AutoUpdateGeom
   end
 
   def point_geom?
-    geom.class == RGeo::Geos::CAPIPointImpl
+    geom.to_s.starts_with?('POINT')
   end
 end
