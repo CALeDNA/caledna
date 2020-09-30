@@ -57,6 +57,9 @@ Rails.application.routes.draw do
   get '/contact-us', to: 'river/contacts#new'
   resources :contacts, only: [:create], controller: 'river/contacts'
 
+  # used when uploading images via the text editor
+  resources :uploads, only: %i[create destroy]
+
   root 'river/pages#home'
 
   namespace :admin do
