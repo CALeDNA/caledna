@@ -5,6 +5,7 @@ require 'rails_helper'
 describe 'Taxa' do
   before do
     create(:website, name: Website::DEFAULT_SITE)
+    create(:research_project, name: 'Los Angeles River')
   end
 
   describe 'taxa index page' do
