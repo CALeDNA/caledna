@@ -3,6 +3,7 @@ export const MMI = "MMI";
 export const OE = "O/E";
 export const D18 = "D18";
 export const S2 = "S2";
+export const H2O = "H20";
 export const CRAM = "Overall CRAM Score";
 export const BioticStructure = "Biotic Structure";
 export const Buffer = "Buffer and Landscape Context";
@@ -21,7 +22,9 @@ export const TSS = "TSS (mg/L)";
 export const Ammonia = "Ammonia as N (mg/L)";
 export const Nitrate = "Nitrate as N (mg/L)";
 export const Nitrite = "Nitrite as N (mg/L)";
+export const NitrateNitrite = "Nitrate + Nitrite as N";
 export const NitrogenTotal = "Nitrogen Total (mg/L)";
+export const NitrogenTotalKjeldahl = "Nitrogen Total Kjeldahl";
 export const OrthoPhosphate = "OrthoPhosphate as P (mg/L)";
 export const Phosphorus = "Phosphorus as P (mg/L)";
 export const DissolvedOrganicCarbon = "Dissolved Organic Carbon (mg/L)";
@@ -38,6 +41,25 @@ export const Mercury = "Mercury (ug/L)";
 export const Nickel = "Nickel (ug/L)";
 export const Selenium = "Selenium (ug/L)";
 export const Zinc = "Zinc (ug/L)";
+export const Eroded = "Eroded";
+export const Stable = "Stable";
+export const Vulnerable = "Vulnerable";
+export const FastWater = "Fast Water (%)";
+export const SlowWater = "Slow Water (%)";
+export const ChannelAlteration = "Channel Alteration";
+export const EpifaunalSubstrate = "Epifaunal Substrate";
+export const SedimentDeposition = "Sediment Deposition";
+export const MeanSlope = "Mean Slope (%)";
+export const Discharge = "Discharge (m3/sec)";
+export const WettedWidth = "Wetted Width (m)";
+export const MicroalgaeThickness = "Microalgae Thickness (mm)";
+export const Macrophytes = "Macrophytes (%)";
+export const Macroalgae = "Macroalgae (%)";
+export const Cover = "Cover (Densiometer) (%)";
+export const CPOM = "CPOM (%)";
+export const SandFines = "Sand and Fines (%)";
+export const ConcreteAsphalt = "Concrete/Asphalt (%)";
+export const CobbleGravel = "Cobble and Gravel (%)";
 export const PouR = "Protecting Our River";
 export const LARWMP = "Los Angeles River Watershed Monitoring Program (2018)";
 
@@ -63,12 +85,14 @@ export const locations = {
   [PouR]: `Protecting our River is collecting eDNA from sediment and water
   samples at 12 locations along the LA River and its tributaries in three
   separate rounds.`,
-  [LARWMP]: `"The Los Angeles River Watershed Monitoring Program conducts annual
-  assessments to better understand the health of a dynamic and predominantly
-  urban watershed. The guiding questions and corresponding monitoring framework
-  of the LARWMP provide both the public and resource managers with an
-  improved understanding of conditions and trends in the watershed."
-  - Los Angeles River Watershed Monitoring Program 2018 Annual Report`,
+  [LARWMP]: `Starting in 2007, the Los Angeles River Watershed Monitoring
+  Program (LARWMP) has conducted annual assessments of the rivers and streams
+  throughout the Los Angeles River watershed. LARWMP is a joint program
+  supported by LA Sanitation, City of Burbank, and Los Angeles County
+  Department of Public Works, and managed by the Council for Watershed Health.
+  To learn more about LARWMP and view the full reports, please visit the
+  <a href='https://www.watershedhealth.org/larwmp'>LARWMP</a> page on the
+  Council for Watershed site.`,
 };
 
 export const benthicMacroinvertebrates = {
@@ -80,6 +104,7 @@ export const benthicMacroinvertebrates = {
 export const attachedAlgae = {
   [D18]: null,
   [S2]: null,
+  [H2O]: null,
 };
 
 export const riparianHabitatScore = {
@@ -110,7 +135,9 @@ export const nutrients = {
   [Ammonia]: null,
   [Nitrate]: null,
   [Nitrite]: null,
+  [NitrateNitrite]: null,
   [NitrogenTotal]: null,
+  [NitrogenTotalKjeldahl]: null,
   [OrthoPhosphate]: null,
   [Phosphorus]: null,
   [DissolvedOrganicCarbon]: null,
@@ -135,11 +162,34 @@ export const dissolvedMetals = {
   [Zinc]: null,
 };
 
+export const physicalHabitatAssessments = {
+  [Eroded]: null,
+  [Stable]: null,
+  [Vulnerable]: null,
+  [FastWater]: null,
+  [SlowWater]: null,
+  [ChannelAlteration]: null,
+  [EpifaunalSubstrate]: null,
+  [SedimentDeposition]: null,
+  [MeanSlope]: null,
+  [Discharge]: null,
+  [WettedWidth]: null,
+  [MicroalgaeThickness]: null,
+  [Macrophytes]: null,
+  [Macroalgae]: null,
+  [Cover]: null,
+  [CPOM]: null,
+  [SandFines]: null,
+  [ConcreteAsphalt]: null,
+  [CobbleGravel]: null,
+};
+
 export const legends = {
   [CSCI]: "/data/river_explorer/legend/na.png",
   [MMI]: "/data/river_explorer/legend/na.png",
   [OE]: "/data/river_explorer/legend/na.png",
   [D18]: "/data/river_explorer/legend/na.png",
+  [H2O]: "/data/river_explorer/legend/na.png",
   [S2]: "/data/river_explorer/legend/na.png",
   [CRAM]: "/data/river_explorer/legend/na.png",
   [BioticStructure]: "/data/river_explorer/legend/na.png",
@@ -160,7 +210,9 @@ export const legends = {
   [Ammonia]: "/data/river_explorer/legend/na.png",
   [Nitrate]: "/data/river_explorer/legend/na.png",
   [Nitrite]: "/data/river_explorer/legend/na.png",
+  [NitrateNitrite]: "/data/river_explorer/legend/na.png",
   [NitrogenTotal]: "/data/river_explorer/legend/na.png",
+  [NitrogenTotalKjeldahl]: "/data/river_explorer/legend/na.png",
   [OrthoPhosphate]: "/data/river_explorer/legend/na.png",
   [Phosphorus]: "/data/river_explorer/legend/na.png",
   [DissolvedOrganicCarbon]: "/data/river_explorer/legend/na.png",
@@ -177,4 +229,23 @@ export const legends = {
   [Nickel]: "/data/river_explorer/legend/na.png",
   [Selenium]: "/data/river_explorer/legend/na.png",
   [Zinc]: "/data/river_explorer/legend/na.png",
+  [Eroded]: "/data/river_explorer/legend/na.png",
+  [Stable]: "/data/river_explorer/legend/na.png",
+  [Vulnerable]: "/data/river_explorer/legend/na.png",
+  [FastWater]: "/data/river_explorer/legend/na.png",
+  [SlowWater]: "/data/river_explorer/legend/na.png",
+  [ChannelAlteration]: "/data/river_explorer/legend/na.png",
+  [EpifaunalSubstrate]: "/data/river_explorer/legend/na.png",
+  [SedimentDeposition]: "/data/river_explorer/legend/na.png",
+  [MeanSlope]: "/data/river_explorer/legend/na.png",
+  [Discharge]: "/data/river_explorer/legend/na.png",
+  [WettedWidth]: "/data/river_explorer/legend/na.png",
+  [MicroalgaeThickness]: "/data/river_explorer/legend/na.png",
+  [Macrophytes]: "/data/river_explorer/legend/na.png",
+  [Macroalgae]: "/data/river_explorer/legend/na.png",
+  [Cover]: "/data/river_explorer/legend/na.png",
+  [CPOM]: "/data/river_explorer/legend/na.png",
+  [SandFines]: "/data/river_explorer/legend/na.png",
+  [ConcreteAsphalt]: "/data/river_explorer/legend/na.png",
+  [CobbleGravel]: "/data/river_explorer/legend/na.png",
 };

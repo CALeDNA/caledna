@@ -15,7 +15,7 @@
         </span>
         <Modal v-if="key == currentModal" @close="currentModal = null">
           <h3 slot="header">{{ key }}</h3>
-          <div slot="body">{{ showBody(key) }}</div>
+          <div slot="body" v-html="showBody(key)"></div>
         </Modal>
       </li>
     </ul>

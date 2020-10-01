@@ -62,7 +62,7 @@ export function pourLocationsLayer(places) {
 
   let markers = places.map((place) => {
     let popup = `
-      <p>Protecting Our River site</p>
+      <p>Protecting Our River</p>
 
       <table class="map-popup">
         <tr>
@@ -242,7 +242,7 @@ export function createLARWMP2018() {
 
   function createPopup(feature, layer) {
     let popup = `
-      <p>Los Angeles River Water Monitoring Program site</p>
+      <p>Los Angeles River Watershed Monitoring Program</p>
 
       <table class="map-popup">
         <tr>

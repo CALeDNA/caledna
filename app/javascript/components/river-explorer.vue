@@ -169,13 +169,9 @@
             tributaries, select one or more of these enviromental factors.
           </p>
           <p>
-            The data comes from the
+            The data comes from the 2018
             <a href="https://www.watershedhealth.org/larwmp"
               >Los Angeles River Watershed Monitoring Program</a
-            >
-            in 2018 via
-            <a href="https://www.watershedhealth.org/"
-              >Council for Watershed Health</a
             >.
           </p>
           <div class="data-list">
@@ -339,6 +335,28 @@
                 <div slot="body">TODO: Add info about Dissolved Metals</div>
               </Modal>
             </div>
+
+            <div>
+              <h3>
+                Physical Habitat Assessments
+                <span @click="showModal('Physical Habitat Assessments')">
+                  <i class="far fa-question-circle"></i>
+                </span>
+              </h3>
+              <AnalyteList
+                :list="physicalHabitatAssessments"
+                @addSelectedLayer="appendTempSelectedLayers"
+              />
+              <Modal
+                v-if="currentModal == 'Physical Habitat Assessments'"
+                @close="currentModal = null"
+              >
+                <h3 slot="header">Physical Habitat Assessments</h3>
+                <div slot="body">
+                  TODO: Add info about Physical Habitat Assessments
+                </div>
+              </Modal>
+            </div>
           </div>
           <div class="m-t-md">
             <button class="btn btn-primary" @click="submitData('mapTab')">
@@ -372,6 +390,7 @@ import {
   nutrients,
   algalBiomass,
   dissolvedMetals,
+  physicalHabitatAssessments,
   Temperature,
   Oxygen,
   pH,
@@ -421,6 +440,7 @@ export default {
       nutrients,
       algalBiomass,
       dissolvedMetals,
+      physicalHabitatAssessments,
       // misc
       activeTab: "mapTab",
       map: null,
@@ -838,6 +858,12 @@ export default {
       let riverLayer = createRiverLayer();
       this.map.addLayer(createWatershedLayer());
       this.map.addLayer(createRiverLayer());
+
+      var ctx = this;
+      this.map.on("zoomend", function () {
+        var zoomlevel = ctx.map.getZoom();
+        console.log("zoom", zoomlevel);
+      });
 
       this.fetchPourLocations();
     });
