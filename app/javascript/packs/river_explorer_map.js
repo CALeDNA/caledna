@@ -11,8 +11,7 @@ export function initMap() {
   var map = L.map("map", {
     zoomControl: true,
     maxZoom: 28,
-    minZoom: 1,
-    initialZoom: 7,
+    minZoom: 6,
     layers: [base_map.tileLayers.Minimal],
   }).fitBounds([
     [33.679246670913905, -118.6974911092205],
