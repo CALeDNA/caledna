@@ -66,7 +66,7 @@ namespace :import_places do
   end
 
   task import_la_river: :environment do
-    file_path = "#{IMPORT_GIS_BASE}/LA_River_no_mz.shp"
+    file_path = "#{IMPORT_GIS_BASE}/LA_River_v2_no_mz.shp"
     puts "import #{file_path}"
 
     import_shapefile(file_path,
