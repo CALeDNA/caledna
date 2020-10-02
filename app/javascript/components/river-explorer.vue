@@ -40,7 +40,10 @@
               <label :for="layer">
                 {{ layer }}
                 <span :key="newestTaxa" v-html="ednaDataCount(layer)"></span
-                ><span :key="newestTaxa" v-html="gbifDataCount(layer)"></span
+                ><span
+                  :key="`${newestTaxa}-b`"
+                  v-html="gbifDataCount(layer)"
+                ></span
               ></label>
             </div>
             <div>
@@ -822,7 +825,7 @@ export default {
           ctx.ednaData[taxonName]["layer"] = ednaLayer;
           ctx.ednaData[taxonName]["color"] = ednaColor;
           ctx.map.addLayer(ednaLayer);
-          ctx.newestTaxa = taxonName;
+          ctx.newestTaxa = `${taxonName}-${new Date().getTime()}`;
         })
         .catch((e) => {
           console.error(e);
