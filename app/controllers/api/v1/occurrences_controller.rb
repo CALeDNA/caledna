@@ -16,80 +16,112 @@ module Api
 
       private
 
-      def gbif_occurrences_sql
-        <<~SQL
-          SELECT hexbin.id, count(distinct(gbif_id)) AS count,
-            hexbin.latitude, hexbin.longitude
-          FROM pour.hexbin_1km AS hexbin
-          JOIN pour.gbif_occurrences
-            ON (ST_Contains(hexbin.geom_projected, gbif_occurrences.geom_projected))
-          JOIN pour.gbif_taxa
-            ON pour.gbif_taxa.taxon_id = pour.gbif_occurrences.taxon_id
-          where gbif_taxa.names @> $1
-          GROUP BY hexbin.id;
-        SQL
-      end
+      # ===================
+      # gbif results
+      # ===================
 
+      # rubocop:disable Metrics/AbcSize
       def gbif_occurrences
         @gbif_occurrences ||= begin
           return [] if params['taxon'].blank?
 
-          binding = [[nil, "{#{params['taxon']}}"]]
+          binding = [[nil, "{#{params['taxon']}}"], [nil, radius]]
           results = conn.exec_query(gbif_occurrences_sql, 'q', binding)
 
-          if results.count.zero?
-            binding = [[nil, "#{params['taxon'].downcase}%"]]
-            conn.exec_query(gbif_occurrences_common_sql, 'q', binding)
+          if results.count.zero? && gbif_common_name.present?
+            binding = [[nil, "{#{gbif_common_name}}"], [nil, radius]]
+            results = conn.exec_query(gbif_occurrences_common_sql, 'q', binding)
           end
+          results
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
+      def gbif_occurences_join_sql
+        <<~SQL
+          SELECT hexbin.id, count(distinct(gbif_id)) AS count,
+          hexbin.latitude, hexbin.longitude, hexbin.geom
+          FROM pour.gbif_occurrences_river as gbif_occurrences
+           JOIN pour.gbif_taxa
+             ON pour.gbif_taxa.taxon_id = gbif_occurrences.taxon_id
+           JOIN pour.hexbin
+             ON ST_Contains(hexbin.geom, gbif_occurrences.geom)
+         SQL
+      end
 
-      def full_texa_sql
-        <<-SQL
-        SELECT taxon_id, canonical_name, rank, common_names,
-        division_name
-        FROM (
-          SELECT taxon_id, canonical_name, rank, common_names,
-          ncbi_divisions.name as division_name,
-          to_tsvector('simple', canonical_name) ||
-          to_tsvector('english', common_names) AS doc
-          FROM ncbi_nodes
-          JOIN ncbi_divisions
-            ON ncbi_nodes.cal_division_id = ncbi_divisions.id
-          ORDER BY asvs_count DESC NULLS LAST
-        ) AS search
-        WHERE search.doc @@ plainto_tsquery('simple', $1)
-        OR search.doc @@ plainto_tsquery('english', $1)
-        LIMIT 10
+      def gbif_occurrences_sql
+        sql = gbif_occurences_join_sql
+        sql += <<~SQL
+          WHERE gbif_taxa.names @> $1
+          AND gbif_occurrences.distance = $2
+          GROUP BY hexbin.id;
         SQL
-      end
-
-      def full_texa_results
-        @full_texa_results ||= begin
-          binding = [[nil, query]]
-          conn.exec_query(full_texa_sql, 'q', binding)
-        end
+        sql
       end
 
       def gbif_occurrences_common_sql
-        <<~SQL
-          SELECT id, count, latitude, longitude
-          FROM (
-            SELECT hexbin.id, count(distinct(gbif_id)) AS count,
-              hexbin.latitude, hexbin.longitude, vernacular_name,
-              to_tsvector('english', vernacular_name) AS doc
-            FROM pour.hexbin_1km AS hexbin
-            JOIN pour.gbif_occurrences
-              ON (ST_Contains(hexbin.geom_projected, gbif_occurrences.geom_projected))
-            JOIN pour.gbif_taxa
-              ON pour.gbif_taxa.taxon_id = pour.gbif_occurrences.taxon_id
-            JOIN pour.gbif_common_names
-              ON gbif_taxa.taxon_id = gbif_common_names.taxon_id
-            GROUP BY hexbin.id, vernacular_name
-          ) as search
-          WHERE search.doc @@ plainto_tsquery('english', $1);
+        sql = gbif_occurences_join_sql
+        sql += <<~SQL
+          WHERE gbif_taxa.ids @> $1
+          AND gbif_occurrences.distance = $2
+          GROUP BY hexbin.id;
         SQL
+        sql
+      end
+
+      def gbif_common_name_sql
+        <<-SQL
+          SELECT gbif_taxa.taxon_id
+          FROM pour.gbif_common_names
+          JOIN pour.gbif_taxa
+            ON gbif_taxa.taxon_id = gbif_common_names.taxon_id
+          WHERE to_tsvector('english', vernacular_name)
+            @@ plainto_tsquery('english', $1)
+          ORDER BY occurrence_count DESC NULLS LAST
+          LIMIT 1;
+        SQL
+      end
+
+      def gbif_common_name
+        @gbif_common_name ||= begin
+          binding = [[nil, params['taxon']]]
+          result = conn.exec_query(gbif_common_name_sql, 'q', binding)
+          result.entries.first['taxon_id'] if result.entries.present?
+        end
+      end
+
+      def radius
+        radius = params[:radius].blank? ? 1000 : params[:radius].to_i
+        radius = 1000 if radius > 1000
+        radius
+      end
+
+      def conn
+        ActiveRecord::Base.connection
+      end
+
+      # ===================
+      # edna results
+      # ===================
+
+      def ncbi_common_name_sql
+        <<-SQL
+          SELECT canonical_name
+          FROM ncbi_nodes
+          WHERE (to_tsvector('simple', canonical_name) ||
+            to_tsvector('english', common_names))
+            @@ plainto_tsquery('english', $1)
+          ORDER BY asvs_count DESC NULLS LAST
+          LIMIT 1;
+        SQL
+      end
+
+      def ncbi_common_name
+        @ncbi_common_name ||= begin
+          binding = [[nil, params['taxon']]]
+          result = conn.exec_query(ncbi_common_name_sql, 'q', binding)
+          result.entries.first['canonical_name'] if result.entries.present?
+        end
       end
 
       def taxa_join_sql
@@ -101,29 +133,23 @@ module Api
         SQL
       end
 
+      def samples(taxon)
+        website_sample_map
+          .select('id', 'barcode', 'latitude', 'longitude')
+          .joins(taxa_join_sql)
+          .where(published_samples_sql)
+          .where('ncbi_nodes.names @> ARRAY[?]', taxon)
+          .group('id', 'barcode', 'latitude', 'longitude')
+      end
+
       def taxa_samples
         @taxa_samples ||= begin
-          website_sample_map
-            .select('id', 'barcode', 'latitude', 'longitude')
-            .joins(taxa_join_sql)
-            .where(published_samples_sql)
-            .where('ncbi_nodes.names @> ARRAY[?]', params[:taxon])
-            .group('id', 'barcode', 'latitude', 'longitude')
+          results = samples(params[:taxon])
+          if results.to_a.blank? && ncbi_common_name.present?
+            results = samples(ncbi_common_name)
+          end
+          results
         end
-      end
-
-      def grid_level
-        0.01
-      end
-
-      def radius
-        radius = params[:radius].blank? ? 1000 : params[:radius].to_i
-        radius = 3000 if radius > 3000
-        radius
-      end
-
-      def conn
-        ActiveRecord::Base.connection
       end
     end
   end
