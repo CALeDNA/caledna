@@ -181,6 +181,19 @@ namespace :gbif do
     end
   end
 
+  task add_ids_to_taxa: :environment do
+    PourGbifTaxon.find_each do |taxon|
+      puts taxon.taxon_id
+
+      all_ids = [taxon.kingdom_id, taxon.phylum_id, taxon.class_id,
+                 taxon.order_id, taxon.family_id, taxon.genus_id,
+                 taxon.species_id].compact
+
+      taxon.ids = all_ids
+      taxon.save
+    end
+  end
+
   task add_common_names_to_taxa: :environment do
     def create_sql(rank)
       sql <<~SQL
@@ -253,7 +266,7 @@ namespace :gbif do
       "order", order_id;
     SQL
 
-    family_sql=<<~SQL
+    family_sql = <<~SQL
       select kingdom, kingdom_id,
       phylum, phylum_id,
       class_name, class_id,
@@ -268,7 +281,7 @@ namespace :gbif do
       "order", order_id, family, family_id;
     SQL
 
-    genus_sql=<<~SQL
+    genus_sql = <<~SQL
       select  kingdom, kingdom_id,
       phylum, phylum_id,
       class_name, class_id,
@@ -286,7 +299,7 @@ namespace :gbif do
 
     [kingdom_sql, phylum_sql, class_sql, order_sql, family_sql,
      genus_sql].each do |sql|
-      results = ActiveRecord::Base.connection.exec_query(sql)
+      results = conn.exec_query(sql)
       results.each do |res|
         taxon = PourGbifTaxon.find_by(taxon_id: res['taxon_id'])
         next if taxon.present?
