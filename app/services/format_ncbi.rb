@@ -8,6 +8,7 @@ module FormatNcbi
       name_class = 'genbank common name' OR
       name_class = 'genbank synonym'  OR
       name_class = 'synonym' OR
+      name_class = 'blast name' OR
       name_class = 'equivalent name'
     SQL
 
@@ -29,6 +30,7 @@ module FormatNcbi
   def create_common_names
     sql = <<-SQL
       name_class = 'common name' OR
+      name_class = 'blast name' OR
       name_class = 'genbank common name'
     SQL
 

@@ -41,7 +41,7 @@ namespace :ncbi do
       AND taxon_id < 3000000;
     SQL
 
-    ActiveRecord::Base.connection.exec_query(sql)
+    conn.exec_query(sql)
   end
 
   desc 'update cal divisions for "Plants and Fungi"'
@@ -235,7 +235,7 @@ namespace :ncbi do
     ]
 
     queries.each do |sql|
-      ActiveRecord::Base.connection.exec_query(sql)
+      conn.exec_query(sql)
     end
   end
 
@@ -274,7 +274,7 @@ namespace :ncbi do
     ]
 
     queries.each do |sql|
-      ActiveRecord::Base.connection.exec_query(sql)
+      conn.exec_query(sql)
     end
   end
 
@@ -292,7 +292,7 @@ namespace :ncbi do
       WHERE ncbi_nodes.taxon_id = subquery.taxon_id;
     SQL
 
-    ActiveRecord::Base.connection.exec_query(sql)
+    conn.exec_query(sql)
   end
 
   task add_ruggiero_taxa_to_ncbi_order: :environment do
@@ -592,4 +592,23 @@ namespace :ncbi do
     end
   end
   # rubocop:enable Metrics/LineLength
+
+  task add_blast_to_common_names: :environment do
+    sql = <<~SQL
+      UPDATE ncbi_nodes SET common_names =
+      coalesce(foo.name || '|' || common_names, common_names)
+      FROM (
+        SELECT name , taxon_id
+        FROM  ncbi_names
+        WHERE ncbi_names.name_class = 'blast name'
+      ) AS foo
+      WHERE ncbi_nodes.ncbi_id = foo.taxon_id;
+    SQL
+
+    conn.exec_query(sql)
+  end
+
+  def conn
+    ActiveRecord::Base.connection
+  end
 end
