@@ -307,4 +307,26 @@ namespace :gbif do
       end
     end
   end
+
+  task update_occurrence_count: :environment do
+    sql = <<~SQL
+      SELECT UNNEST(ids) as id, count(*)
+      FROM pour.gbif_taxa
+      JOIN pour.gbif_occurrences
+      ON gbif_occurrences.taxon_id = gbif_taxa.taxon_id
+      GROUP BY UNNEST(ids);
+    SQL
+
+    results = conn.exec_query(sql)
+    results.each do |res|
+      sql =
+        'UPDATE pour.gbif_taxa SET occurrence_count = $1 WHERE taxon_id = $2'
+      bindings = [[nil, res['count']], [nil, res['id']]]
+      conn.exec_query(sql, 'q', bindings)
+    end
+  end
+
+  def conn
+    ActiveRecord::Base.connection
+  end
 end
