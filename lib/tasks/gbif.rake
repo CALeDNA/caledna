@@ -181,6 +181,31 @@ namespace :gbif do
     end
   end
 
+  task add_common_names_to_taxa: :environment do
+    def create_sql(rank)
+      sql <<~SQL
+        UPDATE pour.gbif_taxa
+        SET common_names = coalesce(temp.common_names || ' | ' ||
+          temp.vernacular_name , temp.vernacular_name)
+        FROM (
+          SELECT vernacular_name, gbif_taxa.#{rank}_id , common_names
+          FROM pour.gbif_taxa
+          JOIN pour.gbif_common_names
+          ON pour.gbif_taxa.#{rank}_id = pour.gbif_common_names.taxon_id
+        ) AS temp
+        WHERE gbif_taxa.#{rank}_id = temp.#{rank}_id;
+      SQL
+    end
+
+    conn.exec_query(create_sql('kingdom'))
+    conn.exec_query(create_sql('phylum'))
+    conn.exec_query(create_sql('class'))
+    conn.exec_query(create_sql('order'))
+    conn.exec_query(create_sql('family'))
+    conn.exec_query(create_sql('genus'))
+    conn.exec_query(create_sql('species'))
+  end
+
   task add_missing_taxon: :environment do
     kingdom_sql = <<~SQL
       select  kingdom, kingdom_id,
