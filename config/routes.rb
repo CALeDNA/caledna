@@ -67,8 +67,10 @@ Rails.application.routes.draw do
           get 'sites', defaults: params
         end
       end
+
       namespace :pour do
         resources :occurrences, only: %i[index]
+        get '/inat_occurrences', to: 'occurrences#inat_occurrences'
       end
     end
   end

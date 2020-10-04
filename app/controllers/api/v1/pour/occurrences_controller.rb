@@ -15,7 +15,45 @@ module Api
           }
         end
 
+        def inat_occurrences
+          render json: {
+            total_species: total_inat_species,
+            total_occurrences: total_inat_occurrences
+          }
+        end
+
         private
+
+        # ===================
+        # inat_occurrences
+        # ===================
+        def total_sql(field)
+          <<~SQL
+            SELECT mapgrid.id, count(distinct(#{field})) AS count,
+            mapgrid.latitude, mapgrid.longitude,
+            ST_AsGeoJSON(mapgrid.geom) as geom
+            FROM pour.gbif_occurrences as gbif_occurrences
+             JOIN pour.gbif_taxa
+               ON pour.gbif_taxa.taxon_id = gbif_occurrences.taxon_id
+             JOIN pour.mapgrid
+               ON ST_Contains(mapgrid.geom, gbif_occurrences.geom)
+             WHERE mapgrid.size = 2000
+             AND mapgrid.type = 'hexagon'
+             GROUP BY mapgrid.id;
+           SQL
+        end
+
+        def total_inat_occurrences
+          @total_inat_occurrences ||= begin
+            conn.exec_query(total_sql('gbif_occurrences.gbif_id'))
+          end
+        end
+
+        def total_inat_species
+          @total_inat_species ||= begin
+            conn.exec_query(total_sql('gbif_taxa.taxon_id'))
+          end
+        end
 
         # ===================
         # index: gbif results
