@@ -25,11 +25,13 @@ module Api
         @gbif_occurrences ||= begin
           return [] if params['taxon'].blank?
 
-          binding = [[nil, "{#{params['taxon']}}"], [nil, radius]]
+          binding = [[nil, "{#{params['taxon']}}"], [nil, radius],
+                     [nil, mapgrid_size]]
           results = conn.exec_query(gbif_occurrences_sql, 'q', binding)
 
           if results.count.zero? && gbif_common_name.present?
-            binding = [[nil, "{#{gbif_common_name}}"], [nil, radius]]
+            binding = [[nil, "{#{gbif_common_name}}"], [nil, radius],
+                       [nil, mapgrid_size]]
             results = conn.exec_query(gbif_occurrences_common_sql, 'q', binding)
           end
           results
@@ -39,22 +41,24 @@ module Api
 
       def gbif_occurences_join_sql
         <<~SQL
-          SELECT hexbin.id, count(distinct(gbif_id)) AS count,
-          hexbin.latitude, hexbin.longitude, hexbin.geom
+          SELECT mapgrid.id, count(distinct(gbif_id)) AS count,
+          mapgrid.latitude, mapgrid.longitude, ST_AsGeoJSON(mapgrid.geom) as geom
           FROM pour.gbif_occurrences_river as gbif_occurrences
            JOIN pour.gbif_taxa
              ON pour.gbif_taxa.taxon_id = gbif_occurrences.taxon_id
-           JOIN pour.hexbin
-             ON ST_Contains(hexbin.geom, gbif_occurrences.geom)
+           JOIN pour.mapgrid
+             ON ST_Contains(mapgrid.geom, gbif_occurrences.geom)
          SQL
       end
 
       def gbif_occurrences_sql
         sql = gbif_occurences_join_sql
         sql += <<~SQL
-          WHERE gbif_taxa.names @> $1
-          AND gbif_occurrences.distance = $2
-          GROUP BY hexbin.id;
+          WHERE gbif_occurrences.distance = $2
+          AND mapgrid.size = $3
+          AND mapgrid.type = 'hexagon'
+          AND gbif_taxa.names @> $1
+          GROUP BY mapgrid.id;
         SQL
         sql
       end
@@ -62,9 +66,11 @@ module Api
       def gbif_occurrences_common_sql
         sql = gbif_occurences_join_sql
         sql += <<~SQL
-          WHERE gbif_taxa.ids @> $1
-          AND gbif_occurrences.distance = $2
-          GROUP BY hexbin.id;
+          WHERE gbif_occurrences.distance = $2
+          AND mapgrid.size = $3
+          AND mapgrid.type = 'hexagon'
+          AND gbif_taxa.ids @> $1
+          GROUP BY mapgrid.id;
         SQL
         sql
       end
@@ -92,8 +98,18 @@ module Api
 
       def radius
         radius = params[:radius].blank? ? 1000 : params[:radius].to_i
-        radius = 1000 if radius > 1000
+        radius = 1000 if radius > 3000
         radius
+      end
+
+      def mapgrid_size
+        size = params[:mapgrid_size].blank? ? 2000 : params[:mapgrid_size].to_i
+        size = 2000 if size > 2000
+        size
+      end
+
+      def mapgrid_type
+        params[:mapgrid_type].blank? ? :square : :hexagon
       end
 
       def conn
@@ -101,7 +117,7 @@ module Api
       end
 
       # ===================
-      # edna results
+      # index: edna results
       # ===================
 
       def ncbi_common_name_sql
