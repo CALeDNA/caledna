@@ -25,7 +25,6 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :occurrences, only: %i[index]
       resources :field_projects, only: %i[show]
       resources :inat_observations, only: %i[index]
       resources :places, only: %i[show] do
@@ -67,6 +66,9 @@ Rails.application.routes.draw do
           get 'detection_frequency', defaults: params
           get 'sites', defaults: params
         end
+      end
+      namespace :pour do
+        resources :occurrences, only: %i[index]
       end
     end
   end
