@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_03_200203) do
+ActiveRecord::Schema.define(version: 2020_10_04_073958) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
   enable_extension "postgis"
+  enable_extension "tablefunc"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -50,6 +52,20 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
     t.index ["taxon_id"], name: "index_asvs_on_taxon_id"
+  end
+
+  create_table "cal_taxa_old", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.string "original_taxonomy_string"
+    t.string "clean_taxonomy_string"
+    t.text "sources", array: true
   end
 
   create_table "event_registrations", force: :cascade do |t|
@@ -92,9 +108,9 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
-    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "iucn_status"
     t.string "source"
     t.string "col_id"
     t.string "wikispecies_id"
@@ -109,6 +125,8 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.string "inat_image"
     t.string "inat_image_attribution"
     t.integer "tol_id"
+    t.text "wiki_excerpt"
+    t.string "wiki_title"
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["source"], name: "index_external_resources_on_source"
@@ -225,6 +243,7 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.string "iucn_status"
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (common_names)::text)))", name: "full_text_search_idx", using: :gin
     t.index "lower((canonical_name)::text) text_pattern_ops", name: "name_autocomplete_idx"
+    t.index "lower((common_names)::text)", name: "foo"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"
@@ -351,6 +370,8 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.index ["geom"], name: "index_places_on_geom", using: :gist
     t.index ["geom_projected"], name: "index_places_on_geom_projected", using: :gist
     t.index ["place_source_id"], name: "index_places_on_place_source_id"
+    t.index ["place_source_type_cd"], name: "places_place_source_type_cd_idx"
+    t.index ["place_type_cd"], name: "places_place_type_cd_idx"
   end
 
   create_table "primers", force: :cascade do |t|
@@ -413,10 +434,10 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.string "dryad_link"
     t.text "decontamination_method"
     t.jsonb "metadata", default: {}
-    t.string "primers", default: [], array: true
     t.decimal "map_latitude"
     t.decimal "map_longitude"
     t.integer "map_zoom"
+    t.string "primers", array: true
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|
@@ -451,7 +472,6 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
@@ -468,7 +488,7 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.index ["research_project_id"], name: "index_result_raw_imports_on_research_project_id"
   end
 
-  create_table "result_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
+  create_table "result_taxa", id: :serial, force: :cascade do |t|
     t.string "taxon_rank"
     t.jsonb "hierarchy"
     t.boolean "normalized"
@@ -491,6 +511,25 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.index ["ignore"], name: "index_result_taxa_on_ignore"
     t.index ["taxon_id"], name: "index_result_taxa_on_taxon_id"
     t.index ["taxon_rank"], name: "index_result_taxa_on_taxon_rank"
+  end
+
+  create_table "result_taxa_with_pcr", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.string "taxon_rank"
+    t.jsonb "hierarchy"
+    t.boolean "normalized"
+    t.integer "taxon_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean "ignore"
+    t.text "original_taxonomy_string", array: true
+    t.string "clean_taxonomy_string"
+    t.text "result_sources", array: true
+    t.boolean "exact_match"
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.integer "ncbi_version_id"
+    t.string "canonical_name"
   end
 
   create_table "sample_primers", force: :cascade do |t|
@@ -543,6 +582,70 @@ ActiveRecord::Schema.define(version: 2020_10_03_200203) do
     t.index ["metadata"], name: "samples_metadata_idx", using: :gin
     t.index ["primers"], name: "index_samples_on_primer", using: :gin
     t.index ["status_cd"], name: "index_samples_on_status_cd"
+  end
+
+  create_table "samples_prod", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.integer "field_project_id"
+    t.integer "kobo_id"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.datetime "submission_date"
+    t.string "barcode"
+    t.jsonb "kobo_data"
+    t.text "field_notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "collection_date"
+    t.string "status_cd"
+    t.string "substrate_cd"
+    t.decimal "altitude"
+    t.integer "gps_precision"
+    t.string "location"
+    t.text "director_notes"
+    t.string "habitat_cd"
+    t.string "depth_cd"
+    t.boolean "missing_coordinates"
+    t.jsonb "metadata"
+    t.string "primers", array: true
+    t.jsonb "csv_data"
+    t.string "country"
+    t.string "country_code"
+    t.boolean "has_permit"
+    t.string "environmental_features", array: true
+    t.string "environmental_settings", array: true
+  end
+
+  create_table "samples_rollback", id: false, force: :cascade do |t|
+    t.integer "id"
+    t.integer "field_project_id"
+    t.integer "kobo_id"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.datetime "submission_date"
+    t.string "barcode"
+    t.jsonb "kobo_data"
+    t.text "field_notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "collection_date"
+    t.string "status_cd"
+    t.string "substrate_cd"
+    t.decimal "altitude"
+    t.integer "gps_precision"
+    t.string "location"
+    t.text "director_notes"
+    t.string "habitat_cd"
+    t.string "depth_cd"
+    t.boolean "missing_coordinates"
+    t.jsonb "metadata"
+    t.string "primers", array: true
+    t.jsonb "csv_data"
+    t.string "country"
+    t.string "country_code"
+    t.boolean "has_permit"
+    t.string "environmental_features", array: true
+    t.string "environmental_settings", array: true
   end
 
   create_table "site_news", force: :cascade do |t|
