@@ -421,6 +421,7 @@ import {
 import base_map from "../packs/base_map";
 import api from "../utils/api_routes";
 import { randomColorRange, randomColor } from "../utils/map_colors";
+import { formatTaxonName, formatKingdomIcon } from "../utils/taxon_utils";
 
 export default {
   name: "RiverExplorer",
@@ -476,19 +477,7 @@ export default {
       },
     };
   },
-  computed: {
-    filteredOptions() {
-      return [
-        {
-          data: this.suggestions[0].data.filter((option) => {
-            return (
-              option.name.toLowerCase().indexOf(this.query.toLowerCase()) > -1
-            );
-          }),
-        },
-      ];
-    },
-  },
+
   methods: {
     // =============
     // mapTab
@@ -737,20 +726,10 @@ export default {
     // common
     // =============
     taxonName: function (taxon) {
-      const { common_names, canonical_name } = taxon;
-
-      if (common_names) {
-        return `${canonical_name} (${common_names.split("|").join(", ")})`;
-      } else {
-        return canonical_name;
-      }
+      return formatTaxonName(taxon);
     },
     kingdomIcon: function (taxon) {
-      if (taxon.division_name) {
-        return `/images/taxa_icons/${taxon.division_name
-          .replace(" ", "_")
-          .toLowerCase()}.png`;
-      }
+      return formatKingdomIcon(taxon);
     },
     setActiveTab: function (tab) {
       this.activeTab = tab;
