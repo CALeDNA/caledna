@@ -16,6 +16,7 @@
     "file-loader": "4",
     "leaflet-easybutton": "^2.4.0",
     "pluralize": "^8.0.0",
+    "simple-statistics": "^7.3.0",
     "spin.js": "^4.0.0",
     "venn.js": "^0.2.20",
     "vue": "^2.5.16",
