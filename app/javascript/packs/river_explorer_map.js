@@ -2,6 +2,8 @@
 import { riversJson } from "../data/rivers.js";
 import { watershedJson } from "../data/watershed.js";
 import { LARWMP2018Json } from "../data/sites_2018.js";
+import { ckmeans } from 'simple-statistics'
+
 import base_map from "./base_map";
 
 import L from "leaflet";
@@ -112,10 +114,11 @@ export function pourEdnaLayer(samples, color, taxonName) {
   return L.layerGroup(markers);
 }
 
-function colorGraduatedColor(sample, colors, totalCount) {
-  var interval = Math.floor(totalCount / 5);
-  var stops = [interval, interval * 2, interval * 3, interval * 4, totalCount];
-  // console.log("stops", stops);
+function calculateGraduatedColor(sample, samples, colors) {
+  let counts = samples.map(s => (s.count))
+  let clusters = ckmeans(counts, 5);
+
+  var stops = [clusters[1][0], clusters[2][0], clusters[3][0], clusters[4][0]];
   if (sample.count < stops[0]) {
     // console.log("0, ", sample.count);
     return colors[0];
@@ -128,7 +131,7 @@ function colorGraduatedColor(sample, colors, totalCount) {
   } else if (sample.count < stops[3]) {
     // console.log("3 ", sample.count);
     return colors[3];
-  } else if (sample.count < stops[4]) {
+  } else {
     // console.log("4 ", sample.count);
     return colors[4];
   }
@@ -159,8 +162,7 @@ export function pourGbifLayer(samples, colors, taxonName) {
       layer.bindPopup(popup, { maxHeight: 400 });
     }
 
-    let maxCount = samples.map((s) => s.count).sort((a, b) => b - a)[0];
-    let color = colorGraduatedColor(sample, colors, maxCount);
+    let color = calculateGraduatedColor(sample, samples, colors);
 
     var myStyle = {
       color: colors[2],
@@ -269,7 +271,7 @@ export function createLARWMP2018() {
 
   return new L.geoJson(LARWMP2018Json, {
     onEachFeature: createPopup,
-    pointToLayer: function(_feature, latlng) {
+    pointToLayer: function (_feature, latlng) {
       return L.shapeMarker(latlng, pointStyle);
     },
   });
@@ -371,7 +373,7 @@ function sites_2018_temperature_popup(feature, layer) {
 
 export const sites_2018_temperature = new L.geoJson(LARWMP2018Json, {
   onEachFeature: sites_2018_temperature_popup,
-  pointToLayer: function(feature, latlng) {
+  pointToLayer: function (feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_temperature(feature));
   },
 });
@@ -433,7 +435,7 @@ function sites_2018_oxygen_popup(feature, layer) {
 
 export const sites_2018_oxygen = new L.geoJson(LARWMP2018Json, {
   onEachFeature: sites_2018_oxygen_popup,
-  pointToLayer: function(feature, latlng) {
+  pointToLayer: function (feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_oxygen(feature));
   },
 });
@@ -495,7 +497,7 @@ function sites_2018_ph_popup(feature, layer) {
 
 export const sites_2018_ph = new L.geoJson(LARWMP2018Json, {
   onEachFeature: sites_2018_ph_popup,
-  pointToLayer: function(feature, latlng) {
+  pointToLayer: function (feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_ph(feature));
   },
 });
@@ -557,7 +559,7 @@ function sites_2018_salinity_popup(feature, layer) {
 
 export const sites_2018_salinity = new L.geoJson(LARWMP2018Json, {
   onEachFeature: sites_2018_salinity_popup,
-  pointToLayer: function(feature, latlng) {
+  pointToLayer: function (feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_salinity(feature));
   },
 });
@@ -619,7 +621,7 @@ function sites_2018_conductivity_popup(feature, layer) {
 
 export const sites_2018_conductivity = new L.geoJson(LARWMP2018Json, {
   onEachFeature: sites_2018_conductivity_popup,
-  pointToLayer: function(feature, latlng) {
+  pointToLayer: function (feature, latlng) {
     return L.shapeMarker(latlng, style_sites_2018_conductivity(feature));
   },
 });
