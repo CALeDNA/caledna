@@ -95,4 +95,15 @@
   .analyte-list label {
     font-weight: normal;
   }
+
+  .map-tab {
+    position: relative;
+  }
+
+  .map-controls {
+    position: absolute;
+    z-index: 401; // index needed to appear above leaflet map
+    left: 70px;
+    top: 10px;
+  }
 }
