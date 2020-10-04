@@ -43,6 +43,9 @@ Rails.application.routes.draw do
   resource :river_explorer, only: %i[show], controller: 'river/river_explorers'
 
 
+  get '/beta/inat', to: 'river/beta#inat'
+
+
   get '/faq', to: 'river/pages#show', defaults: { id: 'faq' }
   get '/our-mission', to: 'river/pages#show', defaults: { id: 'our-mission' }
   get '/our-team', to: 'river/pages#show', defaults: { id: 'our-team' }
@@ -50,7 +53,6 @@ Rails.application.routes.draw do
                                    defaults: { id: 'why-protect-biodiversity' }
   get '/get-involved', to: 'river/pages#show',  defaults: { id: 'get-involved' }
   get '/donate', to: 'river/pages#show', defaults: { id: 'donate' }
-  get '/beta', to: 'river/pages#show', defaults: { id: 'beta' }
   get '/disclaimer', to: 'river/pages#show', defaults: { id: 'disclaimer' }
   get '/samples-analyzed', to: 'river/pages#show', defaults: { id: 'samples-analyzed' }
 

@@ -190,6 +190,71 @@ export function pourGbifLayer(items, classifications, colors, taxonName) {
   return L.layerGroup(markers);
 }
 
+export function createMapgridLayer(items, classifications, colors, type) {
+  let markers = items.map((item) => {
+    function createPopup(feature, layer) {
+      let popup = `
+        <table class="map-popup">
+          <tr>
+            <th scope="row">ID</th>
+            <td>${item.id}</td>
+          </tr>
+          <tr>
+            <th scope="row">Count</th>
+            <td>${item.count} ${type}</td>
+          </tr>
+          <tr>
+            <th scope="row">Latitude</th>
+            <td>${item.latitude}</td>
+          </tr>
+          <tr>
+            <th scope="row">Longitude</th>
+            <td>${item.longitude}</td>
+          </tr>
+        </table>
+      `;
+      layer.bindPopup(popup);
+    }
+
+    let color = findClassificationColor(item, classifications, colors);
+
+    var myStyle = {
+      color: colors[3],
+      weight: .5,
+      opacity: 1,
+      fillColor: color,
+      fillOpacity: 0.8,
+    };
+
+    return L.geoJSON(JSON.parse(item.geom), {
+      onEachFeature: createPopup,
+      style: myStyle,
+    });
+  });
+  return L.featureGroup(markers);
+}
+
+export function createMapLegend(classifications, colors) {
+  let legend = L.control({ position: "bottomleft" });
+  legend.onAdd = function () {
+    var div = L.DomUtil.create("div", "map-legend");
+    classifications.forEach((classification, index) => {
+      div.innerHTML += `
+      <div>
+        <svg width="20" height="20">
+          <rect width="18" height="18"
+            style="fill:${colors[index]};stroke-width:1;stroke:${colors[3]}" />
+        </svg>
+        <span>${classification.begin} - ${classification.end}</span>
+      </div>
+      `;
+    });
+
+    return div;
+  };
+  return legend;
+}
+
 export function createRiverLayer() {
   var style = {
     opacity: 1,
