@@ -9,21 +9,21 @@ import base_map from "./base_map";
 import L from "leaflet";
 import "leaflet-svg-shape-markers";
 
-export function initMap() {
-  var map = L.map("map", {
+export function initMap(selector = "map") {
+  let tiles = base_map.tileLayersFactory();
+  tiles["None"] = L.tileLayer('');
+
+  var map = L.map(selector, {
     zoomControl: true,
     maxZoom: 28,
     minZoom: 6,
-    layers: [base_map.tileLayers.Minimal],
+    layers: [tiles.Minimal],
   }).fitBounds([
     [33.679246670913905, -118.6974911092205],
     [34.45898102165338, -117.94488821092733],
   ]);
 
-  let tiles = base_map.tileLayers;
-  tiles["None"] = L.tileLayer("");
-
-  L.control.layers(base_map.tileLayers).addTo(map);
+  L.control.layers(tiles).addTo(map);
 
   return map;
 }
