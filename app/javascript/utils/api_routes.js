@@ -6,6 +6,9 @@ const routes = {
   taxa: `${baseUrl}/taxa`,
   taxaNextTaxonId: `${baseUrl}/taxa/next_taxon_id`,
   normalizeTaxa: "/admin/labwork/normalize_ncbi_taxa",
+  placesBasic: `${baseUrl}/places_basic`,
+  pourOccurrences: `${baseUrl}/pour/occurrences`,
+  inatOccurrences: `${baseUrl}/pour/inat_occurrences`
 };
 
 const updateAndCreateTaxa = (id, body) => {
@@ -18,7 +21,7 @@ const getNextTaxonId = () => {
 };
 
 export default {
-  routes,
+  ...routes,
   updateAndCreateTaxa,
   getNextTaxonId,
 };

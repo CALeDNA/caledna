@@ -167,12 +167,12 @@ export default {
       taxaDatasets: [
         {
           name: "NCBI",
-          source: "NCBI"
+          source: "NCBI",
         },
         {
           name: "BOLD",
-          source: "BOLD"
-        }
+          source: "BOLD",
+        },
       ],
       ranks: [
         "superkingdom",
@@ -182,16 +182,16 @@ export default {
         "order",
         "family",
         "genus",
-        "species"
+        "species",
       ],
-      getTaxaRoute: api.routes.taxa,
+      getTaxaRoute: api.taxa,
       errors: [],
-      nextTaxonId: null
+      nextTaxonId: null,
     };
   },
   methods: {
     fetchSuggestions(json) {
-      const res = json.data.map(record => record.attributes);
+      const res = json.data.map((record) => record.attributes);
       return res;
     },
 
@@ -209,7 +209,9 @@ export default {
       this.newTaxon.division_id = data.division_id;
       this.newTaxon.cal_division_id = data.cal_division_id;
 
-      api.getNextTaxonId().then(res => (this.nextTaxonId = res.next_taxon_id));
+      api
+        .getNextTaxonId()
+        .then((res) => (this.nextTaxonId = res.next_taxon_id));
     },
 
     processCanonicalName(newTaxon) {
@@ -234,7 +236,7 @@ export default {
 
     trimObject(object) {
       const newObject = { ...object };
-      Object.keys(newObject).forEach(field => {
+      Object.keys(newObject).forEach((field) => {
         if (newObject[field] && typeof newObject[field] === "string") {
           newObject[field] = newObject[field].trim();
         }
@@ -255,7 +257,7 @@ export default {
       const taxon_id = this.nextTaxonId;
       const hierarchy = {
         ...this.selectedTaxon.hierarchy,
-        [this.newTaxon.rank]: taxon_id
+        [this.newTaxon.rank]: taxon_id,
       };
 
       this.selectedTaxon.ids.push(taxon_id);
@@ -276,7 +278,7 @@ export default {
           order: this.newTaxon.order,
           family: this.newTaxon.family,
           genus: this.newTaxon.genus,
-          species: this.newTaxon.species
+          species: this.newTaxon.species,
         },
         canonical_name,
         taxon_id,
@@ -287,7 +289,7 @@ export default {
         result_taxon_id: id,
         division_id: this.newTaxon.division_id,
         cal_division_id: this.newTaxon.cal_division_id,
-        source: this.newTaxon.source
+        source: this.newTaxon.source,
       };
 
       if (this.newTaxon.source === "NCBI") {
@@ -312,7 +314,7 @@ export default {
         return;
       }
       return this.ranks.indexOf(this.selectedTaxon.rank) >= num;
-    }
+    },
   },
   computed: {
     isSuperkingdom() {
@@ -338,7 +340,7 @@ export default {
     },
     isSpecies() {
       return this.calculateRank(7);
-    }
-  }
+    },
+  },
 };
 </script>
