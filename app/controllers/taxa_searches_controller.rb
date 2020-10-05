@@ -64,7 +64,7 @@ class TaxaSearchesController < ApplicationController
     FROM (
       SELECT taxon_id,
       to_tsvector('simple', canonical_name) ||
-      to_tsvector('english', coalesce(alt_names, '')) as doc
+      to_tsvector('english', common_names) as doc
       FROM ncbi_nodes
     ) AS search
     WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})
