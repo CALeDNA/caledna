@@ -60,7 +60,28 @@
   .data-layer {
     width: 100%;
     border: 1px #aaa solid;
-    padding: 7px;
+    margin-bottom: 0.75em;
+
+    .data-header {
+      padding: 7px;
+      border-bottom: 1px solid #aaa;
+      position: relative;
+
+      svg {
+        position: absolute;
+        right: 7px;
+        top: 10px;
+      }
+    }
+
+    .data-legend {
+      padding: 10px;
+    }
+
+    .data-footer {
+      padding: 7px;
+      border-top: 1px solid #ccc;
+    }
   }
 
   .data-tab {
