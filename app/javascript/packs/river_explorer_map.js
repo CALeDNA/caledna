@@ -114,21 +114,31 @@ export function pourEdnaLayer(samples, color, taxonName) {
   return L.layerGroup(markers);
 }
 
-function calculateGraduatedColor(sample, samples, colors) {
-  let counts = samples.map(s => (s.count))
+export function createClassificationRanges(items) {
+  let counts = items.map(s => (s.count));
   let clusters = ckmeans(counts, 5);
 
-  var stops = [clusters[1][0], clusters[2][0], clusters[3][0], clusters[4][0]];
-  if (sample.count < stops[0]) {
+  return clusters.map((cluster, index) => {
+    let prevCluster = clusters[index - 1];
+    let begin = index === 0 ? cluster[0] : prevCluster[prevCluster.length - 1] + 1;
+    return {
+      begin: begin,
+      end: cluster[cluster.length - 1]
+    }
+  })
+}
+
+export function findClassificationColor(sample, classifications, colors) {
+  if (sample.count <= classifications[0].end) {
     // console.log("0, ", sample.count);
     return colors[0];
-  } else if (sample.count < stops[1]) {
+  } else if (sample.count <= classifications[1].end) {
     // console.log("1 ", sample.count);
     return colors[1];
-  } else if (sample.count < stops[2]) {
+  } else if (sample.count <= classifications[2].end) {
     // console.log("2", sample.count);
     return colors[2];
-  } else if (sample.count < stops[3]) {
+  } else if (sample.count <= classifications[3].end) {
     // console.log("3 ", sample.count);
     return colors[3];
   } else {
@@ -137,8 +147,8 @@ function calculateGraduatedColor(sample, samples, colors) {
   }
 }
 
-export function pourGbifLayer(samples, colors, taxonName) {
-  let markers = samples.map((sample) => {
+export function pourGbifLayer(items, classifications, colors, taxonName) {
+  let markers = items.map((item) => {
     function createPopup(feature, layer) {
       let popup = `
       <p>iNaturalist Observations for ${taxonName}</p>
@@ -146,15 +156,15 @@ export function pourGbifLayer(samples, colors, taxonName) {
       <table class="map-popup">
         <tr>
           <th scope="row">Count</th>
-          <td>${sample.count} observations</td>
+          <td>${item.count} observations</td>
         </tr>
         <tr>
           <th scope="row">Latitude</th>
-          <td>${sample.latitude}</td>
+          <td>${item.latitude}</td>
         </tr>
         <tr>
           <th scope="row">Longitude</th>
-          <td>${sample.longitude}</td>
+          <td>${item.longitude}</td>
         </tr>
       </table>
     `;
@@ -162,7 +172,7 @@ export function pourGbifLayer(samples, colors, taxonName) {
       layer.bindPopup(popup, { maxHeight: 400 });
     }
 
-    let color = calculateGraduatedColor(sample, samples, colors);
+    let color = findClassificationColor(item, classifications, colors);
 
     var myStyle = {
       color: colors[2],
@@ -172,7 +182,7 @@ export function pourGbifLayer(samples, colors, taxonName) {
       opacity: 0.9,
     };
 
-    return L.geoJSON(JSON.parse(sample.geom), {
+    return L.geoJSON(JSON.parse(item.geom), {
       onEachFeature: createPopup,
       style: myStyle,
     });

@@ -412,6 +412,7 @@ import {
   createRiverLayer,
   createImageLayer,
   createWatershedLayer,
+  createClassificationRanges,
   sites_2018_temperature,
   sites_2018_oxygen,
   sites_2018_ph,
@@ -788,8 +789,13 @@ export default {
           let gbifCount = response.data.gbif.reduce(reducer, 0);
           ctx.gbifData[taxonName] = { count: gbifCount };
           let colors = randomColorRange();
-          console.log("colors", colors);
-          let gbifLayer = pourGbifLayer(response.data.gbif, colors, taxonName);
+          let classifications = createClassificationRanges(response.data.gbif);
+          let gbifLayer = pourGbifLayer(
+            response.data.gbif,
+            classifications,
+            colors,
+            taxonName
+          );
           ctx.gbifData[taxonName]["layer"] = gbifLayer;
           ctx.gbifData[taxonName]["color"] = colors[2];
           ctx.map.addLayer(gbifLayer);
