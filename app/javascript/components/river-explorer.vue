@@ -91,16 +91,7 @@
 
       <div id="explorer-content">
         <!-- mapTab -->
-        <section v-show="activeTab == 'mapTab'" class="map-tab">
-          <div class="map-controls">
-            <button
-              class="btn btn-primary"
-              v-show="mapNeedsRefresh"
-              @click="refreshMap"
-            >
-              Update Map
-            </button>
-          </div>
+        <section v-show="activeTab == 'mapTab'">
           <div id="map"></div>
         </section>
 
@@ -485,10 +476,6 @@ export default {
         placeholder:
           "Search for a taxon by Latin or English names (e.g., Canis lupus, wolf)",
       },
-      // map zoom
-      currentZoom: 10,
-      mapNeedsRefresh: false,
-      currentMapgridSize: 2000,
     };
   },
 
@@ -615,9 +602,9 @@ export default {
       if (this.ednaData[layer]) {
         if (this.ednaData[layer].count > 0) {
           let marker = `<svg height="30" width="30">
-                        <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
-                          fill="${this.ednaDataColor(layer)}"/>
-                        </svg>`;
+                            <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
+                              fill="${this.ednaDataColor(layer)}"/>
+                            </svg>`;
           return `<br>${marker}${this.ednaData[layer].count} eDNA sites`;
         } else {
           let blank = '<svg height="30" width="30"></svg>';
@@ -629,9 +616,9 @@ export default {
       if (this.gbifData[layer]) {
         if (this.gbifData[layer].count > 0) {
           let marker = `<svg height="30" width="30">
-                        <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
-                          fill="${this.gbifDataColor(layer)}"/>
-                        </svg>`;
+                            <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
+                              fill="${this.gbifDataColor(layer)}"/>
+                            </svg>`;
           return `<br>${marker}${this.gbifData[layer].count} iNaturalist observations`;
         } else {
           let blank = '<svg height="30" width="30"></svg>';
@@ -791,9 +778,8 @@ export default {
           console.error(e);
         });
     },
-    fetchOccurences: function (taxonName) {
+    fetchOccurences: function (taxonName, radius) {
       let ctx = this;
-      let radius = 1000;
       axios
         .get(`${api.pourOccurrences}?taxon=${taxonName}`)
         .then((response) => {
@@ -812,7 +798,6 @@ export default {
           );
           ctx.gbifData[taxonName]["layer"] = gbifLayer;
           ctx.gbifData[taxonName]["color"] = colors[2];
-          ctx.gbifData[taxonName]["colors"] = colors;
           ctx.map.addLayer(gbifLayer);
 
           ctx.ednaData[taxonName] = { count: response.data.edna.length };
@@ -826,30 +811,6 @@ export default {
           ctx.ednaData[taxonName]["color"] = ednaColor;
           ctx.map.addLayer(ednaLayer);
           ctx.newestTaxa = `${taxonName}-${new Date().getTime()}`;
-          ctx.map.addLayer(createRiverLayer());
-        })
-        .catch((e) => {
-          console.error(e);
-        })
-        .finally(() => (this.loading = false));
-    },
-    updateOccurencesMapgrid: function (taxonName, mapgridSize) {
-      let ctx = this;
-      axios
-        .get(
-          `${api.pourOccurrences}?taxon=${taxonName}&mapgrid_size=${mapgridSize}`
-        )
-        .then((response) => {
-          let classifications = createClassificationRanges(response.data.gbif);
-          let gbifLayer = pourGbifLayer(
-            response.data.gbif,
-            classifications,
-            ctx.gbifData[taxonName]["colors"],
-            taxonName
-          );
-          ctx.map.removeLayer(ctx.gbifData[taxonName]["layer"]);
-          ctx.gbifData[taxonName]["layer"] = gbifLayer;
-          ctx.map.addLayer(gbifLayer);
         })
         .catch((e) => {
           console.error(e);
@@ -877,10 +838,6 @@ export default {
           console.error(e);
         });
     },
-
-    refreshMap: function () {
-      this.mapNeedsRefresh = false;
-    },
   },
   mounted: function () {
     this.$nextTick(function () {
@@ -890,30 +847,10 @@ export default {
       this.map.addLayer(createWatershedLayer());
       this.map.addLayer(createRiverLayer());
 
-      this.fetchOccurences("Aves");
-
       var ctx = this;
       this.map.on("zoomend", function () {
-        var zoomLevel = ctx.map.getZoom();
-        let mapgridSize = 0;
-
-        if (zoomLevel >= 10) {
-          if ([10, 11].includes(zoomLevel)) {
-            mapgridSize = 2000;
-          } else if ([12, 13].includes(zoomLevel)) {
-            mapgridSize = 1500;
-          } else if ([14, 15].includes(zoomLevel)) {
-            mapgridSize = 1000;
-          } else if (zoomLevel > 15) {
-            mapgridSize = 500;
-          }
-          if (mapgridSize !== ctx.currentMapgridSize) {
-            ctx.mapNeedsRefresh = true;
-            ctx.currentMapgridSize = mapgridSize;
-            ctx.updateOccurencesMapgrid("Aves", mapgridSize);
-          }
-        }
-        console.log("zoom", zoomLevel, mapgridSize);
+        var zoomlevel = ctx.map.getZoom();
+        console.log("zoom", zoomlevel);
       });
 
       this.fetchPourLocations();

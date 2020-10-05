@@ -46,7 +46,7 @@ export const taxonLayerMixins = {
     },
 
     addTaxonLayer() {
-      const samples = this.taxonSamplesData.filter(function (sample) {
+      const samples = this.taxonSamplesData.filter(function(sample) {
         return sample.latitude && sample.longitude;
       });
 
@@ -111,52 +111,3 @@ export const secondaryLayerMixins = {
     },
   },
 };
-
-export const mapZoomMixins = {
-  /*
-  ctx.map.getBounds()
-  _northEast: LatLng
-  lat: 35.290468565908775
-  lng: -116.5155029296875
-  _southWest: LatLng
-  lat: 32.10118973232094
-  lng: -120.02014160156251
-  */
-  methods: {
-    calculateBoundingBox: function (latLngBounds, map) {
-      // https://gist.github.com/neilkennedy/9227665
-      var center = latLngBounds.getCenter();
-      var latlngs = [];
-
-      latlngs.push({
-        lat: latLngBounds.getSouthWest().lat,
-        lng: latLngBounds.getSouthWest().lng,
-      }); //bottom left
-      latlngs.push({ lat: latLngBounds.getSouth(), lng: center.lng }); //bottom center
-      latlngs.push({
-        lat: latLngBounds.getSouthEast().lat,
-        lng: latLngBounds.getSouthEast().lng,
-      }); //bottom right
-      latlngs.push({ lat: center.lat, lng: latLngBounds.getEast() }); // center right
-      latlngs.push({
-        lat: latLngBounds.getNorthEast().lat,
-        lng: latLngBounds.getNorthEast().lng,
-      }); //top right
-      latlngs.push({
-        lat: latLngBounds.getNorth(),
-        lng: map.getCenter().lng,
-      }); //top center
-      latlngs.push({
-        lat: latLngBounds.getNorthWest().lat,
-        lng: latLngBounds.getNorthWest().lng,
-      }); //top left
-      latlngs.push({
-        lat: map.getCenter().lat,
-        lng: latLngBounds.getWest(),
-      }); //center left
-
-      return latlngs;
-    }
-  }
-}
-
