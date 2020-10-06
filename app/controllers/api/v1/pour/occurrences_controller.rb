@@ -164,7 +164,7 @@ module Api
             SELECT canonical_name
             FROM ncbi_nodes
             WHERE (to_tsvector('simple', canonical_name) ||
-              to_tsvector('english', common_names))
+              to_tsvector('english', coalesce(common_names, '')))
               @@ plainto_tsquery('english', $1)
             ORDER BY asvs_count DESC NULLS LAST
             LIMIT 1;

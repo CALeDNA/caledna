@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_04_073958) do
+ActiveRecord::Schema.define(version: 2020_10_06_001544) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -241,7 +241,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_073958) do
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "iucn_status"
-    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (common_names)::text)))", name: "full_text_search_idx", using: :gin
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(common_names, ''::character varying))::text)))", name: "full_text_search_idx", using: :gin
     t.index "lower((canonical_name)::text) text_pattern_ops", name: "name_autocomplete_idx"
     t.index "lower((common_names)::text)", name: "foo"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"

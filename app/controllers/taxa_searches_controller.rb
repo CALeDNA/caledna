@@ -43,7 +43,7 @@ class TaxaSearchesController < ApplicationController
       ARRAY_AGG(DISTINCT inat_image) AS inat_images,
       ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images,
       to_tsvector('simple', canonical_name) ||
-      to_tsvector('english', common_names) AS doc
+      to_tsvector('english', coalesce(common_names, '')) AS doc
       FROM ncbi_nodes
       LEFT JOIN external_resources
         ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
@@ -64,7 +64,7 @@ class TaxaSearchesController < ApplicationController
     FROM (
       SELECT taxon_id,
       to_tsvector('simple', canonical_name) ||
-      to_tsvector('english', common_names) as doc
+      to_tsvector('english', coalesce(common_names, '')) as doc
       FROM ncbi_nodes
     ) AS search
     WHERE search.doc @@ plainto_tsquery('simple', #{conn.quote(query)})
@@ -73,7 +73,7 @@ class TaxaSearchesController < ApplicationController
   end
 
   def query
-    params[:query].try(:downcase)
+    params[:query]&.downcase
   end
 
   def limit

@@ -50,7 +50,7 @@ module Api
           SELECT taxon_id, canonical_name, rank, common_names,
           ncbi_divisions.name as division_name,
           to_tsvector('simple', canonical_name) ||
-          to_tsvector('english', common_names) AS doc
+          to_tsvector('english', coalesce(common_names, '')) AS doc
           FROM ncbi_nodes
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
