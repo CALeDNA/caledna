@@ -1,21 +1,34 @@
 <template>
   <div>
-    <input
-      type="checkbox"
-      id="occurrences"
-      name="occurrences"
-      checked
-      @click="toggleOccurrences"
-    />
-    <label for="occurrences">iNaturalist</label>
-
+    <h1>iNaturalist for LA River Watershed</h1>
+    <p>
+      This is a comparison of the number of research-grade iNaturalist
+      observations and species made in the LA River Watershed.
+    </p>
     <div class="my-container">
       <section>
-        <h1>LA River Watershed: iNaturalist Observations</h1>
+        <h2>iNaturalist Observations</h2>
+        <input
+          type="checkbox"
+          id="occurrences"
+          name="occurrences"
+          checked
+          @click="toggleOccurrences"
+        />
+        <label for="occurrences">occurrences</label>
+
         <div id="map-occurrences" class="map-container"></div>
       </section>
       <section>
-        <h1>LA River Watershed: iNaturalist Species</h1>
+        <h2>iNaturalist Species</h2>
+        <input
+          type="checkbox"
+          id="species"
+          name="species"
+          checked
+          @click="toggleSpecies"
+        />
+        <label for="species">Species</label>
         <div id="map-species" class="map-container"></div>
       </section>
     </div>
@@ -25,13 +38,9 @@
 <script>
 import axios from "axios";
 
-import AnalyteList from "./shared/analyte-list";
-
 import {
   initMap,
   pourLocationsLayer,
-  taxonEdnaLayer,
-  taxonGbifLayer,
   LARWMPLocationsLayer,
   createRiverLayer,
   createWatershedLayer,
@@ -41,13 +50,10 @@ import {
 } from "../packs/river_explorer_map";
 import base_map from "../packs/base_map";
 import api from "../utils/api_routes";
-import { randomColorRange, randomColor } from "../utils/misc_util";
+import { randomColorRange } from "../utils/misc_util";
 
 export default {
   name: "RiverExplorer",
-  components: {
-    AnalyteList,
-  },
   data: function () {
     return {
       // misc
@@ -58,8 +64,6 @@ export default {
       // data
       selectedData: {},
       dataMapLayers: {},
-      tempSelectedData: {},
-      dataLayerHistory: [],
       activeMapLayer: null,
       pourLocationsLayer: null,
       speciesCount: null,
@@ -86,6 +90,12 @@ export default {
         fillOpacity: opacity,
         opacity: opacity,
       });
+    },
+
+    toggleSpecies: function (e) {
+      let checked = e.target.checked;
+      let opacity = checked ? 0.9 : 0;
+
       this.speciesLayer.setStyle({ fillOpacity: opacity, opacity: opacity });
     },
 
@@ -123,7 +133,11 @@ export default {
             colors,
             "species"
           );
-          let speciesLegend = createMapLegend(speciesClassifications, colors);
+          let speciesLegend = createMapLegend(
+            speciesClassifications,
+            colors,
+            "Species Count"
+          );
           speciesLegend.addTo(ctx.speciesMap);
           ctx.speciesMap.addLayer(ctx.speciesLayer);
           ctx.speciesMap.addLayer(createRiverLayer());
@@ -143,7 +157,8 @@ export default {
           );
           let occurrencesLegend = createMapLegend(
             occurrencesClassifications,
-            colors
+            colors,
+            "Observations Count"
           );
           occurrencesLegend.addTo(ctx.occurrencesMap);
           ctx.occurrencesMap.addLayer(ctx.occurrencesLayer);
