@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 export var LARWMPJson = {
 =======
 export var LARWMP2018Json = {
 >>>>>>> e3e0e642... add geoJSON files fo LA River
+=======
+export var LARWMPJson = {
+>>>>>>> 0bda3cf0... RE - display data and legend for all LARWMP data
   type: "FeatureCollection",
   name: "sites_2018_4",
   crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
