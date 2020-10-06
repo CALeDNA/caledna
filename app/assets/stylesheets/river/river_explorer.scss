@@ -31,9 +31,16 @@
     width: 300px;
     float: left;
     padding-right: 1em;
+
+    h2 {
+      margin-bottom: .25em;
+      font-size: 1.5em;
+    }
   }
   #explorer-content {
+    border: 1px solid #aaa;
     margin-left: 300px;
+    height: 700px;
   }
 
   #map {
@@ -85,12 +92,10 @@
   }
 
   .data-tab {
-    border: 1px solid #aaa;
     padding: 1.5em;
   }
 
   .taxon-tab {
-    border: 1px solid #aaa;
     padding: 1.5em;
   }
 

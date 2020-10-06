@@ -561,7 +561,10 @@ export default {
     // search
     // =============
     submitSearch: function () {
-      this.fetchSimpleSearch(this.searchKeyword);
+      this.tempSelectedTaxon = {
+        canonical_name: this.searchKeyword,
+        rank: null,
+      };
       this.suggestions = [{ data: [] }];
     },
     onSelected: function (item) {
@@ -833,14 +836,6 @@ export default {
           }
         })
         .catch((e) => console.warn(e));
-    },
-
-    fetchSimpleSearch: function (taxon) {
-      axios
-        .get(`${api.taxa_search}?query=${taxon}&type=simple`)
-        .then((results) => {
-          this.tempSelectedTaxon = results.data.data[0];
-        });
     },
 
     fetchPourLocations: function () {
