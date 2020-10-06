@@ -119,33 +119,10 @@ module Api
       # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
 
-      def exact_sql
-        <<~SQL
-          SELECT ncbi_nodes.taxon_id, canonical_name, rank, common_names,
-          ncbi_divisions.name as division_name
-          FROM ncbi_nodes
-          JOIN ncbi_divisions
-            ON ncbi_nodes.cal_division_id = ncbi_divisions.id
-          JOIN ncbi_names ON ncbi_names.taxon_id = ncbi_nodes.ncbi_id
-          WHERE lower(ncbi_names.name) = $1
-          ORDER BY asvs_count DESC NULLS LAST
-          LIMIT 1
-        SQL
-      end
-
-      def exact_search
-        binding = [[nil, query]]
-        conn.exec_query(exact_sql, 'q', binding)
-      end
-
       def search_results
         @search_results ||= begin
           return [] if query.blank?
-          if params[:type] == 'exact'
-            exact_search
-          else
-            full_text_prefix_search
-          end
+          full_text_prefix_search
         end
       end
 

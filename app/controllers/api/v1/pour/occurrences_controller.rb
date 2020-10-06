@@ -142,8 +142,8 @@ module Api
         end
 
         def mapgrid_size
-          size = params[:mapgrid_size].blank? ? 2000 : params[:mapgrid_size].to_i
-          size = 2000 if size > 2000
+          size = params[:mapgrid_size].blank? ? 1500 : params[:mapgrid_size].to_i
+          size = 1500 if size > 1500
           size
         end
 
