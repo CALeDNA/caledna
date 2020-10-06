@@ -196,7 +196,7 @@ namespace :gbif do
 
   task add_common_names_to_taxa: :environment do
     def create_sql(rank)
-      sql <<~SQL
+      <<~SQL
         UPDATE pour.gbif_taxa
         SET common_names = coalesce(temp.common_names || ' | ' ||
           temp.vernacular_name , temp.vernacular_name)
