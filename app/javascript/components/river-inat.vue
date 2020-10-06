@@ -30,14 +30,13 @@ import AnalyteList from "./shared/analyte-list";
 import {
   initMap,
   pourLocationsLayer,
-  pourEdnaLayer,
-  pourGbifLayer,
-  createLARWMP2018,
+  taxonEdnaLayer,
+  taxonGbifLayer,
+  LARWMPLocationsLayer,
   createRiverLayer,
-  createImageLayer,
   createWatershedLayer,
   createMapgridLayer,
-  createClassificationRanges,
+  createTaxonClassifications,
   createMapLegend,
 } from "../packs/river_explorer_map";
 import base_map from "../packs/base_map";
@@ -74,16 +73,6 @@ export default {
     // =============
     // mapTab
     // =============
-
-    toggleMapLayer: function (layerName, objectLayer) {
-      if (this.dataMapLayers[layerName]) {
-        this.map.removeLayer(this.dataMapLayers[layerName]);
-        this.dataMapLayers[layerName] = null;
-      } else {
-        this.dataMapLayers[layerName] = objectLayer;
-        this.map.addLayer(this.dataMapLayers[layerName]);
-      }
-    },
 
     // =============
     // misc
@@ -125,7 +114,7 @@ export default {
           let colors = randomColorRange();
 
           ctx.speciesCount = response.data.total_species.reduce(reducer, 0);
-          let speciesClassifications = createClassificationRanges(
+          let speciesClassifications = createTaxonClassifications(
             response.data.total_species
           );
           ctx.speciesLayer = createMapgridLayer(
@@ -143,7 +132,7 @@ export default {
             reducer,
             0
           );
-          let occurrencesClassifications = createClassificationRanges(
+          let occurrencesClassifications = createTaxonClassifications(
             response.data.total_occurrences
           );
           ctx.occurrencesLayer = createMapgridLayer(
