@@ -32,13 +32,14 @@ export function createTaxonClassifications(items) {
   if (items.length === 0) { return [] }
 
   let values = items.map(s => (s.count));
-  let clusterCount = values.length >= 5 ? 5 : values.length
-  let clusters = ckmeans(values, clusterCount);
-
-  return formatClassifications(clusters)
+  return formatClassifications(values)
 }
 
-function formatClassifications(clusters) {
+function formatClassifications(values) {
+  let uniqueValues = new Set(values)
+  let clusterCount = uniqueValues.size >= 5 ? 5 : uniqueValues.size
+  let clusters = ckmeans(values, clusterCount);
+
   return clusters.map((cluster, index) => {
     let prevCluster = clusters[index - 1];
     let begin = index === 0 ? cluster[0] : prevCluster[prevCluster.length - 1] + 1;
@@ -117,10 +118,7 @@ export function createAnalyteClassifications(analyte) {
     .filter((feature) => { return feature.properties[analyte] })
     .map((feature) => { return feature.properties[analyte] })
 
-  let clusterCount = values.length >= 5 ? 5 : values.length
-  let clusters = ckmeans(values, clusterCount);
-
-  return formatClassifications(clusters);
+  return formatClassifications(values);
 }
 
 // output: geoJson
