@@ -93,14 +93,21 @@
               />
               <label :for="`${layer}_m`">{{ layer }}</label>
             </div>
-            <div>
-              <span @click="showInfo(layer)">
-                <i class="far fa-question-circle"></i>
-              </span>
-              <span @click="removeDataLayer(layer)">
-                <i class="far fa-times-circle"></i>
-              </span>
+            <div class="data-body">
+              <div class="data-footer">
+                <span @click="showModal(layer)">
+                  <i class="far fa-question-circle"></i> Info
+                </span>
+                <span @click="removeDataLayer(layer)">
+                  <i class="far fa-times-circle"></i> Remove
+                </span>
+              </div>
             </div>
+
+            <Modal v-if="layer == currentModal" @close="currentModal = null">
+              <h3 slot="header">{{ layer }}</h3>
+              <div slot="body" v-html="modalBody(layer)"></div>
+            </Modal>
           </div>
         </section>
       </div>
@@ -197,183 +204,183 @@
             <h2>Biotic Factors</h2>
             <div>
               <h3>
-                Benthic Macroinvertebrates
-                <span @click="showModal('Benthic Macroinvertebrates')">
+                {{ BenthicMacroinvertebrates }}
+                <span @click="showModal(BenthicMacroinvertebrates)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="benthicMacroinvertebrates"
+                :list="benthicMacroinvertebratesAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'Benthic Macroinvertebrates'"
+                v-if="currentModal === BenthicMacroinvertebrates"
                 @close="currentModal = null"
               >
-                <h3 slot="header">Benthic Macroinvertebrates</h3>
-                <div slot="body">
-                  TODO: Add info about Benthic Macroinvertebrates
-                </div>
+                <h3 slot="header">{{ BenthicMacroinvertebrates }}</h3>
+                <div
+                  slot="body"
+                  v-html="modalBody(BenthicMacroinvertebrates)"
+                ></div>
               </Modal>
             </div>
             <div>
               <h3>
-                Attached Algae
-                <span @click="showModal('Attached Algae')">
+                {{ AttachedAlgae }}
+                <span @click="showModal(AttachedAlgae)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="attachedAlgae"
+                :list="attachedAlgaeAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'Attached Algae'"
+                v-if="currentModal === AttachedAlgae"
                 @close="currentModal = null"
               >
-                <h3 slot="header">Attached Algae</h3>
-                <div slot="body">TODO: Add info about Attached Algae</div>
+                <h3 slot="header">{{ AttachedAlgae }}</h3>
+                <div slot="body" v-html="modalBody(AttachedAlgae)"></div>
               </Modal>
             </div>
             <div>
               <h3>
-                Riparian Habitat Score
-                <span @click="showModal('Riparian Habitat Scores')">
+                {{ RiparianHabitatScore }}
+                <span @click="showModal(RiparianHabitatScore)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="riparianHabitatScore"
+                :list="riparianHabitatScoreAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'Riparian Habitat Scores'"
+                v-if="currentModal === RiparianHabitatScore"
                 @close="currentModal = null"
               >
-                <h3 slot="header">Riparian Habitat Scores</h3>
-                <div slot="body">
-                  TODO: Add info about Riparian Habitat Scores
-                </div>
+                <h3 slot="header">{{ RiparianHabitatScore }}</h3>
+                <div slot="body" v-html="modalBody(RiparianHabitatScore)"></div>
               </Modal>
             </div>
             <div>
               <h3>
-                Algal Biomass
-                <span @click="showModal('Algal Biomass')">
+                {{ AlgalBiomass }}
+                <span @click="showModal(AlgalBiomass)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="algalBiomass"
+                :list="algalBiomassAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'Algal Biomass'"
+                v-if="currentModal === AlgalBiomass"
                 @close="currentModal = null"
               >
-                <h3 slot="header">Algal Biomass</h3>
-                <div slot="body">TODO: Add info about Algal Biomass</div>
+                <h3 slot="header">{{ AlgalBiomass }}</h3>
+                <div slot="body" v-html="modalBody(AlgalBiomass)"></div>
               </Modal>
             </div>
 
             <h2>Abiotic Factors</h2>
             <div>
               <h3>
-                InSitu Measurements
-                <span @click="showModal('InSitu Measurements')">
+                {{ InSituMeasurements }}
+                <span @click="showModal(InSituMeasurements)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="inSituMeasurements"
+                :list="inSituMeasurementsAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'InSitu Measurements'"
+                v-if="currentModal === InSituMeasurements"
                 @close="currentModal = null"
               >
-                <h3 slot="header">InSitu Measurements</h3>
-                <div slot="body">TODO: Add info about InSitu Measurements</div>
+                <h3 slot="header">{{ InSituMeasurements }}</h3>
+                <div slot="body" v-html="modalBody(InSituMeasurements)"></div>
               </Modal>
             </div>
             <div>
               <h3>
-                General Chemistry
-                <span @click="showModal('General Chemistry')">
+                {{ GeneralChemistry }}
+                <span @click="showModal(GeneralChemistry)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="generalChemistry"
+                :list="generalChemistryAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'General Chemistry'"
+                v-if="currentModal === GeneralChemistry"
                 @close="currentModal = null"
               >
-                <h3 slot="header">General Chemistry</h3>
-                <div slot="body">TODO: Add info about General Chemistry</div>
+                <h3 slot="header">{{ GeneralChemistry }}</h3>
+                <div slot="body" v-html="modalBody(GeneralChemistry)"></div>
               </Modal>
             </div>
             <div>
               <h3>
-                Nutrients
-                <span @click="showModal('Nutrients')">
+                {{ Nutrients }}
+                <span @click="showModal(Nutrients)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="nutrients"
+                :list="nutrientsAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'Nutrients'"
+                v-if="currentModal === Nutrients"
                 @close="currentModal = null"
               >
-                <h3 slot="header">Nutrients</h3>
-                <div slot="body">TODO: Add info about Nutrients</div>
-              </Modal>
-            </div>
-
-            <div>
-              <h3>
-                Dissolved Metals
-                <span @click="showModal('Dissolved Metals')">
-                  <i class="far fa-question-circle"></i>
-                </span>
-              </h3>
-              <AnalyteList
-                :list="dissolvedMetals"
-                @addSelectedLayer="appendTempSelectedLayers"
-              />
-              <Modal
-                v-if="currentModal === 'Dissolved Metals'"
-                @close="currentModal = null"
-              >
-                <h3 slot="header">Dissolved Metals</h3>
-                <div slot="body">TODO: Add info about Dissolved Metals</div>
+                <h3 slot="header">{{ Nutrients }}</h3>
+                <div slot="body" v-html="modalBody(Nutrients)"></div>
               </Modal>
             </div>
 
             <div>
               <h3>
-                Physical Habitat Assessments
-                <span @click="showModal('Physical Habitat Assessments')">
+                {{ DissolvedMetals }}
+                <span @click="showModal(DissolvedMetals)">
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
               <AnalyteList
-                :list="physicalHabitatAssessments"
+                :list="dissolvedMetalsAnalytes"
                 @addSelectedLayer="appendTempSelectedLayers"
               />
               <Modal
-                v-if="currentModal === 'Physical Habitat Assessments'"
+                v-if="currentModal === DissolvedMetals"
                 @close="currentModal = null"
               >
-                <h3 slot="header">Physical Habitat Assessments</h3>
-                <div slot="body">
-                  TODO: Add info about Physical Habitat Assessments
-                </div>
+                <h3 slot="header">{{ DissolvedMetals }}</h3>
+                <div slot="body" v-html="modalBody(DissolvedMetals)"></div>
+              </Modal>
+            </div>
+
+            <div>
+              <h3>
+                {{ PhysicalHabitatAssessments }}
+                <span @click="showModal(PhysicalHabitatAssessments)">
+                  <i class="far fa-question-circle"></i>
+                </span>
+              </h3>
+              <AnalyteList
+                :list="physicalHabitatAssessmentsAnalytes"
+                @addSelectedLayer="appendTempSelectedLayers"
+              />
+              <Modal
+                v-if="currentModal === PhysicalHabitatAssessments"
+                @close="currentModal = null"
+              >
+                <h3 slot="header">{{ PhysicalHabitatAssessments }}</h3>
+                <div
+                  slot="body"
+                  v-html="modalBody(PhysicalHabitatAssessments)"
+                ></div>
               </Modal>
             </div>
           </div>
@@ -401,17 +408,27 @@ import Modal from "./shared/modal";
 import {
   biodiversity,
   locations,
-  benthicMacroinvertebrates,
-  attachedAlgae,
-  riparianHabitatScore,
-  inSituMeasurements,
-  generalChemistry,
-  nutrients,
-  algalBiomass,
-  dissolvedMetals,
-  physicalHabitatAssessments,
+  benthicMacroinvertebratesAnalytes,
+  attachedAlgaeAnalytes,
+  riparianHabitatScoreAnalytes,
+  inSituMeasurementsAnalytes,
+  generalChemistryAnalytes,
+  nutrientsAnalytes,
+  algalBiomassAnalytes,
+  dissolvedMetalsAnalytes,
+  physicalHabitatAssessmentsAnalytes,
+  allAnalytes,
   PouR,
   LARWMP,
+  BenthicMacroinvertebrates,
+  AttachedAlgae,
+  RiparianHabitatScore,
+  AlgalBiomass,
+  InSituMeasurements,
+  GeneralChemistry,
+  Nutrients,
+  DissolvedMetals,
+  PhysicalHabitatAssessments,
 } from "../data/dataLayers";
 import {
   initMap,
@@ -443,15 +460,24 @@ export default {
       // constants
       biodiversity,
       locations,
-      benthicMacroinvertebrates,
-      attachedAlgae,
-      riparianHabitatScore,
-      inSituMeasurements,
-      generalChemistry,
-      nutrients,
-      algalBiomass,
-      dissolvedMetals,
-      physicalHabitatAssessments,
+      benthicMacroinvertebratesAnalytes,
+      attachedAlgaeAnalytes,
+      riparianHabitatScoreAnalytes,
+      inSituMeasurementsAnalytes,
+      generalChemistryAnalytes,
+      nutrientsAnalytes,
+      algalBiomassAnalytes,
+      dissolvedMetalsAnalytes,
+      physicalHabitatAssessmentsAnalytes,
+      BenthicMacroinvertebrates,
+      AttachedAlgae,
+      RiparianHabitatScore,
+      AlgalBiomass,
+      InSituMeasurements,
+      GeneralChemistry,
+      Nutrients,
+      DissolvedMetals,
+      PhysicalHabitatAssessments,
       // misc
       activeTab: "mapTab",
       map: null,
@@ -481,10 +507,25 @@ export default {
         placeholder:
           "Search for a taxon by Latin or English names (e.g., Canis lupus, wolf)",
       },
+      // modal
+      currentModal: null,
     };
   },
 
   methods: {
+    // =============
+    // modal menu
+    // =============
+    modalBody: function (layer) {
+      if (allAnalytes[layer]) {
+        return allAnalytes[layer];
+      } else {
+        return `TODO: Add info about ${layer}`;
+      }
+    },
+    showModal: function (layer) {
+      this.currentModal = layer;
+    },
     // =============
     // side menu
     // =============
@@ -649,9 +690,7 @@ export default {
     // =============
     // dataTab
     // =============
-    showModal: function (layer) {
-      this.currentModal = layer;
-    },
+
     submitData: function (activeTab) {
       for (const layer in this.tempSelectedData) {
         if (this.tempSelectedData[layer]) {
@@ -773,9 +812,7 @@ export default {
     setActiveTab: function (tab) {
       this.activeTab = tab;
     },
-    showInfo: function (layer) {
-      alert(`TODO: Add info about ${layer}`);
-    },
+
     // =============
     // fetch data
     // =============

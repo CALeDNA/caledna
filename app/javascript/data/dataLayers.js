@@ -62,6 +62,15 @@ export const ConcreteAsphalt = "Concrete/Asphalt (%)";
 export const CobbleGravel = "Cobble and Gravel (%)";
 export const PouR = "Protecting Our River";
 export const LARWMP = "Los Angeles River Watershed Monitoring Program (2018)";
+export const BenthicMacroinvertebrates = "Benthic Macroinvertebrates";
+export const AttachedAlgae = "Attached Algae";
+export const RiparianHabitatScore = "Riparian Habitat Score";
+export const AlgalBiomass = "Algal Biomass";
+export const InSituMeasurements = "InSitu Measurements";
+export const GeneralChemistry = "General Chemistry";
+export const Nutrients = "Nutrients";
+export const DissolvedMetals = "Dissolved Metals";
+export const PhysicalHabitatAssessments = "Physical Habitat Assessments";
 
 export const biodiversity = {
   eDNA: "eDNA",
@@ -69,17 +78,7 @@ export const biodiversity = {
   eBird: "eBird",
 };
 
-// export const allLayers = {
-//   ...locations,
-//   ...benthicMacroinvertebrates,
-//   ...attachedAlgae,
-//   ...riparianHabitatScore,
-//   ...inSituMeasurements,
-//   ...generalChemistry,
-//   ...nutrients,
-//   ...algalBiomass,
-//   ...dissolvedMetals,
-// };
+
 
 export const locations = {
   [PouR]: `Protecting our River is collecting eDNA from sediment and water
@@ -95,19 +94,19 @@ export const locations = {
   Council for Watershed site.`,
 };
 
-export const benthicMacroinvertebrates = {
+export const benthicMacroinvertebratesAnalytes = {
   [CSCI]: null,
   [MMI]: null,
   [OE]: null,
 };
 
-export const attachedAlgae = {
+export const attachedAlgaeAnalytes = {
   [D18]: null,
   [S2]: null,
   [H2O]: null,
 };
 
-export const riparianHabitatScore = {
+export const riparianHabitatScoreAnalytes = {
   [CRAM]: null,
   [BioticStructure]: null,
   [Buffer]: null,
@@ -115,7 +114,7 @@ export const riparianHabitatScore = {
   [PhysicalStructure]: null,
 };
 
-export const inSituMeasurements = {
+export const inSituMeasurementsAnalytes = {
   [Temperature]: null,
   [Oxygen]: null,
   [pH]: null,
@@ -123,7 +122,7 @@ export const inSituMeasurements = {
   [SpecificConductivity]: null,
 };
 
-export const generalChemistry = {
+export const generalChemistryAnalytes = {
   [Alkalinity]: null,
   [Hardness]: null,
   [Chloride]: null,
@@ -131,7 +130,7 @@ export const generalChemistry = {
   [TSS]: null,
 };
 
-export const nutrients = {
+export const nutrientsAnalytes = {
   [Ammonia]: null,
   [Nitrate]: null,
   [Nitrite]: null,
@@ -144,12 +143,12 @@ export const nutrients = {
   [TotalOrganicCarbon]: null,
 };
 
-export const algalBiomass = {
+export const algalBiomassAnalytes = {
   [AFDM]: null,
   [Chla]: null,
 };
 
-export const dissolvedMetals = {
+export const dissolvedMetalsAnalytes = {
   [Arsenic]: null,
   [Cadmium]: null,
   [Chromium]: null,
@@ -162,7 +161,7 @@ export const dissolvedMetals = {
   [Zinc]: null,
 };
 
-export const physicalHabitatAssessments = {
+export const physicalHabitatAssessmentsAnalytes = {
   [Eroded]: null,
   [Stable]: null,
   [Vulnerable]: null,
@@ -183,3 +182,31 @@ export const physicalHabitatAssessments = {
   [ConcreteAsphalt]: null,
   [CobbleGravel]: null,
 };
+
+export const analyteCategories = {
+  [BenthicMacroinvertebrates]: null,
+  [AttachedAlgae]: null,
+  [RiparianHabitatScore]: null,
+  [AlgalBiomass]: null,
+  [InSituMeasurements]: null,
+  [GeneralChemistry]: null,
+  [Nutrients]: null,
+  [DissolvedMetals]: null,
+  [PhysicalHabitatAssessments]: null,
+}
+
+export const allAnalytes = {
+  ...locations,
+  ...benthicMacroinvertebratesAnalytes,
+  ...attachedAlgaeAnalytes,
+  ...riparianHabitatScoreAnalytes,
+  ...inSituMeasurementsAnalytes,
+  ...generalChemistryAnalytes,
+  ...nutrientsAnalytes,
+  ...algalBiomassAnalytes,
+  ...dissolvedMetalsAnalytes,
+  ...physicalHabitatAssessmentsAnalytes,
+  ...analyteCategories
+}
+
+

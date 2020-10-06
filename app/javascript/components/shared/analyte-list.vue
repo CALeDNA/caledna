@@ -15,7 +15,7 @@
         </span>
         <Modal v-if="key == currentModal" @close="currentModal = null">
           <h3 slot="header">{{ key }}</h3>
-          <div slot="body" v-html="showBody(key)"></div>
+          <div slot="body" v-html="modalBody(key)"></div>
         </Modal>
       </li>
     </ul>
@@ -36,7 +36,7 @@ export default {
     return { currentModal: null };
   },
   methods: {
-    showBody: function (layer) {
+    modalBody: function (layer) {
       if (locations[layer]) {
         return locations[layer];
       } else {
