@@ -5,8 +5,8 @@ import "leaflet-svg-shape-markers";
 import { riversJson } from "../data/rivers";
 import { watershedJson } from "../data/watershed";
 import { LARWMPJson } from "../data/sites_2018";
-import { ckmeans } from 'simple-statistics'
 import base_map from "./base_map";
+import { formatClassifications, findClassificationColor } from '../utils/map_colors';
 
 export function initMap(selector = "map") {
   let tiles = base_map.tileLayersFactory();
@@ -35,33 +35,12 @@ export function createTaxonClassifications(items) {
   return formatClassifications(values)
 }
 
-function formatClassifications(values) {
-  let uniqueValues = new Set(values)
-  let clusterCount = uniqueValues.size >= 5 ? 5 : uniqueValues.size
-  let clusters = ckmeans(values, clusterCount);
+export function createAnalyteClassifications(analyte) {
+  let values = LARWMPJson.features
+    .filter((feature) => { return feature.properties[analyte] })
+    .map((feature) => { return feature.properties[analyte] })
 
-  return clusters.map((cluster, index) => {
-    let prevCluster = clusters[index - 1];
-    let begin = index === 0 ? cluster[0] : prevCluster[prevCluster.length - 1] + 1;
-    return {
-      begin: begin,
-      end: cluster[cluster.length - 1]
-    }
-  })
-}
-
-export function findClassificationColor(value, classifications, colors) {
-  if (value <= classifications[0].end) {
-    return colors[0];
-  } else if (value <= classifications[1].end) {
-    return colors[1];
-  } else if (value <= classifications[2].end) {
-    return colors[2];
-  } else if (value <= classifications[3].end) {
-    return colors[3];
-  } else {
-    return colors[4];
-  }
+  return formatClassifications(values);
 }
 
 export function createMapLegend(classifications, colors, title) {
@@ -111,14 +90,6 @@ function LARWMP_popup(feature, analyte) {
       </tr>
     </table>
   `;
-}
-
-export function createAnalyteClassifications(analyte) {
-  let values = LARWMPJson.features
-    .filter((feature) => { return feature.properties[analyte] })
-    .map((feature) => { return feature.properties[analyte] })
-
-  return formatClassifications(values);
 }
 
 // output: geoJson
