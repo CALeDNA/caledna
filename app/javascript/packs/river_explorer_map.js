@@ -43,6 +43,14 @@ export function createAnalyteClassifications(analyte) {
   return formatClassifications(values);
 }
 
+function formatFloats(value, precision) {
+  if (typeof (value) === 'number' && !Number.isInteger(value)) {
+    return Number((value).toFixed(precision));
+  } else {
+    return value;
+  }
+}
+
 export function createMapLegend(classifications, colors, title) {
   let legend = L.control({ position: "bottomleft" });
   legend.onAdd = function () {
