@@ -36,7 +36,6 @@ let siteColorSchemes = [
   ["#f1eef6", "#d7b5d8", "#df65b0", "#dd1c77", "#980043"],
 ];
 
-
 export function formatClassifications(values) {
   let dataClasses = 5;
   let uniqueValues = new Set(values);
@@ -44,14 +43,13 @@ export function formatClassifications(values) {
   let clusters = ckmeans(values, clusterCount);
 
   return clusters.map((cluster, index) => {
-    let prevCluster = clusters[index - 1];
-    let begin = index === 0 ? cluster[0] : prevCluster[prevCluster.length - 1] + 1;
     return {
-      begin: begin,
+      begin: cluster[0],
       end: cluster[cluster.length - 1]
     }
   })
 }
+
 
 export function findClassificationColor(value, classifications, colors) {
   if (value <= classifications[0].end) {
@@ -91,5 +89,10 @@ function randomHslRange() {
 
 export function randomColorRange() {
   let int = getRandomInt(siteColorSchemes.length);
+  return siteColorSchemes[int];
+}
+
+export function targetColorRange(number) {
+  let int = number % siteColorSchemes.length;
   return siteColorSchemes[int];
 }
