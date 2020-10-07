@@ -445,7 +445,7 @@ import {
 } from "../packs/river_explorer_map";
 import base_map from "../packs/base_map";
 import api from "../utils/api_routes";
-import { randomColorRange, randomColor } from "../utils/map_colors";
+import { targetColorRange, randomColor } from "../utils/map_colors";
 import { formatTaxonName, formatKingdomIcon } from "../utils/taxon_utils";
 
 export default {
@@ -719,7 +719,7 @@ export default {
       } else if (layerName === PouR) {
         mapLayer = this.pourLocationsLayer;
       } else {
-        let colors = randomColorRange();
+        let colors = targetColorRange(Object.keys(this.dataMapLayers).length);
         let classifications = createAnalyteClassifications(layerName);
         mapLayer = createAnalyteLayer(layerName, classifications, colors);
         legend = createMapLegend(classifications, colors, layerName);
@@ -858,7 +858,7 @@ export default {
           };
 
           let gbifCount = response.data.gbif.reduce(reducer, 0);
-          let colors = randomColorRange();
+          let colors = targetColorRange(Object.keys(ctx.gbifData).length);
           let classifications = createTaxonClassifications(response.data.gbif);
           let gbifLayer = taxonGbifLayer(
             response.data.gbif,
