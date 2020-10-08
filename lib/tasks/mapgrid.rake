@@ -2,55 +2,25 @@
 
 namespace :mapgrid do
   task import_hex_500: :environment do
-    execute_sql_file('./lib/tasks/data/hexbin_500m.sql')
+    execute_sql_file('./lib/tasks/data/hex_500m.sql')
     update_geom
     update_coordinates
   end
 
   task import_hex_1000: :environment do
-    execute_sql_file('./lib/tasks/data/hexbin_1km.sql')
+    execute_sql_file('./lib/tasks/data/hex_1000m.sql')
     update_geom
     update_coordinates
   end
 
   task import_hex_1500: :environment do
-    execute_sql_file('./lib/tasks/data/hexbin_1500m.sql')
+    execute_sql_file('./lib/tasks/data/hex_1500m.sql')
     update_geom
     update_coordinates
   end
 
   task import_hex_2000: :environment do
-    execute_sql_file('./lib/tasks/data/hexbin_2km.sql')
-    update_geom
-    update_coordinates
-  end
-
-  task import_hex_3000: :environment do
-    execute_sql_file('./lib/tasks/data/hexbin_3km.sql')
-    update_geom
-    update_coordinates
-  end
-
-  task import_square_500: :environment do
-    execute_sql_file('./lib/tasks/data/rect_500m.sql')
-    update_geom
-    update_coordinates
-  end
-
-  task import_square_1000: :environment do
-    execute_sql_file('./lib/tasks/data/rect_1km.sql')
-    update_geom
-    update_coordinates
-  end
-
-  task import_square_2000: :environment do
-    execute_sql_file('./lib/tasks/data/rect_2km.sql')
-    update_geom
-    update_coordinates
-  end
-
-  task import_square_3000: :environment do
-    execute_sql_file('./lib/tasks/data/rect_3km.sql')
+    execute_sql_file('./lib/tasks/data/hex_2000m.sql')
     update_geom
     update_coordinates
   end
