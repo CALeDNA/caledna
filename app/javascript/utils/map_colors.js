@@ -26,14 +26,14 @@ let multiColorsSchemes = [
 ];
 
 let siteColorSchemes = [
-  ["#eff3ff", "#bdd7e7", "#6baed6", "#3182bd", "#08519c"],
-  ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"],
-  ["#edf8e9", "#bae4b3", "#74c476", "#31a354", "#006d2c"],
-  ["#f7f7f7", "#cccccc", "#969696", "#636363", "#252525"],
-  ["#fee5d9", "#fcae91", "#fb6a4a", "#de2d26", "#a50f15"],
-  ["#ffffd4", "#fed98e", "#fe9929", "#d95f0e", "#993404"],
-  ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"],
-  ["#f1eef6", "#d7b5d8", "#df65b0", "#dd1c77", "#980043"],
+  ["#c6dbef", "#9ecae1", "#6baed6", "#3182bd", "#08519c"],
+  ["#c7e9c0", "#a1d99b", "#74c476", "#31a354", "#006d2c"],
+  ["#d4b9da", "#c994c7", "#df65b0", "#dd1c77", "#980043"],
+  ["#d9d9d9", "#bdbdbd", "#969696", "#636363", "#252525"],
+  ["#fdd0a2", "#fdae6b", "#fd8d3c", "#e6550d", "#a63603"],
+  ["#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"],
+  ["#fcbba1", "#fc9272", "#fb6a4a", "#de2d26", "#a50f15"],
+  ["#fcc5c0", "#fa9fb5", "#f768a1", "#c51b8a", "#7a0177"]
 ];
 
 export function formatClassifications(values) {
