@@ -719,7 +719,8 @@ export default {
       } else if (layerName === PouR) {
         mapLayer = this.pourLocationsLayer;
       } else {
-        let colors = targetColorRange(Object.keys(this.dataMapLayers).length);
+        let layers = Object.values(this.dataMapLayers).filter((i) => i);
+        let colors = targetColorRange(layers.length);
         let classifications = createAnalyteClassifications(layerName);
         mapLayer = createAnalyteLayer(layerName, classifications, colors);
         legend = createMapLegend(classifications, colors, layerName);
@@ -858,7 +859,8 @@ export default {
           };
 
           let gbifCount = response.data.gbif.reduce(reducer, 0);
-          let colors = targetColorRange(Object.keys(ctx.gbifData).length);
+          let layers = Object.values(this.gbifData).filter((i) => i);
+          let colors = targetColorRange(layers.length);
           let classifications = createTaxonClassifications(response.data.gbif);
           let gbifLayer = taxonGbifLayer(
             response.data.gbif,
