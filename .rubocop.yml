@@ -52,3 +52,6 @@ Style/RegexpLiteral:
 
 Style/ModuleFunction:
   Enabled: false
+
+Style/AsciiComments:
+  Enabled: false

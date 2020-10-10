@@ -59,7 +59,7 @@ module Api
         # index: gbif results
         # ===================
 
-        # rubocop:disable Metrics/AbcSize
+        # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
         def gbif_occurrences
           @gbif_occurrences ||= begin
             return [] if params['taxon'].blank?
@@ -71,12 +71,13 @@ module Api
             if results.count.zero? && gbif_common_name.present?
               binding = [[nil, "{#{gbif_common_name}}"], [nil, radius],
                          [nil, mapgrid_size]]
-              results = conn.exec_query(gbif_occurrences_common_sql, 'q', binding)
+              results =
+                conn.exec_query(gbif_occurrences_common_sql, 'q', binding)
             end
             results
           end
         end
-        # rubocop:enable Metrics/AbcSize
+        # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
         def gbif_occurences_join_sql
           <<~SQL
@@ -142,9 +143,7 @@ module Api
         end
 
         def mapgrid_size
-          size = params[:mapgrid_size].blank? ? 1500 : params[:mapgrid_size].to_i
-          size = 1500 if size > 1500
-          size
+          1500
         end
 
         def mapgrid_type

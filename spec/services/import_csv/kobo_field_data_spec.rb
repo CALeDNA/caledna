@@ -19,6 +19,8 @@ describe ImportCsv::KoboFieldData do
   end
 
   describe('#import_csv') do
+    include ActiveJob::TestHelper
+
     def subject(file, field_project_id)
       dummy_class.import_csv(file, field_project_id)
     end
@@ -61,41 +63,19 @@ describe ImportCsv::KoboFieldData do
         expect(result.valid?).to eq(true)
       end
 
-      it 'creates samples for each row' do
+      it 'enqueues ImportCsvKoboFieldDataJob' do
         expect { subject(file, field_project_id) }
-          .to change(Sample, :count).by(2)
+          .to have_enqueued_job(ImportCsvKoboFieldDataJob)
+          .exactly(1).times
       end
 
-      it 'uses csv data to create samples' do
-        subject(file, field_project_id)
-        sample = Sample.first
-        row = rows.first
-        collection_date =
-          DateTime.parse("#{row['collection_date']} #{row['collection_time']}")
-        features = row['environmental_features'].split(',').map(&:strip)
-        settings = row['environmental_settings'].split(',').map(&:strip)
+      it 'passes correct as arguement to ImportCsvKoboFieldDataJob' do
+        delimiter = ';'
+        data = CSV.read(file.path, headers: true, col_sep: delimiter)
 
-        expect(sample.barcode).to eq(row['barcode'])
-        expect(sample.collection_date).to eq(collection_date)
-        expect(sample.location).to eq(row['location'])
-        expect(sample.latitude).to eq(row['latitude'].to_f)
-        expect(sample.longitude).to eq(row['longitude'].to_f)
-        expect(sample.altitude).to eq(row['gps_altitude'].to_i)
-        expect(sample.gps_precision).to eq(row['gps_precision'].to_i)
-        expect(sample.substrate_cd).to eq(row['substrate'])
-        expect(sample.habitat_cd).to eq(row['habitat'])
-        expect(sample.depth_cd).to eq(row['sampling_depth'])
-        expect(sample.environmental_features).to eq(features)
-        expect(sample.environmental_settings).to eq(settings)
-        expect(sample.field_notes).to eq(row['field_notes'])
-        expect(sample.country).to eq(row['country'])
-        expect(sample.country_code).to eq(row['country_code'])
-        expect(sample.has_permit.to_s).to eq(row['has_permit'])
-        expect(sample.field_project_id).to eq(field_project_id)
-        expect(sample.status_cd).to eq('approved')
-        expect(sample.geom)
-          .to eq(point_factory(row['longitude'].to_f, row['latitude'].to_f))
-        expect(sample.csv_data).to eq(row.to_h.reject { |k, _v| k.blank? })
+        expect { subject(file, field_project_id) }
+          .to have_enqueued_job
+          .with(data.to_json, field_project_id).exactly(1).times
       end
     end
   end
@@ -179,6 +159,63 @@ describe ImportCsv::KoboFieldData do
       }
 
       expect(subject(row, field_project_id)[:csv_data]).to eq(expected)
+    end
+  end
+
+  describe '#kobo_field_data_job' do
+    include ActiveJob::TestHelper
+
+    def subject(file, field_project_id)
+      delimiter = ';'
+      data = CSV.read(file.path, headers: true, col_sep: delimiter)
+
+      dummy_class.kobo_field_data_job(data.to_json, field_project_id)
+    end
+
+    it 'enqueues ImportCsvKoboFieldDataJob' do
+      expect { subject(file, field_project_id) }
+        .to have_enqueued_job(ImportCsvCreateSampleJob)
+        .exactly(2).times
+    end
+
+    it 'passes correct as arguement to ImportCsvCreateSampleJob' do
+      row1 = {
+        'barcode' => 'K9999-A1', 'collection_date' => '2019-07-02',
+        'collection_time' => '13:30', 'location' => 'Yosemite',
+        'latitude' => '34.100001', 'longitude' => '-118.300001',
+        'gps_altitude' => '0', 'gps_precision' => '10', 'substrate' => 'soil',
+        'habitat' => 'Fully submerged', 'sampling_depth' => 'Submerged >50m',
+        'environmental_features' => ' Enclosed water,  Reef ',
+        'environmental_settings' => 'Near (<5m) buildings, On farm',
+        'light' => nil, 'pH' => nil, 'moisture' => nil,
+        'field_notes' => 'my notes', 'country' => 'United States',
+        'country_code' => 'US', 'has_permit' => 'true'
+      }
+      row2 = {
+        'barcode' => 'K9999-A2', 'collection_date' => '2019-07-03',
+        'collection_time' => '11:30', 'location' => 'Yosemite',
+        'latitude' => '34.200001', 'longitude' => '-118.400001',
+        'gps_altitude' => '0', 'gps_precision' => '10',
+        'substrate' => 'sediment',
+        'habitat' => 'Terrestrial habitat, not submerged',
+        'sampling_depth' => 'Top layer (top 3cm) soil or sediment',
+        'environmental_features' => 'Basin/wash, Rock mound',
+        'environmental_settings' => 'On garden, On manmade landscape',
+        'light' => nil, 'pH' => nil, 'moisture' => nil,
+        'field_notes' => 'my notes 2', 'country' => 'United States',
+        'country_code' => 'US', 'has_permit' => 'true'
+      }
+
+      expect { subject(file, field_project_id) }
+        .to have_enqueued_job
+        .with(row1, field_project_id).exactly(1).times
+        .with(row2, field_project_id).exactly(1).times
+    end
+
+    it 'enqueues UpdateApprovedSamplesWebsiteStatsJob' do
+      expect { subject(file, field_project_id) }
+        .to have_enqueued_job(UpdateApprovedSamplesWebsiteStatsJob)
+        .exactly(1).times
     end
   end
 end
