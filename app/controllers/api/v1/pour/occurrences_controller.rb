@@ -82,12 +82,13 @@ module Api
         def gbif_occurences_join_sql
           <<~SQL
             SELECT mapgrid.id, count(distinct(gbif_id)) AS count,
-            mapgrid.latitude, mapgrid.longitude, ST_AsGeoJSON(mapgrid.geom) as geom
+            mapgrid.latitude, mapgrid.longitude,
+            ST_AsGeoJSON(mapgrid.geom) as geom
             FROM pour.gbif_occurrences_river as gbif_occurrences
-             JOIN pour.gbif_taxa
-               ON pour.gbif_taxa.taxon_id = gbif_occurrences.taxon_id
-             JOIN pour.mapgrid
-               ON ST_Contains(mapgrid.geom, gbif_occurrences.geom)
+            JOIN pour.gbif_taxa
+              ON pour.gbif_taxa.taxon_id = gbif_occurrences.taxon_id
+            JOIN pour.mapgrid
+              ON ST_Contains(mapgrid.geom, gbif_occurrences.geom)
            SQL
         end
 

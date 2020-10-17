@@ -45,15 +45,16 @@ module Api
       def full_texa_sql
         <<-SQL
         SELECT taxon_id, canonical_name, rank, common_names,
-        division_name
+        division_name, count
         FROM (
           SELECT taxon_id, canonical_name, rank, common_names,
-          ncbi_divisions.name as division_name,
+          ncbi_divisions.name as division_name, asvs_count as count,
           to_tsvector('simple', canonical_name) ||
           to_tsvector('english', coalesce(common_names, '')) AS doc
           FROM ncbi_nodes
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+          WHERE asvs_count > 0
           ORDER BY asvs_count DESC NULLS LAST
         ) AS search
         WHERE search.doc @@ plainto_tsquery('simple', $1)
@@ -73,11 +74,12 @@ module Api
       def prefix_sql
         <<~SQL
           SELECT taxon_id, canonical_name, rank, common_names,
-          ncbi_divisions.name as division_name
+          ncbi_divisions.name as division_name, asvs_count as count
           FROM ncbi_nodes
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
           WHERE lower(canonical_name) LIKE $1
+          AND asvs_count > 0
           ORDER BY asvs_count DESC NULLS LAST
           LIMIT 10
         SQL
@@ -90,34 +92,50 @@ module Api
         end
       end
 
-      # NOTE: I want to show a max of ten search results, 6 full text & 4 prefix
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-      # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+      def full_texa_inat_sql
+        <<-SQL
+        SELECT taxon_id, canonical_name, rank, common_names,
+        division_name, count
+        FROM (
+          SELECT taxon_id, canonical_name, taxon_rank as rank, common_names,
+          kingdom as division_name, occurrence_count as count,
+          to_tsvector('simple', canonical_name) ||
+          to_tsvector('english', coalesce(common_names, '')) AS doc
+          FROM pour.gbif_taxa
+          ORDER BY occurrence_count DESC NULLS LAST
+        ) AS search
+        WHERE search.doc @@ plainto_tsquery('simple', $1)
+        OR search.doc @@ plainto_tsquery('english', $1)
+        LIMIT 10
+        SQL
+      end
+
+      def full_texa_inat_results
+        @full_texa_inat_results ||= begin
+          binding = [[nil, query]]
+          conn.exec_query(full_texa_inat_sql, 'q', binding)
+        end
+      end
+
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def full_text_prefix_search
         full_texa_entries = full_texa_results.entries
         prefix_entries = prefix_results.entries
+        inat_entries = full_texa_inat_results.entries
 
-        if full_texa_entries.blank? && prefix_results.blank?
+        if full_texa_entries.blank? && prefix_entries.blank? &&
+           inat_entries.blank?
           []
-        elsif full_texa_entries.blank?
-          prefix_entries[0...10]
-        elsif prefix_results.blank?
-          full_texa_entries[0...10]
-        elsif full_texa_results.count < 6
-          count = 10 - full_texa_results.count
-          (full_texa_entries + prefix_entries[0...count])
-            .uniq { |res| res['taxon_id'] }
-        elsif prefix_results.count < 4
-          count = 10 - prefix_results.count
-          (full_texa_entries[0...count] + prefix_entries)
-            .uniq { |res| res['taxon_id'] }
+        elsif full_texa_entries.blank? && inat_entries.blank?
+          prefix_entries
         else
-          (full_texa_entries[0...6] + prefix_entries[0...4])
-            .uniq { |res| res['taxon_id'] }
+          res = (full_texa_entries + prefix_entries[0...3] + inat_entries)
+                .sort_by { |entry| entry['count'] }
+                .reverse
+          res.uniq { |entry| entry['canonical_name'] }[0...10]
         end
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
-      # rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def search_results
         @search_results ||= begin
