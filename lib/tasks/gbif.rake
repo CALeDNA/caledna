@@ -123,6 +123,7 @@ namespace :gbif do
         gbif_dataset_id: datasets[row['datasetKey']],
         occurrence_id: row['occurrenceID'],
         taxon_rank: row['taxonRank'].downcase,
+        infraspecific_epithet: row['infraspecificEpithet'],
         scientific_name: row['scientificName'],
         verbatim_scientific_name: row['verbatimScientificName'],
         verbatim_scientific_name_authorship:
@@ -146,7 +147,6 @@ namespace :gbif do
         year: row['year'],
         geom: "POINT(#{row['decimalLongitude']} #{row['decimalLatitude']})",
         taxon_id: row['taxonKey'],
-        species_id: row['speciesKey'],
         basis_of_record: row['basisOfRecord'],
         catalog_number: row['catalogNumber'],
         institution_code: row['institutionCode'],
@@ -167,56 +167,6 @@ namespace :gbif do
 
       PourGbifOccurrence.create(attributes)
     end
-  end
-
-  task add_names_to_taxa: :environment do
-    PourGbifTaxon.find_each do |taxon|
-      puts taxon.taxon_id
-
-      all_names = [taxon.kingdom, taxon.phylum, taxon.class_name, taxon.order,
-                   taxon.family, taxon.genus, taxon.species].compact
-
-      taxon.names = all_names
-      taxon.save
-    end
-  end
-
-  task add_ids_to_taxa: :environment do
-    PourGbifTaxon.find_each do |taxon|
-      puts taxon.taxon_id
-
-      all_ids = [taxon.kingdom_id, taxon.phylum_id, taxon.class_id,
-                 taxon.order_id, taxon.family_id, taxon.genus_id,
-                 taxon.species_id].compact
-
-      taxon.ids = all_ids
-      taxon.save
-    end
-  end
-
-  task add_common_names_to_taxa: :environment do
-    def create_sql(rank)
-      <<~SQL
-        UPDATE pour.gbif_taxa
-        SET common_names = coalesce(temp.common_names || ' | ' ||
-          temp.vernacular_name , temp.vernacular_name)
-        FROM (
-          SELECT vernacular_name, gbif_taxa.#{rank}_id , common_names
-          FROM pour.gbif_taxa
-          JOIN pour.gbif_common_names
-          ON pour.gbif_taxa.#{rank}_id = pour.gbif_common_names.taxon_id
-        ) AS temp
-        WHERE gbif_taxa.#{rank}_id = temp.#{rank}_id;
-      SQL
-    end
-
-    conn.exec_query(create_sql('kingdom'))
-    conn.exec_query(create_sql('phylum'))
-    conn.exec_query(create_sql('class'))
-    conn.exec_query(create_sql('order'))
-    conn.exec_query(create_sql('family'))
-    conn.exec_query(create_sql('genus'))
-    conn.exec_query(create_sql('species'))
   end
 
   task add_missing_taxon: :environment do
@@ -306,6 +256,91 @@ namespace :gbif do
         PourGbifTaxon.create(res)
       end
     end
+  end
+
+  task add_infraspecies_to_taxa: :environment do
+    sql = <<~SQL
+      UPDATE pour.gbif_taxa
+      SET infraspecific_epithet = temp.infraspecific_epithet FROM (
+        SELECT infraspecific_epithet, taxon_id
+        FROM pour.gbif_occurrences
+        GROUP BY infraspecific_epithet, taxon_id
+      ) AS temp
+      WHERE gbif_taxa.taxon_id = temp.taxon_id;
+    SQL
+
+    conn.exec_query(sql)
+  end
+
+  task add_canonical_name: :environment do
+    def create_sql(rank)
+      <<~SQL
+        UPDATE pour.gbif_taxa
+        SET canonical_name = #{rank}
+        WHERE taxon_rank = $1;
+      SQL
+    end
+
+    %i[kingdom phylum family genus species].each do |rank|
+      conn.exec_query(create_sql(rank), 'q', [[nil, rank]])
+    end
+
+    class_rank = '"class_name"'
+    conn.exec_query(create_sql(class_rank), 'q', [[nil, 'class']])
+
+    order_rank = '"order"'
+    conn.exec_query(create_sql(order_rank), 'q', [[nil, 'order']])
+
+    %i[form subspecies variety].each do |rank|
+      infra_rank = "species || ' ' || infraspecific_epithet"
+      conn.exec_query(create_sql(infra_rank), 'q', [[nil, rank]])
+    end
+  end
+
+  task add_names_to_taxa: :environment do
+    PourGbifTaxon.find_each do |taxon|
+      puts taxon.taxon_id
+
+      all_names = [taxon.kingdom, taxon.phylum, taxon.class_name, taxon.order,
+                   taxon.family, taxon.genus, taxon.species].compact
+
+      if taxon.infraspecific_epithet
+        all_names << "#{taxon.species} #{taxon.infraspecific_epithet}"
+      end
+
+      taxon.names = all_names
+      taxon.save
+    end
+  end
+
+  task add_ids_to_taxa: :environment do
+    PourGbifTaxon.find_each do |taxon|
+      puts taxon.taxon_id
+
+      all_ids = [taxon.kingdom_id, taxon.phylum_id, taxon.class_id,
+                 taxon.order_id, taxon.family_id, taxon.genus_id,
+                 taxon.species_id].compact
+
+      all_ids << taxon.taxon_id unless all_ids.include?(taxon.taxon_id)
+
+      taxon.ids = all_ids
+      taxon.save
+    end
+  end
+
+  task add_common_names_to_taxa: :environment do
+    sql = <<~SQL
+      UPDATE pour.gbif_taxa
+      SET common_names =
+        coalesce(common_names || ' | ' || temp.vernacular_name, common_names)
+      FROM (
+        SELECT vernacular_name, taxon_id
+        FROM pour.gbif_common_names
+      ) AS temp
+      WHERE gbif_taxa.taxon_id = temp.taxon_id
+    SQL
+
+    conn.exec_query(sql)
   end
 
   task update_occurrence_count: :environment do
