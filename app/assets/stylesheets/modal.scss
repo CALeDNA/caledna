@@ -1,42 +1,50 @@
 .my-modal-mask {
   position: fixed;
-  z-index: 9999;
+  z-index: 1050;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: table;
-  transition: opacity 0.3s ease;
-
-  .modal-wrapper {
-    display: table-cell;
-    vertical-align: middle;
-  }
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow-x: hidden;
+  overflow-y: auto;
 
   .modal-container {
-    width: 70%;
-    margin: 0px auto;
-    padding: 10px;
+    position: relative;
+    width: auto;
+    margin: 10px;
     background-color: #fff;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    border-radius: 6px;
   }
 
-  .modal-header h3 {
-    margin-top: 0;
+  .modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
   }
 
-  .modal-body {
-    margin: 20px 0;
+  .modal-header h4, .modal-header h3, .modal-header h2, .modal-header h1   {
+    margin: 0;
   }
 
   .modal-default-button {
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
     float: right;
-    font-size: 20px;
-    border-radius: 50%;
-    padding: 5px 9px;
+    font-size: 21px;
+    font-weight: bold;
     line-height: 1;
-    background: #eee;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.2;
   }
+
+  @media (min-width: 768px) {
+    .modal-container {
+      width: 70%;
+      margin: 30px auto;
+    }
+  }
+
 }

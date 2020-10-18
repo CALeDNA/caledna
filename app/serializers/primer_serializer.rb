@@ -2,5 +2,5 @@
 
 class PrimerSerializer
   include FastJsonapi::ObjectSerializer
-  attributes :name, :id
+  attributes :name, :id, :forward_primer, :reverse_primer, :reference
 end

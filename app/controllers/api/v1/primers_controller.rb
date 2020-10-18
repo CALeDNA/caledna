@@ -12,7 +12,7 @@ module Api
       def primers
         @primers ||= begin
           Rails.cache.fetch(Primer::ALL_PRIMERS_CACHE_KEY) do
-            Primer.order(:name).select(:name, :id, :updated_at).load
+            Primer.order(:name).load
           end
         end
       end
