@@ -12,7 +12,7 @@
           :value="option.value"
           v-model="store.state.currentFilters[inputName]"
         />
-        {{option.label}}
+        {{ option.label }}
       </label>
     </div>
   </fieldset>
@@ -23,8 +23,8 @@ export default {
   name: "Substrates",
   props: {
     store: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
@@ -33,9 +33,20 @@ export default {
         { label: "All", value: "all", id: "substrate-all" },
         { label: "Soil", value: "soil", id: "substrate-soil" },
         { label: "Sediment", value: "sediment", id: "substrate-sediment" },
-        { label: "Water", value: "water", id: "substrate-water" }
-      ]
+        { label: "Water", value: "water", id: "substrate-water" },
+        {
+          label: "Paleosubstrate",
+          value: "paleosubstrate",
+          id: "substrate-paleosubstrate",
+        },
+        {
+          label: "Organismal Tissue",
+          value: "organismal_tissue",
+          id: "substrate-organismal-tissue",
+        },
+        { label: "Other", value: "other", id: "substrate-other" },
+      ],
     };
-  }
+  },
 };
 </script>

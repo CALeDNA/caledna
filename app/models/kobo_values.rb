@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class KoboValues
-  SUBSTRATES = %w[soil sediment water other].freeze
+  SUBSTRATES =
+    %w[soil sediment water paleosubstrate organismal_tissue other].freeze
 
   ENVIRONMENTAL_FEATURES_HASH = {
     'closed_water' => 'Enclosed water',
