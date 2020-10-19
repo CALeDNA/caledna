@@ -113,6 +113,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_002550) do
     t.integer "tol_id"
     t.text "wiki_excerpt"
     t.string "wiki_title"
+    t.boolean "active", default: true
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["search_term"], name: "index_external_resources_on_search_term"

@@ -6,6 +6,8 @@ class ExternalResource < ApplicationRecord
 
   has_one :ncbi_node, foreign_key: 'taxon_id'
 
+  scope :active, -> { where(active: true) }
+
   scope :missing_links, (lambda do
     where(
       'eol_id IS NULL ' \

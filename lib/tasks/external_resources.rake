@@ -386,6 +386,12 @@ namespace :external_resources do
     end
   end
 
+  task mark_as_inactive: :environment do
+    sql = 'UPDATE external_resources SET active = false ' \
+      "WHERE source != 'wikidata';"
+    conn.exec_query(sql)
+  end
+
   private
 
   def conn
