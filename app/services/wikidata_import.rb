@@ -4,48 +4,62 @@ module WikidataImport
   require 'sparql/client'
 
   URL = 'https://query.wikidata.org/sparql'
-  DEBUG_OFFSET = 156_000
+  DEBUG_OFFSET = 0
   LIMIT = 6000
-  DELAY = 2.minutes
+  DELAY = 3.minutes
 
   def import_records
-    build_queries.each_with_index do |query, i|
+    build_data_queries.each_with_index do |query, i|
       puts "process query #{i}..."
-      ProcessWikidataQueryJob.set(wait: DELAY * i)
+      ProcessWikidataDataJob.set(wait: DELAY * i)
+                            .perform_later(query.to_json)
+    end
+  end
+
+  def import_labels
+    build_label_queries.each_with_index do |query, i|
+      puts "process query #{i}..."
+      ProcessWikidataLabelJob.set(wait: DELAY * i)
                              .perform_later(query.to_json)
     end
   end
 
-  # def import_records
-  #   num = [120000, 108000, 126000, 132000, 138000, 144000, 72000, 96000]
-
-  #   query = build_query(100, 96001)
-
-  #   ProcessWikidataQueryJob.perform_later(query.to_json)
-  # end
-
   private
 
-  def build_queries
+  def build_data_queries
     count = fetch_count - DEBUG_OFFSET
     rounds = (count / LIMIT).ceil + 1
     puts "#{count} records..."
 
     (0...rounds).map do |i|
-      build_query(LIMIT, i * LIMIT + DEBUG_OFFSET)
+      build_data_query(LIMIT, i * LIMIT + DEBUG_OFFSET)
     end
   end
 
-  def process_query(query)
+  def build_label_queries
+    count = fetch_count - DEBUG_OFFSET
+    rounds = (count / LIMIT).ceil + 1
+    puts "#{count} records..."
+
+    (0...rounds).map do |i|
+      build_label_query(LIMIT, i * LIMIT + DEBUG_OFFSET)
+    end
+  end
+
+  def process_wikidata_data(query)
     results = client.query(JSON.parse(query))
-    process_results(results)
+    process_data_results(results)
+  end
+
+  def process_wikidata_label(query)
+    results = client.query(JSON.parse(query))
+    process_label_results(results)
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def process_results(results)
-    results.each do |result|
-      next if external_resource_ids.include?(result[:NCBI_ID]&.value.to_i)
-
+  def process_data_results(results)
+    results.each do |raw|
+      result = raw.to_h
       data = {}
       data[:source] = 'wikidata'
       data[:wikidata_entity] = result[:item].path.split('/').last
@@ -69,9 +83,16 @@ module WikidataImport
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  def external_resource_ids
-    @external_resource_ids ||= begin
-      ExternalResource.where(source: 'wikidata').pluck(:ncbi_id)
+  def process_label_results(results)
+    results.each do |result|
+      entity = result[:item].path.split('/').last
+      resources = ExternalResource.where(wikidata_entity: entity)
+                                  .where('search_term is null')
+      next if resources.blank?
+
+      attr = { search_term: result[:itemLabel]&.value,
+               wiki_title: result[:itemLabel]&.value }
+      resources.update(attr)
     end
   end
 
@@ -85,15 +106,14 @@ module WikidataImport
     results[0][:count].to_i
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def build_query(limit, offset)
+  def build_data_query(limit, offset)
     # NOTE: can't use FILTER NOT IN to ignore ids because query with 400K+ ids
     # is too large.
-    parts = <<-SPARQL.chop
+    <<-SPARQL.chop
       SELECT ?item ?NCBI_ID ?Encyclopedia_of_Life_ID ?BOLD_Systems_taxon_ID
       ?Calflora_ID ?CITES_Species__ID ?CNPS_ID
       ?Global_Biodiversity_Information_Facility_ID ?iNaturalist_taxon_ID
-      ?ITIS_TSN ?IUCN_taxon_ID ?WoRMS_ID ?image ?itemLabel
+      ?ITIS_TSN ?IUCN_taxon_ID ?WoRMS_ID ?image
        WHERE {
         ?item wdt:P685 ?NCBI_ID.
         OPTIONAL { ?item wdt:P830 ?Encyclopedia_of_Life_ID. }
@@ -107,24 +127,32 @@ module WikidataImport
         OPTIONAL { ?item wdt:P627 ?IUCN_taxon_ID. }
         OPTIONAL { ?item wdt:P850 ?WoRMS_ID. }
         OPTIONAL { ?item wdt:P18 ?image. }
-        SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+      } LIMIT #{limit} OFFSET #{offset}
+    SPARQL
+  end
+
+  def build_label_query(limit, offset)
+    # NOTE: The label query can be very slow, so it is a separate query
+    <<-SPARQL.chop
+      SELECT ?item ?NCBI_ID ?itemLabel  WHERE {
+        {
+          SELECT ?item ?NCBI_ID  WHERE {
+              ?item wdt:P685 ?NCBI_ID.
+          } LIMIT #{limit} OFFSET #{offset}
+        }
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
       }
     SPARQL
-    parts += "LIMIT #{limit} OFFSET #{offset}"
-    parts
   end
-  # rubocop:enable Metrics/MethodLength
 
   def client
     @client ||= SPARQL::Client.new(URL, method: :post)
   end
 end
 
-=begin
-optional wikipedia and wikispecies artcles causes a time out
-
-         OPTIONAL {?wikispecies schema:about ?item;
-          schema:isPartOf <https://species.wikimedia.org/> .}
-        OPTIONAL {?wikipedia schema:about ?item;
-          schema:isPartOf <https://en.wikipedia.org/>. }
-=end
+# optional wikipedia and wikispecies artcles causes a time out
+#
+#          OPTIONAL {?wikispecies schema:about ?item;
+#           schema:isPartOf <https://species.wikimedia.org/> .}
+#         OPTIONAL {?wikipedia schema:about ?item;
+#           schema:isPartOf <https://en.wikipedia.org/>. }

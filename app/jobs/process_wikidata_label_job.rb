@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class ProcessWikidataQueryJob < ApplicationJob
+class ProcessWikidataLabelJob < ApplicationJob
   include WikidataImport
 
   queue_as :default
 
   def perform(data)
-    process_query(data)
+    process_wikidata_label(data)
   end
 end
