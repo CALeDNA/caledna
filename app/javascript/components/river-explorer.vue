@@ -569,7 +569,6 @@ export default {
     },
     onSelected: function (item) {
       this.tempSelectedTaxon = item && item.item;
-      // this.fetchEol(taxon.canonical_name);
     },
     getSuggestionValue: function (suggestion) {
       // the <input/> value when you select a suggestion.
@@ -594,15 +593,6 @@ export default {
     toggleTaxaLayerVisibility: function (layer, event) {
       let value = event.target.checked ? 0.9 : 0;
 
-      var ednaLayer = this.ednaData[layer]["layer"];
-      if (ednaLayer) {
-        if (event.target.checked) {
-          ednaLayer.bringToFront();
-        } else {
-          ednaLayer.bringToBack();
-        }
-        ednaLayer.setStyle({ opacity: value, fillOpacity: value });
-      }
       var gbifLayer = this.gbifData[layer]["layer"];
       if (gbifLayer) {
         if (event.target.checked) {
@@ -611,6 +601,15 @@ export default {
           gbifLayer.bringToBack();
         }
         gbifLayer.setStyle({ opacity: value, fillOpacity: value });
+      }
+      var ednaLayer = this.ednaData[layer]["layer"];
+      if (ednaLayer) {
+        if (event.target.checked) {
+          ednaLayer.bringToFront();
+        } else {
+          ednaLayer.bringToBack();
+        }
+        ednaLayer.setStyle({ opacity: value, fillOpacity: value });
       }
       this.selectedTaxa[layer] = event.target.checked;
     },
