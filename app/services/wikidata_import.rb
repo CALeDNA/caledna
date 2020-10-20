@@ -24,6 +24,16 @@ module WikidataImport
     end
   end
 
+  def import_missing_labels
+    sql = resources_with_labels_sql
+    results = ActiveRecord::Base.connection.exec_query(sql)
+
+    results.each_with_index do |result, i|
+      ProcessWikidataMissingLabelJob.set(wait: 1.seconds * i)
+                                    .perform_later(result['wikidata_entity'])
+    end
+  end
+
   private
 
   def build_data_queries
@@ -101,6 +111,26 @@ module WikidataImport
                     .update(search_term: label, wiki_title: label)
   end
 
+  def resources_with_labels_sql
+    <<~SQL
+      SELECT wikidata_entity
+      FROM external_resources
+      WHERE external_resources.source = 'wikidata'
+      AND search_term IS NULL
+      AND wikidata_entity IS NOT NULL;
+    SQL
+  end
+
+  def process_wikidata_missing_label(entity)
+    results = WikidataApi.new.label(entity)
+    return if results['entities'].blank?
+    return if results['entities'][entity]['labels'].blank?
+    return if results['entities'][entity]['labels']['en'].blank?
+
+    label = results['entities'][entity]['labels']['en']['value']
+    update_external_resource(entity, label)
+  end
+
   def fetch_count
     query = 'SELECT (COUNT(*) AS ?count) WHERE { _:b6 p:P685 _:b7. }'
     results = client.query(query)
@@ -144,6 +174,15 @@ module WikidataImport
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
       }
     SPARQL
+  end
+
+  def build_missing_labels_query(qid)
+    <<~Q
+      SELECT distinct ?item ?itemLabel WHERE {
+        BIND(wd:#{qid} AS ?item).
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+      } LIMIT 1
+    Q
   end
 
   def client
