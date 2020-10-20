@@ -1,6 +1,20 @@
 # frozen_string_literal: true
 
 namespace :wikidata do
+  def find_dups_for_sql(field)
+    <<~SQL
+      SELECT ncbi_id,
+      ARRAY_AGG(DISTINCT #{field})
+        FILTER (WHERE #{field} IS NOT NULL) AS records
+      FROM external_resources
+      WHERE  source  = 'wikidata'
+      GROUP BY ncbi_id
+      HAVING COUNT(*) > 1 AND
+      ARRAY_LENGTH(ARRAY_AGG(DISTINCT #{field})
+        FILTER (WHERE #{field} IS NOT NULL), 1) > 1
+    SQL
+  end
+
   desc 'import wikidata'
   task create_external_resources: :environment do
     require_relative '../../app/services/wikidata_import'
@@ -17,6 +31,35 @@ namespace :wikidata do
     include WikidataImport
 
     import_labels
+  end
+
+  task normalize_wikidata_images: :environment do
+    sql = find_dups_for_sql('wikidata_image')
+    results = conn.exec_query(sql)
+    results.each do |result|
+      puts result['ncbi_id']
+
+      records = YAML.safe_load(result['records']).keys
+      ExternalResource.where(ncbi_id: result['ncbi_id']).each do |resource|
+        resource.dup_data['wikidata_image'] = records
+        resource.wikidata_image = records.first
+        resource.save
+      end
+    end
+  end
+
+  task add_ncbi_name: :environment do
+    sql = <<~SQL
+      UPDATE external_resources SET ncbi_name = temp.canonical_name FROM (
+        SELECT  external_resources.ncbi_id, ncbi_nodes.canonical_name
+        FROM external_resources
+        JOIN ncbi_nodes
+        ON ncbi_nodes.ncbi_id = external_resources.ncbi_id
+        WHERE  external_resources.source = 'wikidata'
+      ) AS temp
+      WHERE temp.ncbi_id = external_resources.ncbi_id;
+    SQL
+    conn.exec_query(sql)
   end
 
   task add_wiki_excerpt: :environment do
