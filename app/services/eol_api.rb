@@ -7,6 +7,7 @@ class EolApi
   base_uri 'eol.org/api'
 
   def taxa(keyword)
+    return if keyword.blank?
     self.class.get("/search/#{URI.encode(keyword)}.json", query: { exact: 1 })
   end
 
