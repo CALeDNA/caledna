@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_20_002550) do
+ActiveRecord::Schema.define(version: 2020_10_20_063420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 2020_10_20_002550) do
     t.string "wiki_title"
     t.boolean "active", default: true
     t.jsonb "dup_data", default: {}
+    t.string "ncbi_name"
     t.index ["gbif_id"], name: "index_external_resources_on_gbif_id"
     t.index ["ncbi_id"], name: "index_external_resources_on_ncbi_id"
     t.index ["search_term"], name: "index_external_resources_on_search_term"
