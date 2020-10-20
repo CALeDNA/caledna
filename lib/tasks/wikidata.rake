@@ -6,12 +6,12 @@ namespace :wikidata do
 
   def find_dups_for_sql(field)
     <<~SQL
-      SELECT ncbi_id,
+      SELECT ncbi_id, ncbi_name, wiki_title,
       ARRAY_AGG(DISTINCT #{field})
         FILTER (WHERE #{field} IS NOT NULL) AS records
       FROM external_resources
       WHERE  source  = 'wikidata'
-      GROUP BY ncbi_id
+      GROUP BY ncbi_id, ncbi_name, wiki_title
       HAVING COUNT(*) > 1 AND
       ARRAY_LENGTH(ARRAY_AGG(DISTINCT #{field})
         FILTER (WHERE #{field} IS NOT NULL), 1) > 1
@@ -48,6 +48,207 @@ namespace :wikidata do
         resource.wikidata_image = records.first
         resource.save
       end
+    end
+  end
+
+  task normalize_worms: :environment do
+    field = 'worms_id'
+    api = WormsApi.new
+
+    sql = find_dups_for_sql(field)
+    results = conn.exec_query(sql)
+    results.each do |result|
+      puts result['ncbi_id']
+      response = api.taxa_fuzzy(result['ncbi_name'])
+      response = api.taxa_fuzzy(result['wiki_title']) if response.code == 204
+      if response.code == 200
+        body = JSON.parse(response.body)[0][0]
+        taxon_id = body['AphiaID']
+      else
+        taxon_id = nil
+      end
+      ExternalResource.where(ncbi_id: result['ncbi_id'])
+                      .update(field => taxon_id)
+    end
+  end
+
+  task normalize_itis: :environment do
+    field = 'itis_id'
+    api = ItisApi.new
+
+    sql = find_dups_for_sql(field)
+    results = conn.exec_query(sql)
+    results.each do |result|
+      puts result['ncbi_id']
+
+      response = api.taxa(result['ncbi_name'])
+      if response['anyMatchList'].blank?
+        response = api.taxa(result['wiki_title'])
+      end
+      if response['anyMatchList'].present?
+        match = response['anyMatchList']
+                .filter do |t|
+          t['sciName'] == result['ncbi_name'] ||
+            t['sciName'] == result['wiki_title']
+        end.first
+        taxon_id = match['tsn']
+      else
+        taxon_id = nil
+      end
+
+      ExternalResource.where(ncbi_id: result['ncbi_id'])
+                      .update(field => taxon_id)
+    end
+  end
+
+  task normalize_gbif: :environment do
+    field = 'gbif_id'
+    api = GbifApi.new
+
+    sql = find_dups_for_sql(field)
+    results = conn.exec_query(sql)
+    results.each do |result|
+      puts result['ncbi_id']
+
+      response = api.taxa(result['ncbi_name'])
+      if response['matchType'] == 'NONE'
+        response = api.taxa(result['wiki_title'])
+      end
+      taxon_id = if response['matchType'] == 'NONE'
+                   nil
+                 else
+                   response['usageKey']
+                 end
+
+      ExternalResource.where(ncbi_id: result['ncbi_id'])
+                      .update(field => taxon_id)
+    end
+  end
+
+  task normalize_cnps: :environment do
+    field = 'cnps_id'
+
+    ids = {
+      '880711' => 208,
+      '61574' => 3120,
+      '188300' => 695,
+      '327346' => 1079,
+      '558684' => 3636,
+      '863324' => 2213,
+      '866992' => 1745,
+      '53788' => 1166,
+      '2042412' => 960,
+      '53789' => 1167
+    }
+    ids.each do |ncbi_id, target_id|
+      puts "#{ncbi_id}, #{target_id}"
+      ExternalResource.where(ncbi_id: ncbi_id)
+                      .update(field => target_id)
+    end
+  end
+
+  task normalize_cites: :environment do
+    field = 'cites_id'
+
+    ids = {
+      '50047' => 68_360
+    }
+    ids.each do |ncbi_id, target_id|
+      puts "#{ncbi_id}, #{target_id}"
+      ExternalResource.where(ncbi_id: ncbi_id)
+                      .update(field => target_id)
+    end
+  end
+
+  task normalize_calflora: :environment do
+    field = 'calflora_id'
+
+    ids = {
+      '880711' => 13_175,
+      '221223' => 196,
+      '68869' => 13_456,
+      '1241237' => 13_145,
+      '271007' => 13_479,
+      '271018' => 13_483,
+      '1041273' => 13_514,
+      '270994' => 13_476,
+      '244309' => 10_933
+    }
+    ids.each do |ncbi_id, target_id|
+      puts "#{ncbi_id}, #{target_id}"
+      ExternalResource.where(ncbi_id: ncbi_id)
+                      .update(field => target_id)
+    end
+  end
+
+  task normalize_eol: :environment do
+    field = 'eol_id'
+    api = EolApi.new
+
+    sql = find_dups_for_sql(field)
+    results = conn.exec_query(sql)
+    results.each do |result|
+      puts result['ncbi_id']
+
+      response = api.taxa(result['ncbi_name'])
+      if response.blank? || response['results'].blank?
+        response = api.taxa(result['wiki_title'])
+      end
+      if response.blank? || response['results'].blank?
+        taxon_id = nil
+      else
+        match = response['results'].filter do |t|
+          t['title'] == result['ncbi_name'] ||
+            t['title'] == result['wiki_title']
+        end.first
+        taxon_id = match['id']
+      end
+
+      ExternalResource.where(ncbi_id: result['ncbi_id'])
+                      .update(field => taxon_id)
+    end
+  end
+
+  task normalize_inat: :environment do
+    field = 'inaturalist_id'
+    api = InatApi.new
+
+    sql = find_dups_for_sql(field)
+    results = conn.exec_query(sql)
+    results.each do |result|
+      response = api.taxa_all_names(result['ncbi_name'])
+      if response['results'].blank?
+        response = api.taxa_all_names(result['wiki_title'])
+      end
+
+      if response['results'].blank?
+        taxon_id = nil
+      elsif result['ncbi_id'] == 102_305
+        taxon_id = 50_576
+      elsif result['ncbi_id'] == 104_321
+        taxon_id = 57_875
+      else
+        match = response['results'].filter do |t|
+          t['name'] == result['ncbi_name'] ||
+            t['name'] == result['wiki_title'] ||
+            t['matched_term'] == result['ncbi_name'] ||
+            t['matched_term'] == result['wiki_title']
+        end.first
+        if match.blank?
+          match = response['results'].filter do |r|
+            r['names'].filter do |n|
+              n['name'] == result['ncbi_name'] ||
+                n['name'] == result['wiki_title']
+            end
+          end.first
+        end
+        taxon_id = match['id']
+      end
+
+      puts "#{result['ncbi_id']}, #{taxon_id}"
+
+      ExternalResource.where(ncbi_id: result['ncbi_id'])
+                      .update(field => taxon_id)
     end
   end
 

@@ -10,9 +10,20 @@ class InatApi
     query = {
       only_id: false,
       per_page: 3,
-      rank: rank
+      rank: rank,
+      q: keyword
     }.compact
-    self.class.get("/taxa?q=#{keyword}", query: query)
+    self.class.get('/taxa', query: query)
+  end
+
+  def taxa_all_names(keyword, rank = nil)
+    query = {
+      only_id: false,
+      rank: rank,
+      q: keyword,
+      all_names: true
+    }.compact
+    self.class.get('/taxa', query: query)
   end
 
   def get_taxa(name:, rank: nil)
