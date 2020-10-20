@@ -12,6 +12,13 @@ namespace :wikidata do
     import_records
   end
 
+  task add_labels: :environment do
+    require_relative '../../app/services/wikidata_import'
+    include WikidataImport
+
+    import_labels
+  end
+
   task add_wiki_excerpt: :environment do
     include WikipediaImport
 
@@ -39,8 +46,8 @@ namespace :wikidata do
         puts "#{inat_id}, #{response.first['name']}"
 
         resource = ExternalResource
-          .where(source: 'wikidata', ncbi_id: result['ncbi_id'])
-          .first
+                   .where(source: 'wikidata', ncbi_id: result['ncbi_id'])
+                   .first
         resource.update(inaturalist_id: inat_id)
       end
     end
@@ -63,8 +70,6 @@ namespace :wikidata do
       sleep 1
       # delete_dups(result)
       my_update_inat_id(result)
-
-
     end
   end
 

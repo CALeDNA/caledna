@@ -199,7 +199,7 @@ class FormatExternalResources
   private
 
   def resource_value_for(field)
-    external_resources.map { |r| r.send(field) }.compact.last
+    external_resources.active.map { |r| r.send(field) }.compact.last
   end
 
   def client

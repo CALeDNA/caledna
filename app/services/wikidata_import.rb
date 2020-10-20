@@ -19,7 +19,7 @@ module WikidataImport
   def import_labels
     build_label_queries.each_with_index do |query, i|
       puts "process query #{i}..."
-      ProcessWikidataLabelJob.set(wait: DELAY * i)
+      ProcessWikidataLabelJob.set(wait: 90.seconds * i)
                              .perform_later(query.to_json)
     end
   end
@@ -83,21 +83,22 @@ module WikidataImport
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  def create_external_resource(data)
+    ExternalResource.where(data).first_or_create
+  end
+
   def process_label_results(results)
     results.each do |result|
       entity = result[:item].path.split('/').last
-      resources = ExternalResource.where(wikidata_entity: entity)
-                                  .where('search_term is null')
-      next if resources.blank?
-
-      attr = { search_term: result[:itemLabel]&.value,
-               wiki_title: result[:itemLabel]&.value }
-      resources.update(attr)
+      label = result[:itemLabel]&.value
+      UpdateExternalResourceJob.perform_later(entity, label)
     end
   end
 
-  def create_external_resource(data)
-    ExternalResource.where(data).first_or_create
+  def update_external_resource(entity, label)
+    ExternalResource.where(wikidata_entity: entity)
+                    .where('search_term is null')
+                    .update(search_term: label, wiki_title: label)
   end
 
   def fetch_count
