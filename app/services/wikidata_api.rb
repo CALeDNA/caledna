@@ -28,4 +28,17 @@ class WikidataApi
     }
     self.class.get('/', options)
   end
+
+  def label(qid)
+    options = {
+      query: {
+        action: 'wbgetentities',
+        props: 'labels',
+        ids: qid,
+        languages: 'en',
+        format: 'json'
+      }
+    }
+    self.class.get('/', options)
+  end
 end

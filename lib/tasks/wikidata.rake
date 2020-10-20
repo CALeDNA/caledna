@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 namespace :wikidata do
+  require_relative '../../app/services/wikidata_import'
+  include WikidataImport
+
   def find_dups_for_sql(field)
     <<~SQL
       SELECT ncbi_id,
@@ -17,9 +20,6 @@ namespace :wikidata do
 
   desc 'import wikidata'
   task create_external_resources: :environment do
-    require_relative '../../app/services/wikidata_import'
-    include WikidataImport
-
     sql = "DELETE FROM external_resources WHERE source = 'wikidata'"
     conn.exec_query(sql)
 
@@ -27,12 +27,15 @@ namespace :wikidata do
   end
 
   task add_labels: :environment do
-    require_relative '../../app/services/wikidata_import'
-    include WikidataImport
-
     import_labels
   end
 
+  task add_missing_labels: :environment do
+    import_missing_labels
+  end
+
+  desc 'when an ncbi_id has multiple wikipedia images, update records to ' \
+  'use the same image'
   task normalize_wikidata_images: :environment do
     sql = find_dups_for_sql('wikidata_image')
     results = conn.exec_query(sql)
