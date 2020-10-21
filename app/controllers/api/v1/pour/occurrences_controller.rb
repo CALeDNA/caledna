@@ -11,7 +11,8 @@ module Api
           render json: {
             gbif: gbif_occurrences,
             edna: taxa_samples,
-            query: params[:taxon]
+            query: params[:taxon],
+            taxon: taxon
           }
         end
 
@@ -159,6 +160,14 @@ module Api
         # index: edna results
         # ===================
 
+        def taxon
+          @taxon ||= begin
+            NcbiNode.select(:canonical_name, :common_names, :taxon_id)
+                    .where('lower(canonical_name) = ?', params[:taxon].downcase)
+                    .limit(1)[0]
+          end
+        end
+
         def ncbi_common_name_sql
           <<-SQL
             SELECT canonical_name
@@ -189,12 +198,22 @@ module Api
         end
 
         def samples(taxon)
+          source_join_sql = <<~SQL
+            JOIN research_project_sources
+              ON research_project_sources.sourceable_id = samples_map.id
+              AND research_project_sources.sourceable_type = 'Sample'
+              AND research_project_sources.research_project_id =
+              #{ResearchProject.la_river.id}
+          SQL
+
           website_sample_map
             .select('id', 'barcode', 'latitude', 'longitude')
+            .select('research_project_sources.metadata')
             .joins(taxa_join_sql)
+            .joins(source_join_sql)
             .where(published_samples_sql)
             .where('ncbi_nodes.names @> ARRAY[?]', taxon)
-            .group('id', 'barcode', 'latitude', 'longitude')
+            .group('id', 'barcode', 'latitude', 'longitude', 'research_project_sources.metadata', 'collection_date')
         end
 
         def taxa_samples
