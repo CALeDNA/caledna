@@ -37,7 +37,8 @@
                 :checked="isTaxaLayerSelected(layer)"
                 @click="toggleTaxaLayerVisibility(layer, $event)"
               />
-              <label :for="layer"> {{ layer }} </label>
+              <label :for="layer"> {{ displayTaxonName(layer) }} </label>
+
               <span @click="toggleTaxonBody(layer)">
                 <svg height="13" width="16" v-if="showTaxonBody(layer)">
                   <path
@@ -583,11 +584,13 @@ export default {
 
     submitTaxa: function () {
       if (this.tempSelectedTaxon.canonical_name) {
-        this.selectedTaxa[this.tempSelectedTaxon.canonical_name] = true;
+        this.selectedTaxa = {
+          ...this.selectedTaxa,
+          [this.tempSelectedTaxon.canonical_name]: true,
+        };
         this.fetchOccurences(this.tempSelectedTaxon.canonical_name);
       }
       this.setActiveTab("mapTab");
-      this.tempSelectedTaxon = {};
     },
     isTaxaLayerSelected: function (layer) {
       return this.selectedTaxa[layer];
@@ -804,6 +807,21 @@ export default {
     setActiveTab: function (tab) {
       this.activeTab = tab;
     },
+    displayTaxonName: function (layer) {
+      // TODO: searchTaxon is a mix of both NCBI and GBIF taxonomy.
+      // taxon is just NCBI taxonomy. This means the common names are different.
+      // Need to add GBIF commom names to NCBI taxonomy.
+      if (
+        this.ednaData[layer] &&
+        Object.keys(this.ednaData[layer].searchTaxon).length > 0
+      ) {
+        return this.taxonName(this.ednaData[layer].searchTaxon);
+      } else if (this.ednaData[layer] && this.ednaData[layer].taxon) {
+        return this.taxonName(this.ednaData[layer].taxon);
+      } else {
+        return layer;
+      }
+    },
 
     // =============
     // fetch data
@@ -918,6 +936,8 @@ export default {
               count: response.data.edna.length,
               layer: ednaLayer,
               legend: ednaLegend,
+              taxon: response.data.taxon,
+              searchTaxon: this.tempSelectedTaxon,
             },
           };
 
