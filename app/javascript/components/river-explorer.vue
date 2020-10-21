@@ -64,6 +64,7 @@
               <div class="data-legend" v-html="taxaLegend(layer)"></div>
             </div>
             <div class="data-footer" v-show="showTaxonBody(layer)">
+              <span v-html="taxonLink(layer)"></span>
               <span @click="removeTaxonLayer(layer)">
                 <i class="far fa-times-circle"></i> Remove
               </span>
@@ -820,6 +821,21 @@ export default {
         return this.taxonName(this.ednaData[layer].taxon);
       } else {
         return layer;
+      }
+    },
+    taxonLink: function (layer) {
+      if (this.ednaData[layer] && this.ednaData[layer].taxon) {
+        return `
+        <svg height="15" viewBox="0 0 426.667 426.667" style="vertical-align: -.125em;">
+          <g>
+          	<rect x="192" y="192" width="42.667" height="128"/>
+          	<path d="M213.333,0C95.467,0,0,95.467,0,213.333s95.467,213.333,213.333,213.333S426.667,331.2,426.667,213.333
+          		S331.2,0,213.333,0z M213.333,384c-94.08,0-170.667-76.587-170.667-170.667S119.253,42.667,213.333,42.667
+          		S384,119.253,384,213.333S307.413,384,213.333,384z"/>
+          	<rect x="192" y="106.667" width="42.667" height="42.667"/>
+          </g>
+        </svg>
+        <a href="/taxa/${this.ednaData[layer].taxon.taxon_id}">Taxon Info</a>`;
       }
     },
 
