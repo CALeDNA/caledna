@@ -207,7 +207,6 @@ export default {
     // fetch samples
     //================
     fetchSamples(url) {
-      console.log("fetchSamples", url);
       this.showSpinner = true;
       axios
         .get(url)

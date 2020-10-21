@@ -111,7 +111,6 @@ function responsivefy(svg) {
   function resize() {
     // TODO BUG: on samples#show, width is auto; on reports  page, width is 123px
     let w = parseInt(container.style("width"));
-    console.log(container.style("width"));
 
     if (isNaN(w)) {
       const el = document.querySelector("h1");
