@@ -115,7 +115,8 @@
       <div id="explorer-content">
         <!-- mapTab -->
         <section v-show="activeTab === 'mapTab'">
-          <div id="map"></div>
+          <div id="map" class="map-container">
+          </div>
         </section>
 
         <section v-if="activeTab === 'biodiversityTab'" class="taxon-tab">
@@ -393,6 +394,8 @@
             </button>
           </div>
         </section>
+
+        <RiverInat v-show="activeTab === 'mapTab'" />
       </div>
     </div>
   </div>
@@ -404,6 +407,7 @@ import { VueAutosuggest } from "vue-autosuggest";
 
 import AnalyteList from "./shared/analyte-list";
 import Modal from "./shared/modal";
+import RiverInat from "./river-inat";
 
 import {
   biodiversity,
@@ -458,6 +462,7 @@ export default {
     AnalyteList,
     VueAutosuggest,
     Modal,
+    RiverInat,
   },
   data: function () {
     return {

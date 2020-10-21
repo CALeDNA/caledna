@@ -42,10 +42,6 @@ Rails.application.routes.draw do
                             controller: :user_submissions
   resource :river_explorer, only: %i[show], controller: 'river/river_explorers'
 
-
-  get '/beta/inat', to: 'river/beta#inat'
-
-
   get '/faq', to: 'river/pages#show', defaults: { id: 'faq' }
   get '/our-mission', to: 'river/pages#show', defaults: { id: 'our-mission' }
   get '/our-team', to: 'river/pages#show', defaults: { id: 'our-team' }

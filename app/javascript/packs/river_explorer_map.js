@@ -8,15 +8,16 @@ import { LARWMPJson } from "../data/sites_2018";
 import base_map from "./base_map";
 import { formatClassifications, findClassificationColor } from '../utils/map_colors';
 
-export function initMap(selector = "map") {
+export function initMap(selector = "map", customLayer) {
   let tiles = base_map.tileLayersFactory();
   tiles["None"] = L.tileLayer('');
+  let defaultLayer = customLayer ? customLayer : tiles.Minimal;
 
-  var map = L.map(selector, {
+  let map = L.map(selector, {
     zoomControl: true,
     maxZoom: 28,
     minZoom: 6,
-    layers: [tiles.Minimal],
+    layers: [defaultLayer],
   }).fitBounds([
     [33.679246670913905, -118.6974911092205],
     [34.45898102165338, -117.94488821092733],
@@ -166,9 +167,9 @@ export function createRiverLayer() {
 export function createWatershedLayer() {
   var style = {
     opacity: 1,
-    color: "rgba(35,35,35,0.7)",
+    color: "rgba(100,100,100,1)",
     weight: 2.0,
-    fillOpacity: 0.2,
+    fillOpacity: 0.3,
     fillColor: "rgba(190,190,190,0.9)",
     interactive: false,
   };
@@ -320,8 +321,12 @@ export function taxonGbifLayer(items, classifications, colors, taxonName) {
           <th scope="row">Longitude</th>
           <td>${item.longitude}</td>
         </tr>
+        <tr>
+          <th scope="row">Hexagon ID</th>
+          <td>${item.id}</td>
+        </tr>
       </table>
-    `;
+      `;
 
       layer.bindPopup(popup, { maxHeight: 400 });
     }
@@ -351,10 +356,6 @@ export function createMapgridLayer(items, classifications, colors, type) {
       let popup = `
         <table class="map-popup">
           <tr>
-            <th scope="row">ID</th>
-            <td>${item.id}</td>
-          </tr>
-          <tr>
             <th scope="row">Count</th>
             <td>${item.count} ${type}</td>
           </tr>
@@ -365,6 +366,10 @@ export function createMapgridLayer(items, classifications, colors, type) {
           <tr>
             <th scope="row">Longitude</th>
             <td>${item.longitude}</td>
+          </tr>
+          <tr>
+            <th scope="row">Hexagon ID</th>
+            <td>${item.id}</td>
           </tr>
         </table>
       `;

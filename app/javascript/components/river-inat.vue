@@ -1,34 +1,40 @@
 <template>
   <div>
-    <h1>iNaturalist for LA River Watershed</h1>
-    <p>
-      This is a comparison of the number of research-grade iNaturalist
-      observations and species made in the LA River Watershed.
-    </p>
-    <div class="my-container">
+    <div class="inat-watershed-container">
       <section>
-        <h2>iNaturalist Observations</h2>
-        <input
-          type="checkbox"
-          id="occurrences"
-          name="occurrences"
-          checked
-          @click="toggleOccurrences"
-        />
-        <label for="occurrences">occurrences</label>
-
+        <div class="p-all-sm">
+          <h2>iNaturalist Observations</h2>
+          <p>
+            This maps shows the research-grade iNaturalist observations for the
+            LA River Watershed.
+          </p>
+          <input
+            type="checkbox"
+            id="occurrences"
+            name="occurrences"
+            checked
+            @click="toggleOccurrences"
+          />
+          <label for="occurrences">occurrences</label>
+        </div>
         <div id="map-occurrences" class="map-container"></div>
       </section>
       <section>
-        <h2>iNaturalist Species</h2>
-        <input
-          type="checkbox"
-          id="species"
-          name="species"
-          checked
-          @click="toggleSpecies"
-        />
-        <label for="species">Species</label>
+        <div class="p-all-sm">
+          <h2>iNaturalist Species</h2>
+          <p>
+            This maps shows the species from research-grade iNaturalist
+            observations for the LA River Watershed.
+          </p>
+          <input
+            type="checkbox"
+            id="species"
+            name="species"
+            checked
+            @click="toggleSpecies"
+          />
+          <label for="species">Species</label>
+        </div>
         <div id="map-species" class="map-container"></div>
       </section>
     </div>
@@ -50,7 +56,7 @@ import {
 } from "../packs/river_explorer_map";
 import base_map from "../packs/base_map";
 import api from "../utils/api_routes";
-import { randomColorRange } from "../utils/misc_util";
+import { targetColorRange } from "../utils/map_colors";
 
 export default {
   name: "RiverExplorer",
@@ -121,7 +127,7 @@ export default {
           let reducer = (accumulator, item) => {
             return accumulator + item.count;
           };
-          let colors = randomColorRange();
+          let colors = targetColorRange(1);
 
           ctx.speciesCount = response.data.total_species.reduce(reducer, 0);
           let speciesClassifications = createTaxonClassifications(
@@ -174,10 +180,11 @@ export default {
   },
   mounted: function () {
     this.$nextTick(function () {
-      this.speciesMap = initMap("map-species");
+      let ctx = this;
+      this.speciesMap = initMap("map-species", L.tileLayer(""));
       this.speciesMap.addLayer(createWatershedLayer());
 
-      this.occurrencesMap = initMap("map-occurrences");
+      this.occurrencesMap = initMap("map-occurrences", L.tileLayer(""));
       this.occurrencesMap.addLayer(createWatershedLayer());
 
       this.fetchPourLocations();
