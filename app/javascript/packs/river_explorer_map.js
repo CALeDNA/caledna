@@ -253,31 +253,42 @@ export function LARWMPLocationsLayer() {
   });
 }
 
+function createEdnaPopup(sample, taxonName) {
+  return `<p>eDNA Site for ${taxonName}</p>
+
+  <table class="map-popup">
+    <tr>
+      <th scope="row">Name</th>
+      <td><a href="/samples/${sample.id}">${sample.barcode}</a></td>
+    </tr>
+    <tr>
+      <th scope="row">Latitude</th>
+      <td>${sample.latitude}</td>
+    </tr>
+    <tr>
+      <th scope="row">Longitude</th>
+      <td>${sample.longitude}</td>
+    </tr>
+    <tr>
+      <th scope="row">Collection Period</th>
+      <td>${sample.metadata.collection_period}</td>
+    </tr>
+  </table>`;
+}
+
 // output: featureGroup
-export function taxonEdnaLayer(samples, color, taxonName) {
-  let markers = samples.map((sample) => {
-    let popup = `
-      <p>eDNA Site for ${taxonName}</p>
+export function taxonEdnaLayer(groupedEdnaSamples, taxonName) {
+  let markers = []
 
-      <table class="map-popup">
-        <tr>
-          <th scope="row">Name</th>
-          <td><a href="/samples/${sample.id}">${sample.barcode}</a></td>
-        </tr>
-        <tr>
-          <th scope="row">Latitude</th>
-          <td>${sample.latitude}</td>
-        </tr>
-        <tr>
-          <th scope="row">Longitude</th>
-          <td>${sample.longitude}</td>
-        </tr>
-      </table>
-    `;
-    sample["body"] = popup;
+  for (const period in groupedEdnaSamples) {
+    const sampleGroup = groupedEdnaSamples[period];
+    sampleGroup.samples.forEach((sample) => {
+      let popup = createEdnaPopup(sample, taxonName, period)
+      sample["body"] = popup;
+      markers.push(base_map.createCircleMarker(sample, { fillColor: sampleGroup.color, weight: 1 }));
+    })
+  }
 
-    return base_map.createCircleMarker(sample, { fillColor: color, weight: 1 });
-  });
   return L.featureGroup(markers);
 }
 

@@ -81,9 +81,11 @@
       }
     }
 
-    .data-legend {
+    .data-body {
       padding: 10px;
     }
+
+
 
     .data-footer {
       padding: 7px;
@@ -122,5 +124,9 @@
 
   .analyte-list label {
     font-weight: normal;
+  }
+
+  .menu-legend li {
+    display: flex;
   }
 }

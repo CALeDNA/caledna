@@ -61,11 +61,11 @@
               <div v-html="ednaDataCount(layer)"></div>
               <div v-html="gbifDataCount(layer)"></div>
               <div class="data-legend" v-html="taxaLegend(layer)"></div>
-              <div class="data-footer">
-                <span @click="removeTaxonLayer(layer)">
-                  <i class="far fa-times-circle"></i> Remove
-                </span>
-              </div>
+            </div>
+            <div class="data-footer" v-show="showTaxonBody(layer)">
+              <span @click="removeTaxonLayer(layer)">
+                <i class="far fa-times-circle"></i> Remove
+              </span>
             </div>
           </div>
         </section>
@@ -93,15 +93,13 @@
               />
               <label :for="`${layer}_m`">{{ layer }}</label>
             </div>
-            <div class="data-body">
-              <div class="data-footer">
-                <span @click="showModal(layer)">
-                  <i class="far fa-question-circle"></i> Info
-                </span>
-                <span @click="removeDataLayer(layer)">
-                  <i class="far fa-times-circle"></i> Remove
-                </span>
-              </div>
+            <div class="data-footer">
+              <span @click="showModal(layer)">
+                <i class="far fa-question-circle"></i> Info
+              </span>
+              <span @click="removeDataLayer(layer)">
+                <i class="far fa-times-circle"></i> Remove
+              </span>
             </div>
 
             <Modal v-if="layer == currentModal" @close="currentModal = null">
@@ -445,7 +443,11 @@ import {
 } from "../packs/river_explorer_map";
 import base_map from "../packs/base_map";
 import api from "../utils/api_routes";
-import { targetColorRange, randomColor } from "../utils/map_colors";
+import {
+  targetColorRange,
+  randomColor,
+  targetColor,
+} from "../utils/map_colors";
 import { formatTaxonName, formatKingdomIcon } from "../utils/taxon_utils";
 
 export default {
@@ -628,41 +630,28 @@ export default {
       }
     },
     ednaDataCount: function (layer) {
-      if (this.ednaData[layer]) {
-        if (this.ednaData[layer].count > 0) {
-          let marker = `<svg height="30" width="30">
-                            <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
-                              fill="${this.ednaDataColor(layer)}"/>
-                            </svg>`;
-          return `${marker}${this.ednaData[layer].count} eDNA sites`;
-        } else {
-          let blank = '<svg height="30" width="30"></svg>';
-          return `${blank}0 eDNA sites`;
-        }
+      let data = this.ednaData[layer];
+      let legend = "";
+      if (data) {
+        legend += `<b>${data.count} eDNA sites</b>`;
+        legend += "<ul class='menu-legend'>";
+
+        data.legend.forEach((group) => {
+          let marker = `<svg height="20" width="25">
+                        <circle cx="10" cy="10" r="7" stroke="#222"
+                        stroke-width="1" fill="${group.color}"/>
+                        </svg>`;
+          legend += `<li>${marker}${group.label}, ${group.count} sites</li>`;
+        });
+      } else {
+        legend = "<li>0 eDNA sites</li>";
       }
+      legend += "</ul>";
+      return legend;
     },
     gbifDataCount: function (layer) {
       if (this.gbifData[layer]) {
-        if (this.gbifData[layer].count > 0) {
-          let marker = `<svg height="30" width="30">
-                            <circle cx="15" cy="22" r="7" stroke="#222" stroke-width="2"
-                              fill="${this.gbifDataColor(layer)}"/>
-                            </svg>`;
-          return `${marker}${this.gbifData[layer].count} iNaturalist observations`;
-        } else {
-          let blank = '<svg height="30" width="30"></svg>';
-          return `${blank}0 iNaturalist observations`;
-        }
-      }
-    },
-    ednaDataColor: function (layer) {
-      if (this.ednaData[layer] && this.ednaData[layer].color) {
-        return this.ednaData[layer].color;
-      }
-    },
-    gbifDataColor: function (layer) {
-      if (this.gbifData[layer] && this.gbifData[layer].color) {
-        return this.gbifData[layer].color;
+        return `<b>${this.gbifData[layer].count} iNaturalist observations</b>`;
       }
     },
     createDataLegend: function (classifications, colors) {
@@ -670,19 +659,19 @@ export default {
         return;
       }
 
-      let html = "Observations Count";
+      let legend = "<ul class='menu-legend'>";
       classifications.forEach((classification, index) => {
-        html += `
-        <div>
-          <svg width="20" height="20">
-            <rect width="18" height="18"
+        legend += `
+        <li>
+          <svg width="25" height="22">
+            <polygon points="18.75,9.4 14,17.5 4.7,17.5 0,9.4 4.7,1.3 14,1.3"
               style="fill:${colors[index]};stroke-width:1;stroke:${colors[3]}" />
           </svg>
-          <span>${classification.begin} - ${classification.end}</span>
-        </div>
+          <span>${classification.begin} - ${classification.end} observations</span>
+        </li>
         `;
       });
-      return html;
+      return legend;
     },
     taxaLegend: function (layer) {
       if (this.gbifData[layer] && this.gbifData[layer].legend) {
@@ -848,11 +837,14 @@ export default {
           console.error(e);
         });
     },
-    fetchOccurences: function (taxonName, radius) {
+    fetchOccurences: function (taxonName) {
       let ctx = this;
       axios
         .get(`${api.pourOccurrences}?taxon=${taxonName}`)
         .then((response) => {
+          // =============
+          // GBIF
+          // =============
           let reducer = (accumulator, item) => {
             return accumulator + item.count;
           };
@@ -881,19 +873,51 @@ export default {
 
           ctx.map.addLayer(gbifLayer);
 
-          let ednaColor = randomColor();
-          let ednaLayer = taxonEdnaLayer(
-            response.data.edna,
-            ednaColor,
-            taxonName
-          );
+          // =============
+          // eDNA
+          // =============
+          let groupedEdnaSamples = {};
+
+          response.data.edna.forEach((s) => {
+            let period = s.metadata.collection_period;
+            if (groupedEdnaSamples[period]) {
+              groupedEdnaSamples[period]["count"] += 1;
+              groupedEdnaSamples[period]["samples"].push(s);
+            } else {
+              groupedEdnaSamples[period] = {};
+              groupedEdnaSamples[period]["count"] = 1;
+              groupedEdnaSamples[period]["samples"] = [];
+              groupedEdnaSamples[period]["samples"].push(s);
+              groupedEdnaSamples[period]["order"] = s.metadata.order;
+            }
+          });
+
+          Object.keys(groupedEdnaSamples).forEach((cp, idx) => {
+            groupedEdnaSamples[cp]["color"] = targetColor(idx);
+          });
+
+          let ednaLegend = [];
+          for (const period in groupedEdnaSamples) {
+            let group = groupedEdnaSamples[period];
+            ednaLegend.push({
+              label: period,
+              color: group.color,
+              count: group.count,
+              order: group.order,
+            });
+          }
+          ednaLegend = ednaLegend.sort((a, b) => {
+            return a.order - b.order;
+          });
+
+          let ednaLayer = taxonEdnaLayer(groupedEdnaSamples, taxonName);
 
           ctx.ednaData = {
             ...ctx.ednaData,
             [taxonName]: {
               count: response.data.edna.length,
               layer: ednaLayer,
-              color: ednaColor,
+              legend: ednaLegend,
             },
           };
 
