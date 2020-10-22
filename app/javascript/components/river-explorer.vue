@@ -30,15 +30,16 @@
             class="data-layer"
           >
             <div class="data-header">
-              <input
-                type="checkbox"
-                :id="layer"
-                :name="layer"
-                :checked="isTaxaLayerSelected(layer)"
-                @click="toggleTaxaLayerVisibility(layer, $event)"
-              />
-              <label :for="layer"> {{ displayTaxonName(layer) }} </label>
-
+              <div class="input-group">
+                <input
+                  type="checkbox"
+                  :id="layer"
+                  :name="layer"
+                  :checked="isTaxaLayerSelected(layer)"
+                  @click="toggleTaxaLayerVisibility(layer, $event)"
+                />
+                <label :for="layer"> {{ displayTaxonName(layer) }} </label>
+              </div>
               <span @click="toggleTaxonBody(layer)">
                 <svg height="13" width="16" v-if="showTaxonBody(layer)">
                   <path
@@ -116,6 +117,7 @@
         <!-- mapTab -->
         <section v-show="activeTab === 'mapTab'">
           <div id="map" class="map-container">
+            <spinner v-if="loading" />
           </div>
         </section>
 
@@ -408,6 +410,7 @@ import { VueAutosuggest } from "vue-autosuggest";
 import AnalyteList from "./shared/analyte-list";
 import Modal from "./shared/modal";
 import RiverInat from "./river-inat";
+import Spinner from "./shared/spinner";
 
 import {
   biodiversity,
@@ -463,6 +466,7 @@ export default {
     VueAutosuggest,
     Modal,
     RiverInat,
+    Spinner,
   },
   data: function () {
     return {
@@ -877,6 +881,7 @@ export default {
         });
     },
     fetchOccurences: function (taxonName) {
+      this.loading = true;
       let ctx = this;
       axios
         .get(`${api.pourOccurrences}?taxon=${taxonName}`)

@@ -1,5 +1,5 @@
 <template>
-  <div class="loader"></div>
+  <div class="loading-spinner"></div>
 </template>
 
 <script>
@@ -16,7 +16,7 @@ https://stephanwagner.me/only-css-loading-spinner
   }
 }
 
-.loader:before {
+.loading-spinner:before {
   content: "";
   box-sizing: border-box;
   position: fixed;

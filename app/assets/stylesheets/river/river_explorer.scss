@@ -73,10 +73,14 @@
       border-bottom: 1px solid #aaa;
       position: relative;
 
+      .input-group {
+        margin-right: 21px;
+      }
+
       svg {
         position: absolute;
         right: 7px;
-        top: 10px;
+        top: 7px;
       }
     }
 

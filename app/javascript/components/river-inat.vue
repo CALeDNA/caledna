@@ -17,7 +17,9 @@
           />
           <label for="occurrences">occurrences</label>
         </div>
-        <div id="map-occurrences" class="map-container"></div>
+        <div id="map-occurrences" class="map-container">
+          <spinner v-if="loading" />
+        </div>
       </section>
       <section>
         <div class="p-all-sm">
@@ -35,7 +37,9 @@
           />
           <label for="species">Species</label>
         </div>
-        <div id="map-species" class="map-container"></div>
+        <div id="map-species" class="map-container">
+          <spinner v-if="loading" />
+        </div>
       </section>
     </div>
   </div>
@@ -43,6 +47,8 @@
 
 <script>
 import axios from "axios";
+
+import Spinner from "./shared/spinner";
 
 import {
   initMap,
@@ -60,10 +66,12 @@ import { targetColorRange } from "../utils/map_colors";
 
 export default {
   name: "RiverExplorer",
+  components: {
+    Spinner,
+  },
   data: function () {
     return {
       // misc
-      activeTab: "mapTab",
       speciesMap: null,
       occurrencesMap: null,
       loading: false,
@@ -120,6 +128,8 @@ export default {
         });
     },
     fetchAllOccurences: function () {
+      this.loading = true;
+
       let ctx = this;
       axios
         .get(api.inatOccurrences)
@@ -169,8 +179,6 @@ export default {
           occurrencesLegend.addTo(ctx.occurrencesMap);
           ctx.occurrencesMap.addLayer(ctx.occurrencesLayer);
           ctx.occurrencesMap.addLayer(createRiverLayer());
-          // occurrencesLayer.setStyle({ fillOpacity: 0, opacity: 0 });
-          // occurrencesLayer.bringToBack();
         })
         .catch((e) => {
           console.error(e);
