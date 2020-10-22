@@ -73,7 +73,7 @@
           </div>
         </section>
 
-        <h2>Enviromental Factors</h2>
+        <h2>Environmental Factors</h2>
         <button
           class="btn btn-primary"
           @click="setActiveTab('environmentalTab')"
@@ -495,6 +495,8 @@ export default {
       activeTab: "mapTab",
       map: null,
       loading: false,
+      riverLayer: null,
+      watershedLayer: null,
       // data
       selectedData: {},
       dataMapLayers: {},
@@ -626,6 +628,8 @@ export default {
         }
         ednaLayer.setStyle({ opacity: value, fillOpacity: value });
       }
+
+      this.riverLayer.bringToFront();
       this.selectedTaxa[layer] = event.target.checked;
     },
     removeTaxonLayer: function (layer) {
@@ -735,7 +739,6 @@ export default {
     },
 
     updateLegend: function () {
-      // only add the
       if (this.legend) {
         this.map.removeControl(this.legend);
       }
@@ -764,6 +767,7 @@ export default {
         this.getActiveMapLayer();
         this.updateLegend();
       }
+      this.riverLayer.bringToFront();
     },
 
     isDataLayerSelected: function (layer) {
@@ -786,6 +790,7 @@ export default {
       this.dataLayerHistory.push({ [layer]: event.target.checked });
       this.getActiveMapLayer();
       this.updateLegend();
+      this.riverLayer.bringToFront();
     },
     removeDataLayer: function (layer) {
       delete this.selectedData[layer];
@@ -968,6 +973,7 @@ export default {
           };
 
           ctx.map.addLayer(ednaLayer);
+          ctx.riverLayer.bringToFront();
         })
         .catch((e) => {
           console.error(e);
@@ -978,10 +984,10 @@ export default {
   mounted: function () {
     this.$nextTick(function () {
       this.map = initMap();
-      let watershedLayer = createWatershedLayer();
-      let riverLayer = createRiverLayer();
-      this.map.addLayer(createWatershedLayer());
-      this.map.addLayer(createRiverLayer());
+      this.watershedLayer = createWatershedLayer();
+      this.riverLayer = createRiverLayer();
+      this.map.addLayer(this.watershedLayer);
+      this.map.addLayer(this.riverLayer);
 
       var ctx = this;
       this.map.on("zoomend", function () {

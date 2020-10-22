@@ -136,10 +136,9 @@ export function createAnalyteLayer(analyte, classifications, colors) {
 // output: geoJson
 export function createRiverLayer() {
   var style = {
-    opacity: 1,
+    opacity: .8,
     color: "rgba(19,133,255,1.0)",
-    weight: 2.0,
-    fillOpacity: 0,
+    weight: 1.75,
   };
 
   function createPopup(feature, layer) {
@@ -383,7 +382,7 @@ export function createMapgridLayer(items, classifications, colors, type) {
       weight: .5,
       opacity: 1,
       fillColor: color,
-      fillOpacity: 0.8,
+      fillOpacity: 0.9,
     };
 
     return L.geoJSON(JSON.parse(item.geom), {

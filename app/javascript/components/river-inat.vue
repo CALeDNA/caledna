@@ -75,6 +75,8 @@ export default {
       speciesMap: null,
       occurrencesMap: null,
       loading: false,
+      occurrencesRiverLayer: null,
+      speciesRiverLayer: null,
       // data
       selectedData: {},
       dataMapLayers: {},
@@ -156,7 +158,6 @@ export default {
           );
           speciesLegend.addTo(ctx.speciesMap);
           ctx.speciesMap.addLayer(ctx.speciesLayer);
-          ctx.speciesMap.addLayer(createRiverLayer());
 
           ctx.occurrencesCount = response.data.total_occurrences.reduce(
             reducer,
@@ -169,7 +170,7 @@ export default {
             response.data.total_occurrences,
             occurrencesClassifications,
             colors,
-            "occurrences"
+            "observations"
           );
           let occurrencesLegend = createMapLegend(
             occurrencesClassifications,
@@ -178,7 +179,8 @@ export default {
           );
           occurrencesLegend.addTo(ctx.occurrencesMap);
           ctx.occurrencesMap.addLayer(ctx.occurrencesLayer);
-          ctx.occurrencesMap.addLayer(createRiverLayer());
+          this.speciesRiverLayer.bringToFront();
+          this.occurrencesRiverLayer.bringToFront();
         })
         .catch((e) => {
           console.error(e);
@@ -191,9 +193,13 @@ export default {
       let ctx = this;
       this.speciesMap = initMap("map-species", L.tileLayer(""));
       this.speciesMap.addLayer(createWatershedLayer());
+      this.speciesRiverLayer = createRiverLayer();
+      ctx.speciesMap.addLayer(this.speciesRiverLayer);
 
       this.occurrencesMap = initMap("map-occurrences", L.tileLayer(""));
       this.occurrencesMap.addLayer(createWatershedLayer());
+      this.occurrencesRiverLayer = createRiverLayer();
+      ctx.occurrencesMap.addLayer(this.occurrencesRiverLayer);
 
       this.fetchPourLocations();
       this.fetchAllOccurences();
