@@ -15,7 +15,7 @@ export function initMap(selector = "map", customLayer) {
 
   let map = L.map(selector, {
     zoomControl: true,
-    maxZoom: 28,
+    maxZoom: 18,
     minZoom: 6,
     layers: [defaultLayer],
   }).fitBounds([

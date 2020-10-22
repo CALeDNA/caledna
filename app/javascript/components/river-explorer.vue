@@ -989,11 +989,11 @@ export default {
       this.map.addLayer(this.watershedLayer);
       this.map.addLayer(this.riverLayer);
 
-      var ctx = this;
-      this.map.on("zoomend", function () {
-        var zoomlevel = ctx.map.getZoom();
-        console.log("zoom", zoomlevel);
-      });
+      // var ctx = this;
+      // this.map.on("zoomend", function () {
+      //   var zoomlevel = ctx.map.getZoom();
+      //   console.log("zoom", zoomlevel);
+      // });
 
       this.fetchPourLocations();
     });
