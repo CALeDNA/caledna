@@ -38,7 +38,7 @@ module Api
                ON pour.gbif_taxa.taxon_id = gbif_occurrences.taxon_id
              JOIN pour.mapgrid
                ON ST_Contains(mapgrid.geom, gbif_occurrences.geom)
-             WHERE mapgrid.size = 2000
+             WHERE mapgrid.size = $1
              AND mapgrid.type = 'hexagon'
              GROUP BY mapgrid.id;
            SQL
@@ -46,13 +46,15 @@ module Api
 
         def total_inat_occurrences
           @total_inat_occurrences ||= begin
-            conn.exec_query(total_sql('gbif_occurrences.gbif_id'))
+            binding = [[nil, mapgrid_size]]
+            conn.exec_query(total_sql('gbif_occurrences.gbif_id'), 'q', binding)
           end
         end
 
         def total_inat_species
           @total_inat_species ||= begin
-            conn.exec_query(total_sql('gbif_taxa.taxon_id'))
+            binding = [[nil, mapgrid_size]]
+            conn.exec_query(total_sql('gbif_taxa.taxon_id'), 'q', binding)
           end
         end
 
@@ -139,9 +141,7 @@ module Api
         end
 
         def radius
-          radius = params[:radius].blank? ? 1000 : params[:radius].to_i
-          radius = 1000 if radius > 3000
-          radius
+          1000
         end
 
         def mapgrid_size
