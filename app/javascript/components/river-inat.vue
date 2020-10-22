@@ -154,7 +154,8 @@ export default {
           let speciesLegend = createMapLegend(
             speciesClassifications,
             colors,
-            "Species Count"
+            "Species Count",
+            "hexagon"
           );
           speciesLegend.addTo(ctx.speciesMap);
           ctx.speciesMap.addLayer(ctx.speciesLayer);
@@ -175,7 +176,8 @@ export default {
           let occurrencesLegend = createMapLegend(
             occurrencesClassifications,
             colors,
-            "Observations Count"
+            "Observations Count",
+            "hexagon"
           );
           occurrencesLegend.addTo(ctx.occurrencesMap);
           ctx.occurrencesMap.addLayer(ctx.occurrencesLayer);

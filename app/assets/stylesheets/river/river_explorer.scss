@@ -107,16 +107,26 @@
     padding: 1.5em;
   }
 
-  .map-legend {
-    background: white;
-    padding: .5em;
-    font-size: 1.1em;
+
+
+  .map-legend li {
+    display: flex;
+  }
+
+  .menu-legend li {
+    display: flex;
   }
 
   .main-container {
     ul {
       list-style: none;
       padding: 0;
+    }
+
+    ul.map-legend {
+      background: white;
+      padding: 8px;
+      font-size: 1.1em;
     }
   }
 
@@ -132,7 +142,5 @@
     font-weight: normal;
   }
 
-  .menu-legend li {
-    display: flex;
-  }
+
 }

@@ -52,25 +52,37 @@ function formatFloats(value, precision) {
   }
 }
 
-export function createMapLegend(classifications, colors, title) {
+export function createMapLegend(classifications, colors, title, shape = 'rect') {
   let legend = L.control({ position: "bottomleft" });
   legend.onAdd = function () {
-    var div = L.DomUtil.create("div", "map-legend");
-    div.innerHTML = title;
+    var element = L.DomUtil.create("ul", "map-legend");
+    element.innerHTML = title;
 
     classifications.forEach((classification, index) => {
-      div.innerHTML += `
-      <div>
-        <svg width="20" height="20">
-          <rect width="18" height="18"
-            style="fill:${colors[index]};stroke-width:1;stroke:${colors[3]}" />
-        </svg>
-        <span>${classification.begin} - ${classification.end}</span>
-      </div>
-      `;
+      if (shape === 'hexagon') {
+        element.innerHTML += `
+          <li>
+            <svg width="25" height="22">
+              <polygon points="18.75,9.4 14,17.5 4.7,17.5 0,9.4 4.7,1.3 14,1.3"
+                style="fill:${colors[index]};stroke-width:1;stroke:${colors[3]}" />
+            </svg>
+            <span>${classification.begin} - ${classification.end}</span>
+          </li>
+        `;
+      } else {
+        element.innerHTML += `
+          <li>
+            <svg width="25" height="22">
+              <rect width="16" height="16"
+                style="fill:${colors[index]};stroke-width:1;stroke:${colors[3]}" />
+            </svg>
+            <span>${classification.begin} - ${classification.end}</span>
+          </li>
+        `;
+      }
     });
 
-    return div;
+    return element;
   };
   return legend;
 }
