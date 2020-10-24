@@ -59,10 +59,14 @@ import {
   createMapgridLayer,
   createTaxonClassifications,
   createMapLegend,
+  openPopupForMap,
+  closePopupForMap,
+  getHexagonData,
 } from "../packs/river_explorer_map";
 import base_map from "../packs/base_map";
 import api from "../utils/api_routes";
 import { targetColorRange } from "../utils/map_colors";
+import { inatStore } from "../stores/stores";
 
 export default {
   name: "RiverExplorer",
@@ -77,6 +81,7 @@ export default {
       loading: false,
       occurrencesRiverLayer: null,
       speciesRiverLayer: null,
+      store: inatStore,
       // data
       selectedData: {},
       dataMapLayers: {},
@@ -90,10 +95,6 @@ export default {
   },
 
   methods: {
-    // =============
-    // mapTab
-    // =============
-
     // =============
     // misc
     // =============
@@ -190,9 +191,34 @@ export default {
         .finally(() => (this.loading = false));
     },
   },
+
+  watch: {
+    "store.hexagonIdExplorer": function (hexagonId) {
+      this.store.logger("inat watch", hexagonId);
+
+      if (hexagonId) {
+        if (this.store.openInatWatchMap()) {
+          openPopupForMap(this.speciesMap, hexagonId);
+        }
+      } else {
+        if (this.store.popupsExist()) {
+          closePopupForMap(this.speciesMap);
+        }
+        if (this.store.popupsExist()) {
+          closePopupForMap(this.occurrencesMap);
+        }
+      }
+    },
+  },
+
   mounted: function () {
     this.$nextTick(function () {
       let ctx = this;
+
+      // =============
+      // create maps
+      // =============
+
       this.speciesMap = initMap("map-species", L.tileLayer(""));
       this.speciesMap.addLayer(createWatershedLayer());
       this.speciesRiverLayer = createRiverLayer();
@@ -203,8 +229,60 @@ export default {
       this.occurrencesRiverLayer = createRiverLayer();
       ctx.occurrencesMap.addLayer(this.occurrencesRiverLayer);
 
-      this.fetchPourLocations();
       this.fetchAllOccurences();
+
+      // =============
+      // setup event listeners
+      // =============
+      this.speciesMap.on("popupopen", function (e) {
+        var hexagonData = getHexagonData(e);
+        if (hexagonData) {
+          ctx.store.openCount += 1;
+          ctx.store.hexagonIdInat = +hexagonData[1];
+          ctx.store.logger("inat species popupopen", +hexagonData[1]);
+
+          if (ctx.store.openInatMap()) {
+            openPopupForMap(ctx.occurrencesMap, ctx.store.hexagonIdInat);
+          }
+        }
+      });
+      this.occurrencesMap.on("popupopen", function (e) {
+        var hexagonData = getHexagonData(e);
+        if (hexagonData) {
+          ctx.store.openCount += 1;
+          ctx.store.hexagonIdInat = +hexagonData[1];
+          ctx.store.logger("inat occurrences popupopen", +hexagonData[1]);
+
+          if (ctx.store.openInatMap()) {
+            openPopupForMap(ctx.speciesMap, ctx.store.hexagonIdInat);
+          }
+        }
+      });
+
+      this.speciesMap.on("popupclose", function (e) {
+        var hexagonData = getHexagonData(e);
+        if (hexagonData) {
+          ctx.store.openCount -= 1;
+          ctx.store.hexagonIdInat = null;
+          ctx.store.logger("inat species popupclose", +hexagonData[1]);
+
+          if (ctx.store.popupsExist()) {
+            closePopupForMap(ctx.occurrencesMap);
+          }
+        }
+      });
+      this.occurrencesMap.on("popupclose", function (e) {
+        var hexagonData = getHexagonData(e);
+        if (hexagonData) {
+          ctx.store.openCount -= 1;
+          ctx.store.hexagonIdInat = null;
+          ctx.store.logger("inat occurrences popupclose", +hexagonData[1]);
+
+          if (ctx.store.popupsExist()) {
+            closePopupForMap(ctx.speciesMap);
+          }
+        }
+      });
     });
   },
 };

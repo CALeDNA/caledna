@@ -319,7 +319,7 @@ export function taxonGbifLayer(items, classifications, colors, taxonName) {
       let popup = `
       <p>iNaturalist Observations for ${taxonName}</p>
 
-      <table class="map-popup">
+      <table class="map-popup" data-hexagon-id="${item.id}">
         <tr>
           <th scope="row">Count</th>
           <td>${item.count} observations</td>
@@ -352,10 +352,12 @@ export function taxonGbifLayer(items, classifications, colors, taxonName) {
       opacity: 0.9,
     };
 
-    return L.geoJSON(JSON.parse(item.geom), {
+    let jsonLayer =  L.geoJSON(JSON.parse(item.geom), {
       onEachFeature: createPopup,
       style: myStyle,
     });
+    jsonLayer.hexagonId = item.id;
+    return jsonLayer;
   });
   return L.featureGroup(markers);
 }
@@ -365,7 +367,7 @@ export function createMapgridLayer(items, classifications, colors, type) {
   let markers = items.map((item) => {
     function createPopup(feature, layer) {
       let popup = `
-        <table class="map-popup">
+        <table class="map-popup" data-hexagon-id="${item.id}">
           <tr>
             <th scope="row">Count</th>
             <td>${item.count} ${type}</td>
@@ -397,11 +399,36 @@ export function createMapgridLayer(items, classifications, colors, type) {
       fillOpacity: 0.9,
     };
 
-    return L.geoJSON(JSON.parse(item.geom), {
+    let gridLayer = L.geoJSON(JSON.parse(item.geom), {
       onEachFeature: createPopup,
       style: myStyle,
     });
+    gridLayer.hexagonId = item.id
+    return gridLayer
   });
   return L.featureGroup(markers);
 }
 
+export function getHexagonData(e) {
+  return e.popup.getContent().match(/data-hexagon-id="([0-9]+)/);
+}
+
+export function openPopupForMap(map, hexagonId) {
+  // console.log(">openPopupForMap", map.getContainer().getAttribute("id"));
+  let hexagonExists = false
+  map.eachLayer(function (layer) {
+    if (layer.hexagonId === hexagonId) {
+      hexagonExists = true
+      Object.values(layer._layers)[0].openPopup();
+    }
+  });
+  if(!hexagonExists) {
+    // console.log('missing hexagon')
+    closePopupForMap(map)
+  }
+}
+
+export function closePopupForMap(map) {
+  // console.log(">closePopupForMap", map.getContainer().getAttribute("id"));
+  map.closePopup();
+}

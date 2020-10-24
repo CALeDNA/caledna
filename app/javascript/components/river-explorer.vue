@@ -449,6 +449,9 @@ import {
   createAnalyteLayer,
   createAnalyteClassifications,
   createMapLegend,
+  openPopupForMap,
+  closePopupForMap,
+  getHexagonData,
 } from "../packs/river_explorer_map";
 import base_map from "../packs/base_map";
 import api from "../utils/api_routes";
@@ -458,6 +461,7 @@ import {
   targetColor,
 } from "../utils/map_colors";
 import { formatTaxonName, formatKingdomIcon } from "../utils/taxon_utils";
+import { inatStore } from "../stores/stores";
 
 export default {
   name: "RiverExplorer",
@@ -497,6 +501,7 @@ export default {
       loading: false,
       riverLayer: null,
       watershedLayer: null,
+      store: inatStore,
       // data
       selectedData: {},
       dataMapLayers: {},
@@ -981,13 +986,48 @@ export default {
         .finally(() => (this.loading = false));
     },
   },
+  watch: {
+    "store.hexagonIdInat": function (hexagonId) {
+      this.store.logger("explorer watch", hexagonId);
+
+      if (hexagonId) {
+        if (this.store.openExplorerWatchMap()) {
+          openPopupForMap(this.map, hexagonId);
+        }
+      } else {
+        if (this.store.popupsExist()) {
+          closePopupForMap(this.map);
+        }
+      }
+    },
+  },
   mounted: function () {
     this.$nextTick(function () {
+      let ctx = this;
+
       this.map = initMap();
       this.watershedLayer = createWatershedLayer();
       this.riverLayer = createRiverLayer();
       this.map.addLayer(this.watershedLayer);
       this.map.addLayer(this.riverLayer);
+
+      this.map.on("popupopen", function (e) {
+        var hexagonData = getHexagonData(e);
+        if (hexagonData) {
+          ctx.store.openCount += 1;
+          ctx.store.hexagonIdExplorer = +hexagonData[1];
+          ctx.store.logger("explorer popupopen", +hexagonData[1]);
+        }
+      });
+
+      this.map.on("popupclose", function (e) {
+        var hexagonData = getHexagonData(e);
+        if (hexagonData) {
+          ctx.store.openCount -= 1;
+          ctx.store.hexagonIdExplorer = null;
+          ctx.store.logger("explorer popupclose", +hexagonData[1]);
+        }
+      });
 
       // var ctx = this;
       // this.map.on("zoomend", function () {
