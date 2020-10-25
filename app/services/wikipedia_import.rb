@@ -4,7 +4,7 @@
 module WikipediaImport
   def save_wiki_excerpts
     external_resources.find_each.with_index do |resource, i|
-      delay = i * 1
+      delay = i * 0.2
       UpdateWikiExcerptJob.set(wait: delay.seconds).perform_later(resource)
     end
   end
@@ -30,6 +30,8 @@ module WikipediaImport
 
   def external_resources
     @external_resources ||=
-      ExternalResource.where(source: :wikidata).where('wiki_excerpt IS NULL')
+      ExternalResource.active
+                      .where(source: :wikidata)
+                      .where('wiki_excerpt IS NULL')
   end
 end
