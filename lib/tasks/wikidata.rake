@@ -18,7 +18,8 @@ namespace :wikidata do
     SQL
   end
 
-  desc 'import wikidata'
+  desc 'import all NCBI taxa that is in wikidata & save them to ' \
+  'external_resources'
   task create_external_resources: :environment do
     sql = "DELETE FROM external_resources WHERE source = 'wikidata'"
     conn.exec_query(sql)
@@ -26,12 +27,29 @@ namespace :wikidata do
     import_records
   end
 
+  desc 'add labels to the wikidata records'
   task add_labels: :environment do
     import_labels
   end
 
+  desc 'do a second query to add labels to the wikidata records'
   task add_missing_labels: :environment do
     import_missing_labels
+  end
+
+  desc 'add NCBI canonical_name to wikidata records'
+  task add_ncbi_name: :environment do
+    sql = <<~SQL
+      UPDATE external_resources SET ncbi_name = temp.canonical_name FROM (
+        SELECT  external_resources.ncbi_id, ncbi_nodes.canonical_name
+        FROM external_resources
+        JOIN ncbi_nodes
+        ON ncbi_nodes.ncbi_id = external_resources.ncbi_id
+        WHERE  external_resources.source = 'wikidata'
+      ) AS temp
+      WHERE temp.ncbi_id = external_resources.ncbi_id;
+    SQL
+    conn.exec_query(sql)
   end
 
   desc 'when an ncbi_id has multiple wikipedia images, update records to ' \
@@ -51,6 +69,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple worms ids, connect to WORMS ' \
+  'api to get the correct id'
   task normalize_worms: :environment do
     field = 'worms_id'
     api = WormsApi.new
@@ -72,6 +92,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple itis ids, connect to ITIS ' \
+  'api to get the correct id'
   task normalize_itis: :environment do
     field = 'itis_id'
     api = ItisApi.new
@@ -101,6 +123,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple gbif ids, connect to GBIF ' \
+  'api to get the correct id'
   task normalize_gbif: :environment do
     field = 'gbif_id'
     api = GbifApi.new
@@ -125,6 +149,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple cnps ids, use hardcode hash ' \
+  'to get the correct id'
   task normalize_cnps: :environment do
     field = 'cnps_id'
 
@@ -147,6 +173,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple cites ids, use hardcode hash ' \
+  'to get the correct id'
   task normalize_cites: :environment do
     field = 'cites_id'
 
@@ -160,6 +188,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple calflora ids, use hardcode hash ' \
+  'to get the correct id'
   task normalize_calflora: :environment do
     field = 'calflora_id'
 
@@ -181,6 +211,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple eol ids, connect to EOL ' \
+  'api to get the correct id'
   task normalize_eol: :environment do
     field = 'eol_id'
     api = EolApi.new
@@ -209,6 +241,8 @@ namespace :wikidata do
     end
   end
 
+  desc 'for wikidata ncbi taxa with multiple inat ids, connect to iNat ' \
+  'api to get the correct id'
   task normalize_inat: :environment do
     field = 'inaturalist_id'
     api = InatApi.new
@@ -252,72 +286,94 @@ namespace :wikidata do
     end
   end
 
-  task add_ncbi_name: :environment do
+  desc 'Delete the duplicate records NCBI records that have different data.'
+  task remove_ncbi_records_with_different_data: :environment do
     sql = <<~SQL
-      UPDATE external_resources SET ncbi_name = temp.canonical_name FROM (
-        SELECT  external_resources.ncbi_id, ncbi_nodes.canonical_name
-        FROM external_resources
-        JOIN ncbi_nodes
-        ON ncbi_nodes.ncbi_id = external_resources.ncbi_id
-        WHERE  external_resources.source = 'wikidata'
-      ) AS temp
-      WHERE temp.ncbi_id = external_resources.ncbi_id;
+      SELECT COUNT(*), ncbi_id, ncbi_name, wiki_title
+      FROM external_resources
+      WHERE source = 'wikidata'
+      GROUP BY ncbi_id, ncbi_name, wiki_title
+      HAVING COUNT(*) > 1
+
+      EXCEPT
+
+      SELECT COUNT(*), ncbi_id, ncbi_name, wiki_title
+      FROM external_resources
+      WHERE source = 'wikidata'
+      GROUP BY ncbi_id, ncbi_name, wiki_title,
+      eol_id, bold_id, calflora_id, cites_id, cnps_id, gbif_id, inaturalist_id,
+      itis_id, worms_id, wikidata_image, wiki_title
+      HAVING COUNT(*) > 1 ;
     SQL
-    conn.exec_query(sql)
-  end
+    results = conn.exec_query(sql)
+    ids = results.map { |r| r['ncbi_id'] }
 
-  task add_wiki_excerpt: :environment do
-    include WikipediaImport
+    ids.each do |id|
+      ExternalResource.where(ncbi_id: id).where(source: 'wikidata').each do |r|
+        data = [r['eol_id'], r['bold_id'], r['calflora_id'], r['cites_id'],
+                r['cnps_id'], r['gbif_id'], r['itis_id'], r['worms_id'],
+                r['inaturalist_id'], r['wikidata_image']].compact
 
-    save_wiki_excerpts
-  end
-
-  # if a NCBI_ID is assocciated with multiple images, iNaturalist ID, etc,
-  # the wiki data api will return multiple records for that NCBI_ID. Need
-  # do delete the duplicate records
-  task delete_dup_ncbi_records: :environment do
-    def delete_dups(result)
-      sql = <<~SQL
-        DELETE FROM external_resources WHERE ncbi_id = $1
-        AND source = 'wikidata'
-        LIMIT $2
-      SQL
-
-      binding = [[nil, result['ncbi_id']], [nil, result['count'] - 1]]
-      conn.exec_query(sql, 'q', binding)
-    end
-
-    def my_update_inat_id(result)
-      InatApi.new.get_taxa(name: result['search_term']) do |response|
-        inat_id = response.first['id']
-        puts "#{inat_id}, #{response.first['name']}"
-
-        resource = ExternalResource
-                   .where(source: 'wikidata', ncbi_id: result['ncbi_id'])
-                   .first
-        resource.update(inaturalist_id: inat_id)
+        if data.size <= 1
+          puts "#{r.id} #{r.ncbi_id} #{data.size}"
+          r.delete
+        end
       end
+    end
+  end
+
+  desc 'Delete the duplicate records NCBI records with the same data.'
+  task remove_duplicate_ncbi_records: :environment do
+    def delete_dups(result, ids)
+      sql = <<~SQL
+        DELETE FROM external_resources
+        WHERE ncbi_id = $1
+        AND wikidata_entity = $2
+        AND source = 'wikidata'
+        AND id IN (?)
+      SQL
+      processed_sql = ActiveRecord::Base.send(:sanitize_sql_array, [sql, ids])
+
+      binding = [[nil, result['ncbi_id']], [nil, result['wikidata_entity']]]
+      conn.exec_query(processed_sql, 'q', binding)
     end
 
     find_dups_sql = <<~SQL
-      SELECT count(*), ncbi_id, eol_id,bold_id,calflora_id,cites_id,cnps_id,
-      gbif_id,itis_id,worms_id,wikidata_image, search_term
+      SELECT COUNT(*), ncbi_id, ncbi_name, wikidata_entity, array_agg(id) AS ids
       FROM external_resources
-      WHERE  source  = 'wikidata'
-      GROUP BY ncbi_id, eol_id,bold_id,calflora_id,cites_id, cnps_id,
-      gbif_id,itis_id,worms_id,wikidata_image, search_term
-      HAVING count(*) > 1
-      limit 10
+      WHERE source = 'wikidata'
+      GROUP BY ncbi_id, ncbi_name, wikidata_entity,
+      eol_id, bold_id, calflora_id, cites_id, cnps_id, gbif_id, inaturalist_id,
+      itis_id, worms_id, wikidata_image, wikidata_entity
+      HAVING COUNT(*) > 1
     SQL
     results = conn.exec_query(find_dups_sql)
 
     results.each do |result|
-      puts '---------------------'
-      puts "#{result['ncbi_id']}, #{result['search_term']}"
-      sleep 1
-      # delete_dups(result)
-      my_update_inat_id(result)
+      ids = YAML.safe_load(result['ids']).keys
+      delete_ids = ids.slice(1, ids.size)
+
+      delete_dups(result, delete_ids)
     end
+  end
+
+  desc 'Set duplicate records NCBI records to inactive if wikititle does not ' \
+  'match NCBI name.'
+  task set_duplicate_ncbi_to_inactive: :environment do
+    sql = <<~SQL
+      UPDATE external_resources
+      SET active = false
+      WHERE ncbi_id IN (
+        SELECT  ncbi_id
+        FROM external_resources
+        WHERE source = 'wikidata'
+        GROUP BY ncbi_id, ncbi_name
+        HAVING COUNT(*) > 1
+      )
+      AND ncbi_name != wiki_title
+    SQL
+
+    conn.exec_query(sql)
   end
 
   def conn
