@@ -10,13 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_25_203354) do
+ActiveRecord::Schema.define(version: 2020_10_25_210922) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
   enable_extension "postgis"
-  enable_extension "tablefunc"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -49,9 +47,111 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "taxonomy_string"
     t.index ["primer_id"], name: "index_asvs_on_primer_id"
+    t.index ["primer_id"], name: "index_pillar_point.asvs_on_primer_id"
     t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
+    t.index ["research_project_id"], name: "index_pillar_point.asvs_on_research_project_id"
     t.index ["sample_id"], name: "index_asvs_on_sample_id"
+    t.index ["sample_id"], name: "index_pillar_point.asvs_on_sample_id"
     t.index ["taxon_id"], name: "index_asvs_on_taxon_id"
+    t.index ["taxon_id"], name: "index_pillar_point.asvs_on_taxon_id"
+  end
+
+  create_table "asvs", force: :cascade do |t|
+    t.integer "taxon_id"
+    t.bigint "sample_id"
+    t.integer "count"
+    t.bigint "research_project_id"
+    t.bigint "primer_id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string "taxonomy_string"
+    t.index ["primer_id"], name: "index_asvs_on_primer_id"
+    t.index ["primer_id"], name: "index_pillar_point.asvs_on_primer_id"
+    t.index ["research_project_id"], name: "index_asvs_on_research_project_id"
+    t.index ["research_project_id"], name: "index_pillar_point.asvs_on_research_project_id"
+    t.index ["sample_id"], name: "index_asvs_on_sample_id"
+    t.index ["sample_id"], name: "index_pillar_point.asvs_on_sample_id"
+    t.index ["taxon_id"], name: "index_asvs_on_taxon_id"
+    t.index ["taxon_id"], name: "index_pillar_point.asvs_on_taxon_id"
+  end
+
+  create_table "asvs_2017", id: :serial, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "taxon_id"
+    t.text "primers", default: [], array: true
+    t.integer "sample_id"
+    t.integer "count", default: 0
+    t.jsonb "counts", default: {}
+    t.integer "research_project_id"
+    t.string "primer"
+    t.bigint "primer_id"
+    t.index ["primer_id"], name: "index_asvs_2017_on_primer_id"
+    t.index ["research_project_id"], name: "index_asvs_2017_on_research_project_id"
+    t.index ["sample_id"], name: "index_asvs_2017_on_sample_id"
+    t.index ["taxon_id"], name: "index_asvs_2017_on_taxon_id"
+  end
+
+  create_table "combine_taxa", force: :cascade do |t|
+    t.bigint "source_taxon_id"
+    t.string "source"
+    t.string "superkingdom"
+    t.string "kingdom"
+    t.string "phylum"
+    t.string "class_name"
+    t.string "order"
+    t.string "family"
+    t.string "genus"
+    t.string "species"
+    t.string "taxon_rank"
+    t.string "canonical_name"
+    t.text "short_taxonomy_string"
+    t.text "notes"
+    t.integer "cal_division_id"
+    t.string "source_superkingdom"
+    t.string "source_kingdom"
+    t.string "source_phylum"
+    t.string "source_class_name"
+    t.string "source_order"
+    t.string "source_family"
+    t.string "source_genus"
+    t.string "source_species"
+    t.string "synonym"
+    t.jsonb "hierarchy_names"
+    t.text "full_taxonomy_string"
+    t.string "paper_match_type"
+    t.jsonb "global_names"
+    t.boolean "approved"
+    t.bigint "caledna_taxon_id"
+    t.index "lower((\"order\")::text)", name: "index_combine_taxa_on_order"
+    t.index "lower((class_name)::text)", name: "index_combine_taxa_on_class_name"
+    t.index "lower((family)::text)", name: "index_combine_taxa_on_family"
+    t.index "lower((genus)::text)", name: "index_combine_taxa_on_genus"
+    t.index "lower((phylum)::text)", name: "index_combine_taxa_on_phylum"
+    t.index "lower((species)::text)", name: "index_combine_taxa_on_species"
+    t.index ["cal_division_id"], name: "index_combine_taxa_on_cal_division_id"
+    t.index ["caledna_taxon_id"], name: "index_pillar_point.combine_taxa_on_caledna_taxon_id"
+    t.index ["kingdom"], name: "index_combine_taxa_on_kingdom"
+    t.index ["source"], name: "index_combine_taxa_on_source"
+    t.index ["source_taxon_id"], name: "index_combine_taxa_on_source_taxon_id"
+  end
+
+  create_table "edna_gbif", force: :cascade do |t|
+    t.string "superkingdom"
+    t.string "kingdom"
+    t.string "phylum"
+    t.string "class_name"
+    t.string "order"
+    t.string "family"
+    t.string "genus"
+    t.string "species"
+    t.boolean "ncbi_match"
+    t.boolean "edna_match"
+    t.integer "count"
+    t.string "gbif_taxa"
+    t.string "ncbi_taxa"
+    t.string "rank"
+    t.index ["rank"], name: "index_pillar_point.edna_gbif_on_rank"
   end
 
   create_table "event_registrations", force: :cascade do |t|
@@ -94,9 +194,9 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.integer "msw_id"
     t.string "wikidata_entity"
     t.integer "worms_id"
+    t.string "iucn_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "iucn_status"
     t.string "source"
     t.string "col_id"
     t.string "wikispecies_id"
@@ -136,6 +236,200 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.index ["kobo_id"], name: "index_field_projects_on_kobo_id", unique: true
   end
 
+  create_table "gbif_common_names", force: :cascade do |t|
+    t.bigint "taxon_id"
+    t.string "vernacular_name"
+    t.string "language"
+    t.string "scientific_name"
+    t.string "taxonomic_status"
+    t.string "taxon_rank"
+    t.bigint "accepted_taxon_id"
+    t.index "lower((vernacular_name)::text) text_pattern_ops", name: "vernacular_name_prefix"
+    t.index "to_tsvector('english'::regconfig, (vernacular_name)::text)", name: "full_text_search_idx", using: :gin
+    t.index ["taxon_id"], name: "index_pour.gbif_common_names_on_taxon_id"
+  end
+
+  create_table "gbif_datasets", force: :cascade do |t|
+    t.string "dataset_key"
+    t.string "institution_code"
+    t.string "collection_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "gbif_occ_taxa", id: false, force: :cascade do |t|
+    t.integer "taxonkey"
+    t.string "kingdom"
+    t.string "phylum"
+    t.string "classname"
+    t.string "order"
+    t.string "family"
+    t.string "genus"
+    t.string "species"
+    t.string "infraspecificepithet"
+    t.string "taxonrank"
+    t.string "scientificname"
+    t.index ["taxonkey"], name: "gbif_occ_taxa_taxonkey_idx"
+  end
+
+  create_table "gbif_occurrences", primary_key: "gbif_id", force: :cascade do |t|
+    t.string "occurrence_id"
+    t.bigint "gbif_dataset_id"
+    t.string "scientific_name"
+    t.string "verbatim_scientific_name"
+    t.string "taxon_rank"
+    t.bigint "taxon_id"
+    t.bigint "species_id"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.decimal "coordinate_uncertainty_in_meters"
+    t.string "country_code"
+    t.string "state_province"
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.datetime "event_date"
+    t.string "identified_by"
+    t.datetime "date_identified"
+    t.string "license"
+    t.string "rights_holder"
+    t.string "recorded_by"
+    t.datetime "last_interpreted"
+    t.string "basis_of_record"
+    t.integer "catalog_number"
+    t.string "media_type"
+    t.string "issue"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.geometry "geom_projected", limit: {:srid=>3857, :type=>"geometry"}
+    t.string "verbatim_scientific_name_authorship"
+    t.string "locality"
+    t.string "occurrence_status"
+    t.integer "individual_count"
+    t.string "publishing_org_key"
+    t.decimal "coordinate_precision"
+    t.integer "elevation"
+    t.integer "elevation_accuracy"
+    t.integer "depth"
+    t.integer "depth_accuracy"
+    t.integer "day"
+    t.integer "month"
+    t.integer "year"
+    t.string "institution_code"
+    t.string "collection_code"
+    t.integer "record_number"
+    t.string "type_status"
+    t.string "establishment_means"
+    t.string "infraspecific_epithet"
+    t.index "lower((genus)::text)", name: "index_gbif_occurrences_on_genus"
+    t.index ["classname"], name: "index_external.gbif_occurrences_on_classname"
+    t.index ["family"], name: "index_external.gbif_occurrences_on_family"
+    t.index ["gbif_dataset_id"], name: "index_pour.gbif_occurrences_on_gbif_dataset_id"
+    t.index ["genus"], name: "index_external.gbif_occurrences_on_genus"
+    t.index ["geom"], name: "index_pour.gbif_occurrences_on_geom", using: :gist
+    t.index ["geom_projected"], name: "index_pour.gbif_occurrences_on_geom_projected", using: :gist
+    t.index ["order"], name: "index_external.gbif_occurrences_on_order"
+    t.index ["phylum"], name: "index_external.gbif_occurrences_on_phylum"
+    t.index ["scientificname"], name: "gbif_ob_scientificname_idx"
+    t.index ["species"], name: "index_external.gbif_occurrences_on_species"
+    t.index ["taxonkey"], name: "gbif_ob_taxonkey_idx"
+    t.index ["taxonrank"], name: "gbif_ob_taxonrank_idx"
+  end
+
+  create_table "gbif_occurrences", primary_key: "gbif_id", force: :cascade do |t|
+    t.string "occurrence_id"
+    t.bigint "gbif_dataset_id"
+    t.string "scientific_name"
+    t.string "verbatim_scientific_name"
+    t.string "taxon_rank"
+    t.bigint "taxon_id"
+    t.bigint "species_id"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.decimal "coordinate_uncertainty_in_meters"
+    t.string "country_code"
+    t.string "state_province"
+    t.geometry "geom", limit: {:srid=>4326, :type=>"st_point"}
+    t.datetime "event_date"
+    t.string "identified_by"
+    t.datetime "date_identified"
+    t.string "license"
+    t.string "rights_holder"
+    t.string "recorded_by"
+    t.datetime "last_interpreted"
+    t.string "basis_of_record"
+    t.integer "catalog_number"
+    t.string "media_type"
+    t.string "issue"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.geometry "geom_projected", limit: {:srid=>3857, :type=>"geometry"}
+    t.string "verbatim_scientific_name_authorship"
+    t.string "locality"
+    t.string "occurrence_status"
+    t.integer "individual_count"
+    t.string "publishing_org_key"
+    t.decimal "coordinate_precision"
+    t.integer "elevation"
+    t.integer "elevation_accuracy"
+    t.integer "depth"
+    t.integer "depth_accuracy"
+    t.integer "day"
+    t.integer "month"
+    t.integer "year"
+    t.string "institution_code"
+    t.string "collection_code"
+    t.integer "record_number"
+    t.string "type_status"
+    t.string "establishment_means"
+    t.string "infraspecific_epithet"
+    t.index "lower((genus)::text)", name: "index_gbif_occurrences_on_genus"
+    t.index ["classname"], name: "index_external.gbif_occurrences_on_classname"
+    t.index ["family"], name: "index_external.gbif_occurrences_on_family"
+    t.index ["gbif_dataset_id"], name: "index_pour.gbif_occurrences_on_gbif_dataset_id"
+    t.index ["genus"], name: "index_external.gbif_occurrences_on_genus"
+    t.index ["geom"], name: "index_pour.gbif_occurrences_on_geom", using: :gist
+    t.index ["geom_projected"], name: "index_pour.gbif_occurrences_on_geom_projected", using: :gist
+    t.index ["order"], name: "index_external.gbif_occurrences_on_order"
+    t.index ["phylum"], name: "index_external.gbif_occurrences_on_phylum"
+    t.index ["scientificname"], name: "gbif_ob_scientificname_idx"
+    t.index ["species"], name: "index_external.gbif_occurrences_on_species"
+    t.index ["taxonkey"], name: "gbif_ob_taxonkey_idx"
+    t.index ["taxonrank"], name: "gbif_ob_taxonrank_idx"
+  end
+
+  create_table "gbif_taxa", primary_key: "taxon_id", force: :cascade do |t|
+    t.string "kingdom"
+    t.bigint "kingdom_id"
+    t.string "phylum"
+    t.bigint "phylum_id"
+    t.string "class_name"
+    t.bigint "class_id"
+    t.string "order"
+    t.bigint "order_id"
+    t.string "family"
+    t.bigint "family_id"
+    t.string "genus"
+    t.bigint "genus_id"
+    t.string "species"
+    t.bigint "species_id"
+    t.string "infraspecific_epithet"
+    t.string "taxon_rank"
+    t.string "scientific_name"
+    t.string "taxonomic_status"
+    t.string "accepted_scientific_name"
+    t.string "accepted_taxon_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "names", default: [], array: true
+    t.text "common_names"
+    t.integer "ids", default: [], array: true
+    t.integer "occurrence_count"
+    t.string "canonical_name"
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, COALESCE(common_names, ''::text))))", name: "full_text_gbif_taxa_idx", using: :gin
+    t.index "to_tsvector('english'::regconfig, common_names)", name: "full_text_search_gc_idx", using: :gin
+    t.index ["ids"], name: "index_pour.gbif_taxa_on_ids", using: :gin
+    t.index ["names"], name: "index_pour.gbif_taxa_on_names", using: :gin
+  end
+
   create_table "ggbn_meta", force: :cascade do |t|
     t.string "technical_contact_name"
     t.string "technical_contact_email"
@@ -167,14 +461,122 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "highlights", id: :serial, force: :cascade do |t|
-    t.string "notes"
-    t.integer "highlightable_id"
-    t.string "highlightable_type"
+  create_table "globi_interactions", force: :cascade do |t|
+    t.string "sourceTaxonId"
+    t.string "sourceTaxonIds"
+    t.string "sourceTaxonName"
+    t.string "sourceTaxonRank"
+    t.string "sourceTaxonPathNames"
+    t.string "sourceTaxonPathIds"
+    t.string "sourceTaxonPathRankNames"
+    t.string "sourceId"
+    t.string "sourceOccurrenceId"
+    t.string "sourceCatalogNumber"
+    t.string "sourceBasisOfRecordId"
+    t.string "sourceBasisOfRecordName"
+    t.string "sourceLifeStageId"
+    t.string "sourceLifeStageName"
+    t.string "sourceBodyPartId"
+    t.string "sourceBodyPartName"
+    t.string "sourcePhysiologicalStateId"
+    t.string "sourcePhysiologicalStateName"
+    t.string "interactionTypeName"
+    t.string "interactionTypeId"
+    t.string "targetTaxonId"
+    t.string "targetTaxonIds"
+    t.string "targetTaxonName"
+    t.string "targetTaxonRank"
+    t.string "targetTaxonPathNames"
+    t.string "targetTaxonPathIds"
+    t.string "targetTaxonPathRankNames"
+    t.string "targetId"
+    t.string "targetOccurrenceId"
+    t.string "targetCatalogNumber"
+    t.string "targetBasisOfRecordId"
+    t.string "targetBasisOfRecordName"
+    t.string "targetLifeStageId"
+    t.string "targetLifeStageName"
+    t.string "targetBodyPartId"
+    t.string "targetBodyPartName"
+    t.string "targetPhysiologicalStateId"
+    t.string "targetPhysiologicalStateName"
+    t.string "decimalLatitude"
+    t.string "decimalLongitude"
+    t.string "localityId"
+    t.string "localityName"
+    t.string "eventDateUnixEpoch"
+    t.string "referenceCitation"
+    t.string "referenceDoi"
+    t.string "referenceUrl"
+    t.string "sourceCitation"
+    t.string "sourceNamespace"
+    t.string "sourceArchiveURI"
+    t.string "sourceDOI"
+    t.string "sourceLastSeenAtUnixEpoch"
+    t.bigint "target_ncbi_id"
+    t.bigint "target_gbif_id"
+    t.bigint "source_ncbi_id"
+    t.bigint "source_gbif_id"
+    t.index ["sourceTaxonName"], name: "index_external.globi_interactions_on_sourceTaxonName"
+    t.index ["source_gbif_id"], name: "globi_interactions_on_sourceGbifId"
+    t.index ["source_ncbi_id"], name: "globi_interactions_on_sourceNcbiId"
+    t.index ["targetTaxonId"], name: "index_external.globi_interactions_on_targetTaxonId"
+    t.index ["targetTaxonName"], name: "index_external.globi_interactions_on_targetTaxonName"
+    t.index ["target_gbif_id"], name: "globi_interactions_on_targetGbifId"
+    t.index ["target_ncbi_id"], name: "globi_interactions_on_targetNcbiId"
+  end
+
+  create_table "globi_requests", force: :cascade do |t|
+    t.string "taxon_name"
+    t.string "taxon_id", array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["highlightable_id"], name: "index_highlights_on_highlightable_id"
-    t.index ["highlightable_type"], name: "index_highlights_on_highlightable_type"
+    t.jsonb "metadata", default: {}
+  end
+
+  create_table "globi_show", force: :cascade do |t|
+    t.string "source_taxon_name"
+    t.string "source_taxon_ids"
+    t.string "source_taxon_path"
+    t.string "source_taxon_rank"
+    t.string "interaction_type"
+    t.string "target_taxon_name"
+    t.string "target_taxon_ids"
+    t.string "target_taxon_path"
+    t.string "target_taxon_rank"
+    t.boolean "is_source"
+    t.boolean "edna_match"
+    t.boolean "gbif_match"
+    t.string "keyword"
+    t.index ["source_taxon_name"], name: "index_pillar_point.globi_show_on_source_taxon_name"
+    t.index ["target_taxon_name"], name: "index_pillar_point.globi_show_on_target_taxon_name"
+  end
+
+  create_table "inat_taxa", force: :cascade do |t|
+    t.string "scientific_name"
+    t.string "common_name"
+    t.string "iconic_taxon_name"
+    t.string "kingdom"
+    t.string "phylum"
+    t.string "class_name"
+    t.string "order"
+    t.string "family"
+    t.string "genus"
+    t.string "species"
+    t.string "rank"
+    t.bigint "inat_id"
+    t.bigint "gbif_id"
+    t.bigint "ncbi_id"
+    t.string "form"
+    t.string "variety"
+    t.string "subspecies"
+    t.string "infraspecific_epithet"
+    t.string "canonical_name"
+    t.index ["common_name"], name: "index_pour.inat_taxa_on_common_name"
+    t.index ["gbif_id"], name: "index_pour.inat_taxa_on_gbif_id"
+    t.index ["inat_id"], name: "index_pour.inat_taxa_on_inat_id"
+    t.index ["ncbi_id"], name: "index_pour.inat_taxa_on_ncbi_id"
+    t.index ["scientific_name"], name: "index_pour.inat_taxa_on_scientific_name"
   end
 
   create_table "kobo_photos", id: :serial, force: :cascade do |t|
@@ -189,10 +591,47 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.index ["sample_id"], name: "index_kobo_photos_on_sample_id"
   end
 
+  create_table "mapgrid", id: :bigint, default: -> { "nextval('hexbin_1km_id_seq'::regclass)" }, force: :cascade do |t|
+    t.bigint "taxon_id"
+    t.decimal "left"
+    t.decimal "bottom"
+    t.decimal "right"
+    t.decimal "top"
+    t.geometry "geom_projected", limit: {:srid=>3857, :type=>"multi_polygon"}
+    t.geometry "geom", limit: {:srid=>4326, :type=>"geometry"}
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.integer "size"
+    t.string "type"
+    t.index ["geom"], name: "index_pour.hexbin_on_geom", using: :gist
+    t.index ["geom_projected"], name: "index_pour.hexbin_1km_on_geom_projected", using: :gist
+    t.index ["taxon_id"], name: "index_pour.hexbin_1km_on_taxon_id"
+  end
+
+  create_table "ncbi_deleted_taxa", force: :cascade do |t|
+    t.integer "taxon_id"
+    t.bigint "ncbi_version_id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["ncbi_version_id"], name: "index_external.ncbi_deleted_taxa_on_ncbi_version_id"
+    t.index ["taxon_id"], name: "index_external.ncbi_deleted_taxa_on_taxon_id"
+  end
+
   create_table "ncbi_divisions", id: :serial, force: :cascade do |t|
     t.string "cde", limit: 255
     t.string "name", limit: 255
     t.string "comments", limit: 255
+  end
+
+  create_table "ncbi_merged_taxa", force: :cascade do |t|
+    t.integer "old_taxon_id"
+    t.integer "taxon_id"
+    t.bigint "ncbi_version_id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index ["ncbi_version_id"], name: "index_external.ncbi_merged_taxa_on_ncbi_version_id"
+    t.index ["old_taxon_id"], name: "index_external.ncbi_merged_taxa_on_old_taxon_id"
+    t.index ["taxon_id"], name: "index_external.ncbi_merged_taxa_on_taxon_id"
   end
 
   create_table "ncbi_names", force: :cascade do |t|
@@ -204,9 +643,41 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index "lower(name) text_pattern_ops", name: "name_prefix"
+    t.index "lower(name)", name: "index_ncbi_names_on_lower_name"
+    t.index "lower(name)", name: "index_pillar_point.ncbi_names_on_lower_name"
     t.index ["name_class"], name: "index_ncbi_names_on_name_class"
+    t.index ["name_class"], name: "index_pillar_point.ncbi_names_on_name_class"
     t.index ["ncbi_version_id"], name: "index_ncbi_names_on_ncbi_version_id"
     t.index ["taxon_id"], name: "index_ncbi_names_on_taxon_id"
+    t.index ["taxon_id"], name: "index_pillar_point.ncbi_names_on_taxon_id"
+  end
+
+  create_table "ncbi_names", force: :cascade do |t|
+    t.integer "taxon_id"
+    t.text "name"
+    t.string "unique_name"
+    t.string "name_class"
+    t.bigint "ncbi_version_id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.index "lower(name) text_pattern_ops", name: "name_prefix"
+    t.index "lower(name)", name: "index_ncbi_names_on_lower_name"
+    t.index "lower(name)", name: "index_pillar_point.ncbi_names_on_lower_name"
+    t.index ["name_class"], name: "index_ncbi_names_on_name_class"
+    t.index ["name_class"], name: "index_pillar_point.ncbi_names_on_name_class"
+    t.index ["ncbi_version_id"], name: "index_ncbi_names_on_ncbi_version_id"
+    t.index ["taxon_id"], name: "index_ncbi_names_on_taxon_id"
+    t.index ["taxon_id"], name: "index_pillar_point.ncbi_names_on_taxon_id"
+  end
+
+  create_table "ncbi_names_2017", force: :cascade do |t|
+    t.integer "taxon_id", null: false
+    t.text "name"
+    t.string "unique_name", limit: 255
+    t.string "name_class", limit: 255
+    t.index "lower(name)", name: "index_ncbi_names_on_name"
+    t.index ["name_class"], name: "index_ncbi_names_2017_on_name_class"
+    t.index ["taxon_id"], name: "ncbi_names_taxonid_idx"
   end
 
   create_table "ncbi_nodes", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
@@ -234,7 +705,7 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.string "iucn_status"
     t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(common_names, ''::character varying))::text)))", name: "full_text_search_idx", using: :gin
     t.index "lower((canonical_name)::text) text_pattern_ops", name: "name_autocomplete_idx"
-    t.index "lower((common_names)::text)", name: "foo"
+    t.index "lower((canonical_name)::text)", name: "index_pillar_point.ncbi_nodes_on_lower_canonical_name"
     t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
     t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
     t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"
@@ -248,6 +719,101 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.index ["ncbi_version_id"], name: "index_ncbi_nodes_on_ncbi_version_id"
     t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
     t.index ["rank"], name: "index_ncbi_nodes_on_rank"
+  end
+
+  create_table "ncbi_nodes", primary_key: "taxon_id", id: :serial, force: :cascade do |t|
+    t.integer "parent_taxon_id"
+    t.string "rank"
+    t.string "canonical_name"
+    t.integer "division_id"
+    t.integer "cal_division_id"
+    t.text "full_taxonomy_string"
+    t.integer "ids", default: [], array: true
+    t.text "ranks", default: [], array: true
+    t.text "names", default: [], array: true
+    t.jsonb "hierarchy_names", default: {}
+    t.jsonb "hierarchy", default: {}
+    t.integer "ncbi_id"
+    t.integer "bold_id"
+    t.string "source", default: "ncbi"
+    t.bigint "ncbi_version_id"
+    t.string "alt_names"
+    t.string "common_names"
+    t.integer "asvs_count", default: 0
+    t.integer "asvs_count_la_river", default: 0
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string "iucn_status"
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(common_names, ''::character varying))::text)))", name: "full_text_search_idx", using: :gin
+    t.index "lower((canonical_name)::text) text_pattern_ops", name: "name_autocomplete_idx"
+    t.index "lower((canonical_name)::text)", name: "index_pillar_point.ncbi_nodes_on_lower_canonical_name"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
+    t.index ["asvs_count"], name: "index_ncbi_nodes_on_asvs_count"
+    t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_on_asvs_count_la_river"
+    t.index ["bold_id"], name: "index_ncbi_nodes_on_bold_id"
+    t.index ["cal_division_id"], name: "index_ncbi_nodes_on_cal_division_id"
+    t.index ["hierarchy"], name: "index_ncbi_nodes_on_hierarchy", using: :gin
+    t.index ["hierarchy_names"], name: "index_ncbi_nodes_on_hierarchy_names", using: :gin
+    t.index ["ids"], name: "index_ncbi_nodes_on_ids", using: :gin
+    t.index ["iucn_status"], name: "index_ncbi_nodes_on_iucn_status"
+    t.index ["ncbi_id"], name: "index_ncbi_nodes_on_ncbi_id"
+    t.index ["ncbi_version_id"], name: "index_ncbi_nodes_on_ncbi_version_id"
+    t.index ["parent_taxon_id"], name: "index_ncbi_nodes_on_parent_taxon_id"
+    t.index ["rank"], name: "index_ncbi_nodes_on_rank"
+  end
+
+  create_table "ncbi_nodes_2017", primary_key: "taxon_id", id: :integer, default: nil, force: :cascade do |t|
+    t.integer "parent_taxon_id"
+    t.string "rank", limit: 255
+    t.string "embl_code", limit: 255
+    t.integer "division_id"
+    t.boolean "inherited_division"
+    t.integer "genetic_code_id"
+    t.boolean "inherited_genetic_code"
+    t.integer "mitochondrial_genetic_code_id"
+    t.boolean "inherited_mitochondrial_genetic_code"
+    t.boolean "genbank_hidden"
+    t.boolean "hidden_subtree_root"
+    t.text "comments"
+    t.string "canonical_name"
+    t.text "lineage", array: true
+    t.jsonb "hierarchy", default: {}
+    t.text "full_taxonomy_string"
+    t.text "short_taxonomy_string"
+    t.integer "cal_division_id"
+    t.integer "asvs_count", default: 0
+    t.string "ids", default: [], array: true
+    t.string "alt_names"
+    t.jsonb "hierarchy_names", default: {}
+    t.integer "ncbi_id"
+    t.bigint "bold_id"
+    t.integer "asvs_count_5", default: 0
+    t.integer "asvs_count_la_river", default: 0
+    t.integer "asvs_count_la_river_5", default: 0
+    t.string "common_names"
+    t.index "((to_tsvector('simple'::regconfig, (canonical_name)::text) || to_tsvector('english'::regconfig, (COALESCE(alt_names, ''::character varying))::text)))", name: "idx_taxa_search", using: :gin
+    t.index "lower((canonical_name)::text) text_pattern_ops", name: "canonical_name_prefix"
+    t.index "lower((canonical_name)::text)", name: "index_ncbi_nodes_on_canonical_name"
+    t.index "lower(replace((canonical_name)::text, ''''::text, ''::text))", name: "replace_quotes_idx"
+    t.index ["asvs_count"], name: "index_ncbi_nodes_2017_on_asvs_count"
+    t.index ["asvs_count_5"], name: "index_ncbi_nodes_2017_on_asvs_count_5"
+    t.index ["asvs_count_la_river"], name: "index_ncbi_nodes_2017_on_asvs_count_la_river"
+    t.index ["asvs_count_la_river_5"], name: "index_ncbi_nodes_2017_on_asvs_count_la_river_5"
+    t.index ["bold_id"], name: "index_ncbi_nodes_2017_on_bold_id"
+    t.index ["cal_division_id"], name: "index_ncbi_nodes_2017_on_cal_division_id"
+    t.index ["division_id"], name: "ncbi_nodes_divisionid_idx"
+    t.index ["hierarchy"], name: "index_taxa_on_hierarchy", using: :gin
+    t.index ["hierarchy_names"], name: "index_ncbi_nodes_2017_on_hierarchy_names", using: :gin
+    t.index ["ids"], name: "index_ncbi_nodes_2017_on_ids", using: :gin
+    t.index ["ncbi_id"], name: "index_ncbi_nodes_2017_on_ncbi_id"
+    t.index ["parent_taxon_id"], name: "index_ncbi_nodes_2017_on_parent_taxon_id"
+    t.index ["rank"], name: "index_ncbi_nodes_2017_on_rank"
+  end
+
+  create_table "ncbi_versions", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "page_blocks", force: :cascade do |t|
@@ -361,8 +927,6 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.index ["geom"], name: "index_places_on_geom", using: :gist
     t.index ["geom_projected"], name: "index_places_on_geom_projected", using: :gist
     t.index ["place_source_id"], name: "index_places_on_place_source_id"
-    t.index ["place_source_type_cd"], name: "places_place_source_type_cd_idx"
-    t.index ["place_type_cd"], name: "places_place_type_cd_idx"
   end
 
   create_table "primers", force: :cascade do |t|
@@ -425,10 +989,10 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.string "dryad_link"
     t.text "decontamination_method"
     t.jsonb "metadata", default: {}
+    t.string "primers", default: [], array: true
     t.decimal "map_latitude"
     t.decimal "map_longitude"
     t.integer "map_zoom"
-    t.string "primers", array: true
   end
 
   create_table "researchers", id: :serial, force: :cascade do |t|
@@ -463,23 +1027,12 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
     t.index ["invitation_token"], name: "index_researchers_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_researchers_on_invitations_count"
     t.index ["invited_by_id"], name: "index_researchers_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_researchers_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_researchers_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_researchers_on_unlock_token", unique: true
   end
 
-  create_table "result_raw_imports", force: :cascade do |t|
-    t.string "original_taxonomy_string"
-    t.string "clean_taxonomy_string"
-    t.string "canonical_name"
-    t.string "primer"
-    t.bigint "research_project_id"
-    t.jsonb "payload"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["research_project_id"], name: "index_result_raw_imports_on_research_project_id"
-  end
-
-  create_table "result_taxa", id: :serial, force: :cascade do |t|
+  create_table "result_taxa", id: :integer, default: -> { "nextval('cal_taxa_taxonid_seq'::regclass)" }, force: :cascade do |t|
     t.string "taxon_rank"
     t.jsonb "hierarchy"
     t.boolean "normalized"
@@ -705,12 +1258,19 @@ ActiveRecord::Schema.define(version: 2020_10_25_203354) do
   add_foreign_key "asvs", "primers"
   add_foreign_key "asvs", "research_projects"
   add_foreign_key "asvs", "samples"
+  add_foreign_key "asvs", "primers"
+  add_foreign_key "asvs", "research_projects"
+  add_foreign_key "asvs", "samples"
   add_foreign_key "event_registrations", "events"
   add_foreign_key "event_registrations", "users"
   add_foreign_key "events", "field_projects"
   add_foreign_key "kobo_photos", "samples"
-  add_foreign_key "ncbi_names", "external.ncbi_versions", column: "ncbi_version_id"
-  add_foreign_key "ncbi_nodes", "external.ncbi_versions", column: "ncbi_version_id"
+  add_foreign_key "ncbi_deleted_taxa", "ncbi_versions"
+  add_foreign_key "ncbi_merged_taxa", "ncbi_versions"
+  add_foreign_key "ncbi_names", "ncbi_versions"
+  add_foreign_key "ncbi_names", "ncbi_versions"
+  add_foreign_key "ncbi_nodes", "ncbi_versions"
+  add_foreign_key "ncbi_nodes", "ncbi_versions"
   add_foreign_key "page_blocks", "websites"
   add_foreign_key "pages", "websites"
   add_foreign_key "research_project_authors", "research_projects"
