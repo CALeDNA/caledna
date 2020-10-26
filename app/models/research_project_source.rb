@@ -6,5 +6,5 @@ class ResearchProjectSource < ApplicationRecord
   belongs_to :sample, optional: true
 
   scope :cal, -> { where(sourceable_type: 'Sample') }
-  scope :gbif, -> { where(sourceable_type: 'GbifOccurrence') }
+  scope :gbif, -> { where(sourceable_type: 'PpGbifOccurrence') }
 end

@@ -85,12 +85,12 @@ namespace :combine_taxa do
       NULL AS superkingdom, kingdom, phylum,
       classname AS class, "order", family, genus, species,
       lower(taxonrank) AS taxon_rank
-      FROM external.gbif_occurrences
+      FROM pillar_point.gbif_occurrences
       JOIN research_project_sources
-      ON external.gbif_occurrences.gbifid =
+      ON pillar_point.gbif_occurrences.gbif_id =
       research_project_sources.sourceable_id
       AND research_project_id = 4
-      AND sourceable_type = 'GbifOccurrence'
+      AND sourceable_type = 'PpGbifOccurrence'
       AND metadata ->> 'location' != 'Montara SMR'
       WHERE kingdom IS NOT NULL
 
@@ -401,7 +401,7 @@ namespace :combine_taxa do
     }
     CombineTaxon.where(source: 'gbif', cal_division_id: nil).each do |taxon|
       puts taxon.taxon_id
-      gbif = GbifOccTaxa.find_by(taxonkey: taxon.taxon_id)
+      gbif = PpGbifOccTaxa.find_by(taxonkey: taxon.taxon_id)
       division_id = divisions[gbif.kingdom.to_sym]
 
       taxon.update(cal_division_id: division_id)

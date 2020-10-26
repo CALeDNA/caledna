@@ -70,14 +70,14 @@ module ResearchProjectService
           SELECT pillar_point.combine_taxa.kingdom,
             pillar_point.combine_taxa.#{combine_taxon_rank_field}
           FROM pillar_point.combine_taxa
-          JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey =
+          JOIN pillar_point.gbif_occurrences
+            ON pillar_point.gbif_occurrences.taxonkey =
               pillar_point.combine_taxa.source_taxon_id
           JOIN research_project_sources
-            ON external.gbif_occurrences.gbifid =
+            ON pillar_point.gbif_occurrences.gbifid =
               research_project_sources.sourceable_id
             AND research_project_id = #{project.id}
-            AND sourceable_type = 'GbifOccurrence'
+            AND sourceable_type = 'PpGbifOccurrence'
             AND metadata ->> 'location' != 'Montara SMR'
           WHERE  pillar_point.combine_taxa.source = 'gbif'
           AND pillar_point.combine_taxa.#{combine_taxon_rank_field} IS NOT NULL

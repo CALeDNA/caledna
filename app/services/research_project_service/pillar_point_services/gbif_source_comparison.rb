@@ -21,7 +21,7 @@ module ResearchProjectService
       def inat_division_occurrences_stats
         sql = <<-SQL
           #{gbif_division_sql}
-          AND external.gbif_occurrences.datasetkey =
+          AND pillar_point.gbif_occurrences.datasetkey =
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
           GROUP BY pillar_point.combine_taxa.kingdom
           ORDER BY pillar_point.combine_taxa.kingdom;
@@ -33,7 +33,7 @@ module ResearchProjectService
       def exclude_inat_division_occurrences_stats
         sql = <<-SQL
           #{gbif_division_sql}
-          AND external.gbif_occurrences.datasetkey !=
+          AND pillar_point.gbif_occurrences.datasetkey !=
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
           GROUP BY pillar_point.combine_taxa.kingdom
           ORDER BY pillar_point.combine_taxa.kingdom;
@@ -45,7 +45,7 @@ module ResearchProjectService
       def inat_division_unique_stats
         sql = <<-SQL
           #{gbif_unique_sql}
-          AND external.gbif_occurrences.datasetkey =
+          AND pillar_point.gbif_occurrences.datasetkey =
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
           GROUP BY pillar_point.combine_taxa.kingdom
           ORDER BY pillar_point.combine_taxa.kingdom;
@@ -56,7 +56,7 @@ module ResearchProjectService
       def exclude_inat_division_unique_stats
         sql = <<-SQL
           #{gbif_unique_sql}
-          AND external.gbif_occurrences.datasetkey !=
+          AND pillar_point.gbif_occurrences.datasetkey !=
           '50c9509d-22c7-4a22-a47d-8c48425ef4a7'
           GROUP BY pillar_point.combine_taxa.kingdom
           ORDER BY pillar_point.combine_taxa.kingdom;

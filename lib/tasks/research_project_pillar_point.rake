@@ -95,16 +95,16 @@ namespace :research_project_pillar_point do
 
     # rubocop:disable Metrics/MethodLength
     def create_source(location, project_id)
-      GbifOccurrence.all.each do |obs|
+      PpGbifOccurrence.all.each do |obs|
         source = ResearchProjectSource.find_by(
-          sourceable_id: obs.gbifid, sourceable_type: 'GbifOccurrence'
+          sourceable_id: obs.gbif_id, sourceable_type: 'PpGbifOccurrence'
         )
 
         next if source.present?
         attributes = {
           research_project_id: project_id,
-          sourceable_id: obs.gbifid,
-          sourceable_type: 'GbifOccurrence',
+          sourceable_id: obs.gbif_id,
+          sourceable_type: 'PpGbifOccurrence',
           metadata: { location: location }
         }
         ResearchProjectSource.create(attributes)
@@ -114,12 +114,12 @@ namespace :research_project_pillar_point do
 
     def import_csv(path)
       CSV.foreach(path, headers: true, col_sep: "\t") do |row|
-        obs = GbifOccurrence.find_by(gbifid: row['gbifid'])
+        obs = PpGbifOccurrence.find_by(gbif_id: row['gbifid'])
 
         attributes = row.to_hash
         attributes['classname'] = attributes['class']
         attributes.delete('class')
-        GbifOccurrence.create(attributes) if obs.nil?
+        PpGbifOccurrence.create(attributes) if obs.nil?
       end
     end
 
@@ -302,7 +302,7 @@ namespace :research_project_pillar_point do
 
   task add_missing_gbif_occ_taxa: :environment do
     sql = <<~SQL
-      INSERT INTO external.gbif_occ_taxa (kingdom, phylum, classname,
+      INSERT INTO pillar_point.gbif_occ_taxa (kingdom, phylum, classname,
       "order", family, genus,
       species, infraspecificepithet, taxonrank,
       scientificname, taxonkey)
@@ -313,8 +313,8 @@ namespace :research_project_pillar_point do
       gbif_occurrences.species, gbif_occurrences.infraspecificepithet,
       lower(gbif_occurrences.taxonrank) as taxonrank,
       gbif_occurrences.scientificname, gbif_occurrences.taxonkey
-      FROM external.gbif_occurrences
-      LEFT JOIN external.gbif_occ_taxa
+      FROM pillar_point.gbif_occurrences
+      LEFT JOIN pillar_point.gbif_occ_taxa
       ON gbif_occ_taxa.taxonkey = gbif_occurrences.taxonkey
       WHERE gbif_occ_taxa.taxonkey IS NULL
       GROUP BY gbif_occurrences.kingdom,  gbif_occurrences.phylum,

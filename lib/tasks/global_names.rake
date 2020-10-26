@@ -8,9 +8,9 @@ namespace :global_names do
 
     sql = <<-SQL
     SELECT taxonkey, scientificname
-    FROM external.gbif_occ_taxa
+    FROM pillar_point.gbif_occ_taxa
     LEFT JOIN external_resources
-    ON external.gbif_occ_taxa.taxonkey = external_resources.gbif_id
+    ON pillar_point.gbif_occ_taxa.taxonkey = external_resources.gbif_id
     WHERE gbif_id IS NULL;
     SQL
 
@@ -76,7 +76,7 @@ namespace :global_names do
     include ImportGlobalNames
     global_names_api = ::GlobalNamesApi.new
 
-    records1 = GbifOccTaxa.where("genus in ('Hesperonoe',
+    records1 = PpGbifOccTaxa.where("genus in ('Hesperonoe',
     'Paratrytone',
     'Idarcturus',
     'Integripelta',

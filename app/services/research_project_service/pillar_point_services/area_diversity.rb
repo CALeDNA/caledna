@@ -143,13 +143,13 @@ module ResearchProjectService
         sql = <<-SQL
           SELECT taxonkey
           FROM pillar_point.combine_taxa
-          JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey =
+          JOIN pillar_point.gbif_occurrences
+            ON pillar_point.gbif_occurrences.taxonkey =
               pillar_point.combine_taxa.source_taxon_id
           JOIN research_project_sources
           ON research_project_sources.sourceable_id =
-            external.gbif_occurrences.gbifid
-          WHERE sourceable_type = 'GbifOccurrence'
+            pillar_point.gbif_occurrences.gbifid
+          WHERE sourceable_type = 'PpGbifOccurrence'
           AND research_project_id = #{project.id}
         SQL
 

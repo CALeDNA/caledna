@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 namespace :gbif do
-  task import_missing_fields_for_occ_taxa: :environment do
+  desc 'Pillar Point GBIF'
+  task import_missing_fields_for_pp_occ_taxa: :environment do
     api = GbifApi.new
     conn = ActiveRecord::Base.connection
 
-    GbifOccTaxa.where(taxonkey: nil).each do |taxon|
+    PpGbifOccTaxa.where(taxonkey: nil).each do |taxon|
       rank = taxon.taxonrank
       query = { rank: taxon.taxonrank }
       if rank == 'kingdom'
@@ -39,7 +40,7 @@ namespace :gbif do
 
       taxon.taxonkey = result['usageKey']
       taxon.scientificname = result['scientificName']
-      sql = 'UPDATE external.gbif_occ_taxa ' \
+      sql = 'UPDATE pillar_point.gbif_occ_taxa ' \
       "SET taxonkey = #{result['usageKey']},  " \
       "scientificname = #{conn.quote(result['scientificName'])} " \
       "WHERE taxonrank = #{conn.quote(rank)} " \
@@ -50,6 +51,7 @@ namespace :gbif do
     end
   end
 
+  desc 'PouR GBIF'
   # https://stackoverflow.com/a/29502094
   # bin/rake gbif:import_gbif_taxa'[/full/path]'
   task :import_gbif_taxa, [:path] => :environment do |_t, args|

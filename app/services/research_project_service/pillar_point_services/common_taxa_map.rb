@@ -20,8 +20,8 @@ module ResearchProjectService
             lower(gbif_ct.#{combine_taxon_rank_field})
           ) AS common_names
           FROM pillar_point.combine_taxa as gbif_ct
-          JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey = gbif_ct.source_taxon_id
+          JOIN pillar_point.gbif_occurrences
+            ON pillar_point.gbif_occurrences.taxonkey = gbif_ct.source_taxon_id
           WHERE gbif_ct.source = 'gbif'
           AND gbif_ct.#{combine_taxon_rank_field} IS NOT NULL
           AND gbif_ct.#{combine_taxon_rank_field} IN (
@@ -66,19 +66,19 @@ module ResearchProjectService
         return [] if rank.blank?
 
         sql = <<-SQL
-          SELECT DISTINCT external.gbif_occurrences.gbifid AS id,
+          SELECT DISTINCT pillar_point.gbif_occurrences.gbifid AS id,
             decimallongitude AS longitude,
             decimallatitude AS latitude, pillar_point.combine_taxa.kingdom,
             pillar_point.combine_taxa.species
-          FROM external.gbif_occurrences
+          FROM pillar_point.gbif_occurrences
           JOIN research_project_sources
             ON research_project_sources.sourceable_id =
-              external.gbif_occurrences.gbifid
-            AND (research_project_sources.sourceable_type = 'GbifOccurrence')
+              pillar_point.gbif_occurrences.gbifid
+            AND (research_project_sources.sourceable_type = 'PpGbifOccurrence')
             AND (research_project_sources.research_project_id = #{project.id})
             AND (metadata ->> 'location' != 'Montara SMR')
           JOIN pillar_point.combine_taxa
-            ON external.gbif_occurrences.taxonkey =
+            ON pillar_point.gbif_occurrences.taxonkey =
               pillar_point.combine_taxa.source_taxon_id
             AND pillar_point.combine_taxa.#{rank} = '#{taxon}'
             AND (source = 'gbif');
