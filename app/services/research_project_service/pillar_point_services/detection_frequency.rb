@@ -20,14 +20,14 @@ module ResearchProjectService
           pp_combine_taxa.#{combine_taxon_rank_field} AS #{taxon_rank},
           'gbif' AS source
           FROM pillar_point.combine_taxa as pp_combine_taxa
-          JOIN external.gbif_occurrences
+          JOIN pillar_point.gbif_occurrences
             ON pp_combine_taxa.source_taxon_id =
-              external.gbif_occurrences.taxonkey
+              pillar_point.gbif_occurrences.taxonkey
             AND pp_combine_taxa.source = 'gbif'
           JOIN research_project_sources
-            ON external.gbif_occurrences.gbifid =
+            ON pillar_point.gbif_occurrences.gbifid =
             research_project_sources.sourceable_id
-          WHERE sourceable_type = 'GbifOccurrence'
+          WHERE sourceable_type = 'PpGbifOccurrence'
           AND research_project_id = #{project.id}
           AND pp_combine_taxa.#{combine_taxon_rank_field} IS NOT NULL
           AND (metadata ->> 'location' != 'Montara SMR')

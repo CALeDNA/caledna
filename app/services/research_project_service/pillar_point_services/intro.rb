@@ -13,10 +13,10 @@ module ResearchProjectService
       def gbif_stats
         observations = gbif_occurrences.count
         unique_organisms =
-          GbifOccurrence
+          PpGbifOccurrence
           .select('DISTINCT(taxonkey)')
           .joins(:research_project_sources)
-          .where("research_project_sources.sourceable_type = 'GbifOccurrence'")
+          .where("research_project_sources.sourceable_type = 'PpGbifOccurrence'")
           .where("metadata ->> 'location' != 'Montara SMR'")
           .where('kingdom is not null')
           .where('research_project_sources.research_project_id = ?', project.id)

@@ -25,7 +25,7 @@ module ResearchProjectService
           rank = taxon.rank
         else
           taxon =
-            GbifOccTaxa
+            PpGbifOccTaxa
             .where("species = #{conn.quote(globi_taxon)}")
             .first
           if taxon.present?
@@ -43,11 +43,11 @@ module ResearchProjectService
           SELECT unnest(array[kingdom, phylum, classname, "order", family,
           genus, species])
           FROM research_project_sources
-          JOIN external.gbif_occurrences
-          ON external.gbif_occurrences.gbifid =
+          JOIN pillar_point.gbif_occurrences
+          ON pillar_point.gbif_occurrences.gbifid =
             research_project_sources.sourceable_id
           WHERE research_project_id = #{project.id}
-          AND sourceable_type = 'GbifOccurrence'
+          AND sourceable_type = 'PpGbifOccurrence'
           AND metadata ->> 'location' != 'Montara SMR'
         ) as gbif_match,
         #{conn.quote(globi_taxon)} IN(
@@ -123,11 +123,11 @@ module ResearchProjectService
           (SELECT unnest(ARRAY[kingdom, phylum, classname, "order", family,
           genus, species])
           FROM research_project_sources
-          JOIN external.gbif_occurrences
-          ON external.gbif_occurrences.gbifid =
+          JOIN pillar_point.gbif_occurrences
+          ON pillar_point.gbif_occurrences.gbifid =
             research_project_sources.sourceable_id
           WHERE research_project_sources.research_project_id = #{project.id}
-          AND sourceable_type = 'GbifOccurrence'
+          AND sourceable_type = 'PpGbifOccurrence'
           AND metadata ->> 'location' != 'Montara SMR'
 
           INTERSECT
@@ -179,11 +179,11 @@ module ResearchProjectService
           (SELECT unnest(ARRAY[kingdom, phylum, classname, "order", family,
           genus, species])
           FROM research_project_sources
-          JOIN external.gbif_occurrences
-          ON external.gbif_occurrences.gbifid =
+          JOIN pillar_point.gbif_occurrences
+          ON pillar_point.gbif_occurrences.gbifid =
             research_project_sources.sourceable_id
           WHERE research_project_sources.research_project_id = #{project.id}
-          AND sourceable_type = 'GbifOccurrence'
+          AND sourceable_type = 'PpGbifOccurrence'
           AND metadata ->> 'location' != 'Montara SMR'
 
           INTERSECT

@@ -130,21 +130,21 @@ module ResearchProjectService
       def join_sql
         <<~SQL
           FROM pillar_point.combine_taxa as gbif_ct
-          JOIN external.gbif_occurrences
-            ON external.gbif_occurrences.taxonkey =
+          JOIN pillar_point.gbif_occurrences
+            ON pillar_point.gbif_occurrences.taxonkey =
               gbif_ct.source_taxon_id
             AND gbif_ct.source = 'gbif'
           JOIN  research_project_sources
-            ON external.gbif_occurrences.gbifid =
+            ON pillar_point.gbif_occurrences.gbifid =
               research_project_sources.sourceable_id
             AND research_project_id = #{project.id}
-            AND sourceable_type = 'GbifOccurrence'
+            AND sourceable_type = 'PpGbifOccurrence'
             AND metadata ->> 'location' != 'Montara SMR'
           LEFT JOIN pillar_point.combine_taxa AS edna_ct
             ON lower(edna_ct.#{combine_taxon_rank_field}) =
               lower(gbif_ct.#{combine_taxon_rank_field})
             AND (edna_ct.source = 'ncbi' OR edna_ct.source = 'bold')
-          LEFT JOIN external.gbif_occ_taxa as g_taxa
+          LEFT JOIN pillar_point.gbif_occ_taxa as g_taxa
             ON gbif_ct.source_#{combine_taxon_rank_field} =
               g_taxa.#{gbif_taxon_rank_field}
             AND g_taxa.taxonrank = '#{taxon_rank}'
