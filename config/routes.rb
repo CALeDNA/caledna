@@ -109,6 +109,7 @@ Rails.application.routes.draw do
     namespace :tasks do
       get '/' => 'home#index'
 
+      resources :clear_cache, only: %i[index update]
       resources :aggregate_csv, only: %i[index create]
       resources :research_project_results, only: %i[index]
       delete 'research_project_results' =>
