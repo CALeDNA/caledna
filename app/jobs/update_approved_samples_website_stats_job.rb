@@ -6,7 +6,10 @@ class UpdateApprovedSamplesWebsiteStatsJob < ApplicationJob
   queue_as :default
 
   def perform
-    change_websites_update_at
     refresh_samples_map
+    refresh_ncbi_nodes_edna
+    refresh_caledna_website_stats
+    refresh_pour_website_stats
+    Rails.cache.clear
   end
 end
