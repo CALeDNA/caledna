@@ -392,6 +392,27 @@ namespace :external_resources do
     conn.exec_query(sql)
   end
 
+  task add_gbif_id_to_external_resources_without_gbif_id: :environment do
+    sql = <<~SQL
+      update external_resources set gbif_id = temp.gbif_id from (
+        select gbif_taxa.ncbi_id, gbif_taxa.gbif_id
+        from external.gbif_taxa
+        join external_resources
+        on external_resources.ncbi_id = gbif_taxa.ncbi_id
+        and external_resources.source = 'wikidata'
+        and external_resources.active = true
+        and external_resources.gbif_id is null
+        where gbif_taxa.taxonomic_status = 'accepted'
+      ) as temp
+      where external_resources.ncbi_id = temp.ncbi_id
+      and external_resources.source = 'wikidata'
+      and external_resources.active = true
+      and external_resources.gbif_id is null;
+    SQL
+
+    conn.exec_query(sql)
+  end
+
   private
 
   def conn
