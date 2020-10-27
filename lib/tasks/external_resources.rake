@@ -413,6 +413,30 @@ namespace :external_resources do
     conn.exec_query(sql)
   end
 
+  task create_external_resource_for_gbif_id: :environment do
+    sql = <<~SQL
+      insert into external_resources (ncbi_id, gbif_id, ncbi_name,
+      search_term , source, created_at, updated_at, active)
+      select gbif_taxa.ncbi_id, gbif_taxa.gbif_id, ncbi_nodes.canonical_name,
+      ncbi_nodes.canonical_name, 'external.gbif_taxa', now(), now(), true
+      from external.gbif_taxa
+      join ncbi_nodes on ncbi_nodes.ncbi_id = gbif_taxa.ncbi_id
+      where gbif_id in (
+        select gbif_taxa.gbif_id
+        from external.gbif_taxa
+        where gbif_taxa.taxonomic_status = 'accepted'
+        except
+        select gbif_id
+        from external_resources
+        where gbif_id is not null
+        and external_resources.wikidata_image is not null
+        and external_resources.source = 'wikidata'
+      );
+    SQL
+
+    conn.exec_query(sql)
+  end
+
   private
 
   def conn
