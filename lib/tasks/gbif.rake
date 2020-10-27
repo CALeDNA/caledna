@@ -363,6 +363,126 @@ namespace :gbif do
     end
   end
 
+  desc 'external tos GBIF'
+
+  task add_missing_taxon_tos: :environment do
+    kingdom_sql = <<~SQL
+      select  kingdom, kingdom_id,
+      'kingdom' as taxon_rank, kingdom as canonical_name,
+      kingdom_id as taxon_id
+      from external.gbif_taxa_tos
+      group by kingdom, kingdom_id;
+    SQL
+
+    phylum_sql = <<~SQL
+      select  kingdom, kingdom_id,
+      phylum, phylum_id,
+      'phylum' as taxon_rank, phylum as canonical_name,
+      phylum_id as taxon_id
+      from external.gbif_taxa_tos
+      where phylum is not null
+      group by kingdom, kingdom_id, phylum, phylum_id;
+    SQL
+
+    class_sql = <<~SQL
+      select kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id ,
+      'class' as taxon_rank, class_name as canonical_name,
+      class_id as taxon_id
+      from external.gbif_taxa_tos
+      where class_name is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id;
+    SQL
+
+    order_sql = <<~SQL
+      select kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id,
+      "order", order_id ,
+      'order' as taxon_rank, "order" as canonical_name,
+      order_id as taxon_id
+      from external.gbif_taxa_tos
+      where "order" is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id,
+      "order", order_id;
+    SQL
+
+    family_sql = <<~SQL
+      select kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id,
+      "order", order_id ,
+      family, family_id,
+      'family' as taxon_rank, family as canonical_name,
+      family_id as taxon_id
+      from external.gbif_taxa_tos
+      where family is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id,
+      "order", order_id, family, family_id;
+    SQL
+
+    genus_sql = <<~SQL
+      select  kingdom, kingdom_id,
+      phylum, phylum_id,
+      class_name, class_id,
+      "order", order_id ,
+      family, family_id,
+      genus, genus_id,
+      'genus' as taxon_rank, genus as canonical_name,
+      genus_id as taxon_id
+      from external.gbif_taxa_tos
+      where genus is not null
+      group by kingdom, kingdom_id, phylum, phylum_id, class_name, class_id,
+      "order", order_id, family, family_id, genus, genus_id;
+    SQL
+
+    [kingdom_sql, phylum_sql, class_sql, order_sql, family_sql,
+     genus_sql].each do |sql|
+      results = conn.exec_query(sql)
+      results.each do |res|
+        next if res['taxon_id'].blank?
+        taxon = GbifTaxonTos.find_by(taxon_id: res['taxon_id'])
+        next if taxon.present?
+
+        GbifTaxonTos.create(res)
+      end
+    end
+  end
+
+  task add_canonical_name_tos: :environment do
+    def create_sql(rank)
+      <<~SQL
+        UPDATE external.gbif_taxa_tos
+        SET canonical_name = #{rank}
+        WHERE taxon_rank = $1
+        AND canonical_name is NULL;
+      SQL
+    end
+
+    %i[kingdom phylum family genus species].each do |rank|
+      conn.exec_query(create_sql(rank), 'q', [[nil, rank]])
+    end
+
+    class_rank = '"class_name"'
+    conn.exec_query(create_sql(class_rank), 'q', [[nil, 'class']])
+
+    order_rank = '"order"'
+    conn.exec_query(create_sql(order_rank), 'q', [[nil, 'order']])
+
+    %i[form subspecies variety].each do |rank|
+      infra_rank = 'accepted_scientific_name'
+      conn.exec_query(create_sql(infra_rank), 'q', [[nil, rank]])
+    end
+
+    GbifTaxonTos.where(canonical_name: nil).find_each do |taxon|
+      names = [taxon.species, taxon.genus, taxon.family, taxon.order,
+               taxon.class_name, taxon.phylum, taxon.kingdom].compact
+      taxon.canonical_name = names.first
+      taxon.save
+    end
+  end
+
   def conn
     ActiveRecord::Base.connection
   end
