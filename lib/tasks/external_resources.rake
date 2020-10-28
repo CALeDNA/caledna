@@ -359,7 +359,7 @@ namespace :external_resources do
     end
   end
 
-  task :add_inat_images, %i[path] => :environment do |_t, args|
+  task :add_inat_images_v1, %i[path] => :environment do |_t, args|
     path = args[:path]
 
     CSV.foreach(path, headers: true, col_sep: ',') do |row|
@@ -435,6 +435,27 @@ namespace :external_resources do
     SQL
 
     conn.exec_query(sql)
+  end
+
+  task add_inat_images: :environment do
+    inat_api = InatApi.new
+
+    select_sql = <<~SQL
+      select inaturalist_id
+      from external_resources
+      where active = true
+      and wikidata_image is null
+      and inat_image is null
+      and inaturalist_id is not null
+      and source = 'wikidata'
+    SQL
+
+    results = conn.exec_query(select_sql)
+    results.each.with_index do |result, index|
+      delay = index * 1.1
+      UpdateInatImageJob.set(wait: delay.seconds)
+                        .perform_later(result['inaturalist_id'])
+    end
   end
 
   private

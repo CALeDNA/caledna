@@ -47,4 +47,17 @@ class InatApi
       puts "API error for #{id}"
     end
   end
+
+  def default_photo(taxon_id)
+    response = taxon_by_id(taxon_id)
+    return if response['results'].blank?
+    return if response['results'].first['default_photo'].blank?
+
+    default_photo = response['results'].first['default_photo']
+    url = default_photo['medium_url']
+    photo_id = default_photo['id']
+    attribution = default_photo['attribution']
+
+    { url: url, photo_id: photo_id, attribution: attribution } if url
+  end
 end
