@@ -437,6 +437,46 @@ namespace :external_resources do
     conn.exec_query(sql)
   end
 
+  task add_gbif_images: :environment do
+    gbif_api = GbifApi.new
+    inat_api = InatApi.new
+
+    sql = <<~SQL
+      select gbif_id
+      from external_resources
+      where active = true
+      and wikidata_image is null
+      and inat_image is null
+      and gbif_id is not null
+      group by gbif_id
+      limit 1
+    SQL
+
+    results = conn.exec_query(sql)
+
+    results.each do |result|
+      gbif_response = gbif_api.inat_occurrence_by_taxon(result['gbif_id'])
+      next if gbif_response['results'].blank?
+
+      inat_taxon_id = gbif_response['results'].first['taxonID']
+      photo_data = inat_api.default_photo(inat_taxon_id)
+
+      sql = <<~SQL
+        UPDATE external_resources
+        set inat_image = $1, inat_image_attribution = $2, inat_image_id = $3,
+        updated_at = now()
+        where active = true
+        and wikidata_image is null
+        and inat_image is null
+        and gbif_id = $4
+      SQL
+
+      binding = [[nil, photo_data[:url]], [nil, photo_data[:attribution]],
+                 [nil, photo_data[:photo_id]], [nil, result['gbif_id']]]
+      conn.exec_query(sql, 'q', binding)
+    end
+  end
+
   task add_inat_images: :environment do
     inat_api = InatApi.new
 
