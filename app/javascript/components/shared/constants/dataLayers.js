@@ -39,7 +39,7 @@ export const Nickel = "Nickel (ug/L)";
 export const Selenium = "Selenium (ug/L)";
 export const Zinc = "Zinc (ug/L)";
 export const PouR = "Protecting Our River";
-export const LARWMP = "Los Angeles River Watershed Monitoring Program (2018)";
+export const LARWMP = "Los Angeles River Watershed Monitoring Program (2019)";
 
 export const biodiversity = {
   eDNA: "eDNA",
@@ -68,7 +68,7 @@ export const locations = {
   urban watershed. The guiding questions and corresponding monitoring framework
   of the LARWMP provide both the public and resource managers with an
   improved understanding of conditions and trends in the watershed."
-  - Los Angeles River Watershed Monitoring Program 2018 Annual Report`,
+  - Los Angeles River Watershed Monitoring Program 2019 Annual Report`,
 };
 
 export const benthicMacroinvertebrates = {

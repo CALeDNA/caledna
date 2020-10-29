@@ -4,7 +4,7 @@ import "leaflet-svg-shape-markers";
 // import { ecotopesJson } from "./data/ecotopes.js";
 import { riversJson } from "../data/rivers";
 import { watershedJson } from "../data/watershed";
-import { LARWMPJson } from "../data/sites_2018";
+import { LARWMPJson } from "../data/sites_2019";
 import base_map from "./base_map";
 import { formatClassifications, findClassificationColor } from '../utils/map_colors';
 
@@ -36,10 +36,23 @@ export function createTaxonClassifications(items) {
   return formatClassifications(values)
 }
 
+// https://stackoverflow.com/a/175787
+function isNumeric(str) {
+  if (typeof str != "string") return false // we only process strings!
+  return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+
 export function createAnalyteClassifications(analyte) {
   let values = LARWMPJson.features
-    .filter((feature) => { return feature.properties[analyte] })
-    .map((feature) => { return feature.properties[analyte] })
+    .filter((feature) => {
+      let value = feature.properties[analyte]
+      return value && value != 'NA';
+    })
+    .map((feature) => {
+       let value = feature.properties[analyte]
+       return isNumeric(value) ? Number(value) : value;
+    })
 
   return formatClassifications(values);
 }
@@ -116,7 +129,7 @@ function LARWMP_popup(feature, analyte) {
 // output: geoJson
 export function createAnalyteLayer(analyte, classifications, colors) {
   let filteredData = LARWMPJson.features.filter(feature => {
-    return feature.properties[analyte]
+    return feature.properties[analyte] && feature.properties[analyte] != 'NA';
   })
 
   function create_popup(feature, layer) {
