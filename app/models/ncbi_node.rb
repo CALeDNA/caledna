@@ -35,7 +35,8 @@ class NcbiNode < ApplicationRecord
   delegate *LINKS, to: :format_resources
   # rubocop:enable Lint/AmbiguousOperator
   delegate :wikidata_entity, :wikidata_image, :eol_image, :inat_image,
-           :gbif_id, :gbif_image, :wiki_excerpt, to: :format_resources
+           :gbif_id, :gbif_image, :wiki_excerpt, :wikipedia_title,
+           to: :format_resources
 
   def self.taxa_dataset
     OpenStruct.new(
@@ -153,17 +154,11 @@ class NcbiNode < ApplicationRecord
   # rubocop:disable Metrics/AbcSize
   # formats the a wikipedia link for a given page title
   def wikipedia_link
-    # wikidata_entity comes from ExternalResources. format is Qxxxxxx
-    return if wikidata_entity.blank?
-    results = wikipedia_page
+    return if wikipedia_title.blank?
 
-    return if results['entities'].blank?
-    return if results['entities'][wikidata_entity]['sitelinks'].blank?
-
-    title = results['entities'][wikidata_entity]['sitelinks']['enwiki']['title']
     @wikipedia_link ||= OpenStruct.new(
-      title: title,
-      url: "https://en.wikipedia.org/wiki/#{title}",
+      title: wikipedia_title,
+      url: "https://en.wikipedia.org/wiki/#{wikipedia_title}",
       text: 'Wikipedia'
     )
   end
@@ -295,8 +290,6 @@ class NcbiNode < ApplicationRecord
     @format_resources ||=
       FormatExternalResources.new(ncbi_id, external_resources)
   end
-
-  private
 
   def update_external_resource_eol(eol_id, photo)
     image = {
