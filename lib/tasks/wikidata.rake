@@ -21,7 +21,8 @@ namespace :wikidata do
   desc 'import all NCBI taxa that is in wikidata & save them to ' \
   'external_resources'
   task create_external_resources: :environment do
-    sql = "DELETE FROM external_resources WHERE source = 'wikidata'"
+    sql = "UPDATE external_resources SET source = 'wikidata_old', " \
+      "active = false WHERE source = 'wikidata'"
     conn.exec_query(sql)
 
     import_records
