@@ -1,0 +1,71 @@
+active_storage_attachments,
+active_storage_blobs,
+ar_internal_metadata,Rails table
+asvs,
+,
+event_registrations,
+events,
+external.asvs_2017,asvs using 2017 NCBI taxonomy
+external.gbif_taxa,
+external.gbif_taxa_tos,
+external.globi_interactions,data from GloBI
+external.globi_requests,
+external.ncbi_deleted_taxa,2020 NCBI taxonomy
+external.ncbi_merged_taxa,2020 NCBI taxonomy
+external.ncbi_names_2017,2017 NCBI taxonomy
+external.ncbi_nodes_2017,2017 NCBI taxonomy
+external.ncbi_versions,Keep track of which NCBI taxonomy version have been implemented
+external_resources,"List of ids, images, data from external sites."
+field_projects,
+ggbn_meta,Used to export data to GGBN.
+kobo_photos,
+ncbi_divisions,
+ncbi_names,
+ncbi_nodes,
+page_blocks,
+pages,
+pg_search_documents,
+pghero_query_stats,
+pghero_space_stats,
+pillar_point.asvs,
+pillar_point.combine_taxa,
+pillar_point.edna_gbif,
+pillar_point.gbif_occ_taxa,
+pillar_point.gbif_occurrences,
+pillar_point.globi_show,
+pillar_point.ncbi_names,
+pillar_point.ncbi_nodes,
+place_pages,
+place_sources,
+places,
+pour.gbif_common_names,
+pour.gbif_datasets,
+pour.gbif_occurrences,
+pour.gbif_taxa,
+pour.inat_taxa,
+pour.mapgrid,
+primers,
+research_project_authors,
+research_project_pages,
+research_project_sources,
+research_projects,
+researchers,
+result_taxa,
+,
+sample_primers,
+samples,
+,
+,
+schema_migrations,
+site_news,
+spatial_ref_sys,
+survey_answers,
+survey_options,
+survey_questions,
+survey_responses,
+surveys,
+unmatched_results,Taxonomy strings  that didn't have a match in result_taxa when researchers uploaded the eDNA results.
+uploads,Files uploaded using Rails ActiveStorage
+user_submissions,Posts that are submited by users. Used on River Stories.
+users,Registered users.
+websites,Websites using this code base.
