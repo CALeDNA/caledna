@@ -64,7 +64,7 @@ survey_options,
 survey_questions,
 survey_responses,
 surveys,
-unmatched_results,Taxonomy strings  that didn't have a match in result_taxa when researchers uploaded the eDNA results.
+unmatched_results,Taxonomy strings that didn't have a nomalized taxa when researchers uploaded the eDNA results.
 uploads,Files uploaded using Rails ActiveStorage
 user_submissions,Posts that are submited by users. Used on River Stories.
 users,Registered users.
