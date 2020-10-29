@@ -174,7 +174,7 @@
             v-if="tempSelectedTaxon && tempSelectedTaxon.canonical_name"
           >
             <h2>{{ taxonName(tempSelectedTaxon) }}</h2>
-            Rank: {{ tempSelectedTaxon.rank }}
+            <p>Rank: {{ tempSelectedTaxon.rank }}</p>
           </div>
 
           <div class="m-t-md">
@@ -188,6 +188,19 @@
               Cancel
             </button>
           </div>
+
+          <h3 v-if="tempSelectedTaxon.image || tempSelectedTaxon.wiki_excerpt">
+            Additional Info
+          </h3>
+          <img
+            v-if="tempSelectedTaxon.image"
+            :src="tempSelectedTaxon.image"
+            class="taxon-image"
+          />
+          <div
+            v-if="tempSelectedTaxon.wiki_excerpt"
+            v-html="tempSelectedTaxon.wiki_excerpt"
+          ></div>
         </section>
 
         <!-- environmentalTab -->
