@@ -45,15 +45,24 @@ module Api
       def full_texa_sql
         <<-SQL
         SELECT taxon_id, canonical_name, rank, common_names,
-        division_name, count
+        division_name, count, wiki_excerpt, image
         FROM (
           SELECT taxon_id, canonical_name, rank, common_names,
           ncbi_divisions.name as division_name, asvs_count as count,
+          external_resources.wiki_excerpt,
+          CASE
+            WHEN wikidata_image IS NOT NULL THEN wikidata_image
+            WHEN inat_image IS NOT NULL THEN inat_image
+            WHEN eol_image IS NOT NULL THEN eol_image
+          END image,
           to_tsvector('simple', canonical_name) ||
           to_tsvector('english', coalesce(common_names, '')) AS doc
           FROM ncbi_nodes
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+          JOIN external_resources
+            ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
+            AND active = true
           WHERE asvs_count > 0
           ORDER BY asvs_count DESC NULLS LAST
         ) AS search
@@ -74,10 +83,19 @@ module Api
       def prefix_sql
         <<~SQL
           SELECT taxon_id, canonical_name, rank, common_names,
-          ncbi_divisions.name as division_name, asvs_count as count
+          ncbi_divisions.name as division_name, asvs_count as count,
+          external_resources.wiki_excerpt,
+          CASE
+            WHEN wikidata_image IS NOT NULL THEN wikidata_image
+            WHEN inat_image IS NOT NULL THEN inat_image
+            WHEN eol_image IS NOT NULL THEN eol_image
+          END image
           FROM ncbi_nodes
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
+          JOIN external_resources
+            ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
+            AND active = true
           WHERE lower(canonical_name) LIKE $1
           AND asvs_count > 0
           ORDER BY asvs_count DESC NULLS LAST
@@ -95,13 +113,22 @@ module Api
       def full_texa_inat_sql
         <<-SQL
         SELECT taxon_id, canonical_name, rank, common_names,
-        division_name, count
+        division_name, count, wiki_excerpt, image
         FROM (
           SELECT taxon_id, canonical_name, taxon_rank as rank, common_names,
           kingdom as division_name, occurrence_count as count,
+          wiki_excerpt,
+          CASE
+            WHEN wikidata_image IS NOT NULL THEN wikidata_image
+            WHEN inat_image IS NOT NULL THEN inat_image
+            WHEN eol_image IS NOT NULL THEN eol_image
+          END image,
           to_tsvector('simple', canonical_name) ||
           to_tsvector('english', coalesce(common_names, '')) AS doc
           FROM pour.gbif_taxa
+          JOIN external_resources
+            ON external_resources.gbif_id = gbif_taxa.taxon_id
+            AND active = true
           ORDER BY occurrence_count DESC NULLS LAST
         ) AS search
         WHERE search.doc @@ plainto_tsquery('simple', $1)
