@@ -56,6 +56,7 @@ class TaxaController < ApplicationController
   def top_sql(kingdom_sql = nil)
     <<-SQL
     SELECT
+    ARRAY_AGG(DISTINCT gbif_image) AS gbif_images,
     ARRAY_AGG(DISTINCT eol_image) AS eol_images,
     ARRAY_AGG(DISTINCT inat_image) AS inat_images,
     ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images,
@@ -66,6 +67,7 @@ class TaxaController < ApplicationController
     FROM "ncbi_nodes"
     LEFT JOIN "external_resources"
        ON "external_resources"."ncbi_id" = "ncbi_nodes"."ncbi_id"
+       AND active = true
     JOIN ncbi_divisions
       ON ncbi_nodes.cal_division_id = ncbi_divisions.id
     WHERE "ncbi_nodes"."rank" = 'species'

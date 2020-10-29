@@ -47,6 +47,7 @@ class TaxaSearchesController < ApplicationController
       FROM ncbi_nodes
       LEFT JOIN external_resources
         ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
+        AND active = true
       LEFT JOIN ncbi_divisions
         ON ncbi_nodes.cal_division_id = ncbi_divisions.id
       GROUP BY ncbi_nodes.taxon_id, ncbi_divisions.name

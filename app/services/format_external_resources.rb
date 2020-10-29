@@ -26,6 +26,16 @@ class FormatExternalResources
     @gbif_id ||= resource_value_for(:gbif_id)
   end
 
+  def gbif_image
+    image = resource_value_for(:gbif_image)
+    return if image.blank?
+    OpenStruct.new(
+      url: image,
+      attribution: resource_value_for(:gbif_image_attribution),
+      source: 'GBIF'
+    )
+  end
+
   def inat_image
     image = resource_value_for(:inat_image)
     return if image.blank?

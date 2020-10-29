@@ -35,7 +35,7 @@ class NcbiNode < ApplicationRecord
   delegate *LINKS, to: :format_resources
   # rubocop:enable Lint/AmbiguousOperator
   delegate :wikidata_entity, :wikidata_image, :eol_image, :inat_image,
-           :gbif_id, :wiki_excerpt, to: :format_resources
+           :gbif_id, :gbif_image, :wiki_excerpt, to: :format_resources
 
   def self.taxa_dataset
     OpenStruct.new(
@@ -145,7 +145,7 @@ class NcbiNode < ApplicationRecord
   # then *_id to get images from api. Best used when showing one taxa.
   def image
     @image ||= begin
-      wikidata_image || inat_image || eol_image ||
+      wikidata_image || inat_image || eol_image || gbif_image ||
         inaturalist_api_image || eol_api_image || gbif_api_image
     end
   end
@@ -238,17 +238,15 @@ class NcbiNode < ApplicationRecord
     @gbif_api_image ||= begin
       return if gbif_occurrences.blank?
 
-      cc_license = 'http://creativecommons.org/licenses/by-nc/4.0/'
-      media = gbif_occurrences.flat_map { |i| i['media'] }
-                              .compact
-                              .select { |i| i['license'] == cc_license }
-
+      media = gbif_occurrences.flat_map { |i| i['media'] }.compact
       return if media.blank?
+
       photo = media.first
 
+      credit = "#{photo['creator']} (#{photo['publisher']})" if photo['creator']
       OpenStruct.new(
         url: photo['identifier'],
-        attribution: "#{photo['creator']} (#{photo['publisher']})",
+        attribution: credit,
         source: 'GBIF'
       )
     end
@@ -257,18 +255,6 @@ class NcbiNode < ApplicationRecord
 
   def eol_api
     @eol_api ||= ::EolApi.new
-  end
-
-  def eol_api_image
-    @eol_api_image ||= begin
-      return if eol_image_obj.blank?
-
-      OpenStruct.new(
-        url: eol_image_obj['eolMediaURL'],
-        attribution: eol_image_obj['rightsHolder'],
-        source: 'Encyclopedia of Life'
-      )
-    end
   end
 
   # rubocop:disable Metrics/AbcSize
@@ -287,6 +273,18 @@ class NcbiNode < ApplicationRecord
     end
   end
   # rubocop:enable Metrics/AbcSize
+
+  def eol_api_image
+    @eol_api_image ||= begin
+      return if eol_image_obj.blank?
+
+      OpenStruct.new(
+        url: eol_image_obj['eolMediaURL'],
+        attribution: eol_image_obj['rightsHolder'],
+        source: 'Encyclopedia of Life'
+      )
+    end
+  end
 
   def format_resources
     @format_resources ||=
