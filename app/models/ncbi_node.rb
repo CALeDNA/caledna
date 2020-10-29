@@ -157,7 +157,7 @@ class NcbiNode < ApplicationRecord
     return if wikipedia_title.blank?
 
     @wikipedia_link ||= OpenStruct.new(
-      title: wikipedia_title,
+      id: wikipedia_title,
       url: "https://en.wikipedia.org/wiki/#{wikipedia_title}",
       text: 'Wikipedia'
     )
