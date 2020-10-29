@@ -56,15 +56,15 @@ export function formatClassifications(values) {
 
 
 export function findClassificationColor(value, classifications, colors) {
-  if (value <= classifications[0].end) {
+  if (classifications[0] && value <= classifications[0].end) {
     return colors[0];
-  } else if (value <= classifications[1].end) {
+  } else if (classifications[1] && value <= classifications[1].end) {
     return colors[1];
-  } else if (value <= classifications[2].end) {
+  } else if (classifications[2] && value <= classifications[2].end) {
     return colors[2];
-  } else if (value <= classifications[3].end) {
+  } else if (classifications[3] && value <= classifications[3].end) {
     return colors[3];
-  } else {
+  } else if(classifications[4]) {
     return colors[4];
   }
 }
