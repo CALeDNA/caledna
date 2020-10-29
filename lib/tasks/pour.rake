@@ -28,4 +28,24 @@ namespace :pour do
                     director_notes: new_note)
     end
   end
+
+  task add_collection_period_to_pilot: :environment do
+    sql = <<-SQL
+      UPDATE research_project_sources
+      SET metadata = jsonb_set(metadata, '{collection_period}', '"Summer 2019 Pilot"')
+      WHERE research_project_id = 7 AND sourceable_type = 'Sample';
+    SQL
+    conn.exec_query(sql)
+
+    sql = <<-SQL
+      UPDATE research_project_sources
+      SET metadata = jsonb_set(metadata, '{order}', '1')
+      WHERE research_project_id = 7 AND sourceable_type = 'Sample';
+    SQL
+    conn.exec_query(sql)
+  end
+
+  def conn
+    ActiveRecord::Base.connection
+  end
 end
