@@ -211,6 +211,8 @@ class NcbiNode < ApplicationRecord
       default_photo = inaturalist_taxa['default_photo']
       return if default_photo.blank?
 
+      update_external_resource_inat(inaturalist_taxa['id'], default_photo)
+
       OpenStruct.new(
         url: default_photo['medium_url'],
         attribution: default_photo['attribution'],
@@ -242,6 +244,7 @@ class NcbiNode < ApplicationRecord
       return if media.blank?
 
       photo = media.first
+      update_external_resource_gbif(gbif_link.id, photo)
 
       credit = "#{photo['creator']} (#{photo['publisher']})" if photo['creator']
       OpenStruct.new(
@@ -278,6 +281,8 @@ class NcbiNode < ApplicationRecord
     @eol_api_image ||= begin
       return if eol_image_obj.blank?
 
+      update_external_resource_eol(eol_link.id, eol_image_obj)
+
       OpenStruct.new(
         url: eol_image_obj['eolMediaURL'],
         attribution: eol_image_obj['rightsHolder'],
@@ -289,5 +294,45 @@ class NcbiNode < ApplicationRecord
   def format_resources
     @format_resources ||=
       FormatExternalResources.new(ncbi_id, external_resources)
+  end
+
+  private
+
+  def update_external_resource_eol(eol_id, photo)
+    image = {
+      eol_image: photo['eolMediaURL'],
+      eol_image_attribution: photo['rightsHolder'],
+    }
+    id = { eol_id: eol_id }
+    update_resource(image, id)
+  end
+
+  def update_external_resource_inat(inaturalist_id, photo)
+    image = {
+      inat_image: photo['medium_url'],
+      inat_image_attribution: photo['attribution'],
+      inat_image_id: photo['id'],
+    }
+    id = { inaturalist_id: inaturalist_id }
+    update_resource(image, id)
+  end
+
+  def update_external_resource_gbif(gbif_id, photo)
+    if photo['creator'].present?
+      credit = "#{photo['creator']} (#{photo['publisher']})"
+    else
+      credit = photo['rightsHolder']
+    end
+    image = {
+      gbif_image: photo['identifier'],
+      gbif_image_attribution: credit,
+    }
+    id = { gbif_id: gbif_id }
+    update_resource(image, id)
+  end
+
+  def update_resource(image, id)
+    resource = ExternalResource.where(ncbi_id: ncbi_id, active: true).where(id)
+    resource.update(image) if resource.present?
   end
 end
