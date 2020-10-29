@@ -46,6 +46,21 @@ class FormatExternalResources
     )
   end
 
+  def wiki_excerpt
+    excerpt = resource_value_for(:wiki_excerpt)
+    return if excerpt.blank?
+
+    word_count = 0
+    text = []
+    excerpt.split('</p>').map do |paragraph|
+      next if word_count > 50
+      clean_paragraph = ActionView::Base.full_sanitizer.sanitize(paragraph).strip
+      word_count += clean_paragraph.count(' ')
+      text << clean_paragraph
+    end
+    text.join('')
+  end
+
   def bold_link
     id = resource_value_for(:bold_id)
     return if id.blank?
@@ -183,7 +198,9 @@ class FormatExternalResources
     )
   end
 
-  def wikipedia_link; end
+  def wikipedia_title
+    resource_value_for(:wiki_title)
+  end
 
   def worms_link
     id = resource_value_for(:worms_id)

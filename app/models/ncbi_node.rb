@@ -35,7 +35,7 @@ class NcbiNode < ApplicationRecord
   delegate *LINKS, to: :format_resources
   # rubocop:enable Lint/AmbiguousOperator
   delegate :wikidata_entity, :wikidata_image, :eol_image, :inat_image,
-           :gbif_id, to: :format_resources
+           :gbif_id, :wiki_excerpt, to: :format_resources
 
   def self.taxa_dataset
     OpenStruct.new(
@@ -171,14 +171,8 @@ class NcbiNode < ApplicationRecord
 
   # connects to wikipedia api to get excerpt for a given title
   def wikipedia_excerpt
-    return if wikipedia_link.blank?
-
-    results = WikipediaApi.new.summary(wikipedia_link.title)
-    pages = results['query']['pages']
-    page_id = pages.keys.first
-    return if page_id == -1
-
-    pages[page_id]['extract']
+    return if wiki_excerpt.blank?
+    wiki_excerpt
   end
 
   def asvs_count_display
