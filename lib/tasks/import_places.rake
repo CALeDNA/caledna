@@ -4,7 +4,7 @@ namespace :import_places do
   require_relative '../../app/services/import_places'
   include ImportPlaces
 
-  IMPORT_GIS_BASE = ENV.fetch('IMPORT_GIS_BASE')
+  IMPORT_GIS_BASE = ENV.fetch('IMPORT_GIS_BASE', '')
 
   task import_states: :environment do
     file_path = "#{IMPORT_GIS_BASE}/CA_state_TIGER2016.shp"

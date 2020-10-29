@@ -5,11 +5,8 @@ class DBSeeds
   include SeedData
 
   def seed_basic
-    delete_records
     seed_people
-    seed_projects
-    seed_extraction_types
-    puts 'done seeding'
+    seed_website
   end
 end
 

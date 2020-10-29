@@ -32,7 +32,6 @@ namespace :mapgrid do
     source.readlines.each do |line|
       line.strip!
       next if line.empty?
-      print '.'
       ActiveRecord::Base.connection.exec_query(line)
     end
     source.close
