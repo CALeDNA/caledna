@@ -54,13 +54,14 @@ module Api
             WHEN wikidata_image IS NOT NULL THEN wikidata_image
             WHEN inat_image IS NOT NULL THEN inat_image
             WHEN eol_image IS NOT NULL THEN eol_image
+            WHEN gbif_image IS NOT NULL THEN gbif_image
           END image,
           to_tsvector('simple', canonical_name) ||
           to_tsvector('english', coalesce(common_names, '')) AS doc
           FROM ncbi_nodes
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
-          JOIN external_resources
+          LEFT JOIN external_resources
             ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
             AND active = true
           WHERE asvs_count > 0
@@ -89,11 +90,12 @@ module Api
             WHEN wikidata_image IS NOT NULL THEN wikidata_image
             WHEN inat_image IS NOT NULL THEN inat_image
             WHEN eol_image IS NOT NULL THEN eol_image
+            WHEN gbif_image IS NOT NULL THEN gbif_image
           END image
           FROM ncbi_nodes
           JOIN ncbi_divisions
             ON ncbi_nodes.cal_division_id = ncbi_divisions.id
-          JOIN external_resources
+          LEFT JOIN external_resources
             ON external_resources.ncbi_id = ncbi_nodes.ncbi_id
             AND active = true
           WHERE lower(canonical_name) LIKE $1
@@ -122,11 +124,12 @@ module Api
             WHEN wikidata_image IS NOT NULL THEN wikidata_image
             WHEN inat_image IS NOT NULL THEN inat_image
             WHEN eol_image IS NOT NULL THEN eol_image
+            WHEN gbif_image IS NOT NULL THEN gbif_image
           END image,
           to_tsvector('simple', canonical_name) ||
           to_tsvector('english', coalesce(common_names, '')) AS doc
           FROM pour.gbif_taxa
-          JOIN external_resources
+          LEFT JOIN external_resources
             ON external_resources.gbif_id = gbif_taxa.taxon_id
             AND active = true
           ORDER BY occurrence_count DESC NULLS LAST
@@ -156,7 +159,7 @@ module Api
         elsif full_texa_entries.blank? && inat_entries.blank?
           prefix_entries
         else
-          res = (full_texa_entries + prefix_entries[0...3] + inat_entries)
+          res = (full_texa_entries[0...6] + inat_entries[0...6])
                 .sort_by { |entry| entry['count'] }
                 .reverse
           res.uniq { |entry| entry['canonical_name'] }[0...10]
