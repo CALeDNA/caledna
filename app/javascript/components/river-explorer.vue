@@ -65,10 +65,10 @@
               <div class="data-legend" v-html="taxaLegend(layer)"></div>
             </div>
             <div class="data-footer" v-show="showTaxonBody(layer)">
-              <span v-html="taxonLink(layer)"></span>
               <span @click="removeTaxonLayer(layer)">
                 <i class="far fa-times-circle"></i> Remove
               </span>
+              <span v-html="taxonLink(layer)"></span>
             </div>
           </div>
         </section>
@@ -97,11 +97,11 @@
               <label :for="`${layer}_m`">{{ layer }}</label>
             </div>
             <div class="data-footer">
-              <span @click="showModal(layer)">
-                <i class="far fa-question-circle"></i> Info
-              </span>
               <span @click="removeDataLayer(layer)">
                 <i class="far fa-times-circle"></i> Remove
+              </span>
+              <span @click="showModal(layer)" v-if="showInfoIcon(layer)">
+                <i class="far fa-question-circle"></i> Info
               </span>
             </div>
 
@@ -221,7 +221,10 @@
             <div>
               <h3>
                 {{ BenthicMacroinvertebrates }}
-                <span @click="showModal(BenthicMacroinvertebrates)">
+                <span
+                  @click="showModal(BenthicMacroinvertebrates)"
+                  v-if="showInfoIcon(BenthicMacroinvertebrates)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -243,7 +246,10 @@
             <div>
               <h3>
                 {{ AttachedAlgae }}
-                <span @click="showModal(AttachedAlgae)">
+                <span
+                  @click="showModal(AttachedAlgae)"
+                  v-if="showInfoIcon(AttachedAlgae)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -262,7 +268,10 @@
             <div>
               <h3>
                 {{ RiparianHabitatScore }}
-                <span @click="showModal(RiparianHabitatScore)">
+                <span
+                  @click="showModal(RiparianHabitatScore)"
+                  v-if="showInfoIcon(RiparianHabitatScore)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -281,7 +290,10 @@
             <div>
               <h3>
                 {{ AlgalBiomass }}
-                <span @click="showModal(AlgalBiomass)">
+                <span
+                  @click="showModal(AlgalBiomass)"
+                  v-if="showInfoIcon(AlgalBiomass)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -302,7 +314,10 @@
             <div>
               <h3>
                 {{ InSituMeasurements }}
-                <span @click="showModal(InSituMeasurements)">
+                <span
+                  @click="showModal(InSituMeasurements)"
+                  v-if="showInfoIcon(InSituMeasurements)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -321,7 +336,10 @@
             <div>
               <h3>
                 {{ GeneralChemistry }}
-                <span @click="showModal(GeneralChemistry)">
+                <span
+                  @click="showModal(GeneralChemistry)"
+                  v-if="showInfoIcon(GeneralChemistry)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -340,7 +358,10 @@
             <div>
               <h3>
                 {{ Nutrients }}
-                <span @click="showModal(Nutrients)">
+                <span
+                  @click="showModal(Nutrients)"
+                  v-if="showInfoIcon(Nutrients)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -360,7 +381,10 @@
             <div>
               <h3>
                 {{ DissolvedMetals }}
-                <span @click="showModal(DissolvedMetals)">
+                <span
+                  @click="showModal(DissolvedMetals)"
+                  v-if="showInfoIcon(DissolvedMetals)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -380,7 +404,10 @@
             <div>
               <h3>
                 {{ PhysicalHabitatAssessments }}
-                <span @click="showModal(PhysicalHabitatAssessments)">
+                <span
+                  @click="showModal(PhysicalHabitatAssessments)"
+                  v-if="showInfoIcon(PhysicalHabitatAssessments)"
+                >
                   <i class="far fa-question-circle"></i>
                 </span>
               </h3>
@@ -550,14 +577,13 @@ export default {
     // modal menu
     // =============
     modalBody: function (layer) {
-      if (allAnalytes[layer]) {
-        return allAnalytes[layer];
-      } else {
-        return `TODO: Add info about ${layer}`;
-      }
+      return allAnalytes[layer];
     },
     showModal: function (layer) {
       this.currentModal = layer;
+    },
+    showInfoIcon: function (layer) {
+      return allAnalytes[layer];
     },
     // =============
     // side menu

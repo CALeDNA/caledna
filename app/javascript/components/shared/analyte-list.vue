@@ -10,7 +10,7 @@
           @click="addLayer(key, $event)"
         />
         <label :for="key">{{ key }}</label>
-        <span @click="showModal(key)">
+        <span @click="showModal(key)" v-if="showInfoIcon(key)">
           <i class="far fa-question-circle"></i>
         </span>
         <Modal v-if="key == currentModal" @close="currentModal = null">
@@ -24,7 +24,7 @@
 
 <script>
 import Modal from "./modal";
-import { locations } from "../../data/dataLayers";
+import { locations, allAnalytes } from "../../data/dataLayers";
 
 export default {
   name: "AnalyteList",
@@ -37,14 +37,13 @@ export default {
   },
   methods: {
     modalBody: function (layer) {
-      if (locations[layer]) {
-        return locations[layer];
-      } else {
-        return `TODO: Add info about ${layer}`;
-      }
+      return allAnalytes[layer];
     },
     showModal: function (layer) {
       this.currentModal = layer;
+    },
+    showInfoIcon: function (layer) {
+      return allAnalytes[layer];
     },
     addLayer: function (layer, event) {
       this.$emit("addSelectedLayer", layer, event.target.checked);
