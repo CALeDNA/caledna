@@ -27,11 +27,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :field_projects, only: %i[show]
       resources :inat_observations, only: %i[index]
-      resources :places, only: %i[show] do
-        get '/gbif_occurrences', to: 'places#gbif_occurrences'
-        get '/kingdom_counts', to: 'places#kingdom_counts'
-      end
-      get '/places_basic', to: 'places#places_basic'
+      # resources :places, only: %i[show] do
+      #   get '/gbif_occurrences', to: 'places#gbif_occurrences'
+      #   get '/kingdom_counts', to: 'places#kingdom_counts'
+      # end
+      # get '/places_basic', to: 'places#places_basic'
 
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]
@@ -84,8 +84,8 @@ Rails.application.routes.draw do
     resources :kobo_photos
     resources :pages
     resources :page_blocks
-    resources :places
-    resources :place_pages
+    # resources :places
+    # resources :place_pages
     resources :primers
     resources :research_projects do
       get 'edna_results', to: 'research_projects#edna_results',
@@ -188,10 +188,10 @@ Rails.application.routes.draw do
                       controller: 'research_projects/pages'
   end
 
-  resources :places, only: %i[index show edit] do
-    resources :pages, only: %i[show edit update],
-                      controller: 'place_pages'
-  end
+  # resources :places, only: %i[index show edit] do
+  #   resources :pages, only: %i[show edit update],
+  #                     controller: 'place_pages'
+  # end
   # resources :user_submissions, only: %i[index show new create]
 
   namespace :beta do
