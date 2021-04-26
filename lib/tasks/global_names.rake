@@ -202,9 +202,9 @@ namespace :global_names do
     sql = <<-SQL
     SELECT taxon_name,
       research_project_sources.metadata ->> 'inat_id' as inat_id
-    FROM external.globi_requests
+    FROM pillar_point.globi_requests
     JOIN research_project_sources
-    ON research_project_sources.sourceable_id = external.globi_requests.id
+    ON research_project_sources.sourceable_id = pillar_point.globi_requests.id
     LEFT JOIN external_resources
       ON external_resources.inaturalist_id = (research_project_sources.metadata ->> 'inat_id')::integer
       AND external_resources.source = 'globalnames',

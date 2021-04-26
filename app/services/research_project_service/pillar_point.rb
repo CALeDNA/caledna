@@ -138,9 +138,9 @@ module ResearchProjectService
     def count_sql
       <<-SQL
       SELECT COUNT(*)
-      FROM external.globi_requests
+      FROM pillar_point.globi_requests
       JOIN research_project_sources
-      ON research_project_sources.sourceable_id = external.globi_requests.id
+      ON research_project_sources.sourceable_id = pillar_point.globi_requests.id
       WHERE research_project_id = #{project.id}
       AND sourceable_type = 'GlobiRequest'
       SQL

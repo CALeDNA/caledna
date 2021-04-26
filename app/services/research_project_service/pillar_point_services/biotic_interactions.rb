@@ -137,8 +137,8 @@ module ResearchProjectService
           WHERE "sourceTaxonName" = #{conn.quote(globi_taxon)} )
         ) as gbif_match
           FROM external.globi_interactions
-          LEFT JOIN external.globi_requests
-          ON external.globi_requests.taxon_name =
+          LEFT JOIN pillar_point.globi_requests
+          ON pillar_point.globi_requests.taxon_name =
             external.globi_interactions."sourceTaxonName"
           WHERE "targetTaxonName" != 'Detritus'
           AND "targetTaxonName" != 'Detritus complex'
@@ -193,8 +193,8 @@ module ResearchProjectService
           WHERE "targetTaxonName" = #{conn.quote(globi_taxon)} )
         ) as gbif_match
         FROM external.globi_interactions
-        LEFT JOIN external.globi_requests
-        ON external.globi_requests.taxon_name =
+        LEFT JOIN pillar_point.globi_requests
+        ON pillar_point.globi_requests.taxon_name =
           external.globi_interactions."targetTaxonName"
         WHERE "sourceTaxonName" != 'Detritus'
         AND "sourceTaxonName" != 'Detritus complex'
@@ -211,9 +211,9 @@ module ResearchProjectService
           research_project_sources.metadata ->> 'inat_at_pillar_point_count' AS count,
           taxon_name, gbif_id,
           inaturalist_id, external_resources.ncbi_id
-        FROM external.globi_requests
+        FROM pillar_point.globi_requests
         JOIN research_project_sources
-        ON research_project_sources.sourceable_id = external.globi_requests.id
+        ON research_project_sources.sourceable_id = pillar_point.globi_requests.id
         LEFT JOIN external_resources
         ON  external_resources.inaturalist_id =
           (research_project_sources.metadata ->> 'inat_id')::integer

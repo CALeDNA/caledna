@@ -2,7 +2,6 @@
 
 module ResearchProjectService
   class LaRiver
-    include CustomPagination
     include ResearchProjectService::LaRiverServices::OccurrencesComparison
     include ResearchProjectService::LaRiverServices::AreaDiversity
     include ResearchProjectService::LaRiverServices::DetectionFrequency
@@ -48,21 +47,6 @@ module ResearchProjectService
 
     def selected_taxon_groups
       taxon_groups.split('|').to_s[1..-2].tr('"', "'")
-    end
-
-    def limit
-      48
-    end
-
-    def count_sql
-      <<-SQL
-      SELECT COUNT(*)
-      FROM external.globi_requests
-      JOIN research_project_sources
-      ON research_project_sources.sourceable_id = external.globi_requests.id
-      WHERE research_project_id = #{project.id}
-      AND sourceable_type = 'GlobiRequest'
-      SQL
     end
 
     def query_results(sql_string)
