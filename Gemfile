@@ -48,6 +48,7 @@ gem 'sparql-client', '~> 3.1'
 gem 'summernote-rails', '~> 0.8.10.0'
 gem 'title', '~> 0.0.7'
 gem 'uglifier', '~> 4.0'
+gem 'unicode-display_width', '~> 1.7'
 gem 'webpacker', '~> 3.5.3'
 
 group :development do
@@ -96,7 +97,7 @@ group :test do
   gem 'rails-controller-testing', '~> 1.0.2'
   gem 'rspec-sidekiq', '~> 3.1'
   gem 'rspec-support', '~> 3.9'
-  gem 'shoulda-matchers', '~> 3.1'
+  gem 'shoulda-matchers', '~> 3.1', '>= 3.1.3'
   gem 'timecop', '~> 0.9'
 end
 
