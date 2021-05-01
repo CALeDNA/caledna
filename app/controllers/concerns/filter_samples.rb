@@ -25,7 +25,7 @@ module FilterSamples
       if CheckWebsite.caledna_site?
         SamplesMap
       else
-        SamplesMap.where(field_project_id: FieldProject.la_river)
+        SamplesMap.where(field_project_id: FieldProject.la_river.ids)
       end
     end
   end

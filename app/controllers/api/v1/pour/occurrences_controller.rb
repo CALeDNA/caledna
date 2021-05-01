@@ -203,8 +203,8 @@ module Api
             JOIN research_project_sources
               ON research_project_sources.sourceable_id = samples_map.id
               AND research_project_sources.sourceable_type = 'Sample'
-              AND research_project_sources.research_project_id =
-              #{ResearchProject.la_river.id}
+              AND research_project_sources.research_project_id IN
+              #{ResearchProject.la_river_ids}
           SQL
 
           website_sample_map

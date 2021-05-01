@@ -15,8 +15,12 @@ class ResearchProject < ApplicationRecord
   validates :slug, presence: true
 
   scope :published, -> { where(published: true) }
-  scope :la_river, -> { find_by(name: 'Los Angeles River') }
+  scope :la_river, -> { where("name LIKE 'Los Angeles River%'") }
   scope :pillar_point, -> { find_by(name: 'Pillar Point') }
+
+  def self.la_river_ids
+    la_river.ids.to_s.tr('[', '(').tr(']', ')')
+  end
 
   def project_pages
     @project_pages ||= begin

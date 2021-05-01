@@ -71,7 +71,7 @@ module WebsiteStats
   def taxa_count_sql(pour: false)
     sql = base_taxa_count_sql
     if pour
-      sql += " AND asvs.research_project_id = #{ResearchProject.la_river.id}"
+      sql += " AND asvs.research_project_id IN #{ResearchProject.la_river_ids}"
     end
     sql += ') AS temp;'
     sql
@@ -94,7 +94,7 @@ module WebsiteStats
   def rank_count_sql(rank, pour: false)
     sql = base_rank_count_sql(rank)
     if pour
-      sql += "AND asvs.research_project_id = #{ResearchProject.la_river.id}"
+      sql += "AND asvs.research_project_id IN #{ResearchProject.la_river_ids}"
     end
     sql += <<~SQL
         )

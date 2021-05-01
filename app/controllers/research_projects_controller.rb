@@ -40,7 +40,7 @@ class ResearchProjectsController < ApplicationController
     SQL
 
     if CheckWebsite.pour_site?
-      sql += " AND research_projects.id = #{ResearchProject.la_river.id}"
+      sql += " AND research_projects.id IN #{ResearchProject.la_river_ids}"
     end
 
     sql + <<-SQL
@@ -74,7 +74,7 @@ class ResearchProjectsController < ApplicationController
     SQL
 
     if CheckWebsite.pour_site?
-      sql += " AND research_projects.id = #{ResearchProject.la_river.id};"
+      sql += " AND research_projects.id IN #{ResearchProject.la_river_ids};"
     end
     sql
   end

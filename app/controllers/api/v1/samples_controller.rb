@@ -90,7 +90,7 @@ module Api
         SQL
 
         if CheckWebsite.pour_site?
-          sql += "AND research_project_id = #{ResearchProject.la_river.id}"
+          sql += "AND research_project_id IN #{ResearchProject.la_river_ids}"
         end
 
         sql + <<~SQL
