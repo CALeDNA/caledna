@@ -18,26 +18,32 @@ Rails app the [CALeDNA](http://ucedna.com) and [Protecting Our River](https://ww
 - [Node.js 9](https://nodejs.org/en/) for installing javascript libraries
 - [Yarn](https://yarnpkg.com/en/) javascript package manager
 - [Webpacker](https://github.com/rails/webpacker) to bundle javascript
-
+- [AWS]
+- [Cloudfront]
+- [Heroku]
 ## Setup
 
 Clone this repo.
 
-Download the NCBI taxonomy tables and ERSI shp files from Google Drive.
+Install libraries.
 
 ```bash
 $ bundle install
-$ rake newb
 $ yarn install
 ```
 
 `rake newb` - runs `setup.rb` to fill out the environmental variables, run
-database migrations, and seed the database. Contact the CALeDNA program manager
-to get a copy of the 3rd party environmental variables.
+database migrations, and seed the database. Seeding the taxa tables (ncbi_names,
+ncbi_nodes) will take many minutes since the taxa tables have over 3.5 GB of
+data.
 
-Import the NCBI taxa tables (ncbi_nodes, ncbi_names, ncbi_divisions).
+```bash
+$ rake newb
+```
 
 ## Start server
+
+Start rails server.
 
 ```bash
 $ bin/rails s
@@ -49,7 +55,8 @@ This app uses Webpacker to handle javascript bundling. Optionally run webpack de
 $ ./bin/webpack-dev-server
 ```
 
-Optionally run sidekiq to handle background jobs.
+Optionally run sidekiq to handle background jobs. The most commonly used
+background jobs involve importing eDNA results.
 
 ```
 $ redis-cli flushall
@@ -80,8 +87,8 @@ $ bin/rake
 
 ### Squarespace
 
-- The UCeDNA.com site has a Squarespace site for the static content,
-and a Rails app for the data portal.
+- The UCeDNA.com site has a Squarespace site for the static content (ucedna.com),
+and a Rails app for the data portal (data.ucedna.com).
 - The Rails app handles the registration and login. After users login to the Rails app, they are redirected to home page of Squarespace page. On the local development, the login redirects to localhost:9000, which is default port for the Squarespace development server.
 
 ### Database
