@@ -27,7 +27,7 @@ module River
     # rubocop:disable Metrics/AbcSize
     def home
       @stats = project_service.home_page_stats
-      @block_1 = home_blocks.find { |b| b.slug == 'pour-home-1' }
+      @block_1 = home_blocks.find { |b| b.slug == 'pour-home-1' } || null_block
       @block_2 = home_blocks.find { |b| b.slug == 'pour-home-2' }
       @block_3 = home_blocks.find { |b| b.slug == 'pour-home-3' }
       @block_donate = home_blocks.find { |b| b.slug == 'pour-home-donate' }
@@ -48,13 +48,20 @@ module River
 
     private
 
+    def null_block
+      OpenStruct.new(image: OpenStruct.new(attachment: nil))
+    end
+
     def home_news
       @home_news ||=
         SiteNews.current_site.published.order('published_date DESC').limit(3)
     end
 
     def home_blocks
-      @home_blocks ||= Page.find_by(slug: 'pour-home-page').page_blocks
+      @home_blocks ||= begin
+        page = Page.find_by(slug: 'pour-home-page')
+        page.present? ? page.page_blocks : {}
+      end
     end
 
     def page
