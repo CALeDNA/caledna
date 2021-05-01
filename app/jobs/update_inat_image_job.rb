@@ -3,6 +3,7 @@
 class UpdateInatImageJob < ApplicationJob
   queue_as :default
 
+  # rubocop:disable Metrics/MethodLength
   def perform(inaturalist_id)
     inat_api = InatApi.new
     update_sql = <<~SQL
@@ -22,4 +23,5 @@ class UpdateInatImageJob < ApplicationJob
                [nil, photo_data[:photo_id]], [nil, inaturalist_id]]
     ActiveRecord::Base.connection.exec_query(update_sql, 'q', binding)
   end
+  # rubocop:enable Metrics/MethodLength
 end

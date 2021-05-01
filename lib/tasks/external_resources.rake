@@ -478,8 +478,6 @@ namespace :external_resources do
   end
 
   task add_inat_images: :environment do
-    inat_api = InatApi.new
-
     select_sql = <<~SQL
       select inaturalist_id
       from external_resources

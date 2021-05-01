@@ -47,10 +47,12 @@ puts 'setting up database'
 rake 'db:drop db:create db:migrate'
 
 puts 'importing taxa'
+# rubocop:disable Metrics/LineLength
 system_call 'psql -d caledna_development -c "\copy external.ncbi_versions from ./import_data/ncbi_versions.csv delimiter \',\' csv header;" '
 system_call 'psql -d caledna_development -c "\copy ncbi_divisions from ./import_data/ncbi_divisions.csv delimiter \',\' csv header;" '
 system_call 'psql -d caledna_development -c "\copy ncbi_nodes from ./import_data/ncbi_nodes.csv delimiter \',\' csv header;" '
 system_call 'psql -d caledna_development -c "\copy ncbi_names from ./import_data/ncbi_names.csv delimiter \',\' csv header;" '
+# rubocop:enable Metrics/LineLength
 
 puts 'importing places'
 rake 'mapgrid:import_hex_1500'

@@ -197,6 +197,7 @@ module Api
           SQL
         end
 
+        # rubocop:disable Metrics/MethodLength
         def samples(taxon)
           source_join_sql = <<~SQL
             JOIN research_project_sources
@@ -213,8 +214,10 @@ module Api
             .joins(source_join_sql)
             .where(published_samples_sql)
             .where('ncbi_nodes.names @> ARRAY[?]', taxon)
-            .group('id', 'barcode', 'latitude', 'longitude', 'research_project_sources.metadata', 'collection_date')
+            .group('id', 'barcode', 'latitude', 'longitude',
+                   'research_project_sources.metadata', 'collection_date')
         end
+        # rubocop:enable Metrics/MethodLength
 
         def taxa_samples
           @taxa_samples ||= begin

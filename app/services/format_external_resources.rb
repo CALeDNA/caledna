@@ -56,6 +56,7 @@ class FormatExternalResources
     )
   end
 
+  # rubocop:disable Metrics/MethodLength
   def wiki_excerpt
     excerpt = resource_value_for(:wiki_excerpt)
     return if excerpt.blank?
@@ -64,12 +65,14 @@ class FormatExternalResources
     text = []
     excerpt.split('</p>').map do |paragraph|
       next if word_count > 50
-      clean_paragraph = ActionView::Base.full_sanitizer.sanitize(paragraph).strip
+      clean_paragraph =
+        ActionView::Base.full_sanitizer.sanitize(paragraph).strip
       word_count += clean_paragraph.count(' ')
       text << clean_paragraph
     end
     text.join('')
   end
+  # rubocop:enable Metrics/MethodLength
 
   def bold_link
     id = resource_value_for(:bold_id)

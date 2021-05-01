@@ -2,8 +2,8 @@
 
 module SeedData
   include WebsiteStats
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 
-  # rubocop:disable Metrics/MethodLength
   def seed_people
     return unless Researcher.count.zero?
     puts 'creating people...'
@@ -21,7 +21,6 @@ module SeedData
       username: 'Researcher Jane'
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
   def seed_website
     puts 'creating websites...'
@@ -93,7 +92,6 @@ module SeedData
       create_edna_results(research, sample)
     end
   end
-
 
   def create_edna_results(research_project, sample)
     50.times do
@@ -245,4 +243,6 @@ module SeedData
       'sample_primers CASCADE'
     ActiveRecord::Base.connection.execute(sql)
   end
+
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end

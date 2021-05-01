@@ -121,6 +121,7 @@ module WikidataImport
     SQL
   end
 
+  # rubocop:disable Metrics/AbcSize
   def process_wikidata_missing_label(entity)
     results = WikidataApi.new.label(entity)
     return if results['entities'].blank?
@@ -130,6 +131,7 @@ module WikidataImport
     label = results['entities'][entity]['labels']['en']['value']
     update_external_resource(entity, label)
   end
+  # rubocop:enable Metrics/AbcSize
 
   def fetch_count
     query = 'SELECT (COUNT(*) AS ?count) WHERE { _:b6 p:P685 _:b7. }'

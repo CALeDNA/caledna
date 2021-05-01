@@ -144,14 +144,15 @@ class NcbiNode < ApplicationRecord
 
   # loops through external_resources *_image to get saved images and
   # then *_id to get images from api. Best used when showing one taxa.
+  # rubocop:disable Metrics/CyclomaticComplexity
   def image
     @image ||= begin
       wikidata_image || inat_image || eol_image || gbif_image ||
         inaturalist_api_image || eol_api_image || gbif_api_image
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
-  # rubocop:disable Metrics/AbcSize
   # formats the a wikipedia link for a given page title
   def wikipedia_link
     return if wikipedia_title.blank?
@@ -162,7 +163,6 @@ class NcbiNode < ApplicationRecord
       text: 'Wikipedia'
     )
   end
-  # rubocop:enable Metrics/AbcSize
 
   # connects to wikipedia api to get excerpt for a given title
   def wikipedia_excerpt
@@ -199,6 +199,7 @@ class NcbiNode < ApplicationRecord
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def inaturalist_api_image
     @inaturalist_api_image ||= begin
       return if inaturalist_taxa.blank?
@@ -215,6 +216,7 @@ class NcbiNode < ApplicationRecord
       )
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def gbif_api
     @gbif_api ||= ::GbifApi.new
@@ -294,7 +296,7 @@ class NcbiNode < ApplicationRecord
   def update_external_resource_eol(eol_id, photo)
     image = {
       eol_image: photo['eolMediaURL'],
-      eol_image_attribution: photo['rightsHolder'],
+      eol_image_attribution: photo['rightsHolder']
     }
     id = { eol_id: eol_id }
     update_resource(image, id)
@@ -304,25 +306,27 @@ class NcbiNode < ApplicationRecord
     image = {
       inat_image: photo['medium_url'],
       inat_image_attribution: photo['attribution'],
-      inat_image_id: photo['id'],
+      inat_image_id: photo['id']
     }
     id = { inaturalist_id: inaturalist_id }
     update_resource(image, id)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update_external_resource_gbif(gbif_id, photo)
-    if photo['creator'].present?
-      credit = "#{photo['creator']} (#{photo['publisher']})"
-    else
-      credit = photo['rightsHolder']
-    end
+    credit = if photo['creator'].present?
+               "#{photo['creator']} (#{photo['publisher']})"
+             else
+               photo['rightsHolder']
+             end
     image = {
       gbif_image: photo['identifier'],
-      gbif_image_attribution: credit,
+      gbif_image_attribution: credit
     }
     id = { gbif_id: gbif_id }
     update_resource(image, id)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def update_resource(image, id)
     resource = ExternalResource.where(ncbi_id: ncbi_id, active: true).where(id)
