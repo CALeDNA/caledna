@@ -19,7 +19,7 @@ module CustomCounter
   end
 
   def update_asvs_count_la_river
-    puts 'update asvs_count_la_river...'
+    puts 'reset asvs_count_la_river...'
     reset_counter('asvs_count_la_river')
 
     puts 'update asvs_count_la_river...'
@@ -35,8 +35,7 @@ module CustomCounter
   def reset_counter(asvs_field)
     sql = <<~SQL
       UPDATE ncbi_nodes set #{asvs_field} = 0
-      WHERE #{asvs_field} > 0
-      AND taxon_id IN (SELECT taxon_id FROM ncbi_nodes_edna);
+      WHERE #{asvs_field} > 0;
     SQL
     conn.exec_update(sql)
   end
