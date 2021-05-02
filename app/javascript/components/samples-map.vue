@@ -99,7 +99,6 @@
         </template>
       </vue-good-table>
     </div>
-    <map-layers-modal />
   </div>
 </template>
 
@@ -112,10 +111,10 @@ import pluralize from "pluralize";
 import Spinner from "./shared/spinner";
 import MapTableToggle from "./shared/map-table-toggle";
 import FiltersLayout from "./shared/filters/all-samples";
-import MapLayersModal from "./shared/map-layers-modal";
 
 import { formatQuerystring } from "../utils/data_viz_filters";
 import baseMap from "../packs/base_map.js";
+import LaRiverBaseMap from "../packs/la_river_base_map.js";
 import { samplesTableColumns, samplesDefaultFilters } from "../constants";
 import { mapMixins, searchMixins, taxonLayerMixins } from "../mixins";
 import { allSamplesStore } from "../stores/stores";
@@ -127,7 +126,6 @@ export default {
     MapTableToggle,
     FiltersLayout,
     Spinner,
-    MapLayersModal,
   },
   mixins: [mapMixins, searchMixins, taxonLayerMixins],
   filters: {
@@ -164,8 +162,7 @@ export default {
     this.fetchSamples(this.endpoint);
   },
   mounted() {
-    this.map = baseMap.createMap();
-    this.addMapOverlays(this.map);
+    this.map = LaRiverBaseMap.createMap();
   },
   methods: {
     setActiveTab(event) {
