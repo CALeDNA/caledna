@@ -1,14 +1,5 @@
 <h1>Los Angeles River Sampling Locations</h1>
 
-<div class="flex-grid">
-  <% @places.each do |place| %>
-    <div class="flex-grid-item">
-      <% if place.image.attachment.present? %>
-        <div><%= display_resize_image(place.image) %></div>
-      <% end %>
+<div id="places-index"></div>
 
-      <h3 class="m-b-zero"><%= link_to place.name, place_path(place) %></h3>
-      <div>(<%= pluralize(place.count, 'site') %>)</div>
-    </div>
-  <% end %>
-</div>
+<%= javascript_pack_tag 'places_index' %>

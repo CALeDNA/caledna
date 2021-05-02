@@ -42,7 +42,7 @@ class PlacesController < ApplicationController
         .joins('LEFT JOIN samples_map ON ST_DWithin ' \
         '(places.geom_projected, samples_map.geom_projected, 1000)')
         .group('id', 'name', 'latitude', 'longitude', 'geom')
-        .order(:name)
+        .order(latitude: :desc)
     end
   end
 

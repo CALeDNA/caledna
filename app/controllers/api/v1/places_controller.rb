@@ -33,6 +33,12 @@ module Api
         }
       end
 
+      def places_pour
+        render json: {
+          places: places_for_pour_map
+        }
+      end
+
       private
 
       def place_id
@@ -224,6 +230,23 @@ module Api
         attributes[:place_type_cd] = params[:place_type] if params[:place_type]
 
         attributes
+      end
+
+      # ==============
+      # places_pour
+      # ==============
+
+      def places_for_pour_map
+        @places_for_pour_map ||= begin
+          Place
+            .select('id', 'name', 'latitude', 'longitude')
+            .select('count(samples_map.id) as site_count')
+            .joins('LEFT JOIN samples_map ON ST_DWithin ' \
+            '(places.geom_projected, samples_map.geom_projected, 1000)')
+            .where('place_type_cd = ?', 'pour_location')
+            .group('id', 'name', 'latitude', 'longitude')
+            .order(latitude: :desc)
+        end
       end
     end
   end
