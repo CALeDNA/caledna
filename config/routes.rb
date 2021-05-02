@@ -17,11 +17,10 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :field_projects, only: %i[show]
       resources :inat_observations, only: %i[index]
-      # resources :places, only: %i[show] do
-      #   get '/gbif_occurrences', to: 'places#gbif_occurrences'
-      #   get '/kingdom_counts', to: 'places#kingdom_counts'
-      # end
-      # get '/places_basic', to: 'places#places_basic'
+      resources :places, only: %i[show] do
+        get '/gbif_occurrences', to: 'places#gbif_occurrences'
+        get '/kingdom_counts', to: 'places#kingdom_counts'
+      end
 
       resources :primers, only: %i[index]
       resources :research_projects, only: %i[show]

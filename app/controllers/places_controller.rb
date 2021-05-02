@@ -3,7 +3,9 @@
 class PlacesController < ApplicationController
   layout 'river/application' if CheckWebsite.pour_site?
 
-  def index; end
+  def index
+    @places = places
+  end
 
   def show
     redirect_show if place&.show_pages?
