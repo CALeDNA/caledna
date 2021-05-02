@@ -68,13 +68,13 @@ module River
       @page ||= Page.current_site.published.find_by(slug: params[:id])
     end
 
-    def project
-      @project ||= ResearchProject.find_by(slug: 'los-angeles-river')
+    def projects
+      @projects ||= ResearchProject.la_river
     end
 
     def project_service
       @project_service ||= begin
-        ResearchProjectService::LaRiver.new(project, params)
+        ResearchProjectService::LaRiver.new(projects, {})
       end
     end
 
