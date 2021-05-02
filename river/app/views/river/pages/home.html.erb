@@ -53,18 +53,18 @@
       </div>
 
       <div class="item">
-        <%= link_to research_project_path(id: 'los-angeles-river') do %>
-          <%= image_tag 'river/pilot_results.jpg' %>
-          <h3>Pilot Results</h3>
-          <p>Browse through the results from our summer 2019 pilot.</p>
-        <% end %>
-      </div>
-
-      <div class="item">
         <%= link_to samples_path do %>
           <%= image_tag 'river/explore_data.jpg' %>
           <h3>Explore our Data</h3>
           <p>Explore biological and environmental data about the LA River.</p>
+        <% end %>
+      </div>
+
+      <div class="item">
+        <%= link_to river_stories_path do %>
+          <%= image_tag 'river/river_stories.png' %>
+          <h3>River Stories</h3>
+          <p>Share your stories of what the LA River means to you.</p>
         <% end %>
       </div>
 
