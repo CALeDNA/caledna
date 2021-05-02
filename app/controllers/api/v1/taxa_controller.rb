@@ -212,7 +212,7 @@ module Api
         <<~SQL
           JOIN asvs ON samples_map.id = asvs.sample_id
             AND "samples_map"."status" = 'results_completed'
-            AND asvs.research_project_id = #{ResearchProject.la_river.id}
+            AND asvs.research_project_id IN #{ResearchProject.la_river_ids}
           JOIN primers ON asvs.primer_id = primers.id
           JOIN ncbi_nodes_edna as ncbi_nodes
             ON ncbi_nodes.taxon_id = asvs.taxon_id
@@ -228,8 +228,7 @@ module Api
               .select(taxa_select_sql)
               .joins(taxa_join_sql)
               .where('ids @> ?', "{#{params[:id]}}")
-              .where('samples_map.field_project_id = ?',
-                      FieldProject.la_river.id)
+              .where("samples_map.field_project_id IN #{FieldProject.la_river_ids}")
               .load
           end
         end
