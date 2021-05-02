@@ -173,4 +173,8 @@ namespace :fix_records do
       ActiveRecord::Base.connection.exec_query(sql)
     end
   end
+
+  def conn
+    ActiveRecord::Base.connection
+  end
 end
