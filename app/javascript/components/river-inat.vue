@@ -53,9 +53,6 @@ import Spinner from "./shared/spinner";
 import {
   initMap,
   pourLocationsLayer,
-  LARWMPLocationsLayer,
-  createRiverLayer,
-  createWatershedLayer,
   createMapgridLayer,
   createTaxonClassifications,
   createMapLegend,
@@ -63,7 +60,7 @@ import {
   closePopupForMap,
   getHexagonData,
 } from "../packs/river_explorer_map";
-import base_map from "../packs/base_map";
+import LaRiverBaseMap from "../packs/la_river_base_map";
 import api from "../utils/api_routes";
 import { targetColorRange } from "../utils/map_colors";
 import { inatStore } from "../stores/stores";
@@ -80,7 +77,9 @@ export default {
       occurrencesMap: null,
       loading: false,
       occurrencesRiverLayer: null,
+      occurrencesWatershedLayer: null,
       speciesRiverLayer: null,
+      speciesWatershedLayer: null,
       store: inatStore,
       // data
       selectedData: {},
@@ -218,22 +217,42 @@ export default {
       // =============
       // create maps
       // =============
+      this.speciesWatershedLayer = LaRiverBaseMap.createWatershedLayer();
+      this.speciesRiverLayer = LaRiverBaseMap.createRiverLayer();
 
-      this.speciesMap = initMap("map-species", L.tileLayer(""));
-      this.speciesMap.addLayer(createWatershedLayer());
-      this.speciesRiverLayer = createRiverLayer();
-      ctx.speciesMap.addLayer(this.speciesRiverLayer);
+      this.speciesMap = initMap({
+        watershedLayer: this.speciesWatershedLayer,
+        riverLayer: this.speciesRiverLayer,
+        selector: "map-species",
+        initialTile: "None",
+      });
 
-      this.occurrencesMap = initMap("map-occurrences", L.tileLayer(""));
-      this.occurrencesMap.addLayer(createWatershedLayer());
-      this.occurrencesRiverLayer = createRiverLayer();
-      ctx.occurrencesMap.addLayer(this.occurrencesRiverLayer);
+      this.occurrencesWatershedLayer = LaRiverBaseMap.createWatershedLayer();
+      this.occurrencesRiverLayer = LaRiverBaseMap.createRiverLayer();
+
+      this.occurrencesMap = initMap({
+        watershedLayer: this.occurrencesWatershedLayer,
+        riverLayer: this.occurrencesRiverLayer,
+        selector: "map-occurrences",
+        initialTile: "None",
+      });
 
       this.fetchAllOccurences();
 
       // =============
       // setup event listeners
       // =============
+      this.speciesMap.on("overlayadd", function (e) {
+        if (e.name == "LA River Watershed") {
+          ctx.speciesWatershedLayer.bringToBack();
+        }
+      });
+      this.occurrencesMap.on("overlayadd", function (e) {
+        if (e.name == "LA River Watershed") {
+          ctx.occurrencesWatershedLayer.bringToBack();
+        }
+      });
+
       this.speciesMap.on("popupopen", function (e) {
         var hexagonData = getHexagonData(e);
         if (hexagonData) {

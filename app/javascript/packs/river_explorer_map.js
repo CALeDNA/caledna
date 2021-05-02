@@ -8,22 +8,27 @@ import { LARWMPJson } from "../data/sites_2019";
 import base_map from "./base_map";
 import { formatClassifications, findClassificationColor } from '../utils/map_colors';
 
-export function initMap(selector = "map", customLayer) {
+export function initMap({watershedLayer, riverLayer, selector, initialTile}) {
   let tiles = base_map.tileLayersFactory();
   tiles["None"] = L.tileLayer('');
-  let defaultLayer = customLayer ? customLayer : tiles.Minimal;
+  let defaultLayer = initialTile ? tiles[initialTile] : tiles.Minimal;
 
   let map = L.map(selector, {
     zoomControl: true,
     maxZoom: 18,
     minZoom: 6,
-    layers: [defaultLayer],
+    layers: [defaultLayer, riverLayer, watershedLayer]
   }).fitBounds([
     [33.679246670913905, -118.6974911092205],
     [34.45898102165338, -117.94488821092733],
   ]);
 
-  L.control.layers(tiles).addTo(map);
+  var overlayMaps = {
+    "LA River Watershed": watershedLayer,
+    "Rivers": riverLayer,
+  };
+
+  L.control.layers(tiles, overlayMaps).addTo(map);
 
   return map;
 }
@@ -155,51 +160,6 @@ export function createAnalyteLayer(analyte, classifications, colors) {
     pointToLayer: function (feature, latlng) {
       return L.shapeMarker(latlng, create_style(feature));
     },
-  });
-}
-
-// output: geoJson
-export function createRiverLayer() {
-  var style = {
-    opacity: .8,
-    color: "rgba(19,133,255,1.0)",
-    weight: 1.75,
-  };
-
-  function createPopup(feature, layer) {
-    let popup = `
-      <p>LA River Watershed</p>
-      <table class="map-popup">
-        <tr>
-          <th scope="row">Name</th>
-          <td>${feature.properties["GNIS_NAME"]}</td>
-        </tr>
-      </table>
-    `;
-
-    layer.bindPopup(popup, { maxHeight: 400 });
-  }
-
-  return new L.geoJson(riversJson, {
-    style: style,
-    onEachFeature: createPopup,
-    interactive: true,
-  });
-}
-
-// output: geoJson
-export function createWatershedLayer() {
-  var style = {
-    opacity: 1,
-    color: "rgba(100,100,100,1)",
-    weight: 2.0,
-    fillOpacity: 0.3,
-    fillColor: "rgba(190,190,190,0.9)",
-    interactive: false,
-  };
-
-  return new L.geoJson(watershedJson, {
-    style: style,
   });
 }
 

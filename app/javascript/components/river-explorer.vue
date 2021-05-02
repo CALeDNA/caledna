@@ -120,7 +120,9 @@
             <spinner v-if="loading" />
           </div>
         </section>
+        <RiverInat v-show="activeTab === 'mapTab'" />
 
+        <!-- biodiversityTab -->
         <section v-if="activeTab === 'biodiversityTab'" class="taxon-tab">
           <h2 class="m-t-zero">LA River Biodiversity</h2>
           <p>
@@ -436,8 +438,6 @@
             </button>
           </div>
         </section>
-
-        <RiverInat v-show="activeTab === 'mapTab'" />
       </div>
     </div>
   </div>
@@ -483,8 +483,6 @@ import {
   taxonEdnaLayer,
   taxonGbifLayer,
   LARWMPLocationsLayer,
-  createRiverLayer,
-  createWatershedLayer,
   createTaxonClassifications,
   createAnalyteLayer,
   createAnalyteClassifications,
@@ -493,7 +491,7 @@ import {
   closePopupForMap,
   getHexagonData,
 } from "../packs/river_explorer_map";
-import base_map from "../packs/base_map";
+import LaRiverBaseMap from "../packs/la_river_base_map";
 import api from "../utils/api_routes";
 import {
   targetColorRange,
@@ -1044,11 +1042,19 @@ export default {
     this.$nextTick(function () {
       let ctx = this;
 
-      this.map = initMap();
-      this.watershedLayer = createWatershedLayer();
-      this.riverLayer = createRiverLayer();
-      this.map.addLayer(this.watershedLayer);
-      this.map.addLayer(this.riverLayer);
+      this.watershedLayer = LaRiverBaseMap.createWatershedLayer();
+      this.riverLayer = LaRiverBaseMap.createRiverLayer();
+      this.map = initMap({
+        watershedLayer: this.watershedLayer,
+        riverLayer: this.riverLayer,
+        selector: "map",
+      });
+
+      this.map.on("overlayadd", function (e, h) {
+        if (e.name == "LA River Watershed") {
+          ctx.watershedLayer.bringToBack();
+        }
+      });
 
       this.map.on("popupopen", function (e) {
         var hexagonData = getHexagonData(e);
