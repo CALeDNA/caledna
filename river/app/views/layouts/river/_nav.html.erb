@@ -36,9 +36,11 @@
           </a>
           <ul class="dropdown-menu">
             <%= nav_link 'Sites', samples_path %>
+            <%= nav_link 'River Explorer', river_explorer_path %>
             <%= nav_link 'Sampling Locations', places_path %>
+            <%= nav_link 'Research Projects', research_projects_path %>
             <%= nav_link 'Identified Organisms', taxa_path %>
-            <%= nav_link 'Pilot Results', research_project_path(id: 'los-angeles-river') %>
+            <li class="divider"></li>
             <%= nav_link 'How are Samples Analyzed?', samples_analyzed_path %>
             <%= nav_link 'Disclaimer', disclaimer_path %>
           </ul>
