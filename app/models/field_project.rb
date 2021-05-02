@@ -10,7 +10,11 @@ class FieldProject < ApplicationRecord
 
   scope :published, -> { where(published: true) }
   scope :default_project, -> { find_by(name: 'unknown') }
-  scope :la_river, -> { find_by(name: 'Los Angeles River') }
+  scope :la_river, -> { where("name LIKE 'Los Angeles River%'") }
+
+  def self.la_river_ids
+    la_river.ids.to_s.tr('[', '(').tr(']', ')')
+  end
 
   def multi_sample_form?
     MULTI_SAMPLE_PROJECTS.include?(kobo_id)
