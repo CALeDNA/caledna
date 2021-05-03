@@ -116,7 +116,7 @@ module FilterSamples
   end
 
   def basic_completed_samples
-    columns = %w[id latitude longitude substrate primer_ids]
+    columns = %w[id latitude longitude substrate primer_ids barcode status]
     samples = base_samples_for_map.select(columns)
                                   .where(status: :results_completed)
                                   .where(completed_query_string)
