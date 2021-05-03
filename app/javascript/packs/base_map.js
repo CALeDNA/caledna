@@ -1,4 +1,5 @@
 import "leaflet-easybutton";
+import "leaflet-svg-shape-markers";
 
 // =============
 // config map
@@ -119,17 +120,52 @@ function createMap(customLatlng = null, customInitialZoom = null) {
 
 function createCircleMarker(record, customOptions = {}) {
   var options = { ...defaultCircleOptions, ...customOptions };
+  var latitude = record.lat || record.latitude;
+  var longitude = record.lng || record.longitude;
 
   if (record.color) {
     options.fillColor = record.color;
   }
 
-  var circleMarker = L.circleMarker(L.latLng(record.lat, record.lng), options);
+  var circleMarker = L.circleMarker(L.latLng(latitude, longitude), options);
+
+  if (record.id) {
+    circleMarker.recordId = record.id
+  }
+
   if (record.body) {
     circleMarker.bindPopup(record.body);
   }
 
   return circleMarker;
+}
+
+function createTriangleMarker(record, customOptions = {}) {
+  var pointStyle = {
+    shape: "triangle",
+    radius: 6,
+    color: "#222",
+    fillColor: "#5aa172",
+    fillOpacity: 0.9,
+    weight: 2,
+  };
+  var options = { ...pointStyle, ...customOptions };
+  var latitude = record.lat || record.latitude;
+  var longitude = record.lng || record.longitude;
+
+  if (record.color) {
+    options.fillColor = record.color;
+  }
+
+  let marker = L.shapeMarker([latitude, longitude], options);
+  if (record.id) {
+    marker.recordId = record.id
+  }
+  if (record.body) {
+    marker.bindPopup(record.body);
+  }
+
+  return marker;
 }
 
 function createIconMarker(sample, map) {
@@ -535,6 +571,8 @@ export default {
   createOverlayEventListeners,
   createMarkerCluster,
   createCircleMarker,
+  createTriangleMarker,
+  createMarkerLayer,
   renderCirclesLayer,
   renderIconsLayer,
   formatGBIFData,
