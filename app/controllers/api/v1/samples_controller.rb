@@ -13,6 +13,26 @@ module Api
         }, status: :ok
       end
 
+      def basic_samples
+        render json: {
+          samples: basic_samples_for_map
+        }, status: :ok
+      end
+
+      def basic_samples_for_map
+        @basic_samples_for_map ||= begin
+          key = "#{website.cache_key}/basic_samples"
+          Rails.cache.fetch(key) do
+            cols = %w[id latitude longitude substrate_cd barcode status_cd]
+            Sample.select(cols)
+                  .where(field_project: FieldProject.la_river)
+                  .where(status_cd: %w[approved results_completed])
+                  .load
+          end
+        end
+      end
+
+
       def show
         render json: {
           sample: { data: sample }

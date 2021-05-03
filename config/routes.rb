@@ -39,6 +39,7 @@ Rails.application.routes.draw do
         get '/taxa_tree', to: 'samples#taxa_tree'
         get '/taxa_list', to: 'samples#taxa_list'
       end
+      get '/basic_samples', to: 'samples#basic_samples'
       resource :samples_search, only: %i[show]
       resource :stats, only: [] do
         get '/home_page', to: 'stats#home_page'
