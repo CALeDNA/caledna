@@ -111,8 +111,8 @@ import MapTableToggle from "./shared/map-table-toggle";
 import FiltersLayout from "./shared/filters/completed-samples";
 import MapLayersModal from "./shared/map-layers-modal";
 
-import { formatQuerystring } from "../utils/data_viz_filters";
 import baseMap from "../packs/base_map.js";
+import LaRiverBaseMap from "../packs/la_river_base_map.js";
 import { taxaTableColumns, taxaDefaultFilters } from "../constants";
 import {
   mapMixins,
@@ -164,8 +164,7 @@ export default {
     this.fetchSamples(this.endpoint);
   },
   mounted() {
-    this.map = baseMap.createMap();
-    this.addMapOverlays(this.map);
+    this.map = LaRiverBaseMap.createMap();
   },
   methods: {
     setActiveTab(event) {
