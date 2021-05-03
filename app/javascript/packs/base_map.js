@@ -228,10 +228,21 @@ function formatSamplesData(rawSample) {
 
   if (sample.id) {
     var sampleLink = `<a href='/samples/${sample.id}'>${sample.barcode}</a>`;
-    body = `<b>Site:</b> ${sampleLink} <br>
-      <b>Lat/Long</b>: ${sample.latitude} , ${sample.longitude} <br>
-      <b>Status</b>: ${sample.status} <br>
-      <b>Organism count</b>: ${sample.taxa_count} <br>`;
+    var status = sample.status || sample.status_cd;
+    var substrate = sample.substrate || sample.substrate_cd;
+
+    body = `<b>Site:</b> ${sampleLink} <br>`;
+    body += `<b>Lat/Long</b>: ${sample.latitude} , ${sample.longitude} <br>`;
+    if(status) {
+      body += `<b>Status</b>: ${status} <br>`;
+    }
+    if(substrate) {
+      body += `<b>Substrate</b>: ${substrate} <br>`;
+    }
+    if(sample.taxa_count) {
+      body += `<b>Organism count</b>: ${sample.taxa_count} <br>`;
+    }
+
   } else {
     body = null;
   }
