@@ -82,6 +82,7 @@ import MapLayersModal from "./shared/map-layers-modal";
 
 import { formatQuerystring } from "../utils/data_viz_filters";
 import baseMap from "../packs/base_map.js";
+import LaRiverBaseMap from "../packs/la_river_base_map.js";
 import { samplesTableColumns, samplesDefaultFilters } from "../constants";
 import { mapMixins, searchMixins, taxonLayerMixins } from "../mixins";
 import { completedSamplesStore } from "../stores/stores";
@@ -124,11 +125,17 @@ export default {
   },
 
   mounted() {
-    let lat = window.caledna.mapLatitude || baseMap.initialLat;
-    let lng = window.caledna.mapLongitude || baseMap.initialLng;
-    let zoom = window.caledna.mapZoom || baseMap.initialZoom;
-    this.map = baseMap.createMap(L.latLng(lat, lng), zoom);
-    this.addMapOverlays(this.map);
+    let isRiver = window.location.pathname.indexOf("los-angeles-river") > -1;
+
+    if (isRiver) {
+      this.map = LaRiverBaseMap.createMap(false);
+    } else {
+      let lat = window.caledna.mapLatitude || baseMap.initialLat;
+      let lng = window.caledna.mapLongitude || baseMap.initialLng;
+      let zoom = window.caledna.mapZoom || baseMap.initialZoom;
+      this.map = baseMap.createMap(L.latLng(lat, lng), zoom);
+      this.addMapOverlays(this.map);
+    }
   },
   methods: {
     setActiveTab(event) {
