@@ -10,7 +10,7 @@ describe 'Samples' do
     create(:field_project, name: 'Los Angeles River')
   end
 
-  let(:field_river) { FieldProject.la_river }
+  let(:field_river) { FieldProject.la_river.first }
 
   describe 'samples index page' do
     it 'returns OK' do

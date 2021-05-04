@@ -292,7 +292,7 @@ describe 'FieldProjecs' do
         expect(data.length).to eq(0)
       end
 
-      it 'only includes one instance of a sample' do
+      xit 'only includes one instance of a sample' do
         sample = create(:sample, :results_completed, id: 1,
                                                      field_project: project)
         rproj = create(:research_project, slug: 'proj1', published: true)

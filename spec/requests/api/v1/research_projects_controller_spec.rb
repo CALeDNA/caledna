@@ -27,7 +27,7 @@ describe 'ResearchProjects' do
                                primer: create(:primer))
       sample = create(:sample, id: sample_id, substrate: substrate,
                                status: :results_completed,
-                               field_project: FieldProject.la_river)
+                               field_project: FieldProject.la_river.first)
       create(:asv, sample: sample, research_project: project, primer: primer)
       create(:sample_primer, primer: primer, sample: sample,
                              research_project: project)
@@ -35,7 +35,7 @@ describe 'ResearchProjects' do
     end
 
     it 'returns OK' do
-      project = ResearchProject.la_river
+      project = ResearchProject.la_river.first
       get api_v1_research_project_path(id: project.slug)
 
       expect(response.status).to eq(200)
@@ -43,7 +43,7 @@ describe 'ResearchProjects' do
 
     context 'when project does not have samples' do
       it 'returns empty array for samples' do
-        project = ResearchProject.la_river
+        project = ResearchProject.la_river.first
 
         get api_v1_research_project_path(id: project.slug)
         data = JSON.parse(response.body)
@@ -54,7 +54,7 @@ describe 'ResearchProjects' do
 
     context 'when project is not published' do
       it 'returns empty array for samples' do
-        project = ResearchProject.la_river
+        project = ResearchProject.la_river.first
         project.update(published: false)
         create_project_samples(project)
 
@@ -67,7 +67,7 @@ describe 'ResearchProjects' do
 
     context 'when project has samples with results' do
       it 'returns the associated samples' do
-        project = ResearchProject.la_river
+        project = ResearchProject.la_river.first
         project.update(published: true)
         primer = create(:primer, name: primer1_name, id: primer1_id)
         create_project_samples(project, sample_id: sample1_id, primer: primer)
@@ -92,12 +92,12 @@ describe 'ResearchProjects' do
       end
 
       it 'only includes one instance of a sample' do
-        project = ResearchProject.la_river
+        project = ResearchProject.la_river.first
         project.update(published: true)
         sample = create(:sample,
                         :results_completed,
                         id: sample1_id,
-                        field_project: FieldProject.la_river)
+                        field_project: FieldProject.la_river.first)
         primer1 = create(:primer, name: primer1_name, id: primer1_id)
         primer2 = create(:primer, name: primer2_name, id: primer2_id)
         taxon1 = create(:ncbi_node, taxon_id: taxon1_id)
@@ -131,7 +131,7 @@ describe 'ResearchProjects' do
       end
 
       it 'ignores samples from other projects' do
-        project = ResearchProject.la_river
+        project = ResearchProject.la_river.first
         project.update(published: true)
         other_project = create(:research_project, slug: 'other')
         create_project_samples(other_project)
@@ -149,12 +149,12 @@ describe 'ResearchProjects' do
         sample1 = create(:sample,
                          :results_completed,
                          id: sample1_id,
-                         field_project: FieldProject.la_river)
+                         field_project: FieldProject.la_river.first)
         sample2 = create(:sample,
                          :results_completed,
                          id: sample2_id,
-                         field_project: FieldProject.la_river)
-        proj1 = ResearchProject.la_river
+                         field_project: FieldProject.la_river.first)
+        proj1 = ResearchProject.la_river.first
         proj1.update(published: true)
         proj2 = create(:research_project, slug: 'other', published: true)
         taxon1 = create(:ncbi_node, taxon_id: taxon1_id)
@@ -212,9 +212,9 @@ describe 'ResearchProjects' do
     end
 
     it 'does not return samples without results' do
-      create(:sample, status: :approved, field_project: FieldProject.la_river)
-      create(:sample, status: :submitted, field_project: FieldProject.la_river)
-      project = ResearchProject.la_river
+      create(:sample, status: :approved, field_project: FieldProject.la_river.first)
+      create(:sample, status: :submitted, field_project: FieldProject.la_river.first)
+      project = ResearchProject.la_river.first
       project.update(published: true)
       refresh_samples_map
 
@@ -226,7 +226,7 @@ describe 'ResearchProjects' do
 
     context 'keyword query param' do
       let(:project) do
-        tmp = ResearchProject.la_river
+        tmp = ResearchProject.la_river.first
         tmp.update(published: true)
         tmp
       end
@@ -259,7 +259,7 @@ describe 'ResearchProjects' do
 
     context 'substrate query param' do
       let(:project) do
-        tmp = ResearchProject.la_river
+        tmp = ResearchProject.la_river.first
         tmp.update(published: true)
         tmp
       end
@@ -293,7 +293,7 @@ describe 'ResearchProjects' do
 
     context 'status query param' do
       let(:project) do
-        tmp = ResearchProject.la_river
+        tmp = ResearchProject.la_river.first
         tmp.update(published: true)
         tmp
       end
@@ -317,7 +317,7 @@ describe 'ResearchProjects' do
 
     context 'primer query param' do
       let(:project) do
-        tmp = ResearchProject.la_river
+        tmp = ResearchProject.la_river.first
         tmp.update(published: true)
         tmp
       end
@@ -351,7 +351,7 @@ describe 'ResearchProjects' do
         sample1 = create(:sample,
                          :results_completed,
                          id: sample1_id,
-                         field_project: FieldProject.la_river)
+                         field_project: FieldProject.la_river.first)
         create(:asv, sample: sample1, research_project: project,
                      primer: primer1)
         create(:asv, sample: sample1, research_project: project,
@@ -400,7 +400,7 @@ describe 'ResearchProjects' do
 
     context 'multiple query params' do
       let(:project) do
-        tmp = ResearchProject.la_river
+        tmp = ResearchProject.la_river.first
         tmp.update(published: true)
         tmp
       end

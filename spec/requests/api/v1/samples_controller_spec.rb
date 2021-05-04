@@ -11,8 +11,8 @@ describe 'Samples' do
     create(:field_project, name: 'Los Angeles River')
   end
 
-  let(:field_river) { FieldProject.la_river }
-  let(:research_river) { ResearchProject.la_river }
+  let(:field_river) { FieldProject.la_river.first }
+  let(:research_river) { ResearchProject.la_river.first }
 
   describe 'index' do
     # rubocop:disable Metrics/MethodLength
