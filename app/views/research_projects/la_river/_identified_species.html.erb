@@ -13,13 +13,13 @@
 }
 </style>
 <%
-hahamongna = @identified_species_by_location['{Hahamongna}']
-both = @identified_species_by_location['{Hahamongna,"Maywood Park"}']
-maywood = @identified_species_by_location['{"Maywood Park"}']
+arroyo_seco = @identified_species_by_location['{"Arroyo Seco"}']
+both = @identified_species_by_location['{"Arroyo Seco",Maywood}']
+maywood = @identified_species_by_location['{Maywood}']
 locations = [
-  { title: 'Hahamongna', species: hahamongna || [], text: 'found only at ' },
-  { title: 'Maywood Park', species: maywood || [], text: 'found only at '},
-  { title: 'Hahamongna & Maywood Park', species: both || [], text: 'found at both '}
+  { title: 'Arroyo Seco', species: arroyo_seco || [], text: 'found only at ' },
+  { title: 'Maywood', species: maywood || [], text: 'found only at '},
+  { title: 'Arroyo Seco & Maywood', species: both || [], text: 'found at both '}
 ]
 %>
 

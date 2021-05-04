@@ -13,7 +13,8 @@ module ResearchProjectService
           SELECT ncbi_nodes.taxon_id, ncbi_nodes.canonical_name,
           ncbi_nodes.asvs_count_la_river as asvs_count, common_names,
           ncbi_divisions.name as division_name,
-          ARRAY_AGG(DISTINCT(samples.metadata ->> 'location')) as locations,
+          ARRAY_AGG(DISTINCT(research_project_sources.metadata ->> 'location'))
+            as locations,
           ARRAY_AGG(DISTINCT eol_image) AS eol_images,
           ARRAY_AGG(DISTINCT inat_image) AS inat_images,
           ARRAY_AGG(DISTINCT wikidata_image) AS wikidata_images

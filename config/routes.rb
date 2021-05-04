@@ -60,7 +60,7 @@ Rails.application.routes.draw do
         end
 
         namespace :la_river do
-          params = { slug: 'los-angeles-river' }
+          params = { slug: 'los-angeles-river-1' }
           get 'area_diversity', defaults: params
           get 'pa_area_diversity', defaults: params
           get 'sampling_types', defaults: params

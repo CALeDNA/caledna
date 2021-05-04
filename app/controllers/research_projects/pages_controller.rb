@@ -9,7 +9,7 @@ module ResearchProjects
     def show
       @project = project
       @page = project_page
-      if project_slug == 'los-angeles-river'
+      if project_slug == 'los-angeles-river-1'
         la_river_view
       elsif project_slug == 'pillar-point'
         pillar_point_view

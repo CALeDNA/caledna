@@ -4,8 +4,8 @@
 module ResearchProjectService
   module LaRiverServices
     module AreaDiversity
-      HAHAMONGNA = 'Hahamongna'
-      MAYWOOD = 'Maywood Park'
+      ARROYO_SECO = 'Arroyo Seco'
+      MAYWOOD = 'Maywood'
       WATER = 'water'
       SEDIMENT = 'sediment'
 
@@ -15,16 +15,16 @@ module ResearchProjectService
             total: taxa_total,
             locations: [
               {
-                names: [HAHAMONGNA],
-                count: taxa_by_location(HAHAMONGNA)
+                names: [ARROYO_SECO],
+                count: taxa_by_location(ARROYO_SECO)
               },
               {
                 names: [MAYWOOD],
                 count: taxa_by_location(MAYWOOD)
               },
               {
-                names: [HAHAMONGNA, MAYWOOD],
-                count: taxa_by_location(HAHAMONGNA, MAYWOOD)
+                names: [ARROYO_SECO, MAYWOOD],
+                count: taxa_by_location(ARROYO_SECO, MAYWOOD)
               }
             ]
           }
@@ -37,16 +37,16 @@ module ResearchProjectService
             total: pa_taxa_total,
             locations: [
               {
-                names: [HAHAMONGNA],
-                count: pa_taxa_by_location(HAHAMONGNA)
+                names: [ARROYO_SECO],
+                count: pa_taxa_by_location(ARROYO_SECO)
               },
               {
                 names: [MAYWOOD],
                 count: pa_taxa_by_location(MAYWOOD)
               },
               {
-                names: [HAHAMONGNA, MAYWOOD],
-                count: pa_taxa_by_location(HAHAMONGNA, MAYWOOD)
+                names: [ARROYO_SECO, MAYWOOD],
+                count: pa_taxa_by_location(ARROYO_SECO, MAYWOOD)
               }
             ]
           }
@@ -152,7 +152,7 @@ module ResearchProjectService
       def pa_area_diversity_cal_location(location)
         sql = area_diversity_cal_sql
         sql += pa_sql
-        sql += " AND samples.metadata ->> 'location'"
+        sql += " AND research_project_sources.metadata ->> 'location'"
         sql += " = '#{location}'"
         sql
       end
@@ -218,7 +218,7 @@ module ResearchProjectService
 
       def area_diversity_cal_location(location)
         sql = area_diversity_cal_sql
-        sql += " AND samples.metadata ->> 'location'"
+        sql += " AND research_project_sources.metadata ->> 'location'"
         sql += " = '#{location}'"
         sql
       end

@@ -3,7 +3,7 @@ import baseMap from "./base_map.js";
 const apiEndpoint = "/api/v1/research_projects/la_river/sites";
 
 const map1 = createMap(
-  "map_hahamongna",
+  "map_arroyo_seco",
   L.latLng(34.2037721328895, -118.166393190622)
 );
 const map2 = createMap(

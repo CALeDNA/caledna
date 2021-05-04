@@ -7,8 +7,8 @@ import baseVenn from "./base_venn.js";
 // =============
 
 const location_names = {
-  Hahamongna: "Hahamongna",
-  "Maywood Park": "Maywood Park"
+  "Arroyo Seco": "Arroyo Seco",
+  "Maywood": "Maywood"
 };
 let diversityData;
 const endpoint = "/api/v1/research_projects/la_river/pa_area_diversity";

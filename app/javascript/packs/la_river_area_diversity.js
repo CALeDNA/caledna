@@ -12,8 +12,8 @@ import {
 // =============
 
 const location_names = {
-  Hahamongna: "Hahamongna",
-  "Maywood Park": "Maywood"
+  "Arroyo Seco": "Arroyo Seco",
+  "Maywood": "Maywood"
 };
 let diversityData;
 const baseFilters = { taxon_groups: [], taxon_rank: [] };

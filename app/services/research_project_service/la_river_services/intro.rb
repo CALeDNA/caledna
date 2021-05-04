@@ -7,7 +7,7 @@ module ResearchProjectService
         {
           maywood: maywood_stats,
           total: total_stats,
-          hahamongna: hahamongna_stats
+          arroyo_seco: arroyo_seco_stats
         }
       end
 
@@ -36,7 +36,8 @@ module ResearchProjectService
 
       def maywood_stats
         sites = river_sites
-                .where("samples.metadata ->> 'location' = 'Maywood Park'")
+                .where("research_project_sources.metadata ->> 'location' = " \
+                       "'Maywood'")
         taxa = distinct_taxa(sites)
 
         { sites: sites.count, taxa: taxa.count }
@@ -49,9 +50,10 @@ module ResearchProjectService
         { sites: sites.count, taxa: taxa.count }
       end
 
-      def hahamongna_stats
+      def arroyo_seco_stats
         sites = river_sites
-                .where("samples.metadata ->> 'location' = 'Hahamongna'")
+                .where("research_project_sources.metadata ->> 'location' = " \
+                       "'Arroyo Seco'")
         taxa = distinct_taxa(sites)
 
         { sites: sites.count, taxa: taxa.count }
