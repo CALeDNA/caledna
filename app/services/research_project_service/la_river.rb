@@ -8,11 +8,18 @@ module ResearchProjectService
     include ResearchProjectService::LaRiverServices::IdentifiedSpecies
     include ResearchProjectService::LaRiverServices::Intro
 
-    attr_reader :project, :taxon_rank, :sort_by, :params,
+    attr_reader :projects, :project, :taxon_rank, :sort_by, :params,
                 :globi_taxon
 
-    def initialize(project, params)
-      @project = project
+    def initialize(projects, params)
+      if projects.class == ResearchProject
+        @projects = nil
+        @project = projects
+      else
+        @projects = projects
+        @project = nil
+      end
+
       @taxon_rank = params[:taxon_rank] || 'phylum'
       @sort_by = params[:sort]
       @params = params
