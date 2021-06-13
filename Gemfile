@@ -42,7 +42,7 @@ gem 'rgeo-shapefile', '~> 2.0.1'
 gem 'sass-rails', '~> 5.0' # required by bootstrap-sass
 gem 'sidekiq', '~> 5.0'
 gem 'simple_enum', '~> 2.3'
-gem 'simple_form', '~> 4.0.1'
+gem 'simple_form', '~> 5.0.0'
 gem 'sparql', '~> 3.1', '>= 3.1.2'
 gem 'sparql-client', '~> 3.1'
 gem 'summernote-rails', '~> 0.8.10.0'
