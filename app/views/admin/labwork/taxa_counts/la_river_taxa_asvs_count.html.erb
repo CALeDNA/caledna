@@ -1,4 +1,4 @@
-<% content_for(:title) { 'Update LA River taxa counts' } %>
+<% content_for(:title) { 'Sync POUR Samples' } %>
 
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title">
@@ -7,9 +7,9 @@
 </header>
 
 <section class="main-content__body">
-  <p>For each taxa, update the number of LA River samples that contain that taxa.</p>
+  <p>After importing POUR eDNA results, sync the samples to update the maps and stats.</p>
 
   <%= simple_form_for :samples, url: admin_labwork_update_la_river_taxa_asvs_count_path, method: :put do |f| %>
-  <%= f.submit 'Update taxa counts' %>
+  <%= f.submit 'Sync Samples' %>
   <% end %>
 </section>

@@ -9,11 +9,6 @@
     View eDNA taxonomy tables for all the samples.
     </p>
 
-    <p>
-    <%= link_to 'Sync Samples', admin_labwork_sync_samples_path %>:
-    After approving/rejecting samples, sync the samples to make sure the maps
-    and stats show all the samples.
-    </p>
   <% end %>
 
   <% if policy('AdminDashboard'.to_sym).admin? %>

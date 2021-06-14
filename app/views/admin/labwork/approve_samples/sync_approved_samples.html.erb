@@ -1,0 +1,21 @@
+<% content_for(:title) { "Sync Field Project Samples" } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= content_for(:title) %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <p>
+    After approving/rejecting samples from Kobo, sync the samples to update the maps and stats.
+  </p>
+
+  <%= form_tag  admin_labwork_update_sync_approved_samples_path, method: :put  do |f| %>
+    <div>
+      <%= submit_tag "Sync Samples"%>
+    </div>
+  <% end %>
+</section>
+
+

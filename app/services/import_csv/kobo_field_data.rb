@@ -5,7 +5,7 @@ module ImportCsv
     require 'csv'
     include CsvUtils
     include ProcessEdnaResults
-    include WebsiteStats
+    include UpdateViewsAndCache
 
     # TODO: find a way to deal with image upload
     # Import csv if all barcodes are not in database. Create new sample for
@@ -81,7 +81,7 @@ module ImportCsv
         clean_row = hash.reject { |k, _v| k.blank? }
         ImportCsvCreateSampleJob.perform_later(clean_row, field_project_id)
       end
-      UpdateApprovedSamplesWebsiteStatsJob.perform_later
+      HandleApprovedSamplesJob.perform_later
     end
     # rubocop:enable Metrics/AbcSize
 

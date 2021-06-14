@@ -3,8 +3,6 @@
 module Admin
   module Labwork
     class ApproveSamplesController < Admin::ApplicationController
-      include WebsiteStats
-
       def index
         authorize 'Labwork::ApproveSamples'.to_sym, :index?
 
@@ -31,15 +29,15 @@ module Admin
         end
       end
 
-      def sync_samples
+      def sync_approved_samples
         authorize 'Labwork::ApproveSamples'.to_sym, :index?
       end
 
-      def update_sync_samples
-        UpdateApprovedSamplesWebsiteStatsJob.perform_later
-        flash[:success] = 'Sync samples completed'
+      def update_sync_approved_samples
+        HandleApprovedSamplesJob.perform_later
+        flash[:success] = 'Syncing samples...'
 
-        redirect_to admin_root_path
+        redirect_to admin_labwork_import_csv_status_index_path
       end
 
       private

@@ -11,6 +11,7 @@ module Admin
 
       def update_taxa_asvs_count
         authorize 'Labwork::ImportCsv'.to_sym, :index?
+        flash[:success] = 'Syncing samples...'
 
         ::FetchTaxaAsvsCountsJob.perform_later
         redirect_to admin_labwork_import_csv_status_index_path
@@ -22,6 +23,7 @@ module Admin
 
       def update_la_river_taxa_asvs_count
         authorize 'Labwork::ImportCsv'.to_sym, :index?
+        flash[:success] = 'Syncing samples...'
 
         ::FetchLaRiverTaxaAsvsCountsJob.perform_later
         redirect_to admin_labwork_import_csv_status_index_path
