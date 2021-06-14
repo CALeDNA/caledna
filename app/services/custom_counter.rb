@@ -7,12 +7,13 @@ module CustomCounter
   end
 
   def update_asvs_count
-    puts 'reset asvs_count...' if Rails.env.development?
+    puts 'reset asvs_count...'
     reset_counter('asvs_count')
 
-    puts 'update asvs_count...' if Rails.env.development?
+    puts 'fetch asvs_count...'
     results = fetch_asv_counts_for(asvs_count_sql)
 
+    puts 'update asvs_count...'
     results.each do |result|
       update_count(result['taxon_id'], result['count'])
     end
@@ -22,9 +23,10 @@ module CustomCounter
     puts 'reset asvs_count_la_river...'
     reset_counter('asvs_count_la_river')
 
-    puts 'update asvs_count_la_river...'
+    puts 'fetch asvs_count_la_river...'
     results = fetch_asv_counts_for(asvs_count_la_river_sql)
 
+    puts 'update asvs_count_la_river...'
     results.each do |result|
       update_count_la_river(result['taxon_id'], result['count'])
     end

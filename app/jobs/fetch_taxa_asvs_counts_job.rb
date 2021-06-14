@@ -2,28 +2,18 @@
 
 class FetchTaxaAsvsCountsJob < ApplicationJob
   include CustomCounter
-  include WebsiteStats
+  include UpdateViewsAndCache
 
   queue_as :default
   after_perform :update_website_stats
 
   def perform
-    puts 'reset asvs_count...' if Rails.env.development?
-    reset_counter('asvs_count')
-
-    puts 'update asvs_count...' if Rails.env.development?
-    results = fetch_asv_counts_for(asvs_count_sql)
-
-    results.each do |result|
-      UpdateTaxaAsvsCountJob.perform_later(result['taxon_id'], result['count'])
-    end
+    update_asvs_count
   end
 
   private
 
   def update_website_stats
-    refresh_caledna_website_stats
-    refresh_samples_map
-    refresh_ncbi_nodes_edna
+    refresh_views_and_stats
   end
 end

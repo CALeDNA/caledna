@@ -24,7 +24,6 @@ module Admin
         authorize 'Labwork::ImportCsv'.to_sym, :index?
 
         ::FetchLaRiverTaxaAsvsCountsJob.perform_later
-        ::FetchTaxaAsvsCountsJob.perform_later
         redirect_to admin_labwork_import_csv_status_index_path
       end
     end

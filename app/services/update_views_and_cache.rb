@@ -1,24 +1,44 @@
 # frozen_string_literal: true
 
-module WebsiteStats
-  def refresh_samples_map
-    sql = 'REFRESH MATERIALIZED VIEW samples_map'
+module UpdateViewsAndCache
+  def refresh_views_and_stats
+    refresh_samples_views
+    refresh_ncbi_nodes_views
+    refresh_ggbn_views
+    Rails.cache.clear
+    refresh_caledna_website_stats
+  end
 
+  def refresh_samples_views
+    puts 'refresh samples_map views'
+    sql = 'REFRESH MATERIALIZED VIEW samples_map;'
     conn.exec_query(sql)
   end
 
-  def refresh_ncbi_nodes_edna
-    sql = 'REFRESH MATERIALIZED VIEW ncbi_nodes_edna'
-
+  def refresh_ncbi_nodes_views
+    puts 'refresh ncbi_nodes_edna views'
+    sql = 'REFRESH MATERIALIZED VIEW ncbi_nodes_edna;'
     conn.exec_query(sql)
   end
 
-  def change_websites_update_at
+  def refresh_ggbn_views
+    puts 'refresh ggbn views'
+    tables = %w[ggbn_full_scientific_name ggbn_higher_taxa ggbn_found_taxa
+                ggbn_completed_samples]
+
+    tables.each do |table|
+      sql = "REFRESH MATERIALIZED VIEW #{table}"
+      conn.exec_query(sql)
+    end
+  end
+
+  def update_websites_via_touch
     Website.caledna.touch
     Website.la_river.touch
   end
 
   def refresh_caledna_website_stats
+    puts 'refresh CALeDNA website stats'
     families_count = fetch_families_count(pour: false)
     species_count = fetch_species_count(pour: false)
     taxa_count = fetch_taxa_count(pour: false)
@@ -30,6 +50,7 @@ module WebsiteStats
   end
 
   def refresh_pour_website_stats
+    puts 'refresh POUR website stats'
     families_count = fetch_families_count(pour: true)
     species_count = fetch_species_count(pour: true)
     taxa_count = fetch_taxa_count(pour: true)
