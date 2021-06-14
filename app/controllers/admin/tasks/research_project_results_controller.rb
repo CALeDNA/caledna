@@ -3,7 +3,6 @@
 module Admin
   module Tasks
     class ResearchProjectResultsController < Admin::ApplicationController
-      include WebsiteStats
       # skip_before_action :verify_authenticity_token
 
       def index

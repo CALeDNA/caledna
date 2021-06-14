@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SeedData
-  include WebsiteStats
+  include UpdateViewsAndCache
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
 
   def seed_people
@@ -229,10 +229,7 @@ module SeedData
 
   def update_views
     puts 'updating views...'
-    refresh_samples_map
-    refresh_ncbi_nodes_edna
-    change_websites_update_at
-    refresh_caledna_website_stats
+    refresh_views_and_stats
     refresh_pour_website_stats
   end
 

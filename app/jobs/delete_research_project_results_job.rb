@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DeleteResearchProjectResultsJob < ApplicationJob
-  include WebsiteStats
+  include UpdateViewsAndCache
 
   queue_as :default
 
@@ -47,7 +47,7 @@ class DeleteResearchProjectResultsJob < ApplicationJob
     delete_sample_primers(project_id)
     update_sample_status
     refresh_caledna_website_stats
-    refresh_samples_map
-    refresh_ncbi_nodes_edna
+    refresh_samples_views
+    refresh_ncbi_nodes_views
   end
 end
