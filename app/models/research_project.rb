@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ResearchProject < ApplicationRecord
+  LA_RIVER_PILOT_SLUG = 'los-angeles-river-1'
+
   has_many :research_project_sources
   has_many :research_project_authors
   has_many :research_project_pages

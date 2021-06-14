@@ -7,7 +7,7 @@ describe 'LaRiver' do
     create(:website, name: Website::DEFAULT_SITE)
   end
 
-  let(:slug) { 'los-angeles-river' }
+  let(:slug) { ResearchProject::LA_RIVER_PILOT_SLUG }
   let!(:research_project) { create(:research_project, slug: slug) }
 
   describe 'sites' do
