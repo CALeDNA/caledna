@@ -97,7 +97,7 @@ module ResearchProjects
         @identified_species_by_location =
           la_river_service.identified_species_by_location
       elsif params[:id] == 'intro'
-        @stats = la_river_service.stats
+        @stats = la_river_service.pilot_stats
       end
 
       render 'research_projects/la_river'
