@@ -50,7 +50,8 @@ Rails.application.routes.draw do
   get '/get-involved', to: 'river/pages#show',  defaults: { id: 'get-involved' }
   get '/donate', to: 'river/pages#show', defaults: { id: 'donate' }
   get '/disclaimer', to: 'river/pages#show', defaults: { id: 'disclaimer' }
-  get '/samples-analyzed', to: 'river/pages#show', defaults: { id: 'samples-analyzed' }
+  get '/samples-analyzed', to: 'river/pages#show',
+                           defaults: { id: 'samples-analyzed' }
 
   get '/contact-us', to: 'river/contacts#new'
   resources :contacts, only: [:create], controller: 'river/contacts'

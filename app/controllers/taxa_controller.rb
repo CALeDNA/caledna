@@ -102,6 +102,7 @@ class TaxaController < ApplicationController
     @taxon ||= NcbiNode.find(params[:id])
   end
 
+  # rubocop:disable Metrics/MethodLength
   def related_organisms
     @related_organisms ||= begin
       sql = 'taxon_id in (SELECT taxon_id from asvs where ' \
@@ -115,6 +116,7 @@ class TaxaController < ApplicationController
               .per(50)
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def children
     @children ||= begin

@@ -322,7 +322,8 @@ describe 'Taxa' do
       before(:each) do
         create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id],
                            taxon_id: target_id)
-        taxon = create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id, 3],
+        taxon = create(:ncbi_node, asvs_count_la_river: 1,
+                                   ids: [1, target_id, 3],
                                    taxon_id: 3)
         create_occurence(taxon, substrate: :soil)
         create_occurence(taxon, substrate: :bad)
@@ -356,7 +357,8 @@ describe 'Taxa' do
       before(:each) do
         create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id],
                            taxon_id: target_id)
-        taxon = create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id, 3],
+        taxon = create(:ncbi_node, asvs_count_la_river: 1,
+                                   ids: [1, target_id, 3],
                                    taxon_id: 3)
         project = research_river_p
         create_occurence(taxon, status: :results_completed,
@@ -382,11 +384,12 @@ describe 'Taxa' do
       let(:primer1_name) { 'primer1' }
       let(:primer2_name) { 'primer2' }
 
-      # rubocop:disable Metrics/AbcSize:
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def create_samples
         create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id],
                            taxon_id: target_id)
-        taxon = create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id, 3],
+        taxon = create(:ncbi_node, asvs_count_la_river: 1,
+                                   ids: [1, target_id, 3],
                                    taxon_id: 3)
         primer1 = create(:primer, id: primer1_id, name: primer1_name)
         primer2 = create(:primer, id: primer2_id, name: primer2_name)
@@ -395,7 +398,7 @@ describe 'Taxa' do
         create_occurence(taxon, primer: create(:primer, id: 30))
         refresh_samples_map
       end
-      # rubocop:enable Metrics/AbcSize:
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       it 'returns samples when there is one primer' do
         create_samples
@@ -442,7 +445,8 @@ describe 'Taxa' do
       it 'only includes one instance of a sample' do
         create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id],
                            taxon_id: target_id)
-        taxon = create(:ncbi_node, asvs_count_la_river: 1, ids: [1, target_id, 3],
+        taxon = create(:ncbi_node, asvs_count_la_river: 1,
+                                   ids: [1, target_id, 3],
                                    taxon_id: 3)
         primer1 = create(:primer, id: primer1_id, name: 'primer1')
         primer2 = create(:primer, id: primer2_id, name: 'primer2')

@@ -220,19 +220,23 @@ module Api
         SQL
       end
 
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def taxa_samples
         @taxa_samples ||= begin
           key = "#{taxon.cache_key}/taxa_samples/#{params_values}"
+          ids = FieldProject.la_river_ids
+
           Rails.cache.fetch(key) do
             completed_samples
               .select(taxa_select_sql)
               .joins(taxa_join_sql)
               .where('ids @> ?', "{#{params[:id]}}")
-              .where("samples_map.field_project_id IN #{FieldProject.la_river_ids}")
+              .where("samples_map.field_project_id IN #{ids}")
               .load
           end
         end
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
       def taxa_basic_samples
         @taxa_basic_samples ||= begin

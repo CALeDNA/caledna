@@ -212,8 +212,9 @@ describe 'ResearchProjects' do
     end
 
     it 'does not return samples without results' do
-      create(:sample, status: :approved, field_project: FieldProject.la_river.first)
-      create(:sample, status: :submitted, field_project: FieldProject.la_river.first)
+      proj = FieldProject.la_river.first
+      create(:sample, status: :approved, field_project: proj)
+      create(:sample, status: :submitted, field_project: proj)
       project = ResearchProject.la_river.first
       project.update(published: true)
       refresh_samples_map
