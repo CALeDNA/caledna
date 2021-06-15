@@ -4,13 +4,4 @@
 
 <section class="main-content__body">
   <%= sanitize @page.body %>
-
-  <% if policy('AdminDashboard'.to_sym).admin? %>
-    <hr>
-    <h2>Protecting Our River</h2>
-    <p>
-      <%= link_to 'Sync POUR Samples', admin_labwork_la_river_taxa_asvs_count_path %>:
-      After importing POUR eDNA results,  sync the samples to update the maps and stats.
-    </p>
-  <% end %>
 </section>
