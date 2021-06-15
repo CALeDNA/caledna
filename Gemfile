@@ -27,6 +27,7 @@ gem 'jquery-rails', '~> 4.3.3' # required by bootstrap-sass
 gem 'kaminari', '~> 1.1.1'
 gem 'lograge', '~> 0.10.0'
 gem 'mail_form', '~> 1.8.0'
+gem 'mimemagic', '~> 0.3.7'
 gem 'mini_magick', '~> 4.10.1' # resize ActiveStorage images
 gem 'pg', '~> 0.21'
 gem 'pg_query', '>= 0.9.0'
