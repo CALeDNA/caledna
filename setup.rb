@@ -56,17 +56,9 @@ system_call 'psql -d caledna_development -c "\copy ncbi_names from ./import_data
 
 puts 'importing places'
 rake 'mapgrid:import_hex_1500'
-rake 'import_places:import_states'
-rake 'import_places:import_counties'
-rake 'import_places:import_ca_places'
-rake 'import_places:import_la_neighborhoods'
-rake 'import_places:import_la_zip_codes'
 rake 'import_places:import_watersheds'
 rake 'import_places:import_la_river'
 rake 'import_places:import_ucnrs'
-rake 'import_places:import_ecoregions_l3'
-rake 'import_places:import_ecoregions_l4'
-rake 'import_places:import_la_ecotopes'
 rake 'import_places:import_pour_locations'
 
 puts 'seed database'
