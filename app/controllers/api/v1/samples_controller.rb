@@ -32,7 +32,6 @@ module Api
         end
       end
 
-
       def show
         render json: {
           sample: { data: sample }

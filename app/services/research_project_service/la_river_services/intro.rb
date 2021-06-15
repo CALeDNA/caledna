@@ -26,7 +26,7 @@ module ResearchProjectService
       def distinct_taxa
         @distinct_taxa ||= begin
           Asv.where(research_project: ResearchProject.la_river)
-            .select('DISTINCT(asvs.taxon_id)')
+             .select('DISTINCT(asvs.taxon_id)')
         end
       end
 
@@ -39,7 +39,7 @@ module ResearchProjectService
       end
 
       def river_pilot_sites
-        @river_completed_sites ||= begin
+        @river_pilot_sites ||= begin
           ResearchProjectSource
             .where(sourceable_type: 'Sample')
             .where(research_project: ResearchProject.la_river)
@@ -53,7 +53,6 @@ module ResearchProjectService
             'research_project_sources.sourceable_id')
           .select('DISTINCT(asvs.taxon_id)')
       end
-
 
       def pilot_total_stats
         sites = river_pilot_sites
@@ -70,7 +69,6 @@ module ResearchProjectService
 
         { sites: sites.count, taxa: taxa.count }
       end
-
 
       def arroyo_seco_stats
         location = "research_project_sources.metadata ->> 'location' = " \

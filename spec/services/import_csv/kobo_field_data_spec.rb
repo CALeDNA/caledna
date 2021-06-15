@@ -212,9 +212,9 @@ describe ImportCsv::KoboFieldData do
         .with(row2, field_project_id).exactly(1).times
     end
 
-    it 'enqueues UpdateApprovedSamplesWebsiteStatsJob' do
+    it 'enqueues HandleApprovedSamplesJob' do
       expect { subject(file, field_project_id) }
-        .to have_enqueued_job(UpdateApprovedSamplesWebsiteStatsJob)
+        .to have_enqueued_job(HandleApprovedSamplesJob)
         .exactly(1).times
     end
   end

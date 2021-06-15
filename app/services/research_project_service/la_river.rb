@@ -11,6 +11,7 @@ module ResearchProjectService
     attr_reader :projects, :project, :taxon_rank, :sort_by, :params,
                 :globi_taxon
 
+    # rubocop:disable Metrics/MethodLength
     def initialize(projects, params)
       if projects.class == ResearchProject
         @projects = nil
@@ -25,6 +26,7 @@ module ResearchProjectService
       @params = params
       @globi_taxon = params[:taxon]&.tr('+', ' ')
     end
+    # rubocop:enable Metrics/MethodLength
 
     private
 
