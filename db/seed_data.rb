@@ -98,7 +98,7 @@ module SeedData
       FactoryBot.create(
         :asv, research_project: research_project, sample: sample,
               primer: Primer.first,
-              taxon_id: NcbiNode.find(rand(2_000_000)).taxon_id
+              ncbi_node: NcbiNode.find(rand(2_000_000))
       )
     end
 
@@ -106,7 +106,7 @@ module SeedData
       FactoryBot.create(
         :asv, research_project: research_project, sample: sample,
               primer: Primer.second,
-              taxon_id: NcbiNode.find(rand(2_000_000)).taxon_id
+              ncbi_node: NcbiNode.find(rand(2_000_000))
       )
     end
 
@@ -115,7 +115,7 @@ module SeedData
       FactoryBot.create(
         :asv, research_project: research_project, sample: sample,
               primer: Primer.second,
-              taxon_id: taxon.taxon_id
+              ncbi_node: taxon
       )
     end
 
@@ -124,7 +124,7 @@ module SeedData
       FactoryBot.create(
         :asv, research_project: research_project, sample: sample,
               primer: Primer.second,
-              taxon_id: taxon.taxon_id
+              ncbi_node: taxon
       )
     end
 
@@ -163,7 +163,7 @@ module SeedData
     [sample1, sample2, sample3]
   end
 
-  def river_project
+  def generated_river_project
     places = Place.where(place_type_cd: :pour_location).limit(2)
 
     field1 = FactoryBot.create(
@@ -219,12 +219,16 @@ module SeedData
     end
   end
 
-  def seed_projects
-    puts 'creating projects...'
+  def seed_caledna_projects
+    puts 'creating caledna projects...'
     approved_published_project
     results_published_project
     results_unpublished_project
-    river_project
+  end
+
+  def seed_la_river_projects
+    puts 'creating la_river projects...'
+    generated_river_project
   end
 
   def update_views
@@ -237,9 +241,15 @@ module SeedData
     puts 'deleting some records...'
     sql = 'TRUNCATE researchers, websites, field_projects, ' \
       'research_projects, samples, asvs, research_project_sources, '\
-      'sample_primers CASCADE'
+      'sample_primers, pages, place_pages, page_blocks, site_news, ' \
+      'user_submissions RESTART IDENTITY CASCADE'
     ActiveRecord::Base.connection.execute(sql)
   end
 
+  def system_call(cmd)
+    puts "Running #{cmd}"
+    system cmd
+    puts
+  end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end

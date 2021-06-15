@@ -11,7 +11,8 @@ class DBSeeds
     seed_people
     seed_website
     seed_primers
-    seed_projects
+    seed_la_river_projects
+    seed_caledna_projects
     update_asvs_count
     update_asvs_count_la_river
     update_views
