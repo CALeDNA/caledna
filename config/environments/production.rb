@@ -129,8 +129,8 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.smtp_settings = {
-    user_name: ENV.fetch('SENDGRID_USERNAME'),
-    password: ENV.fetch('SENDGRID_PASSWORD'),
+    user_name: ENV.fetch('SENDGRID_SMTP_USERNAME'),
+    password: ENV.fetch('SENDGRID_API_KEY'),
     domain: ENV.fetch('HOST'),
     address: 'smtp.sendgrid.net',
     port: 587,
