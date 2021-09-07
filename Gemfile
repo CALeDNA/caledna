@@ -53,7 +53,7 @@ gem 'unicode-display_width', '~> 1.7'
 gem 'webpacker', '~> 3.5.3'
 
 group :development do
-  gem 'better_errors', '~> 2.4'
+  gem 'better_errors', '~> 2.8'
   gem 'binding_of_caller', '~> 0.7'
   gem 'bullet', '~> 6.1.0'
   gem 'derailed_benchmarks', '~> 1.7.0'
