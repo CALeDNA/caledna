@@ -84,7 +84,7 @@ end
 
 group :production, :staging do
   gem 'connection_pool', '~> 2.2.1'
-  gem 'dalli', '~> 2.7.10'
+  gem 'dalli', '~> 3.2.3'
   gem 'rack-cors', '~> 1.1.1'
   gem 'scout_apm', '~> 2.4.13'
   gem 'sendgrid-ruby', '~> 5.2.0'
