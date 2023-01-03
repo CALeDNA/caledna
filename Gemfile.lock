@@ -203,7 +203,8 @@ GEM
     heapy (0.1.4)
     highline (1.7.10)
     htmlentities (4.3.4)
-    httparty (0.15.7)
+    httparty (0.21.0)
+      mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
@@ -546,7 +547,7 @@ DEPENDENCIES
   fast_jsonapi (~> 1.6.0)!
   fastimage (~> 2.1.1)
   flutie (~> 2.0)
-  httparty (~> 0.15.6)
+  httparty (~> 0.21.0)
   i18n-tasks (~> 0.9)
   jquery-rails (~> 4.3.3)
   kaminari (~> 1.1.1)
