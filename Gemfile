@@ -16,7 +16,7 @@ gem 'aws-sdk-s3', '~> 1.14.0', require: false
 gem 'bootsnap', '~> 1.3.0'
 gem 'bootstrap-sass', '~> 3.3.7'
 gem 'bundler', '~> 1.17.2'
-gem 'devise', '~> 4.3'
+gem 'devise', '~> 4.7'
 gem 'devise_invitable', '~> 1.7.4'
 gem 'fast_jsonapi', '~> 1.6.0', git: 'https://github.com/fast-jsonapi/fast_jsonapi'
 gem 'fastimage', '~> 2.1.1'
