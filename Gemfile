@@ -24,7 +24,7 @@ gem 'flutie', '~> 2.0'
 gem 'httparty', '~> 0.15.6'
 # gem 'jemalloc', '~> 1.0.1'
 gem 'jquery-rails', '~> 4.3.3' # required by bootstrap-sass
-gem 'kaminari', '~> 1.1.1'
+gem 'kaminari', '~> 1.2.1'
 gem 'lograge', '~> 0.10.0'
 gem 'mail_form', '~> 1.8.0'
 gem 'mimemagic', '~> 0.3.7'
